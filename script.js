@@ -19,6 +19,26 @@ var companiesData = [];        // full list from fetchData.js
 var activeSectorFilter = "ALL";
 var priceChart = null;
 
+// helper to fetch stock quotes from backend
+async function fetchLiveQuote(ticker) {
+    try {
+        const res = await fetch('/api/getQuote?ticker=' + encodeURIComponent(ticker));
+        if (!res.ok) {
+            console.error('Quote fetch failed for', ticker);
+            return null;
+        }
+        const data = await res.json();
+        if (data.error) {
+            console.error('Quote API error for', ticker, data.error);
+            return null;
+        }
+        return data; // { ticker, currentPrice, prevClose, changePct }
+    } catch (err) {
+        console.error('fetchLiveQuote error', err);
+        return null;
+    }
+}
+
 
 // ---------- HELPER: build ticker badge style ----------
 function getTickerHTML(company) {
@@ -255,11 +275,9 @@ function openCompanyView(ticker) {
     var c = getCompanyByTicker(ticker);
     if (!c) return;
 
-    // swap which view is visible
     document.getElementById("mapView").style.display = "none";
     document.getElementById("companyView").style.display = "block";
 
-    // fill header
     document.getElementById("companyTitle").textContent = `${c.ticker} — ${c.name}`;
     document.getElementById("companySector").textContent = `Sector: ${c.sector || "N/A"}`;
     document.getElementById("companyHQ").textContent = `HQ: ${c.hq || "N/A"}`;
@@ -269,7 +287,47 @@ function openCompanyView(ticker) {
     renderWatchState(c.ticker);
     renderPriceChart(c);
     loadChatMessages(c.ticker);
+
+    // NEW: get live quote and update UI in detail panel
+    fetchLiveQuote(c.ticker).then(function(q) {
+        var priceEl = document.getElementById("livePriceValue");
+        var changeEl = document.getElementById("liveChangeValue");
+
+        if (!q) {
+            if (priceEl) priceEl.textContent = "n/a";
+            if (changeEl) changeEl.textContent = "n/a";
+            return;
+        }
+
+        // Show numbers
+        if (priceEl) {
+            priceEl.textContent = q.currentPrice ? q.currentPrice.toFixed(2) : "n/a";
+        }
+
+        let pctText = "n/a";
+        if (typeof q.changePct === "number") {
+            pctText = q.changePct.toFixed(2) + "%";
+        }
+
+        if (changeEl) {
+            changeEl.textContent = pctText;
+            // Color red/green
+            if (q.changePct > 0) {
+                changeEl.style.color = "green";
+            } else if (q.changePct < 0) {
+                changeEl.style.color = "red";
+            } else {
+                changeEl.style.color = "gray";
+            }
+        }
+
+        // OPTIONAL: update the marker badge color live
+        // We can recalc and redraw that specific ticker’s marker badge
+        // so MSFT goes red if it's down, etc.
+        updateMarkerColor(c.ticker, q.changePct);
+    });
 }
+
 
 function backToMap() {
     document.getElementById("companyView").style.display = "none";
@@ -415,6 +473,48 @@ function wireChatSend(ticker) {
         box.scrollTop = box.scrollHeight;
     };
 }
+
+function updateMarkerColor(ticker, changePct) {
+    ticker = ticker.toUpperCase();
+
+    var marker = markersByTicker[ticker];
+    if (!marker) return;
+
+    // decide colors based on live changePct
+    let bg, border;
+    if (changePct > 0) {
+        bg = "#2ecc71"; // green
+        border = "#1b9a52";
+    } else if (changePct < 0) {
+        bg = "#e74c3c"; // red
+        border = "#9e2f22";
+    } else {
+        bg = "#888";
+        border = "#555";
+    }
+
+    // Rebuild the icon HTML with new colors
+    var html = `
+      <div class="ticker-label"
+           style="
+             background-color:${bg};
+             border-color:${border};
+           ">
+        ${ticker}
+      </div>
+    `;
+
+    var tickerIcon = L.divIcon({
+        className: 'ticker-icon',
+        html: html,
+        iconSize: [60, 25],
+        iconAnchor: [30, 12]
+    });
+
+    // Leaflet trick: setIcon on the marker
+    marker.setIcon(tickerIcon);
+}
+
 
 
 // ---------- INITIALIZE ----------
