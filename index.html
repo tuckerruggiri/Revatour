@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Headquarters Map</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <!-- Our styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- MAP VIEW -->
+    <div id="mapView">
+        <h1>Company Headquarters Map</h1>
+
+        <!-- top controls row -->
+        <div id="topRow">
+            <!-- Search -->
+            <div id="search-panel">
+                <input type="text" id="searchInput" placeholder="Search by ticker or name (e.g. AAPL, Tesla)">
+                <button id="searchButton">Search</button>
+                <div id="results"></div>
+            </div>
+
+            <!-- Filters / Watchlist -->
+            <div id="rightControls">
+                <div class="controlCard">
+                    <label for="sectorFilter"><strong>Filter by sector:</strong></label><br>
+                    <select id="sectorFilter">
+                        <option value="ALL">All sectors</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Semiconductors / AI">Semiconductors / AI</option>
+                        <option value="EV / Energy / AI for autonomy">EV / Energy / AI for autonomy</option>
+                        <option value="Retail / Logistics">Retail / Logistics</option>
+                        <option value="Banking / Financial Services">Banking / Financial Services</option>
+                        <option value="Healthcare / Insurance">Healthcare / Insurance</option>
+                        <option value="Automotive / EV transition">Automotive / EV transition</option>
+                        <option value="Restaurants / Franchising">Restaurants / Franchising</option>
+                        <option value="Home Improvement Retail">Home Improvement Retail</option>
+                        <option value="Footwear / Consumer">Footwear / Consumer</option>
+                        <!-- you can add more if you add more sectors -->
+                    </select>
+                </div>
+
+                <div class="controlCard">
+                    <strong>Your Watchlist</strong>
+                    <div id="watchlistPanel">
+                        <!-- we'll fill this with watched tickers -->
+                        <div class="emptyMsg">Nothing watched yet.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map -->
+        <div id="map"></div>
+    </div>
+
+    <!-- COMPANY DETAIL VIEW (hidden at start) -->
+    <div id="companyView" style="display:none;">
+        <button id="backToMapBtn">&larr; Back to Map</button>
+
+        <div id="companyHeader">
+            <h2 id="companyTitle">TICKER — Company Name</h2>
+            <div id="companySector">Sector: ...</div>
+            <div id="companyHQ">HQ: ...</div>
+        </div>
+
+        <div id="companyBody" style="display:flex; flex-wrap:wrap; gap:20px; margin-top:20px;">
+
+            <!-- LEFT COLUMN -->
+            <div style="flex:1; min-width:300px;">
+                <h3>Stock Chart (sample)</h3>
+                <canvas id="priceChart" width="400" height="200" style="border:1px solid #ccc; border-radius:8px;"></canvas>
+
+                <h3 style="margin-top:20px;">Fundamentals</h3>
+                <div id="companyAbout" class="infoCard">
+                    <!-- about text goes here -->
+                </div>
+
+                <h3 style="margin-top:20px;">Peers / Competitors</h3>
+                <div id="companyPeers" class="infoCard">
+                    <!-- peers go here -->
+                </div>
+
+                <h3 style="margin-top:20px; display:flex; align-items:center; gap:10px;">
+                    <span>Watchlist</span>
+                    <button id="watchToggleBtn" class="watchBtn">
+                        Add to Watch
+                    </button>
+                </h3>
+                <div id="watchStatus" style="font-size:13px; color:#333;">
+                    Not watching this ticker.
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div style="flex:1; min-width:300px;">
+                <h3>Notes / Chat about this ticker</h3>
+
+                <div id="chatMessages" class="chatBox">
+                    <!-- messages appear here -->
+                </div>
+
+                <div style="display:flex; gap:10px;">
+                    <input id="chatInput" type="text" placeholder="Type a thought or question..." class="chatInput">
+                    <button id="chatSendBtn" class="chatSendBtn">
+                        Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- Chart.js for the detail chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Data FIRST -->
+    <script src="fetchData.js"></script>
+
+    <!-- Logic SECOND -->
+    <script src="script.js"></script>
+</body>
+</html>

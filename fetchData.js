@@ -1,0 +1,172 @@
+var companyHQs = [
+  {
+    name: "Apple Inc.",
+    ticker: "AAPL",
+    lat: 37.3349,
+    lon: -122.0090,
+    sector: "Technology",
+    about: "Designs iPhone, Mac, Apple Watch, services ecosystem.",
+    hq: "Cupertino, CA",
+    samplePrices: [225, 227, 230, 229, 232, 235, 233],
+    peers: ["MSFT", "GOOGL", "NVDA"],
+    changePct: +1.2
+  },
+  {
+    name: "Microsoft Corp.",
+    ticker: "MSFT",
+    lat: 47.6426,
+    lon: -122.1391,
+    sector: "Technology",
+    about: "Cloud (Azure), Windows, AI enterprise software.",
+    hq: "Redmond, WA",
+    samplePrices: [410, 412, 415, 417, 416, 420, 422],
+    peers: ["AAPL", "GOOGL", "AMZN"],
+    changePct: +0.5
+  },
+  {
+    name: "Alphabet Inc. (Google)",
+    ticker: "GOOGL",
+    lat: 37.4220,
+    lon: -122.0841,
+    sector: "Technology",
+    about: "Google Search, YouTube, Google Cloud, Android.",
+    hq: "Mountain View, CA",
+    samplePrices: [165, 166, 164, 168, 170, 169, 171],
+    peers: ["MSFT", "META", "AMZN"],
+    changePct: -0.3
+  },
+  {
+    name: "Amazon.com, Inc.",
+    ticker: "AMZN",
+    lat: 47.6225,
+    lon: -122.3365,
+    sector: "Retail / Logistics",
+    about: "Amazon retail, AWS cloud, logistics, devices.",
+    hq: "Seattle, WA",
+    samplePrices: [185, 186, 188, 187, 189, 191, 190],
+    peers: ["WMT", "MSFT", "GOOGL"],
+    changePct: +2.0
+  },
+  {
+    name: "NVIDIA Corporation",
+    ticker: "NVDA",
+    lat: 37.3706,
+    lon: -122.0360,
+    sector: "Semiconductors / AI",
+    about: "GPUs and AI compute hardware/platforms.",
+    hq: "Santa Clara, CA",
+    samplePrices: [115, 118, 121, 120, 123, 125, 128],
+    peers: ["AAPL", "MSFT", "TSLA"],
+    changePct: +3.5
+  },
+  {
+    name: "Meta Platforms, Inc.",
+    ticker: "META",
+    lat: 37.4845,
+    lon: -122.1483,
+    sector: "Technology",
+    about: "Facebook, Instagram, WhatsApp, VR/AR (Reality Labs).",
+    hq: "Menlo Park, CA",
+    samplePrices: [495, 497, 492, 500, 503, 505, 508],
+    peers: ["GOOGL", "AAPL"],
+    changePct: -1.1
+  },
+  {
+    name: "Tesla, Inc.",
+    ticker: "TSLA",
+    lat: 37.3947,
+    lon: -122.1503,
+    sector: "EV / Energy / AI for autonomy",
+    about: "Electric vehicles, batteries, solar, autonomous driving.",
+    hq: "Austin, TX / Palo Alto roots",
+    samplePrices: [250, 252, 248, 255, 257, 260, 258],
+    peers: ["GM", "F", "NVDA"],
+    changePct: +4.2
+  },
+  {
+    name: "Walmart Inc.",
+    ticker: "WMT",
+    lat: 36.3659,
+    lon: -94.2179,
+    sector: "Retail / Logistics",
+    about: "Big box retail, grocery, e-commerce, logistics network.",
+    hq: "Bentonville, AR",
+    samplePrices: [72, 73, 73.5, 74, 74.5, 75, 75],
+    peers: ["AMZN", "COST"],
+    changePct: -0.8
+  },
+  {
+    name: "JPMorgan Chase & Co.",
+    ticker: "JPM",
+    lat: 40.7570,
+    lon: -73.9765,
+    sector: "Banking / Financial Services",
+    about: "Consumer banking, investment banking, asset management.",
+    hq: "New York, NY",
+    samplePrices: [210, 211, 213, 214, 213, 215, 216],
+    peers: ["BAC", "C", "GS"],
+    changePct: +0.1
+  },
+  {
+    name: "UnitedHealth Group",
+    ticker: "UNH",
+    lat: 44.8612,
+    lon: -93.3544,
+    sector: "Healthcare / Insurance",
+    about: "Health insurance, care services, Optum analytics.",
+    hq: "Minnetonka, MN",
+    samplePrices: [520, 522, 521, 523, 525, 528, 527],
+    peers: ["CVS", "HUM"],
+    changePct: -2.4
+  },
+  {
+    name: "Ford Motor Company",
+    ticker: "F",
+    lat: 42.3223,
+    lon: -83.1763,
+    sector: "Automotive / EV transition",
+    about: "Trucks (F-Series), SUVs, commercial vehicles, EV efforts.",
+    hq: "Dearborn, MI",
+    samplePrices: [12.5, 12.7, 12.6, 12.9, 13.1, 13.2, 13.4],
+    peers: ["GM", "TSLA"],
+    changePct: +0.4
+  },
+  {
+    name: "General Motors Company",
+    ticker: "GM",
+    lat: 42.3299,
+    lon: -83.0393,
+    sector: "Automotive / EV transition",
+    about: "Chevrolet, GMC, Cadillac, EV platforms.",
+    hq: "Detroit, MI",
+    samplePrices: [48, 48.5, 49, 49.5, 50, 50.5, 51],
+    peers: ["F", "TSLA"],
+    changePct: -1.7
+  },
+  {
+    name: "The Cheesecake Factory Inc.",
+    ticker: "CAKE",
+    lat: 34.1498,
+    lon: -118.4471,
+    sector: "Restaurants / Franchising",
+    about: "Casual dining restaurants and bakery products.",
+    hq: "Calabasas, CA",
+    samplePrices: [32, 32.5, 33, 33.5, 34, 34.2, 34.5],
+    peers: ["DRI", "EAT"],
+    changePct: +0.9
+  },
+  {
+    name: "Crocs, Inc.",
+    ticker: "CROX",
+    lat: 39.5466,
+    lon: -104.8624,
+    sector: "Footwear / Consumer",
+    about: "Casual footwear brand famous for EVA clogs.",
+    hq: "Broomfield, CO",
+    samplePrices: [148, 149, 150, 151, 152, 152, 153],
+    peers: ["NKE", "DECK"],
+    changePct: +5.0
+  }
+];
+
+window.companyHQs = companyHQs;

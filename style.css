@@ -1,0 +1,255 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    color: #222;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#mapView {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#companyView {
+    max-width: 1000px;
+    margin: 20px auto;
+    font-family: Arial, sans-serif;
+}
+
+#backToMapBtn {
+    background:none;
+    border:none;
+    color:#007bff;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+    padding:0;
+    margin-bottom:10px;
+}
+#backToMapBtn:hover {
+    text-decoration: underline;
+}
+
+/* --- Top row layout --- */
+#topRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-start;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+/* Search panel */
+#search-panel {
+    flex: 1;
+    min-width: 260px;
+    max-width: 400px;
+    text-align: center;
+}
+
+#searchInput {
+    padding: 8px 10px;
+    font-size: 14px;
+    width: 70%;
+    max-width: 260px;
+    box-sizing: border-box;
+}
+
+#searchButton {
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+}
+
+#results {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #333;
+    line-height: 1.4;
+    max-height: 150px;
+    overflow-y: auto;
+    text-align:left;
+    border:1px solid #ddd;
+    border-radius:6px;
+    padding:6px;
+    background:#fff;
+}
+
+/* Right controls (sector filter + watchlist panel) */
+#rightControls {
+    flex: 1;
+    min-width: 260px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.controlCard {
+    border:1px solid #ccc;
+    border-radius:8px;
+    padding:10px;
+    background:#fafafa;
+    box-shadow:0 0 4px rgba(0,0,0,0.05);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+#sectorFilter {
+    margin-top:6px;
+    width:100%;
+    font-size:14px;
+    padding:6px;
+    border-radius:6px;
+    border:1px solid #aaa;
+    cursor:pointer;
+}
+
+/* Watchlist panel */
+#watchlistPanel {
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius:6px;
+    padding:6px;
+    margin-top:8px;
+    max-height:120px;
+    overflow-y:auto;
+    font-size:13px;
+    line-height:1.4;
+}
+#watchlistPanel .emptyMsg {
+    color:#666;
+    font-style:italic;
+}
+.watchItem {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:13px;
+    padding:4px 0;
+    border-bottom:1px solid #eee;
+}
+.watchItem:last-child {
+    border-bottom:none;
+}
+.watchOpenBtn {
+    font-size:12px;
+    border:1px solid #007bff;
+    background:#fff;
+    color:#007bff;
+    border-radius:4px;
+    cursor:pointer;
+    padding:2px 6px;
+}
+
+/* Map */
+#map {
+    height: 600px;
+    width: 100%;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+/* Ticker marker style */
+/* we'll color these dynamically with inline style but set defaults */
+.ticker-icon {
+    background: none;
+    border: none;
+}
+
+.ticker-label {
+    color: #fff;
+    font-weight: bold;
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 12px;
+    text-align: center;
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    display: inline-block;
+    white-space: nowrap;
+    min-width: 30px;
+    border: 1px solid rgba(0,0,0,0.15);
+}
+
+/* Peer pills in detail view */
+.peer-pill {
+    display: inline-block;
+    background: #eef4ff;
+    color: #007bff;
+    border: 1px solid #007bff;
+    font-size: 12px;
+    border-radius: 999px;
+    padding: 4px 8px;
+    margin: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.peer-pill:hover {
+    background: #dce9ff;
+}
+
+/* Cards / boxes in detail view */
+.infoCard {
+    font-size:14px;
+    line-height:1.4;
+    background:#f8f8f8;
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ddd;
+}
+
+/* Chat box in detail view */
+.chatBox {
+    height:200px;
+    overflow-y:auto;
+    border:1px solid #ccc;
+    border-radius:6px;
+    padding:10px;
+    background:#fff;
+    font-size:14px;
+    margin-bottom:10px;
+}
+.chatInput {
+    flex:1;
+    padding:8px;
+    font-size:14px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+.chatSendBtn {
+    padding:8px 12px;
+    font-size:14px;
+    font-weight:bold;
+    background:#007bff;
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+/* Watch button on detail view */
+.watchBtn {
+    padding:6px 10px;
+    font-size:13px;
+    font-weight:bold;
+    border-radius:6px;
+    border:1px solid #007bff;
+    background:#fff;
+    color:#007bff;
+    cursor:pointer;
+}
+.watchBtn.watching {
+    background:#007bff;
+    color:#fff;
+}
