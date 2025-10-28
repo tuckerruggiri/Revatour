@@ -1,5 +1,92 @@
 // ---------- STATE / PERSISTENCE ----------
 
+// figure out which ticker is showing in the detail view
+function getCurrentTickerFromDetailView() {
+    // Example companyTitle text: "UNH — UnitedHealth Group"
+    var titleEl = document.getElementById("companyTitle");
+    if (!titleEl) return null;
+
+    var raw = titleEl.textContent.trim();
+    // Take the part before the first space or before the dash
+    // e.g. "UNH — UnitedHealth Group" -> "UNH"
+    var tickerGuess = raw.split(" ")[0];
+    tickerGuess = tickerGuess.replace("—", "").replace("–", "").trim();
+    return tickerGuess.toUpperCase();
+}
+
+// fetch live quote for a ticker (used in detail view refresh loop below)
+async function fetchLiveQuoteForTicker(ticker) {
+    try {
+        const res = await fetch('/api/getQuote?ticker=' + encodeURIComponent(ticker));
+        if (!res.ok) {
+            console.error('Quote fetch failed for', ticker);
+            return null;
+        }
+        const data = await res.json();
+        if (data.error) {
+            console.error('Quote API error for', ticker, data.error);
+            return null;
+        }
+        // data should look like:
+        // { ticker, currentPrice, prevClose, changePct }
+        return data;
+    } catch (err) {
+        console.error('fetchLiveQuoteForTicker error', err);
+        return null;
+    }
+}
+
+// update the live price box in the company detail view
+function renderLiveQuoteBox(quote) {
+    var priceEl   = document.getElementById("livePriceValue");
+    var prevEl    = document.getElementById("livePrevCloseValue");
+    var changeEl  = document.getElementById("liveChangeValue");
+
+    // might not be visible if we're on the map view
+    if (!priceEl || !prevEl || !changeEl) {
+        return;
+    }
+
+    if (!quote) {
+        priceEl.textContent   = "n/a";
+        prevEl.textContent    = "n/a";
+        changeEl.textContent  = "n/a";
+        changeEl.style.color  = "gray";
+        return;
+    }
+
+    // Price now
+    if (quote.currentPrice !== undefined && quote.currentPrice !== null) {
+        priceEl.textContent = quote.currentPrice.toFixed(2);
+    } else {
+        priceEl.textContent = "n/a";
+    }
+
+    // Yesterday's close
+    if (quote.prevClose !== undefined && quote.prevClose !== null) {
+        prevEl.textContent = quote.prevClose.toFixed(2);
+    } else {
+        prevEl.textContent = "n/a";
+    }
+
+    // % change (and color)
+    if (typeof quote.changePct === "number") {
+        var pctString = quote.changePct.toFixed(2) + "%";
+        changeEl.textContent = pctString;
+
+        if (quote.changePct > 0) {
+            changeEl.style.color = "green";
+        } else if (quote.changePct < 0) {
+            changeEl.style.color = "red";
+        } else {
+            changeEl.style.color = "gray";
+        }
+    } else {
+        changeEl.textContent = "n/a";
+        changeEl.style.color = "gray";
+    }
+}
+
 // restore chats (per ticker notes) from localStorage
 var chats = JSON.parse(localStorage.getItem("tickerChats") || "{}");
 
@@ -19,7 +106,7 @@ var companiesData = [];        // full list from fetchData.js
 var activeSectorFilter = "ALL";
 var priceChart = null;
 
-// helper to fetch stock quotes from backend
+// helper to fetch stock quotes from backend (used both in detail view and map recolor)
 async function fetchLiveQuote(ticker) {
     try {
         const res = await fetch('/api/getQuote?ticker=' + encodeURIComponent(ticker));
@@ -42,8 +129,8 @@ async function fetchLiveQuote(ticker) {
 
 // ---------- HELPER: build ticker badge style ----------
 function getTickerHTML(company) {
-    // decide color by changePct
-    // green-ish for up, red-ish for down, gray-ish for flat
+    // decide initial color by static changePct from fetchData.js
+    // (we'll override live in updateMarkerColor once we fetch real data)
     let bg, border;
     if (company.changePct > 0.2) {
         bg = "#2ecc71"; // green-ish
@@ -281,50 +368,24 @@ function openCompanyView(ticker) {
     document.getElementById("companyTitle").textContent = `${c.ticker} — ${c.name}`;
     document.getElementById("companySector").textContent = `Sector: ${c.sector || "N/A"}`;
     document.getElementById("companyHQ").textContent = `HQ: ${c.hq || "N/A"}`;
-    document.getElementById("companyAbout").textContent = c.about || "No description yet.";
-
+   document.getElementById("companyAbout").textContent = c.about || "No description yet.";
+    
     renderPeers(c);
     renderWatchState(c.ticker);
     renderPriceChart(c);
     loadChatMessages(c.ticker);
 
-    // NEW: get live quote and update UI in detail panel
-    fetchLiveQuote(c.ticker).then(function(q) {
-        var priceEl = document.getElementById("livePriceValue");
-        var changeEl = document.getElementById("liveChangeValue");
+    // 🔥 NEW: pull live quote from backend and update UI + marker color
+    fetchLiveQuoteForTicker(c.ticker).then(function(q) {
+             console.log("LIVE QUOTE RESULT FOR", c.ticker, q);
 
-        if (!q) {
-            if (priceEl) priceEl.textContent = "n/a";
-            if (changeEl) changeEl.textContent = "n/a";
-            return;
+        // fill "Live Price / Prev Close / Change"
+        renderLiveQuoteBox(q);
+
+        // recolor this company's marker on the map based on today's real change
+        if (q && typeof q.changePct === "number") {
+            updateMarkerColor(c.ticker, q.changePct);
         }
-
-        // Show numbers
-        if (priceEl) {
-            priceEl.textContent = q.currentPrice ? q.currentPrice.toFixed(2) : "n/a";
-        }
-
-        let pctText = "n/a";
-        if (typeof q.changePct === "number") {
-            pctText = q.changePct.toFixed(2) + "%";
-        }
-
-        if (changeEl) {
-            changeEl.textContent = pctText;
-            // Color red/green
-            if (q.changePct > 0) {
-                changeEl.style.color = "green";
-            } else if (q.changePct < 0) {
-                changeEl.style.color = "red";
-            } else {
-                changeEl.style.color = "gray";
-            }
-        }
-
-        // OPTIONAL: update the marker badge color live
-        // We can recalc and redraw that specific ticker’s marker badge
-        // so MSFT goes red if it's down, etc.
-        updateMarkerColor(c.ticker, q.changePct);
     });
 }
 
@@ -474,6 +535,8 @@ function wireChatSend(ticker) {
     };
 }
 
+
+// recolor a ticker's marker using real % change
 function updateMarkerColor(ticker, changePct) {
     ticker = ticker.toUpperCase();
 
@@ -514,7 +577,6 @@ function updateMarkerColor(ticker, changePct) {
     // Leaflet trick: setIcon on the marker
     marker.setIcon(tickerIcon);
 }
-
 
 
 // ---------- INITIALIZE ----------

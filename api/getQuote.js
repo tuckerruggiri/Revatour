@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Alpha Vantage endpoint: GLOBAL_QUOTE gives latest price + previous close
+    // Alpha Vantage GLOBAL_QUOTE gives latest price + previous close
     const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${encodeURIComponent(
       ticker
     )}&apikey=${apiKey}`;
@@ -23,20 +23,18 @@ export default async function handler(req, res) {
     const response = await fetch(url);
     const data = await response.json();
 
-    // Alpha Vantage returns data like:
-    // {
-    //   "Global Quote": {
-    //     "01. symbol": "MSFT",
-    //     "05. price": "430.1200",
-    //     "08. previous close": "428.3000",
-    //     "09. change": "1.8200",
-    //     "10. change percent": "0.4250%"
-    //   }
-    // }
+    // Helpful debug info to see what we actually got back
+    // NOTE: console.log runs server-side (shows up in Vercel function logs)
+    console.log("AlphaVantage raw response for", ticker, data);
 
     const quote = data["Global Quote"];
     if (!quote) {
-      res.status(500).json({ error: "No quote data returned" });
+      res.status(502).json({
+        error: "No quote data returned",
+        note: "Alpha Vantage didn't include Global Quote. Possibly rate limit or invalid ticker.",
+        tickerRequested: ticker,
+        raw: data
+      });
       return;
     }
 
@@ -52,10 +50,10 @@ export default async function handler(req, res) {
       ticker: ticker.toUpperCase(),
       currentPrice,
       prevClose,
-      changePct, // number like 1.23 or -0.45
+      changePct // number like 1.23 or -0.45
     });
   } catch (err) {
-    console.error("getQuote error:", err);
-    res.status(500).json({ error: "failed to fetch quote" });
+    console.error("getQuote error for", ticker, err);
+    res.status(500).json({ error: "failed to fetch quote", tickerRequested: ticker });
   }
 }
