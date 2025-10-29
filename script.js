@@ -1,584 +1,993 @@
-// ---------- STATE / PERSISTENCE ----------
+(function () {
+    // ----------------------------------
+    // CONSTANTS / STORAGE KEYS
+    // ----------------------------------
+    const PIN_STORAGE_KEY = 'revatour:pins';
+    const FEED_STORAGE_KEY = 'revatour:feed';
+    const KNOWN_TICKERS_KEY = 'revatour:knownTickers';
 
-// figure out which ticker is showing in the detail view
-function getCurrentTickerFromDetailView() {
-    // Example companyTitle text: "UNH — UnitedHealth Group"
-    var titleEl = document.getElementById("companyTitle");
-    if (!titleEl) return null;
+    // Finnhub API key
+    const FINNHUB_KEY = 'd40vbk9r01qhkm8b33v0d40vbk9r01qhkm8b33vg';
 
-    var raw = titleEl.textContent.trim();
-    // Take the part before the first space or before the dash
-    // e.g. "UNH — UnitedHealth Group" -> "UNH"
-    var tickerGuess = raw.split(" ")[0];
-    tickerGuess = tickerGuess.replace("—", "").replace("–", "").trim();
-    return tickerGuess.toUpperCase();
-}
+    // ----------------------------------
+    // DEFAULT CONTENT (first run)
+    // ----------------------------------
+    const defaultPins = [
+        {
+            id: `pin-${Date.now()}-AAPL`,
+            ticker: 'AAPL',
+            note: 'Opened a long-term position after earnings beat expectations.',
+            imageData: null,
+            createdAt: new Date().toISOString()
+        },
+        {
+            id: `pin-${Date.now()}-TSLA`,
+            ticker: 'TSLA',
+            note: 'Tracked my swing trade from Austin factory expansion news.',
+            imageData: null,
+            createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString()
+        }
+    ];
 
-// fetch live quote for a ticker (used in detail view refresh loop below)
-async function fetchLiveQuoteForTicker(ticker) {
-    try {
-        const res = await fetch('/api/getQuote?ticker=' + encodeURIComponent(ticker));
-        if (!res.ok) {
-            console.error('Quote fetch failed for', ticker);
+    const defaultFeed = [
+        {
+            id: 'feed-sample-1',
+            author: 'Avery Value',
+            avatar: 'AV',
+            text: 'Rebalancing dividend holdings and adding to $JNJ. Yield keeps compounding!',
+            ticker: 'JNJ',
+            imageData: null,
+            createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+            source: 'following'
+        },
+        {
+            id: 'feed-sample-2',
+            author: 'Mila Momentum',
+            avatar: 'MM',
+            text: 'Scaled out of my NVDA call spread after that AI keynote rally. Onto the next setup.',
+            ticker: 'NVDA',
+            imageData: null,
+            createdAt: new Date(Date.now() - 1000 * 60 * 60 * 20).toISOString(),
+            source: 'following'
+        }
+    ];
+
+    // ----------------------------------
+    // DOM CACHE
+    // ----------------------------------
+    const dom = {
+        // map + map UI
+        map: document.getElementById('map'),
+
+        tickerSearchInput: document.getElementById('tickerSearchInput'),
+        clearSearchBtn: document.getElementById('clearSearchBtn'),
+        openAddPinBtn: document.getElementById('openAddPinBtn'),
+
+        // modal
+        addPinModal: document.getElementById('addPinModal'),
+        closeAddPinBtn: document.getElementById('closeAddPinBtn'),
+        cancelAddPinBtn: document.getElementById('cancelAddPinBtn'),
+        addPinForm: document.getElementById('addPinForm'),
+        pinTickerInput: document.getElementById('pinTicker'),
+        pinNoteInput: document.getElementById('pinNote'),
+        pinImageInput: document.getElementById('pinImage'),
+        pinFileName: document.getElementById('pinFileName'),
+
+        // sidebar pins
+        pinCards: document.getElementById('pinCards'),
+        pinCount: document.getElementById('pinCount'),
+
+        // sections / nav
+        mapSection: document.getElementById('mapSection'),
+        wallSection: document.getElementById('wallSection'),
+        viewMapBtn: document.getElementById('viewMapBtn'),
+        viewWallBtn: document.getElementById('viewWallBtn'),
+        brandHomeBtn: document.querySelector('.brand'),
+
+        // wall post form
+        wallPostForm: document.getElementById('wallPostForm'),
+        wallPostText: document.getElementById('wallPostText'),
+        wallPostTicker: document.getElementById('wallPostTicker'),
+        wallPostImage: document.getElementById('wallPostImage'),
+        wallFileName: document.getElementById('wallFileName'),
+
+        // wall feed list
+        feedList: document.getElementById('feedList'),
+
+        // ticker autocomplete <datalist>
+        tickerOptions: document.getElementById('tickerOptions')
+    };
+
+    // ----------------------------------
+    // APP STATE
+    // ----------------------------------
+    let pins = loadPins();
+    let feed = loadFeed();
+
+    // ticker -> { ticker, name, lat, lon }
+    let dynamicCompanyMap = {};
+
+    // Leaflet map init
+    const map = L.map('map').setView([37.8, -96], 4);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // markers keyed by pin.id
+    let markersById = {};
+
+    // ----------------------------------
+    // PERSISTENCE HELPERS
+    // ----------------------------------
+    function loadPins() {
+        try {
+            const stored = localStorage.getItem(PIN_STORAGE_KEY);
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed;
+                }
+            }
+        } catch (err) {
+            console.error('Failed to load pins', err);
+        }
+        return defaultPins;
+    }
+
+    function savePins() {
+        localStorage.setItem(PIN_STORAGE_KEY, JSON.stringify(pins));
+    }
+
+    function loadFeed() {
+        try {
+            const stored = localStorage.getItem(FEED_STORAGE_KEY);
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed;
+                }
+            }
+        } catch (err) {
+            console.error('Failed to load feed', err);
+        }
+        return defaultFeed;
+    }
+
+    function saveFeed() {
+        localStorage.setItem(FEED_STORAGE_KEY, JSON.stringify(feed));
+    }
+
+    function persistCompanyMap() {
+        localStorage.setItem(KNOWN_TICKERS_KEY, JSON.stringify(dynamicCompanyMap));
+    }
+
+    // ----------------------------------
+    // EXTERNAL DATA HELPERS
+    // ----------------------------------
+
+    // 1. pull company profile + quote from Finnhub
+    async function fetchTickerFundamentals(tickerInput) {
+        const t = tickerInput.trim().toUpperCase();
+
+        // profile (HQ, name, shares outstanding, etc)
+        const profileRes = await fetch(
+            `https://finnhub.io/api/v1/stock/profile2?symbol=${encodeURIComponent(t)}&token=${FINNHUB_KEY}`
+        );
+        if (!profileRes.ok) throw new Error('profile lookup failed');
+        const prof = await profileRes.json();
+
+        if (!prof || !prof.ticker) {
+            throw new Error('ticker not found');
+        }
+
+        // quote (price, change %)
+        const quoteRes = await fetch(
+            `https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(t)}&token=${FINNHUB_KEY}`
+        );
+        if (!quoteRes.ok) throw new Error('quote lookup failed');
+        const quote = await quoteRes.json();
+
+        return {
+            ticker: prof.ticker || t,
+            name: prof.name || t,
+            hqCity: prof.city || '',
+            hqState: prof.state || '',
+            hqCountry: prof.country || '',
+
+            price: quote.c ?? null,
+            changePercent: quote.dp ?? null,
+            marketCap: prof.marketCapitalization ?? null,
+            sharesOut: prof.shareOutstanding ?? null,
+
+            currency: prof.currency || 'USD',
+            exchange: prof.exchange || '',
+            logo: prof.logo || ''
+        };
+    }
+
+    // 2. geocode HQ location -> lat/lon via OpenStreetMap
+    async function geocodeHQ(city, state, country) {
+        const locationStr = [city, state, country].filter(Boolean).join(', ');
+        if (!locationStr) {
+            throw new Error('no HQ location data');
+        }
+
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationStr)}`;
+
+        const geoRes = await fetch(url, {
+            headers: {
+                'Accept-Language': 'en'
+            }
+        });
+        if (!geoRes.ok) throw new Error('geocode failed');
+
+        const results = await geoRes.json();
+        if (!Array.isArray(results) || results.length === 0) {
+            throw new Error('no geocode results');
+        }
+
+        const best = results[0];
+        return {
+            lat: parseFloat(best.lat),
+            lon: parseFloat(best.lon)
+        };
+    }
+
+    // 3. learnTickerIfNeeded: pull from memory, else hit APIs, else bail gracefully
+    async function learnTickerIfNeeded(rawTickerInput) {
+        if (!rawTickerInput) return null;
+        const t = rawTickerInput.trim().toUpperCase();
+        if (!t) return null;
+
+        // already known?
+        if (dynamicCompanyMap[t]) {
+            return dynamicCompanyMap[t];
+        }
+
+        let fundamental;
+        try {
+            fundamental = await fetchTickerFundamentals(t);
+        } catch (err) {
+            console.warn('fundamentals lookup failed for', t, err);
             return null;
         }
-        const data = await res.json();
-        if (data.error) {
-            console.error('Quote API error for', ticker, data.error);
+
+        let coords;
+        try {
+            coords = await geocodeHQ(
+                fundamental.hqCity,
+                fundamental.hqState,
+                fundamental.hqCountry || 'USA'
+            );
+        } catch (err2) {
+            console.warn('geocode failed for', t, err2);
             return null;
         }
-        // data should look like:
-        // { ticker, currentPrice, prevClose, changePct }
-        return data;
-    } catch (err) {
-        console.error('fetchLiveQuoteForTicker error', err);
-        return null;
-    }
-}
 
-// update the live price box in the company detail view
-function renderLiveQuoteBox(quote) {
-    var priceEl   = document.getElementById("livePriceValue");
-    var prevEl    = document.getElementById("livePrevCloseValue");
-    var changeEl  = document.getElementById("liveChangeValue");
+        const learned = {
+            ticker: fundamental.ticker.toUpperCase(),
+            name: fundamental.name || fundamental.ticker,
+            lat: coords.lat,
+            lon: coords.lon
+        };
 
-    // might not be visible if we're on the map view
-    if (!priceEl || !prevEl || !changeEl) {
-        return;
+        dynamicCompanyMap[learned.ticker] = learned;
+        persistCompanyMap();
+        renderTickerOptions(); // refresh <datalist>
+
+        return learned;
     }
 
-    if (!quote) {
-        priceEl.textContent   = "n/a";
-        prevEl.textContent    = "n/a";
-        changeEl.textContent  = "n/a";
-        changeEl.style.color  = "gray";
-        return;
-    }
-
-    // Price now
-    if (quote.currentPrice !== undefined && quote.currentPrice !== null) {
-        priceEl.textContent = quote.currentPrice.toFixed(2);
-    } else {
-        priceEl.textContent = "n/a";
-    }
-
-    // Yesterday's close
-    if (quote.prevClose !== undefined && quote.prevClose !== null) {
-        prevEl.textContent = quote.prevClose.toFixed(2);
-    } else {
-        prevEl.textContent = "n/a";
-    }
-
-    // % change (and color)
-    if (typeof quote.changePct === "number") {
-        var pctString = quote.changePct.toFixed(2) + "%";
-        changeEl.textContent = pctString;
-
-        if (quote.changePct > 0) {
-            changeEl.style.color = "green";
-        } else if (quote.changePct < 0) {
-            changeEl.style.color = "red";
-        } else {
-            changeEl.style.color = "gray";
-        }
-    } else {
-        changeEl.textContent = "n/a";
-        changeEl.style.color = "gray";
-    }
-}
-
-// restore chats (per ticker notes) from localStorage
-var chats = JSON.parse(localStorage.getItem("tickerChats") || "{}");
-
-// restore watchlist (ticker -> true/false) from localStorage
-var watchlist = JSON.parse(localStorage.getItem("tickerWatchlist") || "{}");
-
-// ---------- MAP SETUP ----------
-var map = L.map('map').setView([37.8, -96], 4);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);
-
-// data structures
-var markersByTicker = {};      // ticker -> Leaflet marker
-var companiesData = [];        // full list from fetchData.js
-var activeSectorFilter = "ALL";
-var priceChart = null;
-
-// helper to fetch stock quotes from backend (used both in detail view and map recolor)
-async function fetchLiveQuote(ticker) {
-    try {
-        const res = await fetch('/api/getQuote?ticker=' + encodeURIComponent(ticker));
-        if (!res.ok) {
-            console.error('Quote fetch failed for', ticker);
-            return null;
-        }
-        const data = await res.json();
-        if (data.error) {
-            console.error('Quote API error for', ticker, data.error);
-            return null;
-        }
-        return data; // { ticker, currentPrice, prevClose, changePct }
-    } catch (err) {
-        console.error('fetchLiveQuote error', err);
-        return null;
-    }
-}
-
-
-// ---------- HELPER: build ticker badge style ----------
-function getTickerHTML(company) {
-    // decide initial color by static changePct from fetchData.js
-    // (we'll override live in updateMarkerColor once we fetch real data)
-    let bg, border;
-    if (company.changePct > 0.2) {
-        bg = "#2ecc71"; // green-ish
-        border = "#1b9a52";
-    } else if (company.changePct < -0.2) {
-        bg = "#e74c3c"; // red-ish
-        border = "#9e2f22";
-    } else {
-        bg = "#888";    // neutral gray
-        border = "#555";
-    }
-
-    return `
-      <div class="ticker-label"
-           style="
-             background-color:${bg};
-             border-color:${border};
-           ">
-        ${company.ticker}
-      </div>
-    `;
-}
-
-
-// ---------- DRAW MARKERS ----------
-function drawCompaniesOnMap() {
-    if (!window.companyHQs || window.companyHQs.length === 0) {
-        setTimeout(drawCompaniesOnMap, 200);
-        return;
-    }
-
-    companiesData = window.companyHQs;
-
-    // clear old markers if any
-    Object.values(markersByTicker).forEach(m => {
-        map.removeLayer(m);
-    });
-    markersByTicker = {};
-
-    // add markers that match sector filter
-    companiesData.forEach(function(company) {
-        if (activeSectorFilter !== "ALL" && company.sector !== activeSectorFilter) {
-            return; // skip if not in selected sector
+    // ----------------------------------
+    // COMPANY BOOTSTRAP / LOOKUP
+    // ----------------------------------
+    function bootstrapCompanyMap() {
+        // 1. load previously learned tickers
+        try {
+            const raw = localStorage.getItem(KNOWN_TICKERS_KEY);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && typeof parsed === 'object') {
+                    Object.values(parsed).forEach(c => {
+                        if (c && c.ticker) {
+                            dynamicCompanyMap[c.ticker.toUpperCase()] = c;
+                        }
+                    });
+                }
+            }
+        } catch (e) {
+            console.warn('could not restore knownTickers', e);
         }
 
-        var tickerIcon = L.divIcon({
-            className: 'ticker-icon',
-            html: getTickerHTML(company),
-            iconSize: [60, 25],
-            iconAnchor: [30, 12]
+        // 2. seed a starter watchlist so UI isn’t empty on day one
+        const builtIns = [
+            { ticker: 'AAPL', name: 'Apple Inc.', lat: 37.3349, lon: -122.0090 },
+            { ticker: 'MSFT', name: 'Microsoft Corporation', lat: 47.6426, lon: -122.1391 },
+            { ticker: 'GOOGL', name: 'Alphabet Inc.', lat: 37.4220, lon: -122.0841 },
+            { ticker: 'AMZN', name: 'Amazon.com, Inc.', lat: 47.6225, lon: -122.3365 },
+            { ticker: 'TSLA', name: 'Tesla, Inc.', lat: 30.2672, lon: -97.7431 },
+            { ticker: 'NVDA', name: 'NVIDIA Corporation', lat: 37.3705, lon: -121.9620 },
+            { ticker: 'META', name: 'Meta Platforms, Inc.', lat: 37.4845, lon: -122.1483 },
+            { ticker: 'JNJ',  name: 'Johnson & Johnson', lat: 40.4862, lon: -74.4518 }
+        ];
+        builtIns.forEach(c => {
+            const u = c.ticker.toUpperCase();
+            if (!dynamicCompanyMap[u]) {
+                dynamicCompanyMap[u] = c;
+            }
         });
 
-        var marker = L.marker([company.lat, company.lon], { icon: tickerIcon }).addTo(map);
+        persistCompanyMap();
+    }
 
-        marker.bindPopup(
-            `<b>${company.name}</b><br>` +
-            `Ticker: ${company.ticker}<br>` +
-            `Sector: ${company.sector}<br>` +
-            `Change: ${company.changePct}%<br><br>` +
-            `<button class="openDetailBtn" data-ticker="${company.ticker}">View details</button>`
-        );
+    function getAllCompanies() {
+        return Object.values(dynamicCompanyMap);
+    }
 
-        markersByTicker[company.ticker.toUpperCase()] = marker;
-    });
+    function findCompany(tickerLike) {
+        if (!tickerLike) return null;
+        const t = tickerLike.trim().toUpperCase();
+        return dynamicCompanyMap[t] || null;
+    }
 
-    // hook up "View details" buttons when a popup opens
-    map.on('popupopen', function(e) {
-        var btn = e.popup._contentNode.querySelector('.openDetailBtn');
-        if (btn) {
-            btn.addEventListener('click', function() {
-                var t = btn.getAttribute('data-ticker');
-                openCompanyView(t);
+    function findCompanyLoose(query) {
+        if (!query) return null;
+        const q = query.trim().toLowerCase();
+        if (!q) return null;
+
+        // exact ticker first
+        const direct = dynamicCompanyMap[q.toUpperCase()];
+        if (direct) return direct;
+
+        // partial name match
+        let best = null;
+        Object.values(dynamicCompanyMap).forEach(c => {
+            if (
+                c.ticker.toLowerCase() === q ||
+                c.name.toLowerCase().includes(q)
+            ) {
+                best = c;
+            }
+        });
+        return best;
+    }
+
+    // ----------------------------------
+    // UTIL: TIMESTAMP → "2h ago"
+    // ----------------------------------
+    function formatTimestamp(isoString) {
+        const date = new Date(isoString);
+        const now = new Date();
+        const diff = now - date;
+
+        const minute = 60 * 1000;
+        const hour = 60 * minute;
+        const day = 24 * hour;
+
+        if (diff < minute) {
+            return 'Just now';
+        }
+        if (diff < hour) {
+            const minutes = Math.floor(diff / minute);
+            return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+        }
+        if (diff < day) {
+            const hours = Math.floor(diff / hour);
+            return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+        }
+        if (diff < day * 7) {
+            const days = Math.floor(diff / day);
+            return `${days} day${days === 1 ? '' : 's'} ago`;
+        }
+        return date.toLocaleDateString();
+    }
+
+    // ----------------------------------
+    // RENDER: <datalist> AUTOCOMPLETE
+    // ----------------------------------
+    function renderTickerOptions() {
+        if (!dom.tickerOptions) return;
+        dom.tickerOptions.innerHTML = '';
+
+        getAllCompanies()
+            .sort((a, b) => a.ticker.localeCompare(b.ticker))
+            .forEach(company => {
+                const option = document.createElement('option');
+                option.value = company.ticker;
+                option.textContent = `${company.ticker} — ${company.name}`;
+                dom.tickerOptions.appendChild(option);
+            });
+    }
+
+    // ----------------------------------
+    // RENDER: MAP & POPUPS
+    // ----------------------------------
+    function renderMap() {
+        // clear old markers
+        Object.values(markersById).forEach(marker => {
+            map.removeLayer(marker);
+        });
+        markersById = {};
+
+        const validPins = pins.filter(pin => !!findCompany(pin.ticker));
+
+        if (validPins.length === 0) {
+            map.setView([37.8, -96], 4);
+        }
+
+        validPins.forEach(pin => {
+            const company = findCompany(pin.ticker);
+            if (!company) return;
+
+            const marker = L.marker([company.lat, company.lon], {
+                icon: L.divIcon({
+                    className: 'ticker-icon',
+                    html: `<div class="ticker-label">${company.ticker}</div>`,
+                    iconSize: [80, 32],
+                    iconAnchor: [40, 16]
+                })
+            }).addTo(map);
+
+            // popup HTML
+            const popupPieces = [];
+
+            popupPieces.push(
+                `<h3>${company.ticker} — ${company.name}</h3>`
+            );
+
+            popupPieces.push(
+                `<p>${
+                    pin.note
+                        ? pin.note
+                        : 'No note yet. Document why this ticker matters to you.'
+                }</p>`
+            );
+
+            if (pin.imageData) {
+                popupPieces.push(
+                    '<div class="media-frame">' +
+                        `<img src="${pin.imageData}" alt="${company.ticker} pin image">` +
+                    '</div>'
+                );
+            }
+
+            popupPieces.push(`
+                <div class="popup-actions">
+                    <button class="share-btn" data-pin-id="${pin.id}">Share to Wall</button>
+                    <button class="forum-btn" data-ticker="${company.ticker}">Go to Forum</button>
+                    <button class="remove-btn" data-pin-id="${pin.id}">Remove</button>
+                </div>
+            `);
+
+            marker.bindPopup(popupPieces.join(''));
+            markersById[pin.id] = marker;
+        });
+
+        if (validPins.length > 0) {
+            const firstCompany = findCompany(validPins[0].ticker);
+            if (firstCompany) {
+                map.setView([firstCompany.lat, firstCompany.lon], 5);
+            }
+        }
+    }
+
+    // ----------------------------------
+    // RENDER: PIN SIDEBAR
+    // ----------------------------------
+    function renderPinCards() {
+        dom.pinCards.innerHTML = '';
+        dom.pinCount.textContent = pins.length.toString();
+
+        if (pins.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'empty-state';
+            empty.innerHTML = `
+                <p>Your map is waiting for its first ticker.
+                Tap <strong>Add to MyMap</strong> to drop a pin.</p>`;
+            dom.pinCards.appendChild(empty);
+            return;
+        }
+
+        pins
+            .slice()
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .forEach(pin => {
+                const company = findCompany(pin.ticker);
+                if (!company) return;
+
+                const card = document.createElement('article');
+                card.className = 'pin-card';
+                card.innerHTML = `
+                    <header>
+                        <h3>${company.ticker}</h3>
+                        <span>${formatTimestamp(pin.createdAt)}</span>
+                    </header>
+
+                    <p class="pin-note">${
+                        pin.note
+                            ? pin.note
+                            : 'No note yet. Click share to add a story on your wall.'
+                    }</p>
+
+                    ${
+                        pin.imageData
+                            ? (
+                                '<div class="media-frame">' +
+                                    `<img src="${pin.imageData}" alt="${company.ticker} journal image">` +
+                                '</div>'
+                              )
+                            : ''
+                    }
+
+                    <div class="pin-actions">
+                        <button class="share-btn" data-pin-id="${pin.id}">Share to Wall</button>
+                        <button class="remove-btn" data-pin-id="${pin.id}">Remove</button>
+                    </div>
+                `;
+                dom.pinCards.appendChild(card);
+            });
+
+        // bind sidebar buttons
+        dom.pinCards.querySelectorAll('.share-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const pinId = btn.getAttribute('data-pin-id');
+                sharePin(pinId);
+            });
+        });
+
+        dom.pinCards.querySelectorAll('.remove-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const pinId = btn.getAttribute('data-pin-id');
+                removePin(pinId);
+            });
+        });
+    }
+
+    // ----------------------------------
+    // RENDER: WALL FEED
+    // ----------------------------------
+    function renderFeed() {
+        dom.feedList.innerHTML = '';
+
+        if (feed.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'empty-state';
+            empty.innerHTML = `
+                <p>Your wall is quiet.
+                Share a thought from your MyMap or post something new!</p>`;
+            dom.feedList.appendChild(empty);
+            return;
+        }
+
+        feed
+            .slice()
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .forEach(post => {
+                const card = document.createElement('article');
+                card.className = 'feed-card';
+
+                const author = post.author || 'You';
+                const avatar =
+                    post.avatar ||
+                    (author ? author.slice(0, 2).toUpperCase() : 'YO');
+
+                const showDelete = author === 'You';
+
+                // screenshot block w/ padding + dark frame
+                const imageBlock = post.imageData
+                    ? (
+                        '<div class="feed-image-frame">' +
+                            `<img src="${post.imageData}" alt="Post attachment">` +
+                        '</div>'
+                      )
+                    : '';
+
+                card.innerHTML = `
+                    <header>
+                        <div class="author">
+                            <span class="avatar">${avatar}</span>
+                            <div>
+                                <strong>${author}${
+                                    post.source === 'pin' ? ' · Shared from MyMap' : ''
+                                }</strong>
+                                <div class="timestamp">${formatTimestamp(
+                                    post.createdAt
+                                )}</div>
+                            </div>
+                        </div>
+
+                        <div class="feed-header-right">
+                            ${
+                                post.ticker
+                                    ? `<span class="ticker-tag">${post.ticker}</span>`
+                                    : ''
+                            }
+
+                            ${
+                                showDelete
+                                    ? `<button class="delete-post-btn" data-post-id="${post.id}">Delete</button>`
+                                    : ''
+                            }
+                        </div>
+                    </header>
+
+                    <p>${post.text}</p>
+
+                    ${imageBlock}
+                `;
+
+                dom.feedList.appendChild(card);
+            });
+
+        // connect delete buttons
+        dom.feedList.querySelectorAll('.delete-post-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const postId = btn.getAttribute('data-post-id');
+                deletePost(postId);
+            });
+        });
+    }
+
+    // ----------------------------------
+    // ACTIONS
+    // ----------------------------------
+    function openModal() {
+        dom.addPinModal.classList.remove('hidden');
+        dom.pinTickerInput.focus();
+    }
+
+    function closeModal() {
+        dom.addPinModal.classList.add('hidden');
+        dom.addPinForm.reset();
+        dom.pinFileName.textContent = 'No file selected';
+    }
+
+    function removePin(pinId) {
+        pins = pins.filter(pin => pin.id !== pinId);
+        savePins();
+        renderPinCards();
+        renderMap();
+    }
+
+    function sharePin(pinId) {
+        const pin = pins.find(p => p.id === pinId);
+        if (!pin) return;
+
+        const company = findCompany(pin.ticker);
+
+        const text =
+            pin.note && pin.note.trim().length > 0
+                ? pin.note
+                : `Sharing ${company ? company.ticker : pin.ticker} from MyMap.`;
+
+        const newPost = {
+            id: `feed-${Date.now()}`,
+            author: 'You',
+            avatar: 'YOU',
+            text,
+            ticker: company ? company.ticker : pin.ticker,
+            imageData: pin.imageData,
+            createdAt: new Date().toISOString(),
+            source: 'pin'
+        };
+
+        feed.push(newPost);
+        saveFeed();
+        renderFeed();
+
+        // jump to Wall view and sync hash
+        switchToWall();
+        window.location.hash = '#wall';
+    }
+
+    function deletePost(postId) {
+        feed = feed.filter(p => p.id !== postId);
+        saveFeed();
+        renderFeed();
+    }
+
+    function readFileAsDataURL(file) {
+        return new Promise((resolve, reject) => {
+            if (!file) {
+                resolve(null);
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(reader.error);
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function switchToMap() {
+        dom.mapSection.classList.add('active');
+        dom.wallSection.classList.remove('active');
+        dom.viewMapBtn.classList.add('active');
+        dom.viewWallBtn.classList.remove('active');
+
+        if (window.location.hash !== '#map') {
+            window.location.hash = '#map';
+        }
+
+        // Leaflet needs a resize after showing
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 300);
+    }
+
+    function switchToWall() {
+        dom.wallSection.classList.add('active');
+        dom.mapSection.classList.remove('active');
+        dom.viewWallBtn.classList.add('active');
+        dom.viewMapBtn.classList.remove('active');
+
+        if (window.location.hash !== '#wall') {
+            window.location.hash = '#wall';
+        }
+    }
+
+    function prefillTickerFromSearch() {
+        const query = dom.tickerSearchInput.value.trim();
+        if (!query) return;
+        const company = findCompanyLoose(query);
+        if (company) {
+            dom.pinTickerInput.value = company.ticker;
+        } else {
+            dom.pinTickerInput.value = query.toUpperCase();
+        }
+    }
+
+    // ----------------------------------
+    // FORM HANDLERS
+    // ----------------------------------
+    async function handleAddPinSubmit(event) {
+        event.preventDefault();
+
+        const rawTicker = dom.pinTickerInput.value.trim();
+        const note = dom.pinNoteInput.value.trim();
+
+        if (!rawTicker) {
+            dom.pinTickerInput.focus();
+            return;
+        }
+
+        // resolve/learn ticker
+        let company = findCompanyLoose(rawTicker);
+        if (!company) {
+            company = await learnTickerIfNeeded(rawTicker);
+        }
+
+        if (!company) {
+            alert('We could not find that ticker (and could not fetch it). Try again.');
+            dom.pinTickerInput.focus();
+            return;
+        }
+
+        readFileAsDataURL(dom.pinImageInput.files[0])
+            .then(imageData => {
+                const newPin = {
+                    id: `pin-${Date.now()}`,
+                    ticker: company.ticker,
+                    note,
+                    imageData,
+                    createdAt: new Date().toISOString()
+                };
+
+                pins.push(newPin);
+                savePins();
+
+                renderPinCards();
+                renderMap();
+                closeModal();
+
+                dom.tickerSearchInput.value = '';
+                refreshClearBtn();
+            })
+            .catch(err => {
+                console.error('Failed to read file', err);
+            });
+    }
+
+    async function handleWallPostSubmit(event) {
+        event.preventDefault();
+
+        const text = dom.wallPostText.value.trim();
+        if (!text) {
+            dom.wallPostText.focus();
+            return;
+        }
+
+        const rawTicker = dom.wallPostTicker.value.trim();
+        let tickerResolved = '';
+
+        if (rawTicker) {
+            // learn ticker on the fly for tagging
+            let company = findCompanyLoose(rawTicker);
+            if (!company) {
+                company = await learnTickerIfNeeded(rawTicker);
+            }
+            tickerResolved = company ? company.ticker : rawTicker.toUpperCase();
+        }
+
+        readFileAsDataURL(dom.wallPostImage.files[0])
+            .then(imageData => {
+                const newPost = {
+                    id: `feed-${Date.now()}`,
+                    author: 'You',
+                    avatar: 'YOU',
+                    text,
+                    ticker: tickerResolved || null,
+                    imageData,
+                    createdAt: new Date().toISOString(),
+                    source: 'wall'
+                };
+
+                feed.push(newPost);
+                saveFeed();
+                renderFeed();
+
+                dom.wallPostForm.reset();
+                dom.wallFileName.textContent = 'No file selected';
+
+                switchToWall();
+                window.location.hash = '#wall';
+            })
+            .catch(err => {
+                console.error('Failed to read file', err);
+            });
+    }
+
+    // ----------------------------------
+    // LISTENERS
+    // ----------------------------------
+    function wireModalEvents() {
+        dom.openAddPinBtn.addEventListener('click', () => {
+            prefillTickerFromSearch();
+            openModal();
+        });
+
+        dom.closeAddPinBtn.addEventListener('click', closeModal);
+        dom.cancelAddPinBtn.addEventListener('click', closeModal);
+
+        dom.addPinForm.addEventListener('submit', handleAddPinSubmit);
+
+        dom.pinImageInput.addEventListener('change', () => {
+            dom.pinFileName.textContent = dom.pinImageInput.files[0]
+                ? dom.pinImageInput.files[0].name
+                : 'No file selected';
+        });
+    }
+
+    function wireNavigation() {
+        dom.viewMapBtn.addEventListener('click', switchToMap);
+        dom.viewWallBtn.addEventListener('click', switchToWall);
+
+        // brand in top-left is Home -> Map
+        if (dom.brandHomeBtn) {
+            dom.brandHomeBtn.style.cursor = 'pointer';
+            dom.brandHomeBtn.addEventListener('click', () => {
+                switchToMap();
             });
         }
-    });
-}
-
-
-// ---------- SEARCH ----------
-function searchCompanies(query) {
-    if (!query) return [];
-    query = query.trim().toLowerCase();
-
-    return companiesData.filter(function (company) {
-        const tickerMatch = company.ticker.toLowerCase().includes(query);
-        const nameMatch = company.name.toLowerCase().includes(query);
-        return tickerMatch || nameMatch;
-    });
-}
-
-function zoomOnMap(company) {
-    map.setView([company.lat, company.lon], 10);
-    var marker = markersByTicker[company.ticker.toUpperCase()];
-    if (marker) {
-        marker.openPopup();
-    }
-}
-
-function showResults(matches) {
-    var resultsDiv = document.getElementById("results");
-    if (!resultsDiv) return;
-
-    if (matches.length === 0) {
-        resultsDiv.innerHTML = "<div>No matches found.</div>";
-        return;
     }
 
-    var html = matches.map(function(company, idx) {
-        return `
-            <div class="result-item"
-                 data-idx="${idx}"
-                 style="padding:6px 0; border-bottom:1px solid #ddd; cursor:pointer; text-align:left;">
-                <strong>${company.ticker}</strong> — ${company.name}
-                <button data-ticker="${company.ticker}"
-                        style="margin-left:8px; font-size:12px; border:1px solid #007bff; background:#fff; color:#007bff; border-radius:4px; cursor:pointer;">
-                    Open
-                </button>
-            </div>
-        `;
-    }).join("");
-
-    resultsDiv.innerHTML = html;
-
-    var items = resultsDiv.querySelectorAll(".result-item");
-    items.forEach(function(item) {
-        item.addEventListener("click", function(e) {
-            if (e.target.tagName.toLowerCase() === "button") return;
-            var idx = parseInt(item.getAttribute("data-idx"), 10);
-            var chosen = matches[idx];
-            zoomOnMap(chosen);
+    function wireSearchInput() {
+        if (!dom.tickerSearchInput) return;
+        dom.tickerSearchInput.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                prefillTickerFromSearch();
+                openModal();
+            }
         });
-    });
+    }
 
-    var openButtons = resultsDiv.querySelectorAll("button[data-ticker]");
-    openButtons.forEach(function(btn) {
-        btn.addEventListener("click", function(e) {
-            e.stopPropagation();
-            var ticker = btn.getAttribute("data-ticker");
-            openCompanyView(ticker);
-        });
-    });
-}
-
-
-// search UI events
-var searchButton = document.getElementById("searchButton");
-var searchInput = document.getElementById("searchInput");
-
-if (searchButton && searchInput) {
-    searchButton.addEventListener("click", function() {
-        var q = searchInput.value;
-        var matches = searchCompanies(q);
-        showResults(matches);
-
-        if (matches.length === 1) {
-            zoomOnMap(matches[0]);
+    function refreshClearBtn() {
+        if (!dom.clearSearchBtn || !dom.tickerSearchInput) return;
+        if (dom.tickerSearchInput.value.trim().length > 0) {
+            dom.clearSearchBtn.style.display = 'inline-block';
+        } else {
+            dom.clearSearchBtn.style.display = 'none';
         }
-    });
+    }
 
-    searchInput.addEventListener("keydown", function(e) {
-        if (e.key === "Enter") {
-            var q = searchInput.value;
-            var matches = searchCompanies(q);
-            showResults(matches);
-            if (matches.length === 1) {
-                zoomOnMap(matches[0]);
+    function wireSearchClear() {
+        if (!dom.tickerSearchInput || !dom.clearSearchBtn) return;
+
+        dom.tickerSearchInput.addEventListener('input', refreshClearBtn);
+
+        dom.clearSearchBtn.addEventListener('click', () => {
+            dom.tickerSearchInput.value = '';
+            refreshClearBtn();
+            dom.tickerSearchInput.focus();
+        });
+
+        refreshClearBtn();
+    }
+
+    function wireWallForm() {
+        dom.wallPostForm.addEventListener('submit', handleWallPostSubmit);
+
+        dom.wallPostImage.addEventListener('change', () => {
+            dom.wallFileName.textContent = dom.wallPostImage.files[0]
+                ? dom.wallPostImage.files[0].name
+                : 'No file selected';
+        });
+    }
+
+    function wireMapPopups() {
+        map.on('popupopen', e => {
+            const popupRoot = e.popup._contentNode;
+
+            const shareBtn = popupRoot.querySelector('.share-btn');
+            const forumBtn = popupRoot.querySelector('.forum-btn');
+            const removeBtn = popupRoot.querySelector('.remove-btn');
+
+            if (shareBtn) {
+                shareBtn.addEventListener('click', () => {
+                    const pinId = shareBtn.getAttribute('data-pin-id');
+                    sharePin(pinId);
+                    map.closePopup();
+                });
+            }
+
+            if (forumBtn) {
+                forumBtn.addEventListener('click', () => {
+                    const ticker = forumBtn.getAttribute('data-ticker');
+                    // leave this as ticker.html, or whatever your forum page file is called
+                    window.location = `ticker.html?ticker=${encodeURIComponent(ticker)}`;
+                });
+            }
+
+            if (removeBtn) {
+                removeBtn.addEventListener('click', () => {
+                    const pinId = removeBtn.getAttribute('data-pin-id');
+                    removePin(pinId);
+                    map.closePopup();
+                });
+            }
+        });
+    }
+
+    function wireHashRouting() {
+        function applyHashRoute() {
+            if (window.location.hash === '#wall') {
+                switchToWall();
+            } else {
+                switchToMap();
             }
         }
-    });
-}
 
-
-// ---------- SECTOR FILTER ----------
-var sectorFilter = document.getElementById("sectorFilter");
-if (sectorFilter) {
-    sectorFilter.addEventListener("change", function() {
-        activeSectorFilter = sectorFilter.value;
-        drawCompaniesOnMap();
-    });
-}
-
-
-// ---------- WATCHLIST PANEL ON MAP ----------
-function renderWatchlistPanel() {
-    var panel = document.getElementById("watchlistPanel");
-    if (!panel) return;
-
-    // build a list from watchlist {}
-    var watchedTickers = Object.keys(watchlist).filter(t => watchlist[t]);
-
-    if (watchedTickers.length === 0) {
-        panel.innerHTML = `<div class="emptyMsg">Nothing watched yet.</div>`;
-        return;
+        window.addEventListener('hashchange', applyHashRoute);
+        applyHashRoute();
     }
 
-    var html = watchedTickers.map(function(tkr) {
-        var c = getCompanyByTicker(tkr);
-        if (!c) return "";
-        return `
-            <div class="watchItem">
-                <div>
-                    <strong>${c.ticker}</strong><br>
-                    <span style="font-size:12px; color:#555;">${c.name}</span>
-                </div>
-                <button class="watchOpenBtn" data-ticker="${c.ticker}">Open</button>
-            </div>
-        `;
-    }).join("");
+    // ----------------------------------
+    // INIT
+    // ----------------------------------
+    function init() {
+        // bootstrap company list (seed + remembered)
+        bootstrapCompanyMap();
 
-    panel.innerHTML = html;
+        // render UI
+        renderTickerOptions();
+        renderPinCards();
+        renderFeed();
+        renderMap();
 
-    // wire up open buttons
-    panel.querySelectorAll(".watchOpenBtn").forEach(function(btn){
-        btn.addEventListener("click", function() {
-            var t = btn.getAttribute("data-ticker");
-            openCompanyView(t);
-        });
-    });
-}
-
-
-// ---------- COMPANY DETAIL VIEW ----------
-function getCompanyByTicker(ticker) {
-    ticker = ticker.toUpperCase();
-    return companiesData.find(c => c.ticker.toUpperCase() === ticker);
-}
-
-function openCompanyView(ticker) {
-    var c = getCompanyByTicker(ticker);
-    if (!c) return;
-
-    document.getElementById("mapView").style.display = "none";
-    document.getElementById("companyView").style.display = "block";
-
-    document.getElementById("companyTitle").textContent = `${c.ticker} — ${c.name}`;
-    document.getElementById("companySector").textContent = `Sector: ${c.sector || "N/A"}`;
-    document.getElementById("companyHQ").textContent = `HQ: ${c.hq || "N/A"}`;
-   document.getElementById("companyAbout").textContent = c.about || "No description yet.";
-    
-    renderPeers(c);
-    renderWatchState(c.ticker);
-    renderPriceChart(c);
-    loadChatMessages(c.ticker);
-
-    // 🔥 NEW: pull live quote from backend and update UI + marker color
-    fetchLiveQuoteForTicker(c.ticker).then(function(q) {
-             console.log("LIVE QUOTE RESULT FOR", c.ticker, q);
-
-        // fill "Live Price / Prev Close / Change"
-        renderLiveQuoteBox(q);
-
-        // recolor this company's marker on the map based on today's real change
-        if (q && typeof q.changePct === "number") {
-            updateMarkerColor(c.ticker, q.changePct);
-        }
-    });
-}
-
-
-function backToMap() {
-    document.getElementById("companyView").style.display = "none";
-    document.getElementById("mapView").style.display = "block";
-
-    // redraw markers so filter still applies
-    drawCompaniesOnMap();
-    // also update watchlist panel in case watchlist changed
-    renderWatchlistPanel();
-}
-
-var backBtn = document.getElementById("backToMapBtn");
-if (backBtn) {
-    backBtn.addEventListener("click", backToMap);
-}
-
-
-// ---------- PEERS ----------
-function renderPeers(company) {
-    var peersDiv = document.getElementById("companyPeers");
-    peersDiv.innerHTML = "";
-
-    if (!company.peers || company.peers.length === 0) {
-        peersDiv.textContent = "No peers listed.";
-        return;
+        // listeners
+        wireModalEvents();
+        wireNavigation();
+        wireSearchInput();
+        wireSearchClear();
+        wireWallForm();
+        wireMapPopups();
+        wireHashRouting();
     }
 
-    company.peers.forEach(function(peerTicker) {
-        var peerCompany = getCompanyByTicker(peerTicker);
-        var pill = document.createElement("span");
-        pill.className = "peer-pill";
-        pill.textContent = peerTicker + (peerCompany ? ` (${peerCompany.name})` : "");
-        pill.addEventListener("click", function() {
-            openCompanyView(peerTicker);
-        });
-        peersDiv.appendChild(pill);
-    });
-}
-
-
-// ---------- WATCHLIST (detail view) ----------
-function renderWatchState(ticker) {
-    var watchBtn = document.getElementById("watchToggleBtn");
-    var watchStatus = document.getElementById("watchStatus");
-
-    var isWatching = !!watchlist[ticker];
-
-    if (isWatching) {
-        watchBtn.textContent = "Remove from Watch";
-        watchBtn.classList.add("watchBtn","watching");
-        watchStatus.textContent = "You are watching this ticker.";
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
     } else {
-        watchBtn.textContent = "Add to Watch";
-        watchBtn.classList.add("watchBtn");
-        watchBtn.classList.remove("watching");
-        watchStatus.textContent = "Not watching this ticker.";
+        init();
     }
-
-    watchBtn.onclick = function() {
-        watchlist[ticker] = !watchlist[ticker];
-
-        // persist watchlist
-        localStorage.setItem("tickerWatchlist", JSON.stringify(watchlist));
-
-        renderWatchState(ticker);
-        renderWatchlistPanel(); // update map view's watchlist panel
-    };
-}
-
-
-// ---------- CHART ----------
-function renderPriceChart(company) {
-    var ctx = document.getElementById('priceChart').getContext('2d');
-
-    if (priceChart) {
-        priceChart.destroy();
-    }
-
-    var labels = (company.samplePrices || []).map((_, i) => `Day ${i+1}`);
-
-    priceChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: company.ticker + " price (sample)",
-                data: company.samplePrices || [],
-                fill: false
-            }]
-        },
-        options: {
-            responsive: false,
-            scales: {
-                x: { ticks: { font: { size: 10 } } },
-                y: { ticks: { font: { size: 10 } } }
-            }
-        }
-    });
-}
-
-
-// ---------- CHAT / NOTES ----------
-function loadChatMessages(ticker) {
-    var box = document.getElementById("chatMessages");
-    box.innerHTML = "";
-
-    if (!chats[ticker]) {
-        chats[ticker] = [];
-    }
-
-    chats[ticker].forEach(function(msg) {
-        var div = document.createElement("div");
-        div.style.padding = "4px 0";
-        div.style.borderBottom = "1px solid #eee";
-        div.textContent = msg;
-        box.appendChild(div);
-    });
-
-    wireChatSend(ticker);
-}
-
-function wireChatSend(ticker) {
-    var sendBtn = document.getElementById("chatSendBtn");
-    var input = document.getElementById("chatInput");
-    var box = document.getElementById("chatMessages");
-
-    sendBtn.onclick = function() {
-        var text = input.value.trim();
-        if (!text) return;
-        if (!chats[ticker]) chats[ticker] = [];
-        chats[ticker].push(text);
-
-        // persist chats
-        localStorage.setItem("tickerChats", JSON.stringify(chats));
-
-        var div = document.createElement("div");
-        div.style.padding = "4px 0";
-        div.style.borderBottom = "1px solid #eee";
-        div.textContent = text;
-        box.appendChild(div);
-
-        input.value = "";
-        box.scrollTop = box.scrollHeight;
-    };
-}
-
-
-// recolor a ticker's marker using real % change
-function updateMarkerColor(ticker, changePct) {
-    ticker = ticker.toUpperCase();
-
-    var marker = markersByTicker[ticker];
-    if (!marker) return;
-
-    // decide colors based on live changePct
-    let bg, border;
-    if (changePct > 0) {
-        bg = "#2ecc71"; // green
-        border = "#1b9a52";
-    } else if (changePct < 0) {
-        bg = "#e74c3c"; // red
-        border = "#9e2f22";
-    } else {
-        bg = "#888";
-        border = "#555";
-    }
-
-    // Rebuild the icon HTML with new colors
-    var html = `
-      <div class="ticker-label"
-           style="
-             background-color:${bg};
-             border-color:${border};
-           ">
-        ${ticker}
-      </div>
-    `;
-
-    var tickerIcon = L.divIcon({
-        className: 'ticker-icon',
-        html: html,
-        iconSize: [60, 25],
-        iconAnchor: [30, 12]
-    });
-
-    // Leaflet trick: setIcon on the marker
-    marker.setIcon(tickerIcon);
-}
-
-
-// ---------- INITIALIZE ----------
-drawCompaniesOnMap();
-renderWatchlistPanel();
+})();

@@ -1,147 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Company Headquarters Map</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Revatour MyMap & MyWall</title>
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
-    <!-- Our styles -->
-    <link rel="stylesheet" href="style.css">
+    <!-- App styles -->
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <!-- MAP VIEW -->
-    <div id="mapView">
-        <h1>Company Headquarters Map</h1>
 
-        <!-- top controls row -->
-        <div id="topRow">
-            <!-- Search -->
-            <div id="search-panel">
-                <input type="text" id="searchInput" placeholder="Search by ticker or name (e.g. AAPL, Tesla)">
-                <button id="searchButton">Search</button>
-                <div id="results"></div>
-            </div>
+    <!-- Top Navigation -->
+    <header class="topbar">
+        <a class="brand home-link" href="index.html#map">Revatour</a>
+        <nav class="main-nav">
+            <button id="viewMapBtn" class="nav-btn active">MyMap</button>
+            <button id="viewWallBtn" class="nav-btn">MyWall</button>
+            <button class="nav-btn" onclick="window.location='ticker.html'">Ticker Forum</button>
+        </nav>
+    </header>
 
-            <!-- Filters / Watchlist -->
-            <div id="rightControls">
-                <div class="controlCard">
-                    <label for="sectorFilter"><strong>Filter by sector:</strong></label><br>
-                    <select id="sectorFilter">
-                        <option value="ALL">All sectors</option>
-                        <option value="Technology">Technology</option>
-                        <option value="Semiconductors / AI">Semiconductors / AI</option>
-                        <option value="EV / Energy / AI for autonomy">EV / Energy / AI for autonomy</option>
-                        <option value="Retail / Logistics">Retail / Logistics</option>
-                        <option value="Banking / Financial Services">Banking / Financial Services</option>
-                        <option value="Healthcare / Insurance">Healthcare / Insurance</option>
-                        <option value="Automotive / EV transition">Automotive / EV transition</option>
-                        <option value="Restaurants / Franchising">Restaurants / Franchising</option>
-                        <option value="Home Improvement Retail">Home Improvement Retail</option>
-                        <option value="Footwear / Consumer">Footwear / Consumer</option>
-                        <!-- you can add more if you add more sectors -->
-                    </select>
+    <main>
+        <!-- ========== MyMap View ========== -->
+        <section id="mapSection" class="view active">
+
+            <div class="view-header">
+                <div class="view-header-left">
+                    <h1>MyMap</h1>
+                    <p class="subtitle">
+                        Pin the tickers you trade, leave yourself notes,
+                        and build a visual journal of your investing journey.
+                    </p>
                 </div>
 
-<!--live price + change -->
-<div id="livePrice" style="font-size:14px; margin-top:8px;">
-  Price: <span id="livePriceValue">loading...</span><br>
-  Change: <span id="liveChangeValue">loading...</span>
-</div>
-
-                <div class="controlCard">
-                    <strong>Your Watchlist</strong>
-                    <div id="watchlistPanel">
-                        <!-- we'll fill this with watched tickers -->
-                        <div class="emptyMsg">Nothing watched yet.</div>
+                <div class="map-actions">
+                    <div class="search-wrap">
+                        <input
+                            type="text"
+                            id="tickerSearchInput"
+                            placeholder="Search tickers or companies (⌘K)"
+                            list="tickerOptions"
+                        />
+                        <button id="clearSearchBtn" class="clear-input-btn" aria-label="Clear search">
+                            &times;
+                        </button>
                     </div>
+
+                    <button id="openAddPinBtn" class="primary-btn">Add to MyMap</button>
                 </div>
             </div>
-        </div>
 
-        <!-- Map -->
-        <div id="map"></div>
+            <div class="map-layout">
+                <div class="map-card-shell">
+                    <div id="map"></div>
+                </div>
+
+                <aside class="pin-panel">
+                    <div class="panel-header">
+                        <h2>Your Pins</h2>
+                        <span id="pinCount" class="badge">0</span>
+                    </div>
+
+                    <div id="pinCards" class="pin-cards">
+                        <div class="empty-state">
+                            <p>Your map is waiting for its first ticker.
+                            Tap <strong>Add to MyMap</strong> to drop a pin.</p>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- ========== My Wall View ========== -->
+        <section id="wallSection" class="view">
+            <div class="view-header">
+                <div class="view-header-left">
+                    <h1>MyWall</h1>
+                    <p class="subtitle">
+                        Share your trades, hobbies, and investing highlights with the community.
+                    </p>
+                </div>
+            </div>
+
+            <div class="wall-layout">
+                <div class="wall-feed">
+                    <form id="wallPostForm" class="card post-form">
+                        <h2 style="margin:0 0 12px; font-size:16px; font-weight:600;">
+                            Create a post
+                        </h2>
+
+                        <textarea
+                            id="wallPostText"
+                            placeholder="What's on your mind?"
+                            required
+                        ></textarea>
+
+                        <div class="form-row">
+                            <label for="wallPostTicker">Tag a ticker (optional)</label>
+                            <input
+                                id="wallPostTicker"
+                                type="text"
+                                placeholder="e.g. NVDA"
+                            />
+                        </div>
+
+                        <div class="form-row">
+                            <label class="file-input">
+                                <input type="file" id="wallPostImage" accept="image/*" />
+                                <span>Attach an image</span>
+                            </label>
+                            <span class="file-name" id="wallFileName">No file selected</span>
+                        </div>
+
+                        <button type="submit" class="primary-btn">Post to Wall</button>
+                    </form>
+
+                    <div id="feedList" class="feed-list"></div>
+                </div>
+
+                <aside class="wall-sidebar">
+                    <div class="card">
+                        <h3 style="margin-top:0; font-size:15px; font-weight:600;">
+                            Following
+                        </h3>
+                        <ul class="following-list">
+                            <li>
+                                <span class="avatar">AV</span>
+                                <div>
+                                    <div class="name">Avery Value</div>
+                                    <div class="tag">Dividend strategies</div>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="avatar">MM</span>
+                                <div>
+                                    <div class="name">Mila Momentum</div>
+                                    <div class="tag">Swing trades</div>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="avatar">QT</span>
+                                <div>
+                                    <div class="name">Quinn Quant</div>
+                                    <div class="tag">Options &amp; data nerd</div>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="avatar">HG</span>
+                                <div>
+                                    <div class="name">Harper Growth</div>
+                                    <div class="tag">Tech &amp; AI</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add Pin Modal -->
+    <div
+        id="addPinModal"
+        class="modal hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="addPinTitle"
+        style="z-index:9999;"
+    >
+        <div class="modal-content">
+            <button id="closeAddPinBtn" class="modal-close" aria-label="Close">&times;</button>
+
+            <h2 id="addPinTitle"
+                style="margin:0 0 12px; font-size:16px; font-weight:600; color:#1e2030;">
+                Add a ticker to MyMap
+            </h2>
+
+            <form id="addPinForm" class="modal-form">
+                <div class="form-row">
+                    <label for="pinTicker">Ticker</label>
+                    <input id="pinTicker" name="pinTicker" type="text" placeholder="AAPL" list="tickerOptions" required />
+                </div>
+
+                <div class="form-row">
+                    <label for="pinNote">Why is this on your map?</label>
+                    <textarea id="pinNote" name="pinNote" placeholder="Document your trade, thesis, or milestone."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <label class="file-input">
+                        <input type="file" id="pinImage" accept="image/*" />
+                        <span>Attach a photo (optional)</span>
+                    </label>
+                    <span class="file-name" id="pinFileName">No file selected</span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="cancelAddPinBtn" class="secondary-btn">Cancel</button>
+                    <button type="submit" class="primary-btn">Save Pin</button>
+                </div>
+            </form>
+
+            <p class="form-hint">
+                Pins are stored on this device so you can keep curating your map over time.
+            </p>
+        </div>
     </div>
 
-    <!-- COMPANY DETAIL VIEW (hidden at start) -->
-    <div id="companyView" style="display:none;">
-        <button id="backToMapBtn">&larr; Back to Map</button>
-
-        <div id="companyHeader">
-            <h2 id="companyTitle">TICKER — Company Name</h2>
-            <div id="companySector">Sector: ...</div>
-            <div id="companyHQ">HQ: ...</div>
-        </div>
-        
-<!-- LIVE QUOTE BOX -->
-<div id="liveQuoteBox" style="margin: 16px 0; padding: 12px; border: 1px solid #ccc; border-radius: 4px; max-width: 260px; font-family: system-ui, sans-serif; font-size: 14px;">
-  <div><strong>Live Price</strong></div>
-  <div>Price: <span id="livePriceValue">loading...</span></div>
-  <div>Prev Close: <span id="livePrevCloseValue">loading...</span></div>
-  <div>
-    Change:
-    <span id="liveChangeValue" style="font-weight:600;">loading...</span>
-  </div>
-</div>
-
-        <div id="companyBody" style="display:flex; flex-wrap:wrap; gap:20px; margin-top:20px;">
-
-            <!-- LEFT COLUMN -->
-            <div style="flex:1; min-width:300px;">
-                <h3>Stock Chart (sample)</h3>
-                <canvas id="priceChart" width="400" height="200" style="border:1px solid #ccc; border-radius:8px;"></canvas>
-
-                <h3 style="margin-top:20px;">Fundamentals</h3>
-                <div id="companyAbout" class="infoCard">
-                    <!-- about text goes here -->
-                </div>
-
-                <h3 style="margin-top:20px;">Peers / Competitors</h3>
-                <div id="companyPeers" class="infoCard">
-                    <!-- peers go here -->
-                </div>
-
-                <h3 style="margin-top:20px; display:flex; align-items:center; gap:10px;">
-                    <span>Watchlist</span>
-                    <button id="watchToggleBtn" class="watchBtn">
-                        Add to Watch
-                    </button>
-                </h3>
-                <div id="watchStatus" style="font-size:13px; color:#333;">
-                    Not watching this ticker.
-                </div>
-            </div>
-
-            <!-- RIGHT COLUMN -->
-            <div style="flex:1; min-width:300px;">
-                <h3>Notes / Chat about this ticker</h3>
-
-                <div id="chatMessages" class="chatBox">
-                    <!-- messages appear here -->
-                </div>
-
-                <div style="display:flex; gap:10px;">
-                    <input id="chatInput" type="text" placeholder="Type a thought or question..." class="chatInput">
-                    <button id="chatSendBtn" class="chatSendBtn">
-                        Send
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <datalist id="tickerOptions"></datalist>
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-    <!-- Chart.js for the detail chart -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Data FIRST -->
+    <!-- Data + Logic -->
     <script src="fetchData.js"></script>
-
-    <!-- Logic SECOND -->
+    <script src="companies.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

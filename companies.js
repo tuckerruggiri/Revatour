@@ -7,3 +7,6 @@ var companyHQs = [
     { "name": "Tesla, Inc.", "ticker": "TSLA", "lat": 37.3947, "lon": -122.1503 }       // Palo Alto-ish
     // keep adding here...
 ];
+
+// Make it accessible to the rest of the app
+window.companyHQs = companyHQs;

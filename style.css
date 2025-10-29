@@ -1,255 +1,1848 @@
+:root {
+    color-scheme: light;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+    /* Softer, neutral grays for a light airy look */
+    --page-bg: #f7f7f7;        /* Main page background: off-white gray */
+    --surface: #ffffff;        /* Cards and panels */
+    --surface-soft: #f1f1f1;   /* Light gray for soft areas (replaces bluish #eef2ff) */
+    --border-card: #e3e3e3;    /* Light neutral border color */
+    --border-soft: rgba(0,0,0,0.05);
+
+    --text-main: #1e2030;
+    --text-muted: #6b6b6b;
+
+    --blue-solid: #1f3eed;
+    --blue-solid-hover: #1a34c9;
+    --blue-bg-soft: rgba(31, 62, 237, 0.08);
+
+    --red-bg-soft: rgba(244, 63, 94, 0.12);
+    --red-text: #dc2626;
+
+    --success-bg-soft: rgba(16,185,129,0.12);
+    --success-text: #059669;
+
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-2xl: 24px;
+
+    --shadow-card: 0 24px 40px rgba(15,23,42,0.05);
+    --shadow-panel: 0 30px 60px rgba(31,41,55,0.06);
+}
+
+
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    color: #222;
+    margin: 0;
+    background: var(--page-bg);
+    color: var(--text-main);
+    font-family: inherit;
+    min-height: 100vh;
 }
 
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
+/* ───────── Top bar / nav ───────── */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 16px 24px;
+    background: var(--surface);
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-#mapView {
+.brand {
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: -0.03em;
+    color: var(--text-main);
+    text-decoration: none;       /* remove underline */
+    cursor: pointer;             /* show it's clickable */
+}
+
+.brand:visited {
+    color: var(--text-main);     /* keep same color after click */
+}
+
+.brand:hover {
+    color: var(--text-main);     /* don't change on hover unless you want */
+    opacity: 0.9;                /* tiny feedback if you like */
+}
+
+
+.main-nav {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.nav-btn {
+    border-radius: 999px;
+    border: 0;
+    background: transparent;
+    padding: 10px 16px;
+    font-weight: 500;
+    line-height: 1.2;
+    cursor: pointer;
+    color: var(--text-muted);
+    box-shadow: none;
+    border: 1px solid transparent;
+}
+
+.nav-btn.active {
+    background: var(--blue-solid);
+    color: #fff;
+    box-shadow: 0 20px 30px rgba(31, 62, 237, 0.35);
+    font-weight: 600;
+}
+
+.nav-btn:not(.active):hover {
+    color: var(--text-main);
+}
+
+/* ───────── Page shell ───────── */
+
+main {
+    padding: 24px;
     max-width: 1200px;
     margin: 0 auto;
 }
 
-#companyView {
-    max-width: 1000px;
-    margin: 20px auto;
-    font-family: Arial, sans-serif;
+.view {
+    display: none;
+    flex-direction: column;
+    gap: 24px;
 }
 
-#backToMapBtn {
-    background:none;
-    border:none;
-    color:#007bff;
-    font-size:14px;
-    font-weight:bold;
-    cursor:pointer;
-    padding:0;
-    margin-bottom:10px;
-}
-#backToMapBtn:hover {
-    text-decoration: underline;
+.view.active {
+    display: flex;
 }
 
-/* --- Top row layout --- */
-#topRow {
+/* ───────── Image framing helpers (Wall) ───────── */
+
+/* Dark framed screenshot "card in card" look
+   Use this when you want the full screenshot uncropped,
+   but still nicely framed and centered.
+*/
+.feed-image-frame {
+    background: #0f172a; /* deep slate so charts pop */
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 30px rgba(15,23,42,0.25);
+    overflow: hidden;
+
+    /* cap width + center inside post */
+    max-width: 600px;
+    width: 100%;
+    margin: 12px auto 0;
+}
+
+.feed-image-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 0;
+    border-radius: 0;
+}
+
+/* ───────── Header row above map/wall section ───────── */
+
+.view-header {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    column-gap: 24px;
+    row-gap: 16px;
     align-items: flex-start;
-    justify-content: center;
-    margin-bottom: 20px;
+    justify-content: space-between;
 }
 
-/* Search panel */
-#search-panel {
-    flex: 1;
-    min-width: 260px;
-    max-width: 400px;
-    text-align: center;
+.view-header-left h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: -0.04em;
 }
 
-#searchInput {
-    padding: 8px 10px;
-    font-size: 14px;
-    width: 70%;
-    max-width: 260px;
-    box-sizing: border-box;
-}
-
-#searchButton {
-    padding: 8px 12px;
-    font-size: 14px;
-    cursor: pointer;
-    border: none;
-    border-radius: 6px;
-    box-shadow: 0 0 4px rgba(0,0,0,0.2);
-    background-color: #007bff;
-    color: #fff;
-    font-weight: bold;
-}
-
-#results {
-    margin-top: 10px;
-    font-size: 13px;
-    color: #333;
+.view-header-left .subtitle {
+    margin: 8px 0 0;
+    color: var(--text-muted);
+    max-width: 420px;
     line-height: 1.4;
-    max-height: 150px;
-    overflow-y: auto;
-    text-align:left;
-    border:1px solid #ddd;
-    border-radius:6px;
-    padding:6px;
-    background:#fff;
+    font-size: 14px;
+    font-weight: 400;
 }
 
-/* Right controls (sector filter + watchlist panel) */
-#rightControls {
-    flex: 1;
+.map-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.search-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+#tickerSearchInput {
+    padding: 10px 32px 10px 14px; /* room for clear button */
+    border-radius: 10px;
+    border: 1px solid var(--border-card);
+    background: var(--surface);
+    font-size: 14px;
     min-width: 260px;
-    max-width: 400px;
+    line-height: 1.4;
+    color: var(--text-main);
+}
+#tickerSearchInput::placeholder {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.clear-input-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    translate: 0 -50%;
+    border: 0;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0;
+    display: none;
+}
+.clear-input-btn:hover {
+    color: var(--text-main);
+    background: rgba(0,0,0,0.05);
+}
+
+/* Wall post attached images */
+.feed-image-frame {
+    background: #0f172a; /* dark backdrop so charts pop */
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 30px rgba(15,23,42,0.25);
+
+    /* THIS is the padding you’re missing */
+    padding: 12px;
+
+    /* keep it off the text and off the card edges */
+    margin-top: 12px;
+    margin-bottom: 4px;
+    max-width: 100%;
+    overflow-x: auto;       /* safety in case super-wide screenshot */
+}
+
+/* the actual screenshot inside */
+.feed-image-frame img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    border: 0;
+}
+
+
+/* Buttons */
+
+.primary-btn {
+    background: var(--blue-solid);
+    color: #fff;
+    border-radius: 10px;
+    border: 1px solid var(--blue-solid);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 14px;
+    line-height: 1.2;
+    cursor: pointer;
+    box-shadow: 0 20px 30px rgba(31, 62, 237, 0.35);
+}
+.primary-btn:hover,
+.primary-btn:focus-visible {
+    background: var(--blue-solid-hover);
+    border-color: var(--blue-solid-hover);
+    outline: none;
+}
+
+.secondary-btn {
+    background: #fff;
+    color: var(--text-muted);
+    border-radius: 10px;
+    border: 1px solid var(--border-card);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 14px;
+    line-height: 1.2;
+    cursor: pointer;
+}
+
+/* ───────── MyMap content row ───────── */
+
+.map-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+    gap: 24px;
+    align-items: flex-start;
+}
+
+/* Map card wrapper */
+
+.map-card-shell {
+    background: var(--surface);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    padding: 16px;
+}
+
+#map {
+    width: 100%;
+    height: 500px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+/* Pins panel right side */
+
+.pin-panel {
+    background: var(--surface);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-panel);
+    border: 1px solid var(--border-card);
+    padding: 16px 16px 20px;
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-.controlCard {
-    border:1px solid #ccc;
-    border-radius:8px;
-    padding:10px;
-    background:#fafafa;
-    box-shadow:0 0 4px rgba(0,0,0,0.05);
+.panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14px;
+    line-height: 1.3;
+    font-weight: 500;
+    color: var(--text-main);
+}
+.panel-header h2 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--text-main);
+    font-size: 16px;
+    letter-spacing: -0.03em;
+}
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--blue-bg-soft);
+    color: var(--blue-solid);
+    padding: 2px 8px;
+    min-width: 24px;
+    border-radius: 999px;
+    font-weight: 600;
     font-size: 13px;
+    line-height: 1.2;
+    text-align: center;
+}
+
+/* scrollable list of cards */
+
+.pin-cards {
+    overflow-y: auto;
+    max-height: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-right: 4px;
+}
+
+.empty-state {
+    background: var(--surface-soft);
+    border: 1px solid var(--border-card);
+    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text-muted);
+}
+
+/* individual pin card */
+
+.pin-card {
+    background: var(--surface-soft);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: 16px;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--text-main);
+}
+
+.pin-card header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+.pin-card header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: -0.03em;
+}
+.pin-card header span {
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.pin-note {
+    margin: 0 0 12px;
+    white-space: pre-line;
+    font-size: 14px;
+    color: var(--text-main);
+}
+
+/* MyMap pin images: fixed frame, cropped cover.
+   Keeps the MyMap cards a consistent height.
+*/
+.pin-card img {
+    display: block;
+    width: 100%;
+    height: 260px;           /* frame height */
+    object-fit: cover;       /* crop overflow */
+    border-radius: var(--radius-lg);
+    margin-bottom: 12px;
+}
+
+/* share / remove row */
+
+.pin-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pin-actions button {
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+    border: 1px solid transparent;
+    padding: 8px 12px;
+    white-space: nowrap;
+}
+
+.pin-actions .share-btn {
+    background: var(--blue-bg-soft);
+    color: var(--blue-solid);
+}
+
+.pin-actions .remove-btn {
+    background: var(--red-bg-soft);
+    color: var(--red-text);
+}
+
+/* ───────── Wall view (My Wall) ───────── */
+
+.wall-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+    gap: 24px;
+    align-items: flex-start;
+}
+
+/* generic card (used for post form, following card, etc.) */
+.card {
+    background: var(--surface);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-panel);
+    border: 1px solid var(--border-card);
+    padding: 20px 20px 24px;
+}
+
+/* EACH FEED POST CARD on your Wall */
+.feed-card {
+    background: var(--surface);               /* white */
+    border: 1px solid var(--border-card);     /* light border */
+    border-radius: var(--radius-lg);          /* same as pin-card */
+    box-shadow: var(--shadow-card);           /* soft shadow */
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--text-main);
+}
+
+/* header row inside each wall post card */
+.feed-card header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.feed-card .author {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.feed-card .avatar {
+    background: var(--blue-bg-soft);
+    color: var(--blue-solid);
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.2;
+}
+
+.feed-card strong {
+    font-size: 14px;
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--text-main);
+}
+
+.feed-card .timestamp {
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 400;
+    margin-top: 2px;
+}
+
+/* text in post */
+.feed-card p {
+    margin: 0 0 12px;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--text-main);
+    white-space: pre-line;
+}
+
+/* Instagram-style / square crop by default,
+   centered and width-capped so it doesn't stretch huge.
+*/
+.feed-media {
+    position: relative;
+
+    /* center + max width */
+    max-width: 600px;
+    width: 100%;
+    margin: 12px auto 0;
+
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: #000;
+
+    aspect-ratio: 1 / 1; /* square like Instagram feed */
+}
+
+/* the actual <img> inside .feed-media */
+.feed-media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;      /* crop zoom to fill square */
+    object-position: center;
+    display: block;
+}
+
+/* OPTIONAL "uncropped" variant:
+   If JS renders .feed-media.uncropped,
+   we turn off the forced square aspect and show the full screenshot.
+   This is for tall/wide charts you want to preserve.
+*/
+.feed-media.uncropped {
+    aspect-ratio: auto;
+    height: auto;
+    background: transparent;
+
+    /* still capped + centered */
+    max-width: 600px;
+    width: 100%;
+    margin: 12px auto 0;
+
+    border-radius: 0;
+    overflow: visible;
+}
+
+.feed-media.uncropped img {
+    position: static;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+    border-radius: var(--radius-lg);
+    display: block;
+}
+
+/* ticker chip in header */
+.ticker-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    background: var(--success-bg-soft);
+    color: var(--success-text);
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+/* header right side (ticker chip + delete button) */
+.feed-header-right {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.delete-post-btn {
+    background: var(--red-bg-soft);
+    color: var(--red-text);
+    border: 0;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 600;
+    padding: 6px 10px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.delete-post-btn:hover {
+    filter: brightness(0.95);
+}
+
+/* feed list wrapper */
+.feed-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+/* post form */
+.post-form textarea,
+.post-form input[type="text"] {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid var(--border-card);
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.4;
+    resize: vertical;
+    color: var(--text-main);
+    background: var(--surface);
+}
+.post-form textarea {
+    min-height: 100px;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+.file-input {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--blue-solid);
+    font-weight: 600;
+    font-size: 13px;
+}
+.file-input input[type="file"] {
+    display: none;
+}
+.file-name {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+/* sidebar "Following" */
+
+.wall-sidebar .card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-size: 14px;
     line-height: 1.4;
 }
 
-#sectorFilter {
-    margin-top:6px;
-    width:100%;
-    font-size:14px;
-    padding:6px;
-    border-radius:6px;
-    border:1px solid #aaa;
-    cursor:pointer;
+.wall-sidebar .card li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
 }
 
-/* Watchlist panel */
-#watchlistPanel {
-    background:#fff;
-    border:1px solid #ddd;
-    border-radius:6px;
-    padding:6px;
-    margin-top:8px;
-    max-height:120px;
-    overflow-y:auto;
-    font-size:13px;
-    line-height:1.4;
-}
-#watchlistPanel .emptyMsg {
-    color:#666;
-    font-style:italic;
-}
-.watchItem {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    font-size:13px;
-    padding:4px 0;
-    border-bottom:1px solid #eee;
-}
-.watchItem:last-child {
-    border-bottom:none;
-}
-.watchOpenBtn {
-    font-size:12px;
-    border:1px solid #007bff;
-    background:#fff;
-    color:#007bff;
-    border-radius:4px;
-    cursor:pointer;
-    padding:2px 6px;
+.wall-sidebar .avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.2;
+    color: var(--blue-solid);
 }
 
-/* Map */
-#map {
-    height: 600px;
+.wall-sidebar .name {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.wall-sidebar .tag {
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.3;
+    font-weight: 400;
+    margin-top: 2px;
+}
+
+/* ───────── Add Pin Modal ───────── */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: var(--surface);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-card);
+    box-shadow: var(--shadow-panel);
+    width: min(480px, 100%);
+    position: relative;
+    padding: 24px 24px 20px;
+    color: var(--text-main);
+    font-size: 14px;
+    line-height: 1.4;
+}
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+}
+.modal-close:hover {
+    color: var(--text-main);
+}
+
+.modal-form label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+.modal-form textarea,
+.modal-form input[type="text"] {
     width: 100%;
-    border:1px solid #ccc;
-    border-radius:8px;
+    border-radius: 10px;
+    border: 1px solid var(--border-card);
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1.4;
+    background: var(--surface);
+    color: var(--text-main);
+}
+.modal-form textarea {
+    min-height: 90px;
+    resize: vertical;
 }
 
-/* Ticker marker style */
-/* we'll color these dynamically with inline style but set defaults */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+}
+.form-hint {
+    margin-top: 12px;
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* ───────── Leaflet popup inside map ───────── */
+
 .ticker-icon {
     background: none;
     border: none;
 }
-
 .ticker-label {
+    background: var(--blue-solid);
     color: #fff;
-    font-weight: bold;
-    border-radius: 6px;
-    padding: 2px 8px;
-    font-size: 12px;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 13px;
+    line-height: 1.2;
+    min-width: 56px;
     text-align: center;
-    box-shadow: 0 0 4px rgba(0,0,0,0.3);
-    display: inline-block;
-    white-space: nowrap;
-    min-width: 30px;
+    box-shadow: 0 20px 30px rgba(31,62,237,0.4);
     border: 1px solid rgba(0,0,0,0.15);
 }
 
-/* Peer pills in detail view */
-.peer-pill {
-    display: inline-block;
-    background: #eef4ff;
-    color: #007bff;
-    border: 1px solid #007bff;
+.leaflet-popup-content-wrapper {
+    border-radius: var(--radius-lg);
+    padding: 12px 12px 16px;
+    border: 1px solid var(--border-card);
+    box-shadow: var(--shadow-card);
+}
+.leaflet-popup-content {
+    margin: 0;
+    line-height: 1.45;
+    color: var(--text-main);
+    font-size: 14px;
+}
+.leaflet-popup-content h3 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: -0.03em;
+}
+.leaflet-popup-content p {
+    margin: 6px 0 8px;
+    color: var(--text-main);
+    white-space: pre-line;
+}
+
+/* popup images just natural */
+.leaflet-popup-content img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+    margin-top: 8px;
+}
+
+/* popup action buttons */
+.popup-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+.popup-actions button {
+    flex: 1;
+    min-width: 0;
+    border-radius: 8px;
+    border: 0;
+    font-size: 13px;
+    line-height: 1.2;
+    padding: 8px 10px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+}
+.popup-actions .share-btn {
+    background: var(--blue-bg-soft);
+    color: var(--blue-solid);
+}
+.popup-actions .remove-btn {
+    background: var(--red-bg-soft);
+    color: var(--red-text);
+}
+
+/* ───────── Responsive tweaks ───────── */
+
+@media (max-width: 600px) {
+    .map-layout,
+    .wall-layout {
+        grid-template-columns: 1fr;
+    }
+
+    #map {
+        height: 400px;
+    }
+
+    .pin-cards {
+        max-height: none;
+    }
+}
+
+@media (max-width: 640px) {
+    main {
+        padding: 16px;
+    }
+
+    .topbar {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .map-actions {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+
+    #tickerSearchInput,
+    .primary-btn {
+        width: 100%;
+    }
+
+    .view-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* ───────── Ticker Forum Page Shell ───────── */
+.ticker-page-shell {
+    padding: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* snapshot / fundamentals card */
+.ticker-snapshot {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.snapshot-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.snapshot-left {
+    flex: 1 1 240px;
+    min-width: 0;
+    color: var(--text-main);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.ticker-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: baseline;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+}
+.ticker-symbol {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+.ticker-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.price-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: baseline;
+    margin-top: 8px;
+}
+.price {
+    font-size: 20px;
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: -0.03em;
+}
+.price-change {
+    font-size: 13px;
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--success-text);
+}
+
+.facts-grid {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
+    gap: 12px;
+    font-size: 13px;
+    line-height: 1.3;
+}
+.fact-label {
+    display: block;
+    color: var(--text-muted);
+    font-weight: 500;
     font-size: 12px;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+.fact-value {
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+}
+
+.community-line {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: baseline;
+    font-size: 13px;
+}
+.community-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.community-score {
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+.snapshot-chart {
+    flex: 0 0 200px;
+    max-width: 240px;
+    min-width: 180px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: space-between;
+}
+.chart-placeholder {
+    background: #0f172a;
+    color: #fff;
+    border-radius: var(--radius-lg);
+    min-height: 80px;
+    font-size: 12px;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+.chart-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.3;
+    text-align: center;
+}
+
+/* ───────── Composer on ticker page ───────── */
+
+.section-headline {
+    margin:0 0 12px;
+    font-size:16px;
+    font-weight:600;
+    line-height:1.3;
+    letter-spacing:-0.03em;
+    color: var(--text-main);
+}
+
+.forum-textarea {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid var(--border-card);
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.4;
+    resize: vertical;
+    color: var(--text-main);
+    background: var(--surface);
+    min-height: 100px;
+}
+
+.form-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+.confidence-select {
+    border-radius: 10px;
+    border: 1px solid var(--border-card);
+    background: var(--surface);
+    color: var(--text-main);
+    font-size: 14px;
+    line-height: 1.4;
+    padding: 10px 12px;
+}
+
+/* ───────── Forum thread list ───────── */
+
+.forum-thread-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 48px;
+}
+
+/* each top-level forum post (like feed-card but tuned for ticker room) */
+.forum-post-card {
+    background: var(--surface);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--text-main);
+}
+
+/* header */
+.forum-post-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.author-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+}
+
+.author-block .avatar {
+    background: var(--blue-bg-soft);
+    color: var(--blue-solid);
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
     border-radius: 999px;
-    padding: 4px 8px;
-    margin: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.2;
+    flex-shrink: 0;
+}
+
+.author-block .meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.author-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: baseline;
+}
+
+.author-line strong {
+    font-size: 14px;
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--text-main);
+}
+
+.confidence-chip {
+    background: var(--success-bg-soft);
+    color: var(--success-text);
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 3px 8px;
+}
+
+.timestamp {
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 400;
+    margin-top: 2px;
+}
+
+/* reaction buttons on right of header */
+.forum-post-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: flex-start;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+.react-btn {
+    border-radius: 8px;
+    border: 1px solid var(--border-card);
+    background: var(--surface-soft);
+    box-shadow: var(--shadow-card);
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 600;
+    padding: 6px 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    color: var(--text-main);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.react-btn span {
+    font-weight: 600;
+    color: var(--text-main);
+    font-size: 12px;
+    line-height: 1.2;
+}
+
+.post-text {
+    margin: 0 0 12px;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--text-main);
+    white-space: pre-line;
+}
+
+/* media in ticker posts uses same square crop style from feed-media */
+.forum-post-card .feed-media {
+    position: relative;
+    width: 100%;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: #000;
+    margin-top: 12px;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.forum-post-card .feed-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+/* footer row under the media/text */
+.forum-post-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-top: 16px;
+    font-size: 13px;
+    line-height: 1.3;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.reply-toggle-btn,
+.view-replies-btn {
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1.3;
+    color: var(--blue-solid);
+    font-weight: 600;
+}
+.reply-toggle-btn:hover,
+.view-replies-btn:hover {
+    text-decoration: underline;
+}
+
+/* replies section */
+.replies {
+    border-top: 1px solid var(--border-card);
+    margin-top: 16px;
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* individual reply */
+.reply-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: 12px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text-main);
+}
+
+.reply-avatar {
+    background: rgba(15,23,42,0.07);
+    color: var(--blue-solid);
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 1.2;
+}
+
+.reply-body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.reply-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: baseline;
+    font-size: 12px;
+    line-height: 1.3;
+    margin-bottom: 4px;
+}
+.reply-meta strong {
+    font-weight: 600;
+    color: var(--text-main);
+    font-size: 13px;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+}
+.reply-meta .timestamp {
+    font-size: 12px;
+    line-height: 1.2;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-top: 0;
+}
+.reply-text {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text-main);
+    white-space: pre-line;
+}
+
+/* reply form under replies */
+.reply-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: flex-start;
+}
+.reply-input {
+    flex: 1 1 200px;
+    min-width: 0;
+    border-radius: 10px;
+    border: 1px solid var(--border-card);
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text-main);
+    background: var(--surface);
+}
+.reply-submit-btn {
+    font-size: 13px;
+    line-height: 1.2;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-card);
+    background: #fff;
+    color: var(--text-main);
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow-card);
+}
+.reply-submit-btn:hover {
+    background: var(--surface-soft);
+}
+/* ====== Ticker forum layout ====== */
+
+.ticker-page-shell {
+    display: grid;
+    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+    gap: 24px;
+    max-width: 1200px;
+    margin: 24px auto;
+    padding: 0 24px;
+}
+
+/* sidebar card */
+.ticker-sidebar.card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.sidebar-head {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--text-main);
+}
+
+.sidebar-subhead {
+    margin: 8px 0 0;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--text-main);
+}
+
+/* search in sidebar */
+.ticker-search-wrap {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.ticker-search-input {
+    flex: 1;
+    border-radius: 10px;
+    border: 1px solid var(--border-card);
+    background: var(--surface);
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text-main);
+}
+
+.small-btn {
+    padding: 8px 10px;
+    font-size: 13px;
+    line-height: 1.2;
+    border-radius: 8px;
+}
+
+/* watchlist list */
+.watchlist-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.watchlist-row {
+    display: block;
+}
+
+.watchlist-ticker-btn {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    background: var(--surface-soft);
+    border: 1px solid var(--border-card);
+    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-lg);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    padding: 12px 14px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.watchlist-ticker-btn:hover {
+    filter: brightness(0.97);
+}
+
+.watchlist-symbol {
+    letter-spacing: -0.03em;
+}
+
+.watchlist-chevron {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+/* main column */
+.ticker-main-col {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* snapshot */
+.ticker-snapshot .snapshot-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+    justify-content: space-between;
+}
+
+.snapshot-left {
+    flex: 1 1 240px;
+    min-width: 240px;
+}
+
+.snapshot-chart {
+    min-width: 200px;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.chart-placeholder {
+    background: var(--surface-soft);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    width: 240px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.chart-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+}
+
+.ticker-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--text-main);
+}
+
+.ticker-symbol {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.ticker-name {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.price-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.price {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--text-main);
+}
+
+.price-change {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.facts-grid {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 12px 16px;
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+.fact-label {
+    color: var(--text-muted);
+    display: block;
+    font-weight: 500;
+    margin-bottom: 2px;
+    font-size: 12px;
+}
+.fact-value {
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.community-line {
+    margin-top: 16px;
+    font-size: 13px;
+    line-height: 1.3;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.community-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.community-score {
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+/* composer */
+.section-headline {
+    margin: 0 0 12px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.03em;
+    color: var(--text-main);
+}
+
+.forum-textarea {
+    width: 100%;
+    min-height: 90px;
+    border-radius: 10px;
+    border: 1px solid var(--border-card);
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.4;
+    resize: vertical;
+    color: var(--text-main);
+    background: var(--surface);
+}
+
+.confidence-select {
+    border-radius: 10px;
+    border: 1px solid var(--border-card);
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1.4;
+    background: var(--surface);
+    color: var(--text-main);
+}
+
+/* thread list + posts */
+.forum-thread-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.forum-post-card.card {
+    padding: 16px;
+}
+
+.forum-post-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.forum-post-left {
+    display: flex;
+    gap: 10px;
+}
+
+.forum-avatar {
+    background: var(--blue-bg-soft);
+    color: var(--blue-solid);
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.2;
+}
+
+.forum-author {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: -0.03em;
+}
+
+.forum-meta {
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 400;
+    color: var(--text-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 2px;
+}
+
+.forum-post-body p {
+    margin: 0 0 12px;
+    color: var(--text-main);
+    font-size: 14px;
+    line-height: 1.45;
+    white-space: pre-line;
+}
+
+.reply-btn {
+    background: var(--blue-bg-soft);
+    color: var(--blue-solid);
+    border: 0;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 600;
+    padding: 6px 10px;
     cursor: pointer;
     white-space: nowrap;
 }
-.peer-pill:hover {
-    background: #dce9ff;
+
+.forum-replies {
+    border-left: 2px solid var(--border-card);
+    padding-left: 12px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-/* Cards / boxes in detail view */
-.infoCard {
-    font-size:14px;
-    line-height:1.4;
-    background:#f8f8f8;
-    padding:10px;
-    border-radius:6px;
-    border:1px solid #ddd;
+.forum-reply-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 12px;
+    line-height: 1.2;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.forum-reply-author {
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 13px;
+}
+.forum-reply-time {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+.forum-reply-body {
+    color: var(--text-main);
+    font-size: 14px;
+    line-height: 1.4;
+    margin-top: 4px;
+    white-space: pre-line;
 }
 
-/* Chat box in detail view */
-.chatBox {
-    height:200px;
-    overflow-y:auto;
-    border:1px solid #ccc;
-    border-radius:6px;
-    padding:10px;
-    background:#fff;
-    font-size:14px;
-    margin-bottom:10px;
+.forum-inline-reply {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
-.chatInput {
-    flex:1;
-    padding:8px;
-    font-size:14px;
-    border-radius:6px;
-    border:1px solid #ccc;
-}
-.chatSendBtn {
-    padding:8px 12px;
-    font-size:14px;
-    font-weight:bold;
-    background:#007bff;
-    color:#fff;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
+.forum-inline-reply.hidden {
+    display: none;
 }
 
-/* Watch button on detail view */
-.watchBtn {
-    padding:6px 10px;
-    font-size:13px;
-    font-weight:bold;
-    border-radius:6px;
-    border:1px solid #007bff;
-    background:#fff;
-    color:#007bff;
-    cursor:pointer;
+.forum-reply-input {
+    flex: 1 1 200px;
+    min-height: 60px;
+    border-radius: 10px;
+    border: 1px solid var(--border-card);
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1.4;
+    resize: vertical;
+    background: var(--surface);
+    color: var(--text-main);
 }
-.watchBtn.watching {
-    background:#007bff;
-    color:#fff;
+
+.send-reply-btn {
+    align-self: flex-start;
 }
+
+/* responsive: stack the sidebar under on small screens */
+@media (max-width: 768px) {
+    .ticker-page-shell {
+        grid-template-columns: 1fr;
+    }
+}
+

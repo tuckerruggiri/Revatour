@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Revatour Ticker Forum</title>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="topbar">
+    <a class="brand home-link" href="index.html#map">Revatour</a>
+    <nav class="main-nav">
+        <button class="nav-btn" onclick="window.location='index.html#map'">MyMap</button>
+        <button class="nav-btn" onclick="window.location='index.html#wall'">MyWall</button>
+        <button class="nav-btn active">Ticker Forum</button>
+    </nav>
+</header>
+
+
+<main class="ticker-page-shell">
+    <!-- ===== LEFT SIDEBAR ===== -->
+    <aside class="ticker-sidebar card">
+        <h2 class="sidebar-head">Find a ticker</h2>
+
+        <div class="search-wrap ticker-search-wrap">
+            <input
+                type="text"
+                id="tickerSearchInputForum"
+                class="ticker-search-input"
+                placeholder="Search ticker (AAPL)"
+                list="tickerOptions"
+            />
+            <button
+                id="tickerSearchGo"
+                class="primary-btn small-btn"
+                style="white-space:nowrap;"
+            >
+                Go
+            </button>
+        </div>
+
+        <h3 class="sidebar-subhead">Your Watchlist</h3>
+        <ul id="watchlistList" class="watchlist-list">
+            <!-- JS will render tickers like AAPL, NVDA, TSLA, etc. -->
+        </ul>
+    </aside>
+
+    <!-- ===== RIGHT MAIN CONTENT ===== -->
+    <section id="tickerPageMain" class="ticker-main-col">
+        <!-- Snapshot / fundamentals -->
+        <section class="ticker-snapshot card">
+            <div class="snapshot-top">
+                <div class="snapshot-left">
+                    <div class="ticker-line">
+                        <span class="ticker-symbol" id="snapTicker">TICK</span>
+                        <span class="ticker-name" id="snapName">Company Name</span>
+                    </div>
+
+                    <div class="price-line">
+                        <span class="price" id="snapPrice">$0.00</span>
+                        <span class="price-change" id="snapChange">0.00%</span>
+                    </div>
+
+                    <div class="facts-grid">
+                        <div>
+                            <span class="fact-label">Mkt Cap</span>
+                            <span class="fact-value" id="snapMktCap">–</span>
+                        </div>
+                        <div>
+                            <span class="fact-label">Shares Out</span>
+                            <span class="fact-value" id="snapShares">–</span>
+                        </div>
+                        <div>
+                            <span class="fact-label">52w Range</span>
+                            <span class="fact-value" id="snapRange">–</span>
+                        </div>
+                        <div>
+                            <span class="fact-label">Volume</span>
+                            <span class="fact-value" id="snapVol">–</span>
+                        </div>
+                    </div>
+
+                    <div class="community-line">
+                        <span class="community-label">Community Confidence</span>
+                        <span class="community-score" id="snapConfidence">– / 5</span>
+                    </div>
+                </div>
+
+                <div class="snapshot-chart">
+                    <div class="chart-placeholder" id="sparklineArea">[chart]</div>
+                    <div class="chart-hint">Prices are delayed</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Composer -->
+        <section class="card post-form" id="tickerPostForm">
+            <h2 class="section-headline">
+                Post to <span id="composeTicker">TICK</span> forum
+            </h2>
+
+            <textarea
+                id="forumPostText"
+                class="forum-textarea"
+                placeholder="What's your take right now?"
+                required
+            ></textarea>
+
+            <div class="form-row">
+                <label class="form-label">How confident are you?</label>
+                <select id="forumConfidence" class="confidence-select">
+                    <option value="1">1 - Not confident</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3 - Neutral</option>
+                    <option value="4">4</option>
+                    <option value="5">5 - Very confident</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label class="file-input">
+                    <input type="file" id="forumPostImage" accept="image/*" />
+                    <span>Attach an image</span>
+                </label>
+                <span class="file-name" id="forumFileName">No file selected</span>
+            </div>
+
+            <button id="forumSubmitBtn" class="primary-btn">Post</button>
+        </section>
+
+        <!-- Thread list -->
+        <section id="forumThreadList" class="forum-thread-list">
+            <!-- JS will render individual posts here -->
+        </section>
+    </section>
+</main>
+
+<!-- shared datalist for autocomplete -->
+<datalist id="tickerOptions"></datalist>
+
+<script src="ticker.js"></script>
+</body>
+</html>
