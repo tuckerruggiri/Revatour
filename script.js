@@ -6,22 +6,20 @@
     const FEED_STORAGE_KEY = 'revatour:feed';
     const KNOWN_TICKERS_KEY = 'revatour:knownTickers';
 
-    // Finnhub API key
-    const FINNHUB_KEY = 'd40vbk9r01qhkm8b33v0d40vbk9r01qhkm8b33vg';
-
     // ----------------------------------
     // DEFAULT CONTENT (first run)
     // ----------------------------------
+    const nowTs = Date.now();
     const defaultPins = [
         {
-            id: `pin-${Date.now()}-AAPL`,
+            id: `pin-${nowTs}-AAPL`,
             ticker: 'AAPL',
             note: 'Opened a long-term position after earnings beat expectations.',
             imageData: null,
             createdAt: new Date().toISOString()
         },
         {
-            id: `pin-${Date.now()}-TSLA`,
+            id: `pin-${nowTs}-TSLA`,
             ticker: 'TSLA',
             note: 'Tracked my swing trade from Austin factory expansion news.',
             imageData: null,
@@ -91,7 +89,7 @@
         wallPostImage: document.getElementById('wallPostImage'),
         wallFileName: document.getElementById('wallFileName'),
 
-        // wall feed list
+        // wall feed
         feedList: document.getElementById('feedList'),
 
         // ticker autocomplete <datalist>
@@ -162,57 +160,43 @@
     }
 
     // ----------------------------------
-    // EXTERNAL DATA HELPERS
+    // BACKEND FETCH HELPERS
     // ----------------------------------
 
-    // 1. pull company profile + quote from Finnhub
+    // talks to /api/fundamentals on Vercel (this route uses your FINNHUB_KEY on the server)
     async function fetchTickerFundamentals(tickerInput) {
+        if (!tickerInput) throw new Error('No ticker provided');
         const t = tickerInput.trim().toUpperCase();
 
-        // profile (HQ, name, shares outstanding, etc)
-        const profileRes = await fetch(
-            `https://finnhub.io/api/v1/stock/profile2?symbol=${encodeURIComponent(t)}&token=${FINNHUB_KEY}`
+        const response = await fetch(
+            `/api/fundamentals?symbol=${encodeURIComponent(t)}`
         );
-        if (!profileRes.ok) throw new Error('profile lookup failed');
-        const prof = await profileRes.json();
 
-        if (!prof || !prof.ticker) {
-            throw new Error('ticker not found');
+        if (!response.ok) {
+            throw new Error('Failed to fetch fundamentals');
         }
 
-        // quote (price, change %)
-        const quoteRes = await fetch(
-            `https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(t)}&token=${FINNHUB_KEY}`
-        );
-        if (!quoteRes.ok) throw new Error('quote lookup failed');
-        const quote = await quoteRes.json();
-
-        return {
-            ticker: prof.ticker || t,
-            name: prof.name || t,
-            hqCity: prof.city || '',
-            hqState: prof.state || '',
-            hqCountry: prof.country || '',
-
-            price: quote.c ?? null,
-            changePercent: quote.dp ?? null,
-            marketCap: prof.marketCapitalization ?? null,
-            sharesOut: prof.shareOutstanding ?? null,
-
-            currency: prof.currency || 'USD',
-            exchange: prof.exchange || '',
-            logo: prof.logo || ''
-        };
+        const data = await response.json();
+        // expected shape:
+        // {
+        //   ticker, name,
+        //   hqCity, hqState, hqCountry,
+        //   price, changePercent, marketCap, sharesOut,
+        //   currency, exchange, logo
+        // }
+        return data;
     }
 
-    // 2. geocode HQ location -> lat/lon via OpenStreetMap
+    // geocode HQ city/state/country -> {lat, lon} using public Nominatim
     async function geocodeHQ(city, state, country) {
         const locationStr = [city, state, country].filter(Boolean).join(', ');
         if (!locationStr) {
             throw new Error('no HQ location data');
         }
 
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationStr)}`;
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+            locationStr
+        )}`;
 
         const geoRes = await fetch(url, {
             headers: {
@@ -233,7 +217,7 @@
         };
     }
 
-    // 3. learnTickerIfNeeded: pull from memory, else hit APIs, else bail gracefully
+    // learn ticker if new: ask backend for fundamentals, then geocode HQ, then store
     async function learnTickerIfNeeded(rawTickerInput) {
         if (!rawTickerInput) return null;
         const t = rawTickerInput.trim().toUpperCase();
@@ -244,6 +228,7 @@
             return dynamicCompanyMap[t];
         }
 
+        // get fundamentals from our secure API route
         let fundamental;
         try {
             fundamental = await fetchTickerFundamentals(t);
@@ -252,6 +237,7 @@
             return null;
         }
 
+        // get lat/lon from HQ
         let coords;
         try {
             coords = await geocodeHQ(
@@ -264,9 +250,10 @@
             return null;
         }
 
+        // store minimal company info for map and autocomplete
         const learned = {
-            ticker: fundamental.ticker.toUpperCase(),
-            name: fundamental.name || fundamental.ticker,
+            ticker: (fundamental.ticker || t).toUpperCase(),
+            name: fundamental.name || t,
             lat: coords.lat,
             lon: coords.lon
         };
@@ -282,7 +269,7 @@
     // COMPANY BOOTSTRAP / LOOKUP
     // ----------------------------------
     function bootstrapCompanyMap() {
-        // 1. load previously learned tickers
+        // 1. load remembered from localStorage
         try {
             const raw = localStorage.getItem(KNOWN_TICKERS_KEY);
             if (raw) {
@@ -299,7 +286,7 @@
             console.warn('could not restore knownTickers', e);
         }
 
-        // 2. seed a starter watchlist so UI isn’t empty on day one
+        // 2. seed starter names (fallbacks so the app isn't empty on first load)
         const builtIns = [
             { ticker: 'AAPL', name: 'Apple Inc.', lat: 37.3349, lon: -122.0090 },
             { ticker: 'MSFT', name: 'Microsoft Corporation', lat: 47.6426, lon: -122.1391 },
@@ -403,12 +390,13 @@
     // RENDER: MAP & POPUPS
     // ----------------------------------
     function renderMap() {
-        // clear old markers
+        // clear all old markers
         Object.values(markersById).forEach(marker => {
             map.removeLayer(marker);
         });
         markersById = {};
 
+        // only show pins with known coords
         const validPins = pins.filter(pin => !!findCompany(pin.ticker));
 
         if (validPins.length === 0) {
@@ -573,7 +561,6 @@
 
                 const showDelete = author === 'You';
 
-                // screenshot block w/ padding + dark frame
                 const imageBlock = post.imageData
                     ? (
                         '<div class="feed-image-frame">' +
@@ -619,7 +606,7 @@
                 dom.feedList.appendChild(card);
             });
 
-        // connect delete buttons
+        // attach delete handlers
         dom.feedList.querySelectorAll('.delete-post-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const postId = btn.getAttribute('data-post-id');
@@ -675,7 +662,7 @@
         saveFeed();
         renderFeed();
 
-        // jump to Wall view and sync hash
+        // jump to Wall and sync hash
         switchToWall();
         window.location.hash = '#wall';
     }
@@ -709,7 +696,7 @@
             window.location.hash = '#map';
         }
 
-        // Leaflet needs a resize after showing
+        // Leaflet needs a resize after being shown again
         setTimeout(() => {
             map.invalidateSize();
         }, 300);
@@ -751,7 +738,7 @@
             return;
         }
 
-        // resolve/learn ticker
+        // make sure ticker is known (or learn it live)
         let company = findCompanyLoose(rawTicker);
         if (!company) {
             company = await learnTickerIfNeeded(rawTicker);
@@ -801,7 +788,7 @@
         let tickerResolved = '';
 
         if (rawTicker) {
-            // learn ticker on the fly for tagging
+            // learn ticker too so tagging new ones works
             let company = findCompanyLoose(rawTicker);
             if (!company) {
                 company = await learnTickerIfNeeded(rawTicker);
@@ -833,7 +820,7 @@
                 window.location.hash = '#wall';
             })
             .catch(err => {
-                console.error('Failed to read file', err);
+                console.error('Failed to read post attachment', err);
             });
     }
 
@@ -934,7 +921,7 @@
             if (forumBtn) {
                 forumBtn.addEventListener('click', () => {
                     const ticker = forumBtn.getAttribute('data-ticker');
-                    // leave this as ticker.html, or whatever your forum page file is called
+                    // open ticker forum page for this symbol
                     window.location = `ticker.html?ticker=${encodeURIComponent(ticker)}`;
                 });
             }
@@ -966,16 +953,16 @@
     // INIT
     // ----------------------------------
     function init() {
-        // bootstrap company list (seed + remembered)
+        // load known tickers into dynamicCompanyMap
         bootstrapCompanyMap();
 
-        // render UI
+        // initial render
         renderTickerOptions();
         renderPinCards();
         renderFeed();
         renderMap();
 
-        // listeners
+        // hook up listeners
         wireModalEvents();
         wireNavigation();
         wireSearchInput();
