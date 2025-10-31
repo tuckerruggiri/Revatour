@@ -1,24 +1,16 @@
 // api/getWatchlist.js
 
-import { supabaseAdmin } from './_supabaseClient.js';
+module.exports = (req, res) => {
+  try {
+    const demoWatchlist = [
+      { symbol: 'AAPL' },
+      { symbol: 'MSFT' },
+      { symbol: 'GOOGL' },
+    ];
 
-export default async function handler(req, res) {
-  const userId = 'demo-user';
-
-  const { data, error } = await supabaseAdmin
-    .from('watchlist')
-    .select('ticker')
-    .eq('user_id', userId)
-    .order('added_at', { ascending: true });
-
-  if (error) {
-    console.error('getWatchlist error:', error);
-    res.status(500).json({ error: 'failed to load watchlist' });
-    return;
+    res.status(200).json({ watchlist: demoWatchlist });
+  } catch (err) {
+    console.error('getWatchlist error:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-
-  // we only care about the tickers, not the row ids
-  const tickers = (data || []).map(row => row.ticker);
-
-  res.status(200).json({ watchlist: tickers });
-}
+};

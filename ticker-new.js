@@ -2,6 +2,14 @@
   'use strict';
 
   // ========================================
+  // API BASE (local vs vercel)
+  // ========================================
+  const API_BASE =
+    window.location.hostname === 'localhost'
+      ? 'http://localhost:3000'
+      : ''; // on vercel, same origin
+
+  // ========================================
   // DOM CACHE
   // ========================================
   const dom = {
@@ -41,7 +49,7 @@
   let forumPosts = [];
 
   // ========================================
-  // UTILITY FUNCTIONS
+  // UTILITIES
   // ========================================
   function getTickerFromURL() {
     const params = new URLSearchParams(window.location.search);
@@ -78,6 +86,11 @@
 
   function formatNumber(num, decimals = 2) {
     if (num === null || num === undefined) return '—';
+    if (typeof num !== 'number') {
+      const maybeNum = Number(num);
+      if (Number.isNaN(maybeNum)) return '—';
+      num = maybeNum;
+    }
     if (num >= 1e12) return (num / 1e12).toFixed(1) + 'T';
     if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B';
     if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
@@ -100,43 +113,48 @@
   // ========================================
   // API CALLS
   // ========================================
-
-  // Fetch fundamentals from your Vercel backend
   async function fetchFundamentals(ticker) {
     try {
-      const res = await fetch(`/api/fundamentals?symbol=${encodeURIComponent(ticker)}`);
+      // server now accepts ticker OR symbol, but we send ticker
+      const res = await fetch(
+        `${API_BASE}/api/fundamentals?ticker=${encodeURIComponent(ticker)}`
+      );
       if (!res.ok) {
         console.error('Fundamentals API failed:', res.status);
         return null;
       }
-      const data = await res.json();
-      return data;
+      return await res.json();
     } catch (err) {
       console.error('fetchFundamentals error:', err);
       return null;
     }
   }
 
-  // Fetch watchlist from Supabase via your backend
   async function fetchWatchlist() {
     try {
-      const res = await fetch('/api/getWatchlist');
+      const res = await fetch(`${API_BASE}/api/getWatchlist`);
       if (!res.ok) {
         console.error('getWatchlist failed:', res.status);
         return [];
       }
       const data = await res.json();
-      return data.watchlist || [];
+      // backend returns [{symbol: 'AAPL'}], so normalize
+      const arr = data.watchlist || [];
+      return arr.map((item) => {
+        if (typeof item === 'string') return item;
+        if (item && item.symbol) return item.symbol;
+        if (item && item.ticker) return item.ticker;
+        return 'UNKNOWN';
+      });
     } catch (err) {
       console.error('fetchWatchlist error:', err);
       return [];
     }
   }
 
-  // Toggle watchlist (add/remove ticker)
   async function toggleWatchlist(ticker, watching) {
     try {
-      const res = await fetch('/api/toggleWatchlist', {
+      const res = await fetch(`${API_BASE}/api/toggleWatchlist`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ticker, watching })
@@ -152,10 +170,11 @@
     }
   }
 
-  // Fetch forum posts for a ticker
   async function fetchForumPosts(ticker) {
     try {
-      const res = await fetch(`/api/getForumPosts?ticker=${encodeURIComponent(ticker)}`);
+      const res = await fetch(
+        `${API_BASE}/api/getForumPosts?ticker=${encodeURIComponent(ticker)}`
+      );
       if (!res.ok) {
         console.error('getForumPosts failed:', res.status);
         return [];
@@ -168,15 +187,16 @@
     }
   }
 
-  // Save a new forum post
   async function saveForumPost(ticker, text, confidence, imageData) {
     try {
-      const res = await fetch('/api/saveForumPost', {
+      const res = await fetch(`${API_BASE}/api/saveForumPost`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ticker,
-          text,
+          // your backend might expect "content" not "text"
+          content: text,
+          text, // keep both to be safe
           confidence,
           image_data: imageData
         })
@@ -186,7 +206,18 @@
         return null;
       }
       const data = await res.json();
-      return data.post || null;
+      // if backend doesn't return the post, make one locally
+      return (
+        data.post || {
+          ticker,
+          text,
+          content: text,
+          confidence,
+          image_data: imageData,
+          author: 'You',
+          created_at: new Date().toISOString()
+        }
+      );
     } catch (err) {
       console.error('saveForumPost error:', err);
       return null;
@@ -194,13 +225,13 @@
   }
 
   // ========================================
-  // RENDER FUNCTIONS
+  // RENDER
   // ========================================
-
   function renderWatchlist() {
+    if (!dom.watchlistList) return;
     dom.watchlistList.innerHTML = '';
 
-    if (watchlist.length === 0) {
+    if (!watchlist || watchlist.length === 0) {
       dom.watchlistList.innerHTML = `
         <li class="empty-state" style="padding: 12px; font-size: 13px;">
           No tickers in watchlist
@@ -209,7 +240,7 @@
       return;
     }
 
-    watchlist.forEach(ticker => {
+    watchlist.forEach((ticker) => {
       const li = document.createElement('li');
       li.className = 'watchlist-row';
       li.innerHTML = `
@@ -221,54 +252,12 @@
       dom.watchlistList.appendChild(li);
     });
 
-    // Wire click events
-    dom.watchlistList.querySelectorAll('.watchlist-ticker-btn').forEach(btn => {
+    dom.watchlistList.querySelectorAll('.watchlist-ticker-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
         const ticker = btn.getAttribute('data-ticker');
         loadTicker(ticker);
       });
     });
-  }
-
-  async function renderSnapshot(ticker) {
-    dom.snapTicker.textContent = ticker;
-    dom.snapName.textContent = 'Loading...';
-    dom.snapPrice.textContent = '$0.00';
-    dom.snapChange.textContent = '+0.0%';
-    dom.snapMktCap.textContent = '—';
-    dom.snapShares.textContent = '—';
-    dom.snapRange.textContent = '—';
-    dom.snapVol.textContent = '—';
-    dom.snapConfidence.textContent = '— / 5';
-    dom.composeTicker.textContent = ticker;
-
-    const data = await fetchFundamentals(ticker);
-    if (!data) {
-      dom.snapName.textContent = 'Unable to load data';
-      return;
-    }
-
-    dom.snapTicker.textContent = data.ticker || ticker;
-    dom.snapName.textContent = data.name || 'Unknown Company';
-    
-    if (data.price !== null) {
-      dom.snapPrice.textContent = `$${data.price.toFixed(2)}`;
-    }
-
-    if (data.changePercent !== null) {
-      const sign = data.changePercent >= 0 ? '+' : '';
-      dom.snapChange.textContent = `${sign}${data.changePercent.toFixed(2)}%`;
-      dom.snapChange.style.color = data.changePercent >= 0 ? '#059669' : '#dc2626';
-    }
-
-    dom.snapMktCap.textContent = formatNumber(data.marketCap);
-    dom.snapShares.textContent = formatNumber(data.sharesOut);
-    dom.snapRange.textContent = '—'; // Finnhub doesn't provide 52w range in profile
-    dom.snapVol.textContent = '—'; // You'd need to get this from quote endpoint
-
-    // Calculate community confidence (average of all post confidences)
-    const avgConfidence = calculateCommunityConfidence(forumPosts);
-    dom.snapConfidence.textContent = avgConfidence ? `${avgConfidence.toFixed(1)} / 5` : '— / 5';
   }
 
   function calculateCommunityConfidence(posts) {
@@ -277,10 +266,71 @@
     return sum / posts.length;
   }
 
+  async function renderSnapshot(ticker) {
+    // initial UI state
+    if (dom.snapTicker) dom.snapTicker.textContent = ticker;
+    if (dom.snapName) dom.snapName.textContent = 'Loading...';
+    if (dom.snapPrice) dom.snapPrice.textContent = '$0.00';
+    if (dom.snapChange) {
+      dom.snapChange.textContent = '+0.0%';
+      dom.snapChange.style.color = '';
+    }
+    if (dom.snapMktCap) dom.snapMktCap.textContent = '—';
+    if (dom.snapShares) dom.snapShares.textContent = '—';
+    if (dom.snapRange) dom.snapRange.textContent = '—';
+    if (dom.snapVol) dom.snapVol.textContent = '—';
+    if (dom.snapConfidence) dom.snapConfidence.textContent = '— / 5';
+    if (dom.composeTicker) dom.composeTicker.textContent = ticker;
+
+    const data = await fetchFundamentals(ticker);
+    if (!data) {
+      if (dom.snapName) dom.snapName.textContent = 'Unable to load data';
+      return;
+    }
+
+    const symbol = data.ticker || data.symbol || ticker;
+    const name = data.name || symbol;
+    const rawPrice = Number(data.price);
+    const hasPrice = !Number.isNaN(rawPrice);
+    const rawChangePct = Number(data.changePercent);
+    const hasChange = !Number.isNaN(rawChangePct);
+
+    if (dom.snapTicker) dom.snapTicker.textContent = symbol;
+    if (dom.snapName) dom.snapName.textContent = name;
+
+    if (dom.snapPrice) {
+      dom.snapPrice.textContent = hasPrice ? `$${rawPrice.toFixed(2)}` : '$0.00';
+    }
+
+    if (dom.snapChange) {
+      if (hasChange) {
+        const sign = rawChangePct >= 0 ? '+' : '';
+        dom.snapChange.textContent = `${sign}${rawChangePct.toFixed(2)}%`;
+        dom.snapChange.style.color = rawChangePct >= 0 ? '#059669' : '#dc2626';
+      } else {
+        dom.snapChange.textContent = '+0.0%';
+        dom.snapChange.style.color = '';
+      }
+    }
+
+    if (dom.snapMktCap) dom.snapMktCap.textContent = formatNumber(data.marketCap);
+    if (dom.snapShares) dom.snapShares.textContent = formatNumber(data.sharesOut);
+    if (dom.snapRange) dom.snapRange.textContent = '—';
+    if (dom.snapVol) dom.snapVol.textContent = '—';
+
+    const avgConfidence = calculateCommunityConfidence(forumPosts);
+    if (dom.snapConfidence) {
+      dom.snapConfidence.textContent = avgConfidence
+        ? `${avgConfidence.toFixed(1)} / 5`
+        : '— / 5';
+    }
+  }
+
   function renderForumPosts() {
+    if (!dom.forumThreadList) return;
     dom.forumThreadList.innerHTML = '';
 
-    if (forumPosts.length === 0) {
+    if (!forumPosts || forumPosts.length === 0) {
       dom.forumThreadList.innerHTML = `
         <div class="empty-state">
           <p>No posts yet for <strong>${currentTicker}</strong>.
@@ -290,12 +340,12 @@
       return;
     }
 
-    forumPosts.forEach(post => {
+    forumPosts.forEach((post) => {
       const article = document.createElement('article');
       article.className = 'forum-post-card card';
 
       const avatar = post.author ? post.author.slice(0, 2).toUpperCase() : 'AN';
-      
+
       let imageHTML = '';
       if (post.image_data) {
         imageHTML = `
@@ -312,15 +362,17 @@
             <div>
               <div class="forum-author">${post.author || 'Anonymous'}</div>
               <div class="forum-meta">
-                <span class="forum-time">${formatTimeAgo(post.created_at)}</span>
-                <span class="forum-conf">Conf: ${post.confidence}/5</span>
+                <span class="forum-time">${formatTimeAgo(
+                  post.created_at || new Date().toISOString()
+                )}</span>
+                <span class="forum-conf">Conf: ${post.confidence || 3}/5</span>
               </div>
             </div>
           </div>
         </header>
 
         <div class="forum-post-body">
-          <p>${post.text}</p>
+          <p>${post.text || post.content || ''}</p>
           ${imageHTML}
         </div>
       `;
@@ -330,24 +382,31 @@
   }
 
   // ========================================
-  // MAIN LOAD TICKER FUNCTION
+  // MAIN LOAD
   // ========================================
   async function loadTicker(ticker) {
     currentTicker = ticker.toUpperCase();
     setTickerInURL(currentTicker);
 
-    // Load snapshot
+    // snapshot first (so UI looks alive)
     await renderSnapshot(currentTicker);
 
-    // Load forum posts
+    // then forum posts
     forumPosts = await fetchForumPosts(currentTicker);
     renderForumPosts();
+
+    // update snapshot confidence after we get posts
+    const avgConfidence = calculateCommunityConfidence(forumPosts);
+    if (dom.snapConfidence) {
+      dom.snapConfidence.textContent = avgConfidence
+        ? `${avgConfidence.toFixed(1)} / 5`
+        : '— / 5';
+    }
   }
 
   // ========================================
-  // EVENT HANDLERS
+  // EVENTS
   // ========================================
-
   function wireSearch() {
     const handleSearch = () => {
       const ticker = dom.tickerSearchInput.value.trim().toUpperCase();
@@ -384,7 +443,7 @@
       }
 
       const confidence = parseInt(dom.forumConfidence.value, 10);
-      
+
       let imageData = null;
       try {
         imageData = await readFileAsDataURL(dom.forumPostImage.files[0]);
@@ -392,19 +451,19 @@
         console.error('Failed to read image:', err);
       }
 
-      // Save to backend
       const newPost = await saveForumPost(currentTicker, text, confidence, imageData);
-      
+
       if (newPost) {
-        // Add to local state and re-render
         forumPosts.unshift(newPost);
         renderForumPosts();
 
-        // Update community confidence
         const avgConfidence = calculateCommunityConfidence(forumPosts);
-        dom.snapConfidence.textContent = avgConfidence ? `${avgConfidence.toFixed(1)} / 5` : '— / 5';
+        if (dom.snapConfidence) {
+          dom.snapConfidence.textContent = avgConfidence
+            ? `${avgConfidence.toFixed(1)} / 5`
+            : '— / 5';
+        }
 
-        // Reset form
         dom.forumPostForm.reset();
         dom.forumFileName.textContent = 'No file selected';
       } else {
@@ -414,26 +473,24 @@
   }
 
   // ========================================
-  // INITIALIZATION
+  // INIT
   // ========================================
   async function init() {
-    // Get ticker from URL
     currentTicker = getTickerFromURL();
 
-    // Load watchlist
+    // load watchlist first
     watchlist = await fetchWatchlist();
     renderWatchlist();
 
-    // Wire up interactions
+    // interactions
     wireSearch();
     wireImageInput();
     wirePostForm();
 
-    // Load initial ticker data
+    // load first ticker
     await loadTicker(currentTicker);
   }
 
-  // Start when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

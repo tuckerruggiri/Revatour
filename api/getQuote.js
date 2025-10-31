@@ -1,59 +1,61 @@
 // api/getQuote.js
+const https = require('https');
 
-export default async function handler(req, res) {
-  const { ticker } = req.query;
-
-  if (!ticker) {
-    res.status(400).json({ error: "ticker is required, ex: /api/getQuote?ticker=MSFT" });
-    return;
-  }
-
-  const apiKey = process.env.ALPHAVANTAGE_API_KEY;
-  if (!apiKey) {
-    res.status(500).json({ error: "Server missing ALPHAVANTAGE_API_KEY" });
-    return;
-  }
-
+// 🟣 only load .env.local when NOT on Vercel
+if (process.env.VERCEL !== '1') {
   try {
-    // Alpha Vantage GLOBAL_QUOTE gives latest price + previous close
-    const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${encodeURIComponent(
-      ticker
-    )}&apikey=${apiKey}`;
-
-    const response = await fetch(url);
-    const data = await response.json();
-
-    // Helpful debug info to see what we actually got back
-    // NOTE: console.log runs server-side (shows up in Vercel function logs)
-    console.log("AlphaVantage raw response for", ticker, data);
-
-    const quote = data["Global Quote"];
-    if (!quote) {
-      res.status(502).json({
-        error: "No quote data returned",
-        note: "Alpha Vantage didn't include Global Quote. Possibly rate limit or invalid ticker.",
-        tickerRequested: ticker,
-        raw: data
-      });
-      return;
-    }
-
-    const currentPrice = parseFloat(quote["05. price"]);
-    const prevClose = parseFloat(quote["08. previous close"]);
-
-    let changePct = null;
-    if (!isNaN(currentPrice) && !isNaN(prevClose) && prevClose !== 0) {
-      changePct = ((currentPrice - prevClose) / prevClose) * 100;
-    }
-
-    res.status(200).json({
-      ticker: ticker.toUpperCase(),
-      currentPrice,
-      prevClose,
-      changePct // number like 1.23 or -0.45
-    });
-  } catch (err) {
-    console.error("getQuote error for", ticker, err);
-    res.status(500).json({ error: "failed to fetch quote", tickerRequested: ticker });
+    require('dotenv').config({ path: '.env.local' });
+  } catch (e) {
+    console.log('no .env.local found (local dev)');
   }
 }
+
+module.exports = (req, res) => {
+  const symbol = req.query.symbol || req.query.ticker;
+  const apiKey = process.env.FINNHUB_API_KEY;
+
+  if (!symbol) {
+    return res.status(400).json({ error: 'symbol or ticker is required' });
+  }
+
+  if (!apiKey) {
+    return res.status(400).json({ error: 'Server missing FINNHUB_API_KEY' });
+  }
+
+  const url = `https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(
+    symbol
+  )}&token=${apiKey}`;
+
+  https
+    .get(url, (r) => {
+      let data = '';
+      r.on('data', (chunk) => (data += chunk));
+      r.on('end', () => {
+        try {
+          const json = JSON.parse(data);
+
+          const price = Number(json.c);
+          const change = Number(json.d);
+          const changePercent = Number(json.dp);
+
+          return res.status(200).json({
+            ticker: symbol,
+            symbol,
+            name: symbol,
+            price: isNaN(price) ? 0 : price,
+            change: isNaN(change) ? 0 : change,
+            changePercent: isNaN(changePercent) ? 0 : changePercent,
+            source: 'finnhub',
+            where: process.env.VERCEL ? 'vercel' : 'local'
+          });
+        } catch (err) {
+          console.error('finnhub parse error:', err);
+          return res.status(500).json({ error: 'failed to parse finnhub data' });
+        }
+      });
+    })
+    .on('error', (err) => {
+      console.error('finnhub request error:', err);
+      return res.status(500).json({ error: 'finnhub request failed' });
+    });
+};
