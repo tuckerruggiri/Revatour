@@ -24,6 +24,24 @@
     </header>
 
     <main>
+
+<!-- Live Quote Display -->
+<div id="liveQuoteBox" style="
+  margin: 1rem auto;
+  padding: 1rem 1.5rem;
+  max-width: 320px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  background: #fff;
+  font-family: system-ui, sans-serif;
+  text-align: center;
+">
+  <div id="quotePrice" style="font-size: 1.8rem; font-weight: bold;">—</div>
+  <div id="quoteChange" style="font-size: 1.1rem; margin-top: 0.25rem;">—</div>
+  <div id="quoteTime" style="font-size: 0.85rem; color: #777; margin-top: 0.25rem;">—</div>
+</div>
+
+
         <!-- ========== MyMap View ========== -->
         <section id="mapSection" class="view active">
 
@@ -212,12 +230,20 @@
 
     <datalist id="tickerOptions"></datalist>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-    <!-- Data + Logic -->
-    <script src="fetchData.js"></script>
-    <script src="companies.js"></script>
-    <script src="script.js"></script>
+    <!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- Quote box should be visible BEFORE scripts -->
+<div class="quote">
+  <div id="quotePrice">—</div>
+  <div id="quoteChange">—</div>
+  <div id="quoteTime" class="muted">—</div>
+</div>
+
+<!-- Data + Logic -->
+<script src="fetchData.js"></script>
+<script src="companies.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
