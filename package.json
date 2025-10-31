@@ -1,0 +1,16 @@
+{
+  "name": "revatour",
+  "version": "1.0.0",
+  "description": "Social investing platform combining maps, stock market, and community",
+  "main": "index.html",
+  "type": "module",
+  "scripts": {
+    "start": "node api/index.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
