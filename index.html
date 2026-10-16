@@ -1,249 +1,751 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Revatour MyMap & MyWall</title>
-
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
-    <!-- App styles -->
-    <link rel="stylesheet" href="style.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stockspot Studio</title>
+<style>html:not(.authed) body{visibility:hidden}</style>
+<script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="shim.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e8eef2;--panel:#f6f9fb;--ink:#10202e;--mute:#5b6b78;--line:#c9d4dc;--gain:#0b6b5a;--loss:#b3261e;--accent:#1d4ed8;--accent-ink:#fff;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1620;--panel:#142230;--ink:#e6eef4;--mute:#92a4b3;--line:#27394a;--gain:#3ecfae;--loss:#ff7b72;--accent:#6ea0ff;--accent-ink:#0d1620;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1620;--panel:#142230;--ink:#e6eef4;--mute:#92a4b3;--line:#27394a;--gain:#3ecfae;--loss:#ff7b72;--accent:#6ea0ff;--accent-ink:#0d1620;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:24px 16px 64px}
+h1,h2,h3{font-family:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;letter-spacing:-.02em;margin:0}
+h1{font-size:clamp(2.1rem,7vw,3.4rem);font-weight:800;line-height:1}
+h2{font-size:1.2rem;font-weight:600;margin-bottom:4px}
+.sub{color:var(--mute);margin:8px 0 24px;max-width:56ch}
+section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:16px}
+.hint{color:var(--mute);font-size:.9rem;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+label{display:flex;flex-direction:column;font-size:.88rem;color:var(--mute);gap:4px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%}
+textarea{min-height:96px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:600 .95rem "Instrument Sans",sans-serif;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:9px 14px;cursor:pointer}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button:disabled{opacity:.55;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:14px}
+.stat{padding:10px 12px;border-right:1px solid var(--line)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font:800 1.3rem/1.1 "Bricolage Grotesque",sans-serif}
+.stat span{color:var(--mute);font-size:.8rem}
+.gain{color:var(--gain)}.loss{color:var(--loss)}
+.status{color:var(--mute);font-size:.9rem;margin-top:8px}
+.out{border-left:4px solid var(--accent);padding:4px 0 4px 16px;margin-top:14px}
+.out>p,.out>ul,.out>h1,.out>h2,.out>h3{max-width:70ch}
+.pastebox{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;margin:8px 0 10px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.pastebox:focus-visible,.pastebox.on{border-color:var(--accent);outline:none;background:var(--bg)}
+.pastebox span{color:var(--mute);font-size:.88rem}
+.imglist{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px}
+.imgc{border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--bg);display:flex;flex-direction:column;gap:6px}
+.imgc img{width:100%;height:auto;border-radius:4px}
+.out h1,.out h2,.out h3{margin:18px 0 6px}
+.out h1{font-size:1.9rem}.out h2{font-size:1.4rem}.out h3{font-size:1.1rem}
+.out p{margin:8px 0}.out ul{margin:8px 0;padding-left:22px}
+.out a{color:var(--accent)}
+.warn{font-size:.85rem;color:var(--mute);margin-top:12px}
+.shell{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:100vh}
+#side{background:var(--panel);border-right:1px solid var(--line);padding:16px 10px;position:sticky;top:0;height:100vh;overflow-y:auto;align-self:start}
+#side .brand{font:800 1.2rem "Bricolage Grotesque",sans-serif;padding:4px 10px 14px}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;text-align:left;border:0;background:transparent;color:var(--mute);padding:8px 10px;border-radius:6px;font:500 .95rem "Instrument Sans",sans-serif;cursor:pointer}
+.nav:hover{background:var(--bg);color:var(--ink)}
+.nav.on{background:var(--bg);color:var(--ink);font-weight:600}
+.nav.sub{padding-left:26px}
+.nav.fold{margin-top:10px;font-weight:600}
+.badge{font-size:.75rem;color:var(--mute);border:1px solid var(--line);border-radius:99px;padding:0 7px}
+.side-empty{color:var(--mute);font-size:.85rem;padding:6px 10px}
+details.saved{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:12px}
+details.saved summary{cursor:pointer;font-weight:600}
+@media (max-width:760px){.shell{grid-template-columns:1fr}#side{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);max-height:45vh}}
+#pnlcard{margin:0 4px 12px}
+.plbtn{display:block;width:100%;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;color:var(--ink)}
+.plbtn:hover{border-color:var(--accent)}
+.plbtn .pl-lab{display:flex;justify-content:space-between;color:var(--mute);font-size:.78rem;font-weight:500}
+.plbtn b{display:block;font:800 1.45rem/1.15 "Bricolage Grotesque",sans-serif;font-variant-numeric:tabular-nums}
+.plbtn .pl-sub{color:var(--mute);font-size:.8rem;font-weight:400}
+.plbtn svg{display:block;width:100%;height:34px;margin-top:6px}
+.pnlfull{position:fixed;inset:0;z-index:50;background:var(--bg);overflow:auto;padding:max(16px,env(safe-area-inset-top)) 16px 40px}
+.pf-in{max-width:1100px;margin:0 auto}
+.pf-head{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
+.pf-title{font:800 clamp(1.6rem,5vw,2.4rem) "Bricolage Grotesque",sans-serif;letter-spacing:-.02em}
+.pf-ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.pf-ctl input{width:150px}
+.pnlfull h3{margin:22px 0 6px;font-size:1.05rem}
+.pnlfull svg{display:block;width:100%;height:auto}
+.pnlfull .ss .t b{font-size:1.3rem}
+.scroll{overflow-x:auto}
+.pnlfull table{min-width:520px}
+.pnlfull td.n,.pnlfull th.n{text-align:right;font-variant-numeric:tabular-nums}
+.sechead{display:flex;justify-content:space-between;align-items:center;margin:14px 0 2px;padding:0 4px 0 10px;color:var(--mute);font-size:.8rem;font-weight:600}
+#addrow{display:flex;gap:6px;padding:4px 6px 6px}
+#addrow[hidden]{display:none}
+#addrow input{padding:6px 8px;font-size:.9rem;min-width:0}
+#addrow button{padding:6px 10px;font-size:.85rem}
+.navrow{display:flex;align-items:center;gap:2px}
+.navrow .nav{flex:1;min-width:0}
+.x{border:0;background:transparent;color:var(--mute);min-width:26px;height:26px;border-radius:6px;padding:0;font:600 .8rem "Instrument Sans",sans-serif;cursor:pointer;opacity:.45}
+.navrow:hover .x,.x:focus-visible,.x.show{opacity:1}
+.x:hover{background:var(--bg);color:var(--loss)}
+.x.show:hover{color:var(--ink)}
+.x[data-armed]{opacity:1;padding:0 8px;color:var(--loss)}
+.grip{display:flex;align-items:center;justify-content:center;flex:none;width:24px;height:30px;border:0;background:transparent;color:var(--mute);border-radius:6px;padding:0;cursor:grab;opacity:.5;touch-action:none}
+.navrow:hover .grip,.grip:focus-visible{opacity:1}
+.grip:hover{background:var(--bg);color:var(--ink)}
+body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
+.navrow.dragging{opacity:.5;background:var(--bg);border-radius:6px}
+.navrow.drop-before{box-shadow:0 -2px 0 var(--accent)}
+.navrow.drop-after{box-shadow:0 2px 0 var(--accent)}
+#pglist .nav.sub{padding-left:6px}
+.phead{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.pgname{font:800 clamp(1.6rem,5vw,2.4rem) "Bricolage Grotesque",sans-serif;letter-spacing:-.02em;background:transparent;border:1px solid transparent;border-radius:6px;padding:2px 6px;min-width:0;flex:1;color:var(--ink)}
+.pgname:hover,.pgname:focus{border-color:var(--line)}
+.feed{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.post{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.pmeta{display:flex;justify-content:space-between;align-items:center;color:var(--mute);font-size:.8rem;margin-bottom:4px}
+.ptxt{white-space:pre-wrap;overflow-wrap:anywhere}
+.post img{display:block;max-width:100%;height:auto;border-radius:6px;margin-top:8px;border:1px solid var(--line)}
+.composer{position:sticky;bottom:0;background:var(--bg);padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
+.composer textarea{min-height:70px}
+#pprev{display:inline-block;margin-bottom:6px}
+#pprev img{display:block;max-height:140px;width:auto;border-radius:6px;border:1px solid var(--line)}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:6px;opacity:0;pointer-events:none}
+#toast.on{opacity:1}
+</style>
 </head>
 <body>
+<div class="shell">
+<aside id="side" aria-label="Journal">
+  <div class="brand">Stockspot</div>
+  <div id="acct" style="display:flex;align-items:center;gap:8px;margin:2px 0 10px;font-size:.82rem;color:var(--mute)"><span id="whoami" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span><button id="logout" type="button" style="border:1px solid var(--line);background:none;color:var(--ink);border-radius:7px;padding:4px 9px;font:inherit;cursor:pointer">Log out</button></div>
+  <div id="pnlcard"></div>
+  <button class="nav on" id="navstudio" type="button">Studio</button>
+  <div class="sechead"><span>Pages</span><button id="addpg" class="x show" type="button" aria-label="Add a page">+</button></div>
+  <div id="addrow" hidden><input id="newpg" maxlength="40" placeholder="Page name" aria-label="New page name"><button id="newpgok" type="button">Add</button></div>
+  <div id="pglist"></div>
+  <button class="nav fold" id="navfold" type="button" aria-expanded="true"><span><span id="foldc">▾</span> Publishes</span><span id="foldn" class="badge"></span></button>
+  <div id="pubs"></div>
+</aside>
+<div class="wrap" id="studio">
+  <h1>Stockspot Studio</h1>
+  <p class="sub">Upload your trades and your material. Get a guru page, blog post, social posts, newsletter or book chapter written from your real record.</p>
 
-    <!-- Top Navigation -->
-    <header class="topbar">
-        <a class="brand home-link" href="index.html#map">Revatour</a>
-        <nav class="main-nav">
-            <button id="viewMapBtn" class="nav-btn active">MyMap</button>
-            <button id="viewWallBtn" class="nav-btn">MyWall</button>
-            <button class="nav-btn" onclick="window.location='ticker.html'">Ticker Forum</button>
-        </nav>
-    </header>
+  <section>
+    <h2>Step 1: Upload your trades</h2>
+    <p class="hint">Upload a CSV. A thinkorswim Account Statement export works: individual fills are paired into round-trip trades (longs and shorts) and P&amp;L is calculated for you. Other CSVs need columns like symbol, side, quantity, entry, exit, date, P&amp;L.</p>
+    <input type="file" id="file" accept=".csv,text/csv" aria-label="Upload trades CSV">
+    <details style="margin-top:12px"><summary>Or paste rows copied from thinkorswim (include the header row)</summary>
+      <textarea id="paste" aria-label="Pasted trade history" style="margin-top:8px" placeholder="Exec Time, Spread, Side, Qty, Pos Effect, Symbol, ..."></textarea>
+      <div class="row"><button id="pastego" type="button">Import pasted rows</button></div></details>
+    <div class="row"><button id="demo" type="button">Use sample trades</button><button id="clear" type="button">Clear trades</button></div>
+    <div class="status" id="tstatus">No trades loaded.</div>
+    <div class="stats" id="stats" hidden></div>
+  </section>
 
-    <main>
-
-<!-- Live Quote Display -->
-<div id="liveQuoteBox" style="
-  margin: 1rem auto;
-  padding: 1rem 1.5rem;
-  max-width: 320px;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  background: #fff;
-  font-family: system-ui, sans-serif;
-  text-align: center;
-">
-  <div id="quotePrice" style="font-size: 1.8rem; font-weight: bold;">—</div>
-  <div id="quoteChange" style="font-size: 1.1rem; margin-top: 0.25rem;">—</div>
-  <div id="quoteTime" style="font-size: 0.85rem; color: #777; margin-top: 0.25rem;">—</div>
-</div>
-
-
-        <!-- ========== MyMap View ========== -->
-        <section id="mapSection" class="view active">
-
-            <div class="view-header">
-                <div class="view-header-left">
-                    <h1>MyMap</h1>
-                    <p class="subtitle">
-                        Pin the tickers you trade, leave yourself notes,
-                        and build a visual journal of your investing journey.
-                    </p>
-                </div>
-
-                <div class="map-actions">
-                    <div class="search-wrap">
-                        <input
-                            type="text"
-                            id="tickerSearchInput"
-                            placeholder="Search tickers or companies (⌘K)"
-                            list="tickerOptions"
-                        />
-                        <button id="clearSearchBtn" class="clear-input-btn" aria-label="Clear search">
-                            &times;
-                        </button>
-                    </div>
-
-                    <button id="openAddPinBtn" class="primary-btn">Add to MyMap</button>
-                </div>
-            </div>
-
-            <div class="map-layout">
-                <div class="map-card-shell">
-                    <div id="map"></div>
-                </div>
-
-                <aside class="pin-panel">
-                    <div class="panel-header">
-                        <h2>Your Pins</h2>
-                        <span id="pinCount" class="badge">0</span>
-                    </div>
-
-                    <div id="pinCards" class="pin-cards">
-                        <div class="empty-state">
-                            <p>Your map is waiting for its first ticker.
-                            Tap <strong>Add to MyMap</strong> to drop a pin.</p>
-                        </div>
-                    </div>
-                </aside>
-            </div>
-        </section>
-
-        <!-- ========== My Wall View ========== -->
-        <section id="wallSection" class="view">
-            <div class="view-header">
-                <div class="view-header-left">
-                    <h1>MyWall</h1>
-                    <p class="subtitle">
-                        Share your trades, hobbies, and investing highlights with the community.
-                    </p>
-                </div>
-            </div>
-
-            <div class="wall-layout">
-                <div class="wall-feed">
-                    <form id="wallPostForm" class="card post-form">
-                        <h2 style="margin:0 0 12px; font-size:16px; font-weight:600;">
-                            Create a post
-                        </h2>
-
-                        <textarea
-                            id="wallPostText"
-                            placeholder="What's on your mind?"
-                            required
-                        ></textarea>
-
-                        <div class="form-row">
-                            <label for="wallPostTicker">Tag a ticker (optional)</label>
-                            <input
-                                id="wallPostTicker"
-                                type="text"
-                                placeholder="e.g. NVDA"
-                            />
-                        </div>
-
-                        <div class="form-row">
-                            <label class="file-input">
-                                <input type="file" id="wallPostImage" accept="image/*" />
-                                <span>Attach an image</span>
-                            </label>
-                            <span class="file-name" id="wallFileName">No file selected</span>
-                        </div>
-
-                        <button type="submit" class="primary-btn">Post to Wall</button>
-                    </form>
-
-                    <div id="feedList" class="feed-list"></div>
-                </div>
-
-                <aside class="wall-sidebar">
-                    <div class="card">
-                        <h3 style="margin-top:0; font-size:15px; font-weight:600;">
-                            Following
-                        </h3>
-                        <ul class="following-list">
-                            <li>
-                                <span class="avatar">AV</span>
-                                <div>
-                                    <div class="name">Avery Value</div>
-                                    <div class="tag">Dividend strategies</div>
-                                </div>
-                            </li>
-                            <li>
-                                <span class="avatar">MM</span>
-                                <div>
-                                    <div class="name">Mila Momentum</div>
-                                    <div class="tag">Swing trades</div>
-                                </div>
-                            </li>
-                            <li>
-                                <span class="avatar">QT</span>
-                                <div>
-                                    <div class="name">Quinn Quant</div>
-                                    <div class="tag">Options &amp; data nerd</div>
-                                </div>
-                            </li>
-                            <li>
-                                <span class="avatar">HG</span>
-                                <div>
-                                    <div class="name">Harper Growth</div>
-                                    <div class="tag">Tech &amp; AI</div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </aside>
-            </div>
-        </section>
-    </main>
-
-    <!-- Add Pin Modal -->
-    <div
-        id="addPinModal"
-        class="modal hidden"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="addPinTitle"
-        style="z-index:9999;"
-    >
-        <div class="modal-content">
-            <button id="closeAddPinBtn" class="modal-close" aria-label="Close">&times;</button>
-
-            <h2 id="addPinTitle"
-                style="margin:0 0 12px; font-size:16px; font-weight:600; color:#1e2030;">
-                Add a ticker to MyMap
-            </h2>
-
-            <form id="addPinForm" class="modal-form">
-                <div class="form-row">
-                    <label for="pinTicker">Ticker</label>
-                    <input id="pinTicker" name="pinTicker" type="text" placeholder="AAPL" list="tickerOptions" required />
-                </div>
-
-                <div class="form-row">
-                    <label for="pinNote">Why is this on your map?</label>
-                    <textarea id="pinNote" name="pinNote" placeholder="Document your trade, thesis, or milestone."></textarea>
-                </div>
-
-                <div class="form-row">
-                    <label class="file-input">
-                        <input type="file" id="pinImage" accept="image/*" />
-                        <span>Attach a photo (optional)</span>
-                    </label>
-                    <span class="file-name" id="pinFileName">No file selected</span>
-                </div>
-
-                <div class="form-actions">
-                    <button type="button" id="cancelAddPinBtn" class="secondary-btn">Cancel</button>
-                    <button type="submit" class="primary-btn">Save Pin</button>
-                </div>
-            </form>
-
-            <p class="form-hint">
-                Pins are stored on this device so you can keep curating your map over time.
-            </p>
-        </div>
+  <section>
+    <h2>Step 2: Add your material</h2>
+    <p class="hint">Everything here is optional, but the more you add, the more the output sounds like you.</p>
+    <div class="grid">
+      <label>Name or handle<input id="name" maxlength="60" placeholder="e.g. Tucker"></label>
+      <label>What you trade<input id="niche" maxlength="80" placeholder="e.g. swing trades in large-cap tech"></label>
     </div>
+    <div class="grid" style="margin-top:12px">
+      <label>Strategies and rules<textarea id="strat" placeholder="How you find setups, size positions, and cut losers"></textarea></label>
+      <label>Ideas and theses<textarea id="ideas" placeholder="Current market views, trade ideas"></textarea></label>
+      <label>Alerts you sent<textarea id="alerts" placeholder="Paste past alerts, one per line"></textarea></label>
+      <label>Watchlist<textarea id="watch" placeholder="Tickers and why you're watching them"></textarea></label>
+      <label>Videos (title | link, one per line)<textarea id="videos" placeholder="Earnings breakdown | https://..."></textarea></label>
+      <label>Lessons from your losers<textarea id="lessons" placeholder="What your worst trades taught you"></textarea></label>
+    </div>
+    <h3 style="margin:20px 0 4px;font-size:1.05rem">Trade charts</h3>
+    <p class="hint">Take a screenshot of a trade and paste it here with Ctrl+V (Cmd+V on Mac), or choose image files. Link each one to a trade and add a caption. They appear on your page below the writing.</p>
+    <div id="pastebox" class="pastebox" tabindex="0" role="button" aria-label="Paste a screenshot here with Control V"><b>Press Ctrl+V to paste a screenshot here</b><span>Cmd+V on Mac. Click this box first if nothing happens. You can also drop an image on it.</span></div>
+    <input type="file" id="imgfile" accept="image/*" multiple aria-label="Or choose screenshot files">
+    <div id="imglist" class="imglist"></div>
+  </section>
 
-    <datalist id="tickerOptions"></datalist>
-
-
-    <!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-<!-- Quote box should be visible BEFORE scripts -->
-<div class="quote">
-  <div id="quotePrice">—</div>
-  <div id="quoteChange">—</div>
-  <div id="quoteTime" class="muted">—</div>
+  <section>
+    <h2>Step 3: Generate</h2>
+    <div class="grid">
+      <label>What to create
+        <select id="fmt">
+          <option value="page">Guru page (website copy)</option>
+          <option value="blog">Blog post</option>
+          <option value="social">Social posts (10)</option>
+          <option value="news">Newsletter issue</option>
+          <option value="book">Book outline and first chapter</option>
+        </select></label>
+      <label>Voice
+        <select id="voice"><option>Direct and plain-spoken</option><option>Professional and measured</option><option>Energetic and motivational</option><option>Analytical and data-first</option></select></label>
+    </div>
+    <div class="row"><button class="primary" id="go" type="button">Generate</button><button id="stop" type="button" hidden>Stop</button><button id="saveday" type="button">Save day to Publishes</button></div>
+    <div class="status" id="gstatus"></div>
+    <div id="result" hidden>
+      <div class="out" id="out"></div>
+      <div class="row"><button id="copy" type="button">Copy text</button><button id="dlmd" type="button">Download .md</button><button id="dlhtml" type="button">Download .html</button></div>
+    </div>
+    <p class="warn">Generated from the data you provide. Your record is self-reported and not verified. Review everything before publishing. Nothing here is financial advice.</p>
+  </section>
 </div>
+<div class="wrap" id="entry" hidden></div>
+<div class="wrap" id="pagev" hidden></div>
+</div>
+<div id="pnlfull" class="pnlfull" role="dialog" aria-modal="true" aria-label="Yearly P&amp;L" hidden></div>
+<div id="toast" role="status"></div>
+<script>
+(function(){
+var KEY="stockspot-studio-v1",trades=[],ctl=null,lastMd="",ids=["name","niche","strat","ideas","alerts","watch","videos","lessons"];
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function money(v){return (v<0?"-$":"$")+Math.abs(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
+function toast(m){var t=$("toast");t.textContent=m;t.className="on";setTimeout(function(){t.className=""},1600)}
+function persist(){try{var o={trades:trades};ids.forEach(function(i){o[i]=$(i).value});localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
+function restore(){try{var o=JSON.parse(localStorage.getItem(KEY)||"null");if(!o)return;trades=o.trades||[];ids.forEach(function(i){if(o[i])$(i).value=o[i]})}catch(e){}}
 
-<!-- Data + Logic -->
-<script src="fetchData.js"></script>
-<script src="companies.js"></script>
-<script src="script.js"></script>
+/* CSV */
+function parseCSV(t,D){D=D||",";var rows=[],r=[],c="",q=false,i,ch;t=t.replace(/^\uFEFF/,"");
+ for(i=0;i<t.length;i++){ch=t[i];
+  if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++}else q=false}else c+=ch}
+  else if(ch=='"')q=true;else if(ch==D){r.push(c);c=""}
+  else if(ch=="\n"||ch=="\r"){if(ch=="\r"&&t[i+1]=="\n")i++;r.push(c);c="";if(r.some(function(x){return x.trim()}))rows.push(r);r=[]}
+  else c+=ch}
+ r.push(c);if(r.some(function(x){return x.trim()}))rows.push(r);return rows}
+var MAP={sym:["symbol","ticker","instrument","underlying","stock"],side:["side","action","direction","type"],qty:["qty","quantity","shares","size","amount"],ent:["entry","entryprice","buyprice","openprice","avgentry","open","avgbuy"],ext:["exit","exitprice","sellprice","closeprice","avgexit","close","avgsell"],date:["date","closeddate","dateclosed","datesold","closedate","closed","exitdate","closedon","tradedate","selldate","closetime"],pnl:["pnl","profit","realizedpnl","profitloss","netpnl","gainloss","pl","netprofit"],setup:["setup","strategy","tag","pattern"],note:["note","notes","comment","comments"]};
+function num(v){if(v==null)return NaN;var s=String(v).trim(),neg=/^\(.*\)$/.test(s);s=s.replace(/[$,()\s]/g,"");var n=parseFloat(s);return isNaN(n)?NaN:(neg?-Math.abs(n):n)}
+function tsOf(s){var m=/(\d{1,2})\/(\d{1,2})\/(\d{2,4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/.exec(s||"");if(!m)return NaN;var y=+m[3];if(y<100)y+=2000;return Date.UTC(y,+m[1]-1,+m[2],+(m[4]||0),+(m[5]||0),+(m[6]||0))}
+function isoOf(s){var m=/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/.exec(s||"");if(!m)return s||"";var y=+m[3];if(y<100)y+=2000;return y+"-"+("0"+m[1]).slice(-2)+"-"+("0"+m[2]).slice(-2)}
+function timeOf(s){var m=/(\d{1,2}:\d{2}(?::\d{2})?)\s*$/.exec((s||"").trim());return m?m[1]:""}
+function importTOS(rows){
+ var nm2=function(x){return x.toLowerCase().replace(/[^a-z0-9]/g,"")},hi=-1,k,H;
+ for(k=0;k<Math.min(rows.length,500);k++){H=rows[k].map(nm2);if(H.indexOf("exectime")>-1&&H.indexOf("poseffect")>-1&&H.indexOf("symbol")>-1){hi=k;break}}
+ if(hi<0)return null;
+ var ix={t:H.indexOf("exectime"),sd:H.indexOf("side"),q:H.indexOf("qty"),pe:H.indexOf("poseffect"),s:H.indexOf("symbol"),ex:H.indexOf("exp"),st:H.indexOf("strike"),ty:H.indexOf("type"),np:H.indexOf("netprice"),p:H.indexOf("price")};
+ if(ix.sd<0||ix.q<0)return null;
+ var fills=[],skip=0;
+ for(k=hi+1;k<rows.length;k++){var r=rows[k];if(!/\d{1,2}\/\d{1,2}\/\d{2,4}/.test(r[ix.t]||""))break;
+  var g=function(i){return i<0?"":(r[i]||"").trim()};
+  var pr=num(g(ix.np>-1?ix.np:ix.p)),q=Math.abs(num(g(ix.q)));
+  if(isNaN(pr)||isNaN(q)||!g(ix.s)){skip++;continue}
+  fills.push({ts:tsOf(r[ix.t]),raw:r[ix.t],buy:/buy/i.test(g(ix.sd)),open:/open/i.test(g(ix.pe)),sym:g(ix.s).toUpperCase(),key:[g(ix.s),g(ix.ex),g(ix.st),g(ix.ty)].join("|"),mult:g(ix.ex)?100:1,q:q,p:pr,seq:k})}
+ fills.sort(function(a,b){return (a.ts-b.ts)||((b.open?1:0)-(a.open?1:0))||(a.seq-b.seq)});
+ var S={},out=[];
+ fills.forEach(function(f){
+  var dir=f.open?(f.buy?1:-1):(f.buy?-1:1),id=f.key+"|"+dir,s=S[id]||(S[id]={dir:dir,oq:0,avg:0,tot:0,cost:0,cq:0,cv:0,pnl:0});
+  if(f.open){if(!s.tot)s.ot=timeOf(f.raw);s.avg=(s.avg*s.oq+f.p*f.q)/(s.oq+f.q);s.oq+=f.q;s.tot+=f.q;s.cost+=f.p*f.q;return}
+  var m=Math.min(f.q,s.oq);if(m<=0){skip++;if(!s.tot)delete S[id];return}
+  if(f.q>m)skip++;
+  s.pnl+=(f.p-s.avg)*m*s.dir*f.mult;s.cq+=m;s.cv+=f.p*m;s.oq-=m;
+  if(s.oq<=1e-9){out.push({t:f.sym,s:s.dir>0?"Long":"Short",q:s.tot,e:s.cost/s.tot,x:s.cv/s.cq,d:isoOf(f.raw),tm:timeOf(f.raw),ot:s.ot||"",u:"",n:"",p:s.pnl});delete S[id]}});
+ return {n:out.length,skipped:skip,trades:out,hdr:"thinkorswim Trade History",tos:true,openLeft:Object.keys(S).length}}
+function importCSV(text){
+ var head=text.slice(0,3000),D=((head.match(/\t/g)||[]).length>(head.match(/,/g)||[]).length)?"\t":",";
+ var rows=parseCSV(text,D);if(rows.length<2){return {n:0,skipped:0,err:"The file needs a header row and at least one trade."}}
+ var tos=importTOS(rows);if(tos)return tos;
+ var nm=function(x){return x.toLowerCase().replace(/[^a-z0-9]/g,"")},hi=0,k0;
+ for(k0=0;k0<Math.min(rows.length,80);k0++){if(rows[k0].some(function(x){return MAP.sym.indexOf(nm(x))>-1})){hi=k0;break}}
+ rows=rows.slice(hi);
+ var h=rows[0].map(nm),col={};
+ Object.keys(MAP).forEach(function(k){for(var j=0;j<MAP[k].length;j++){var ix=h.indexOf(MAP[k][j]);if(ix>-1){col[k]=ix;break}}});
+ if(col.sym==null)return {n:0,skipped:0,err:"No symbol or ticker column found. First row of your file: "+rows[0].slice(0,12).join(", ")};
+ var out=[],skip=0;
+ rows.slice(1).forEach(function(r){var g=function(k){return col[k]==null?"":(r[col[k]]||"").trim()};
+  var sym=g("sym").toUpperCase(),side=/short|sell short|sold short/i.test(g("side"))?"Short":"Long",q=num(g("qty")),e=num(g("ent")),x=num(g("ext")),p=num(g("pnl"));
+  if(isNaN(p)&&!isNaN(q)&&!isNaN(e)&&!isNaN(x))p=(x-e)*q*(side==="Short"?-1:1);
+  if(!sym||isNaN(p)){skip++;return}
+  out.push({t:sym,s:side,q:isNaN(q)?null:q,e:isNaN(e)?null:e,x:isNaN(x)?null:x,d:g("date"),u:g("setup"),n:g("note"),p:p})});
+ return {n:out.length,skipped:skip,trades:out,hdr:rows[0].join(", ")}}
+function stats(){
+ var n=trades.length,net=0,w=0,gw=0,gl=0,l=0,eq=0,pk=0,dd=0,by={},st={},pts=[0];
+ var list=trades.slice().sort(function(a,b){var x=Date.parse(a.d),y=Date.parse(b.d);return (isNaN(x)||isNaN(y))?0:x-y});
+ list.forEach(function(t){net+=t.p;eq+=t.p;pts.push(eq);if(eq>pk)pk=eq;if(pk-eq>dd)dd=pk-eq;if(t.p>0){w++;gw+=t.p}else if(t.p<0){l++;gl+=-t.p}
+  by[t.t]=(by[t.t]||0)+t.p;if(t.u){st[t.u]=st[t.u]||{n:0,p:0};st[t.u].n++;st[t.u].p+=t.p}});
+ var sorted=trades.slice().sort(function(a,b){return b.p-a.p});
+ return {pts:pts,n:n,net:net,wr:n?w/n:0,aw:w?gw/w:0,al:l?gl/l:0,pf:gl?gw/gl:(gw?Infinity:0),dd:dd,by:by,st:st,best:sorted.slice(0,3),worst:sorted.slice(-3).reverse(),first:list.length?list[0].d:"",last:list.length?list[list.length-1].d:""}}
+function showStats(){
+ var s=stats(),el=$("stats");
+ if(!s.n){el.hidden=true;$("tstatus").textContent="No trades loaded.";return}
+ $("tstatus").textContent=s.n+" trades loaded.";el.hidden=false;
+ el.innerHTML='<div class="stat"><b class="'+(s.net>=0?"gain":"loss")+'">'+money(s.net)+'</b><span>Net P&amp;L</span></div><div class="stat"><b>'+Math.round(s.wr*100)+'%</b><span>Win rate</span></div><div class="stat"><b>'+(s.pf===Infinity?"n/a":s.pf.toFixed(2))+'</b><span>Profit factor</span></div><div class="stat"><b class="loss">'+money(-s.dd)+'</b><span>Max drawdown</span></div>'}
+function note(r){var ts=$("tstatus");
+ if(r.tos){ts.textContent+=" Built from individual fills into round-trip trades. P&L is before commissions and fees."+(r.skipped?" "+r.skipped+" fills skipped because no matching open was in the file.":"")+(r.openLeft?" "+r.openLeft+" open position(s) not counted.":"")}
+ else if(r.skipped)ts.textContent+=" "+r.skipped+" rows skipped (missing symbol or P&L)."}
+function setTrades(arr,msg){trades=arr;showStats();persist();renderImgs();if(msg)toast(msg)}
+$("file").addEventListener("change",function(ev){
+ var f=ev.target.files[0];if(!f)return;var rd=new FileReader();
+ rd.onload=function(){var r=importCSV(String(rd.result));
+  if(r.err){$("tstatus").textContent=r.err;return}
+  if(!r.n){$("tstatus").textContent="No trades could be read from this file. Each row needs a symbol plus either a P&L column or entry price, exit price and quantity. Columns found: "+r.hdr;ev.target.value="";return}
+  setTrades(r.trades,r.n+" trades imported");note(r);ev.target.value=""};
+ rd.onerror=function(){$("tstatus").textContent="Could not read that file."};rd.readAsText(f)});
+$("demo").addEventListener("click",function(){
+ var s=[["NVDA","Long",20,118.4,126.9,"2026-08-04","Breakout","Held through earnings"],["TSLA","Short",15,248,255.3,"2026-08-12","Fade","Fought the trend"],["AAPL","Long",30,214.2,221.5,"2026-08-21","Pullback",""],["AMD","Long",40,141,136.2,"2026-09-02","Breakout","Stop too tight"],["META","Long",10,590,622,"2026-09-15","Pullback","Scaled in twice"],["SPY","Short",25,560,552.4,"2026-09-30","Fade","Clean rejection"]];
+ setTrades(s.map(function(r){return {t:r[0],s:r[1],q:r[2],e:r[3],x:r[4],d:r[5],u:r[6],n:r[7],p:(r[4]-r[3])*r[2]*(r[1]==="Short"?-1:1)}}),"Sample trades loaded")});
+$("clear").addEventListener("click",function(){setTrades([],"Trades cleared")});
+$("pastego").addEventListener("click",function(){var t=$("paste").value;if(!t.trim()){$("tstatus").textContent="Paste the rows first, including the header row.";return}
+ var r=importCSV(t);if(r.err){$("tstatus").textContent=r.err;return}
+ if(!r.n){$("tstatus").textContent="No trades could be read from the pasted text.";return}
+ setTrades(r.trades,r.n+" trades imported");note(r)});
+ids.forEach(function(i){$(i).addEventListener("input",persist)});
+
+/* Prompt */
+var FMT={
+ page:"Write the full copy for a personal trader website. Sections: hero headline and one-line pitch; About; Track record (one short prose paragraph only; no tables and no lists of metrics, because a stats panel is inserted automatically under this heading); Strategy (from the material); Best and worst trades with the lesson in each; Current watchlist (if provided); Videos (if provided, as links); a short risk disclaimer. Use markdown headings.",
+ blog:"Write one blog post of 700 to 900 words that teaches one lesson drawn from the trader's real trades or strategy. Include a title.",
+ social:"Write 10 social posts for X or Threads, each under 280 characters, drawn from real trades, rules, and lessons. Number them. Add one longer LinkedIn-style post at the end.",
+ news:"Write one newsletter issue: subject line, short intro, a recap of the record so far, one trade breakdown, a watchlist note if provided, and a closing line. Use markdown.",
+ book:"Write a book title, a subtitle, a chapter-by-chapter outline of 8 to 10 chapters, and then the full text of chapter 1 (about 900 words) built from the trader's real experience."};
+function fmtTrade(t){return t.t+" "+t.s+(t.d?" closed "+whenOf(t):"")+" P&L "+money(t.p)+(t.u?" ["+t.u+"]":"")+(t.n?" - "+t.n:"")}
+function prompt(){
+ var s=stats(),v=function(i){return $(i).value.trim()},P=[];
+ P.push("You write publishing material for an independent stock trader, using only the data below.");
+ P.push("RULES: Use only facts in the data. Never invent returns, trades, credentials, followers, or quotes. Do not promise or imply future profit. Do not give personalized financial advice. Say the record is self-reported. Never use markdown tables. Write in first person as the trader. Voice: "+$("voice").value+". Output markdown only, no preamble.");
+ P.push("TRADER: "+(v("name")||"(name not given)")+(v("niche")?"; trades: "+v("niche"):""));
+ if(s.n){P.push("RECORD ("+s.n+" closed trades"+(s.first?", "+s.first+" to "+s.last:"")+"): net "+money(s.net)+", win rate "+Math.round(s.wr*100)+"%, avg win "+money(s.aw)+", avg loss "+money(-s.al)+", profit factor "+(s.pf===Infinity?"n/a":s.pf.toFixed(2))+", max drawdown "+money(-s.dd)+".");
+  P.push("BEST TRADES:\n"+s.best.map(fmtTrade).join("\n"));P.push("WORST TRADES:\n"+s.worst.map(fmtTrade).join("\n"));
+  var sk=Object.keys(s.st);if(sk.length)P.push("BY SETUP:\n"+sk.map(function(k){return k+": "+s.st[k].n+" trades, "+money(s.st[k].p)}).join("\n"))}
+ else P.push("RECORD: no trades uploaded. Do not state any performance figures.");
+ [["strat","STRATEGIES AND RULES"],["ideas","IDEAS AND THESES"],["alerts","PAST ALERTS"],["watch","WATCHLIST"],["videos","VIDEOS (title | link)"],["lessons","LESSONS FROM LOSERS"]].forEach(function(p){if(v(p[0]))P.push(p[1]+":\n"+v(p[0]).slice(0,4000))});
+ if(imgs.length)P.push("CHARTS: the page will show "+imgs.length+" trade chart screenshot(s) below your writing. You may say 'see the charts below' but do not describe what they show.");
+ P.push("TASK: "+FMT[$("fmt").value]);return P.join("\n\n")}
+
+/* Output blocks */
+var OUTRULES=[
+ ".ss{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:14px 0 6px}",
+ ".ss .t{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}",
+ ".ss .t b{display:block;font:800 1.5rem/1.1 'Bricolage Grotesque',system-ui,sans-serif;font-variant-numeric:tabular-nums}",
+ ".ss .t span{color:var(--mute);font-size:.82rem}",
+ ".ss .big{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}",
+ ".ss .big b{font-size:2.4rem}",
+ ".ss svg{width:min(320px,100%);height:70px}",
+ ".ssnote{color:var(--mute);font-size:.8rem;margin:0 0 14px}",
+ ".gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:12px 0}",
+ ".tc{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}",
+ ".tc img{display:block;width:100%;height:auto;border-bottom:1px solid var(--line)}",
+ ".tc figcaption{padding:14px 16px 16px;display:flex;flex-direction:column;gap:12px}",
+ ".tc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}",
+ ".tc-id{display:flex;flex-direction:column;gap:2px}",
+ ".tc-name{display:flex;align-items:center;gap:8px}",
+ ".tc-sym{font:800 1.3rem/1.1 'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.01em}",
+ ".tc-side{font-size:.72rem;font-weight:600;border:1px solid var(--line);border-radius:99px;padding:1px 8px;color:var(--mute)}",
+ ".tc-day{font-size:.82rem;color:var(--mute)}",
+ ".tc-pnl{font:800 1.4rem/1.1 'Bricolage Grotesque',system-ui,sans-serif;font-variant-numeric:tabular-nums}",
+ ".tc-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px 16px;margin:0}",
+ ".tc-meta div{display:flex;flex-direction:column;gap:1px}",
+ ".tc-meta .wide{grid-column:1/-1}",
+ ".tc-meta dt{font-size:.72rem;color:var(--mute)}",
+ ".tc-meta dd{margin:0;font-size:.9rem;font-variant-numeric:tabular-nums}",
+ ".tc-cap{margin:0;padding-top:12px;border-top:1px solid var(--line);font-size:.95rem}",
+ "table{border-collapse:collapse;width:100%;font-size:.92rem;margin:10px 0}",
+ "th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left}"
+].join("");
+var DLCSS=":root{--panel:#f6f9fb;--mute:#5b6b78;--line:#c9d4dc;--gain:#0b6b5a;--loss:#b3261e}.gain{color:var(--gain)}.loss{color:var(--loss)}"+OUTRULES;
+(function(){var s=document.createElement("style");s.textContent=OUTRULES;document.head.appendChild(s)})();
+function sparkline(p,up){if(p.length<2)return "";var W=320,H=70,mn=Math.min.apply(null,p),mx=Math.max.apply(null,p);if(mn===mx){mn-=1;mx+=1}
+ var d=p.map(function(v,i){return (i?"L":"M")+(i*W/(p.length-1)).toFixed(1)+" "+(H-4-(H-8)*(v-mn)/(mx-mn)).toFixed(1)}).join(" ");
+ return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Cumulative P&amp;L by trade"><path d="'+d+'" fill="none" style="stroke:var(--'+(up?"gain":"loss")+')" stroke-width="2.5" stroke-linejoin="round"/></svg>'}
+function statsHTML(){var s=stats();if(!s.n)return "";
+ var per=s.first&&s.last?(s.first===s.last?s.first:s.first+" to "+s.last):"",cls=s.net>=0?"gain":"loss";
+ var t=function(v,l,c){return '<div class="t"><b'+(c?' class="'+c+'"':'')+'>'+v+'</b><span>'+l+'</span></div>'};
+ return '<div class="ss"><div class="t big"><div><b class="'+cls+'">'+money(s.net)+'</b><span>Net P&amp;L, '+s.n+' closed trades'+(per?', '+esc(per):'')+'</span></div>'+sparkline(s.pts,s.net>=0)+'</div>'+
+  t(Math.round(s.wr*100)+'%','Win rate')+t(s.pf===Infinity?'n/a':s.pf.toFixed(2),'Profit factor')+t(money(s.aw),'Average win','gain')+t(money(-s.al),'Average loss','loss')+t(money(-s.dd),'Max drawdown','loss')+'</div><p class="ssnote">Self-reported and not independently verified.</p>'}
+var KEYI="stockspot-studio-img-v1",imgs=[];
+function whenOf(t){return (t.d||"")+(t.tm?" "+(t.ot&&t.ot!==t.tm?t.ot+"-"+t.tm:t.tm):"")}
+function sgn(v){return (v>0?"+":"")+money(v)}
+function startOf(t){return t.ot||t.tm||""}
+function sortedTrades(){return trades.slice().sort(function(a,b){var x=(a.d||"")+" "+startOf(a),y=(b.d||"")+" "+startOf(b);return x<y?-1:x>y?1:0})}
+function optLabel(t,multi){return (multi&&t.d?t.d.slice(5)+"  ":"")+(startOf(t)?startOf(t)+"   ":"")+t.t+" "+t.s.toLowerCase()+(t.q?" "+t.q:"")+"   "+sgn(t.p)}
+function tkey(t){return t.t+"|"+t.s+"|"+(t.d||"")+"|"+t.p.toFixed(2)}
+function tradeFor(k){if(!k)return null;for(var i=0;i<trades.length;i++)if(tkey(trades[i])===k)return trades[i];return null}
+function galHTML(){if(!imgs.length)return "";
+ var px=function(v){return v==null?"-":"$"+Number(v).toFixed(2)};
+ return '<h2>Trade charts</h2><div class="gal">'+imgs.map(function(m){var t=tradeFor(m.tid),img='<img alt="'+esc(m.cap||(t?t.t+" trade chart":"Trade chart"))+'" src="'+m.src+'">',cap=m.cap?'<p class="tc-cap">'+esc(m.cap)+'</p>':'';
+  if(!t)return '<figure class="tc">'+img+(cap?'<figcaption>'+cap+'</figcaption>':'')+'</figure>';
+  var c=t.p>=0?"gain":"loss",time=t.tm?(t.ot&&t.ot!==t.tm?esc(t.ot)+" to "+esc(t.tm):esc(t.tm)):"";
+  return '<figure class="tc">'+img+'<figcaption><div class="tc-top"><div class="tc-id"><div class="tc-name"><span class="tc-sym">'+esc(t.t)+'</span><span class="tc-side">'+esc(t.s)+'</span></div><span class="tc-day">'+esc(dayLabel(t.d||""))+'</span></div><span class="tc-pnl '+c+'">'+sgn(t.p)+'</span></div>'+
+   '<dl class="tc-meta">'+(t.e!=null?'<div><dt>Entry</dt><dd>'+px(t.e)+'</dd></div>':'')+(t.x!=null?'<div><dt>Exit</dt><dd>'+px(t.x)+'</dd></div>':'')+(t.q?'<div><dt>Size</dt><dd>'+t.q+' shares</dd></div>':'')+(time?'<div class="wide"><dt>Time</dt><dd>'+time+'</dd></div>':'')+'</dl>'+cap+'</figcaption></figure>'}).join("")+'</div>'}
+function compose(text,fm){var f=fm||$("fmt").value,html=md(text);
+ if(f==="page"||f==="news"){var sh=statsHTML(),m=/<h[1-3]>[^<]*track record[^<]*<\/h[1-3]>/i.exec(html);
+  if(sh)html=m?html.slice(0,m.index+m[0].length)+sh+html.slice(m.index+m[0].length):sh+html}
+ if(f==="page"||f==="blog"||f==="news")html+=galHTML();
+ return html}
+function refreshOut(){if(lastMd)$("out").innerHTML=compose(lastMd)}
+function saveImgs(){refreshOut();try{localStorage.setItem(KEYI,JSON.stringify(imgs))}catch(e){toast("Charts are too big to keep after you close this page")}}
+function loadImgs(){try{imgs=JSON.parse(localStorage.getItem(KEYI)||"[]")}catch(e){imgs=[]}}
+function shrink(file,W){return new Promise(function(res,rej){var u=URL.createObjectURL(file),im=new Image();
+ im.onload=function(){var sc=Math.min(1,(W||1000)/im.width),c=document.createElement("canvas");c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL("image/jpeg",0.82))};
+ im.onerror=function(){URL.revokeObjectURL(u);rej()};im.src=u})}
+async function addImgs(files){var n=0;
+ for(var i=0;i<files.length;i++){var f=files[i];if(!/^image\//.test(f.type))continue;if(imgs.length>=12){toast("Limit is 12 charts");break}
+  try{imgs.push({id:Date.now()+"-"+i,src:await shrink(f),cap:"",tid:""});n++}catch(e){toast("Could not read that image")}}
+ if(n){saveImgs();renderImgs();toast(n+" chart"+(n>1?"s":"")+" added")}}
+function renderImgs(){var el=$("imglist");if(!el)return;el.innerHTML="";
+ imgs.forEach(function(m,i){var d=document.createElement("div");d.className="imgc";
+  var im=document.createElement("img");im.src=m.src;im.alt="Trade chart "+(i+1);d.appendChild(im);
+  var sel=document.createElement("select");sel.setAttribute("aria-label","Link to trade");
+  var o0=document.createElement("option");o0.value="";o0.textContent="Not linked to a trade";sel.appendChild(o0);
+  var days={};trades.forEach(function(t){days[t.d]=1});var multi=Object.keys(days).length>1;
+  sortedTrades().forEach(function(t){var o=document.createElement("option");o.value=tkey(t);o.textContent=optLabel(t,multi);if(o.value===m.tid)o.selected=true;sel.appendChild(o)});
+  sel.onchange=function(){m.tid=sel.value;saveImgs()};d.appendChild(sel);
+  var cap=document.createElement("input");cap.maxLength=160;cap.placeholder="Caption: what the chart shows";cap.value=m.cap||"";cap.setAttribute("aria-label","Caption");cap.oninput=function(){m.cap=cap.value};cap.onchange=saveImgs;d.appendChild(cap);
+  var rm=document.createElement("button");rm.type="button";rm.textContent="Remove";rm.onclick=function(){imgs.splice(i,1);saveImgs();renderImgs()};d.appendChild(rm);
+  el.appendChild(d)})}
+$("imgfile").addEventListener("change",function(ev){addImgs(ev.target.files).then(function(){ev.target.value=""})});
+document.addEventListener("paste",function(ev){var fs=ev.clipboardData&&ev.clipboardData.files;
+ if(fs&&fs.length&&Array.prototype.some.call(fs,function(f){return /^image\//.test(f.type)})){ev.preventDefault();if(!$("pagev").hidden){composerAdd(fs);return}if($("studio").hidden)return;addImgs(fs);var pb=$("pastebox");pb.classList.add("on");setTimeout(function(){pb.classList.remove("on")},900)}});
+$("pastebox").addEventListener("click",function(){this.focus()});
+$("pastebox").addEventListener("dragover",function(ev){ev.preventDefault()});
+$("pastebox").addEventListener("drop",function(ev){ev.preventDefault();if(ev.dataTransfer&&ev.dataTransfer.files.length)addImgs(ev.dataTransfer.files)});
+
+/* Markdown */
+function inline(s){return s.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\*(.+?)\*/g,"<i>$1</i>").replace(/(https?:\/\/[^\s<)]+)/g,'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')}
+function md(t){var out=[],ul=false,tb=0;
+ t.split("\n").forEach(function(l){var m,e=esc(l);
+  if(/^\s*\|/.test(l)){if(/^[\s|:\-]+$/.test(l))return;var c=e.trim().replace(/^\||\|$/g,"").split("|");
+   if(ul){out.push("</ul>");ul=false}
+   if(!tb){out.push("<table><thead><tr>"+c.map(function(x){return "<th>"+inline(x.trim())+"</th>"}).join("")+"</tr></thead><tbody>");tb=1}
+   else out.push("<tr>"+c.map(function(x){return "<td>"+inline(x.trim())+"</td>"}).join("")+"</tr>");return}
+  if(tb){out.push("</tbody></table>");tb=0}
+  if(m=/^(#{1,3})\s+(.*)$/.exec(e)){if(ul){out.push("</ul>");ul=false}out.push("<h"+m[1].length+">"+inline(m[2])+"</h"+m[1].length+">")}
+  else if(m=/^\s*[-*]\s+(.*)$/.exec(e)){if(!ul){out.push("<ul>");ul=true}out.push("<li>"+inline(m[1])+"</li>")}
+  else{if(ul){out.push("</ul>");ul=false}if(e.trim())out.push("<p>"+inline(e)+"</p>")}});
+ if(ul)out.push("</ul>");if(tb)out.push("</tbody></table>");return out.join("")}
+
+/* Generate */
+function busy(b){$("go").disabled=b;$("stop").hidden=!b}
+$("stop").addEventListener("click",function(){if(ctl)ctl.abort()});
+$("go").addEventListener("click",async function(){
+ if(!trades.length&&!ids.some(function(i){return i!=="name"&&i!=="niche"&&$(i).value.trim()})){$("gstatus").textContent="Add trades or some material first.";return}
+ var sample=null;try{sample=await claude.use("sample")}catch(e){}
+ if(!sample){$("gstatus").textContent="AI generation is not available in this view. Open the published page in claude.ai.";return}
+ ctl=new AbortController();busy(true);$("gstatus").textContent="Writing...";$("result").hidden=false;$("out").innerHTML="";lastMd="";
+ try{
+  await sample(prompt(),{cache:false,signal:ctl.signal,modelTier:"default",onText:function(u){lastMd=u.text;$("out").innerHTML=compose(u.text)}});
+  $("gstatus").textContent="Done. Saving to Publishes...";
+  try{var sd=await saveEntry({fmt:$("fmt").value,voice:$("voice").value,md:lastMd});$("gstatus").textContent="Done. Saved to Publishes, "+dayLabel(sd)+". Review before you publish."}
+  catch(e2){$("gstatus").textContent="Done, but saving to Publishes failed"+(e2&&e2.code==="quota_exceeded"?": storage is full.":".")}
+ }catch(e){
+  var c=e&&e.code;
+  $("gstatus").textContent=c==="not_granted"?"Permission was declined, so nothing was generated.":c==="rate_limited"?"Too many requests. Wait a moment and try again.":(ctl.signal.aborted?"Stopped.":"Generation failed. Try again.");
+  if(e&&e.text&&!lastMd){lastMd=e.text;$("out").innerHTML=compose(e.text)}
+ }finally{busy(false)}});
+
+/* Export */
+async function save(name,data){
+ var d=null;try{d=await claude.use("downloads")}catch(e){}
+ if(!d){toast("Downloads unavailable here. Use Copy text.");return}
+ try{await d.save({filename:name,data:data})}catch(e){if(!e||e.code!=="declined")toast("Download failed")}}
+$("copy").addEventListener("click",function(){if(!lastMd)return;try{navigator.clipboard.writeText(lastMd).then(function(){toast("Copied")},function(){toast("Copy blocked by browser")})}catch(e){toast("Copy blocked by browser")}});
+$("dlmd").addEventListener("click",function(){if(lastMd)save("stockspot-"+$("fmt").value+".md",lastMd)});
+$("dlhtml").addEventListener("click",function(){if(!lastMd)return;
+ var t=($("name").value.trim()||"Trader")+" | Stockspot";
+ var h='<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(t)+'</title><style>body{font:17px/1.6 system-ui,sans-serif;max-width:720px;margin:0 auto;padding:32px 18px;color:#10202e}h1,h2,h3{line-height:1.2}a{color:#1d4ed8}footer{margin-top:40px;font-size:.85rem;color:#5b6b78}'+DLCSS+'</style></head><body>'+compose(lastMd)+'<footer>Self-reported record. Not financial advice.</footer></body></html>';
+ save("stockspot-"+$("fmt").value+".html",h)});
+
+/* Journal */
+var KEYJ="stockspot-journal-v1",entries={},store={db:null,assets:null},curDate="";
+var FMTNAME={page:"Guru page",blog:"Blog post",social:"Social posts",news:"Newsletter",book:"Book"};
+function todayISO(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+function dayLabel(iso){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(iso||"");if(!m)return iso||"";var d=new Date(+m[1],+m[2]-1,+m[3]);
+ return d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric",year:(+m[1]!==new Date().getFullYear())?"numeric":undefined})}
+function clone(o){return JSON.parse(JSON.stringify(o))}
+function withCtx(ent,arr,fn){var t0=trades,i0=imgs;trades=ent.trades||[];imgs=arr;try{return fn()}finally{trades=t0;imgs=i0}}
+function entImgs(ent){return (ent.imgs||[]).map(function(m){return {src:m.src||blobUrl(m.aid),aid:m.aid||"",cap:m.cap||"",tid:m.tid||""}})}
+function dataToBlob(u){var p=u.split(","),mime=(/:(.*?);/.exec(p[0])||[0,"image/jpeg"])[1],bin=atob(p[1]),a=new Uint8Array(bin.length),i;for(i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:mime})}
+function blobToData(b){return new Promise(function(r){var fr=new FileReader();fr.onload=function(){r(fr.result)};fr.onerror=function(){r("")};fr.readAsDataURL(b)})}
+async function inlineImgs(arr){var out=[];for(var i=0;i<arr.length;i++){var m=arr[i],src=m.src;
+ if(src&&src.indexOf("data:")!==0){try{src=(await blobToData(await (await fetch(src)).blob()))||src}catch(e){}}
+ out.push({src:src,cap:m.cap,tid:m.tid})}return out}
+function pageShell(body,title){return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(title)+'</title><style>body{font:17px/1.6 system-ui,sans-serif;max-width:720px;margin:0 auto;padding:32px 18px;color:#10202e}h1,h2,h3{line-height:1.2}a{color:#1d4ed8}footer{margin-top:40px;font-size:.85rem;color:#5b6b78}'+DLCSS+'</style></head><body>'+body+'<footer>Self-reported record. Not financial advice.</footer></body></html>'}
+async function initStore(){
+ try{if(typeof claude!=="undefined"&&claude.use){store.db=await claude.use("db");store.assets=await claude.use("assets")}}catch(e){}
+ entries={};
+ try{
+  if(store.db){var snap=await store.db.collection("entries").get();snap.docs.forEach(function(d){if(d.exists)entries[d.id]=clone(d.data())})}
+  else entries=JSON.parse(localStorage.getItem(KEYJ)||"{}")
+ }catch(e){try{entries=JSON.parse(localStorage.getItem(KEYJ)||"{}")}catch(e2){entries={}}}
+ await loadPages();await loadSettings();renderSide()}
+async function putEntry(ent){
+ if(store.db)await store.db.doc("entries/"+ent.date).set(ent);
+ else{var all=JSON.parse(localStorage.getItem(KEYJ)||"{}");all[ent.date]=ent;localStorage.setItem(KEYJ,JSON.stringify(all))}
+ entries[ent.date]=ent}
+async function delEntry(d){
+ if(store.db)await store.db.doc("entries/"+d).delete();
+ else{var all=JSON.parse(localStorage.getItem(KEYJ)||"{}");delete all[d];localStorage.setItem(KEYJ,JSON.stringify(all))}
+ delete entries[d];if(curDate===d)showStudio();else renderSide();toast("Page deleted")}
+async function imgRecords(){var list=[],skipped=0;
+ for(var i=0;i<imgs.length;i++){var m=imgs[i];
+  if(store.db&&store.assets&&!m.aid&&m.src&&m.src.indexOf("data:")===0){try{var r=await store.assets.upload(dataToBlob(m.src),{type:"image/jpeg"});m.aid=r.id}catch(e){}}
+  if(store.db){if(m.aid)list.push({aid:m.aid,cap:m.cap||"",tid:m.tid||""});else skipped++}
+  else list.push({src:m.src,aid:m.aid||"",cap:m.cap||"",tid:m.tid||""})}
+ try{localStorage.setItem(KEYI,JSON.stringify(imgs))}catch(e){}
+ return {list:list,skipped:skipped}}
+async function saveEntry(out){
+ var s=stats(),date=s.n?isoOf(s.last):todayISO();if(!/^\d{4}-\d{2}-\d{2}$/.test(date))date=todayISO();
+ var ent=entries[date]?clone(entries[date]):{date:date,trades:[],imgs:[],outputs:[]};
+ if(trades.length)ent.trades=trades.map(function(t){return {t:t.t,s:t.s,q:t.q,e:t.e,x:t.x,d:t.d||"",tm:t.tm||"",ot:t.ot||"",u:t.u||"",n:t.n||"",p:t.p}});
+ var skipped=0;
+ if(imgs.length){var r=await imgRecords();ent.imgs=r.list;skipped=r.skipped}
+ if(out){ent.outputs=ent.outputs||[];ent.outputs.push({id:Date.now().toString(36),fmt:out.fmt,voice:out.voice,md:out.md,ts:Date.now()});ent.outputs=ent.outputs.slice(-12)}
+ ent.updated=Date.now();
+ while(JSON.stringify(ent).length>230000&&(ent.outputs||[]).length>1)ent.outputs.shift();
+ await putEntry(ent);renderSide();
+ if(curDate===date&&!$("entry").hidden)renderEntry(date);
+ if(skipped)toast(skipped+" chart(s) could not be saved");
+ return date}
+function navRow(label,badge,on,onClick,onDel,delLabel,mv){
+ var row=document.createElement("div");row.className="navrow";
+ var b=document.createElement("button");b.type="button";b.className="nav sub"+(on?" on":"");b.appendChild(document.createTextNode(label));
+ if(badge){var sp=document.createElement("span");sp.className="badge";sp.textContent=badge;b.appendChild(sp)}
+ b.onclick=onClick;row.appendChild(b);if(mv)row.insertBefore(mv,b);
+ var x=document.createElement("button");x.type="button";x.className="x";x.textContent="✕";x.setAttribute("aria-label",delLabel);
+ x.onclick=function(ev){ev.stopPropagation();confirmTwice(x,"Delete?",onDel)};row.appendChild(x);return row}
+function renderSide(){
+ renderPnl();
+ var pl=$("pglist");pl.innerHTML="";
+ var pk=Object.keys(pages).map(function(k){return pages[k]}).sort(function(a,b){return (a.order-b.order)||(a.created-b.created)});
+ if(!pk.length){var q=document.createElement("p");q.className="side-empty";q.textContent="No pages yet. Use + to add one.";pl.appendChild(q)}
+ pk.forEach(function(p,i){var row=navRow("# "+p.name,"",p.id===curPage&&!$("pagev").hidden,function(){showPage(p.id)},
+  async function(){try{await delPage(p.id);if(curPage===p.id)showStudio();else renderSide();toast("Page deleted")}catch(e){toast("Could not delete")}},"Delete page "+p.name,gripEl(p.id,p.name));
+  pl.appendChild(row)});
+ var box=$("pubs");box.innerHTML="";
+ var ds=Object.keys(entries).sort().reverse();$("foldn").textContent=ds.length||"";
+ if(!ds.length){var p2=document.createElement("p");p2.className="side-empty";p2.textContent="Nothing saved yet. Generate something or save a day and it appears here.";box.appendChild(p2);return}
+ ds.forEach(function(d){box.appendChild(navRow(dayLabel(d),(entries[d].outputs||[]).length||"",d===curDate&&!$("entry").hidden,function(){renderEntry(d)},
+  async function(){try{await delEntry(d)}catch(e){toast("Could not delete")}},"Delete "+dayLabel(d)))})}
+function showStudio(){$("studio").hidden=false;$("entry").hidden=true;$("pagev").hidden=true;curDate="";curPage="";$("navstudio").classList.add("on");renderSide()}
+function renderEntry(date){var ent=entries[date];if(!ent){showStudio();return}
+ curDate=date;curPage="";$("pagev").hidden=true;$("studio").hidden=true;var el=$("entry");el.hidden=false;$("navstudio").classList.remove("on");
+ var outs=ent.outputs||[],top=withCtx(ent,entImgs(ent),function(){return {s:statsHTML(),g:galHTML()}});
+ var h='<h1>'+esc(dayLabel(date))+'</h1><p class="sub">Saved in Publishes. '+outs.length+' generated '+(outs.length===1?'piece':'pieces')+'.</p>'+
+  '<div class="row" style="margin:0 0 16px"><button id="eopen" type="button">Open in Studio</button><button id="edel" type="button">Delete this page</button></div>'+top.s;
+ if(!outs.length)h+='<p class="hint">Nothing generated for this day yet. Open it in Studio and press Generate.</p>';
+ outs.slice().reverse().forEach(function(o,k){var i=outs.length-1-k;
+  h+='<details class="saved"'+(k===0?' open':'')+'><summary>'+esc(FMTNAME[o.fmt]||o.fmt||"Piece")+', '+esc(new Date(o.ts).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}))+'</summary><div class="out">'+md(o.md)+'</div><div class="row"><button type="button" data-a="copy" data-i="'+i+'">Copy text</button><button type="button" data-a="md" data-i="'+i+'">Download .md</button><button type="button" data-a="html" data-i="'+i+'">Download .html</button><button type="button" data-a="del" data-i="'+i+'">Delete this piece</button></div></details>'});
+ el.innerHTML=h+top.g;renderSide();window.scrollTo(0,0)}
+function openInStudio(ent){setTrades(clone(ent.trades||[]));
+ imgs=entImgs(ent).map(function(m,i){return {id:"o"+i,src:m.src,aid:m.aid,cap:m.cap,tid:m.tid}});
+ try{localStorage.setItem(KEYI,JSON.stringify(imgs))}catch(e){}
+ renderImgs();lastMd="";$("result").hidden=true;showStudio();toast("Opened in Studio")}
+function confirmTwice(b,label,fn){if(b.dataset.armed){delete b.dataset.armed;fn();return}
+ var t=b.textContent;b.dataset.armed="1";b.textContent=label;setTimeout(function(){if(b.dataset.armed){delete b.dataset.armed;b.textContent=t}},3000)}
+$("navstudio").addEventListener("click",showStudio);
+$("navfold").addEventListener("click",function(){var b=$("pubs"),open=b.hidden;b.hidden=!open;this.setAttribute("aria-expanded",open?"true":"false");$("foldc").textContent=open?"▾":"▸"});
+$("saveday").addEventListener("click",async function(){
+ if(!trades.length&&!imgs.length){toast("Add trades or charts first");return}
+ try{var d=await saveEntry(null);toast("Saved to Publishes, "+dayLabel(d))}catch(e){toast("Could not save")}});
+$("entry").addEventListener("click",async function(ev){
+ var b=ev.target.closest&&ev.target.closest("button");if(!b)return;var ent=entries[curDate];if(!ent)return;
+ if(b.id==="eopen"){openInStudio(ent);return}
+ if(b.id==="edel"){confirmTwice(b,"Click again to delete this page",async function(){try{await delEntry(curDate)}catch(e){toast("Could not delete")}});return}
+ var a=b.dataset.a,i=+b.dataset.i,o=(ent.outputs||[])[i];if(!a||!o)return;
+ if(a==="copy"){try{navigator.clipboard.writeText(o.md).then(function(){toast("Copied")},function(){toast("Copy blocked by browser")})}catch(e){toast("Copy blocked by browser")}}
+ else if(a==="md")save("stockspot-"+curDate+"-"+o.fmt+".md",o.md);
+ else if(a==="html"){var arr=await inlineImgs(entImgs(ent));var body=withCtx(ent,arr,function(){return compose(o.md,o.fmt)});save("stockspot-"+curDate+"-"+o.fmt+".html",pageShell(body,dayLabel(curDate)+" | Stockspot"))}
+ else if(a==="del"){confirmTwice(b,"Click again to delete",async function(){var n=clone(ent);n.outputs.splice(i,1);n.updated=Date.now();try{await putEntry(n);renderEntry(curDate)}catch(e){toast("Could not delete")}})}});
+/* Pages (notes, setups, strategies, PNL) */
+var pages={},curPage="",pend=null,feedPosts=[],PKEY="stockspot-pages-v1";
+var SEED=[["Notes","Write a thought, a lesson, or a reminder"],["A+ Setups","Paste a screenshot of the setup and what made it A+"],["Fail Setups","Paste the setup that failed and what you would change"],["Strategies","Describe a strategy, a rule, or a checklist"],["PNL","Paste a screenshot of your P&L for the day"]];
+function newId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function lsGet(){try{return JSON.parse(localStorage.getItem(PKEY)||"null")}catch(e){return null}}
+function lsPut(o){localStorage.setItem(PKEY,JSON.stringify(o))}
+async function putPage(p){
+ var rec={name:p.name,hint:p.hint||"",order:p.order||0,created:p.created||Date.now()};
+ if(store.db)await store.db.doc("pages/"+p.id).set(rec);
+ else{var o=lsGet()||{pages:{}},ex=o.pages[p.id];o.pages[p.id]=Object.assign({posts:ex?ex.posts||[]:[]},rec);lsPut(o)}
+ pages[p.id]=Object.assign({id:p.id},rec)}
+async function seedPages(){for(var i=0;i<SEED.length;i++)await putPage({id:newId(),name:SEED[i][0],hint:SEED[i][1],order:i,created:Date.now()+i})}
+async function loadPages(){pages={};
+ try{
+  if(store.db){
+   var snap=await store.db.collection("pages").get();
+   snap.docs.forEach(function(d){if(d.exists)pages[d.id]=Object.assign({id:d.id},clone(d.data()))});
+   if(!Object.keys(pages).length){var m=await store.db.doc("meta/state").get();if(!m.exists){await seedPages();await store.db.doc("meta/state").set({seeded:true})}}
+  }else{
+   var o=lsGet();
+   if(o){Object.keys(o.pages||{}).forEach(function(k){var p=o.pages[k];pages[k]={id:k,name:p.name,hint:p.hint,order:p.order,created:p.created}})}
+   else await seedPages()
+  }
+ }catch(e){}}
+async function loadPosts(pid){
+ if(store.db){var s=await store.db.collection("pages/"+pid+"/posts").get();
+  return s.docs.filter(function(d){return d.exists}).map(function(d){return Object.assign({id:d.id},clone(d.data()))}).sort(function(a,b){return a.ts-b.ts})}
+ var o=lsGet()||{pages:{}};return ((o.pages[pid]||{}).posts||[]).slice()}
+async function addPost(pid,post){
+ var id=newId(),rec={ts:Date.now(),text:post.text||""};
+ if(post.aid)rec.aid=post.aid;if(post.src)rec.src=post.src;
+ if(store.db)await store.db.doc("pages/"+pid+"/posts/"+id).set(rec);
+ else{var o=lsGet()||{pages:{}},pg=o.pages[pid];if(!pg)throw new Error("missing");pg.posts=pg.posts||[];pg.posts.push(Object.assign({id:id},rec));lsPut(o)}
+ return Object.assign({id:id},rec)}
+async function delPost(pid,id){
+ if(store.db)await store.db.doc("pages/"+pid+"/posts/"+id).delete();
+ else{var o=lsGet();if(o&&o.pages[pid]){o.pages[pid].posts=(o.pages[pid].posts||[]).filter(function(p){return p.id!==id});lsPut(o)}}}
+async function delPage(pid){
+ if(store.db){var s=await store.db.collection("pages/"+pid+"/posts").get();
+  for(var i=0;i<s.docs.length;i++)await store.db.doc("pages/"+pid+"/posts/"+s.docs[i].id).delete();
+  await store.db.doc("pages/"+pid).delete()}
+ else{var o=lsGet();if(o){delete o.pages[pid];lsPut(o)}}
+ delete pages[pid]}
+function postWhen(ts){var d=new Date(ts);return d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+", "+d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}
+function renderFeed(){var el=$("feed");if(!el)return;
+ if(!feedPosts.length){el.innerHTML='<p class="hint">Nothing here yet. Post your first one below.</p>';return}
+ el.innerHTML=feedPosts.map(function(p){var src=p.src||(p.aid?blobUrl(p.aid):"");
+  return '<article class="post"><div class="pmeta"><span>'+esc(postWhen(p.ts))+'</span><button class="x" type="button" data-del="'+esc(p.id)+'" aria-label="Delete post">✕</button></div>'+
+   (p.text?'<div class="ptxt">'+esc(p.text)+'</div>':'')+(src?'<img alt="Posted screenshot" src="'+esc(src)+'">':'')+'</article>'}).join("")}
+function renderPrev(){var el=$("pprev");if(!el)return;
+ el.innerHTML=pend?'<img alt="Image to post" src="'+pend+'"><button class="x show" type="button" data-rm="1" aria-label="Remove image">Remove image</button>':""}
+async function composerAdd(files){if(!files||!files.length)return;
+ for(var i=0;i<files.length;i++){if(/^image\//.test(files[i].type)){try{pend=await shrink(files[i],1400);renderPrev();toast("Image added. Press Post.")}catch(e){toast("Could not read that image")}return}}}
+async function showPage(pid){var pg=pages[pid];if(!pg){showStudio();return}
+ curPage=pid;curDate="";pend=null;feedPosts=[];
+ $("studio").hidden=true;$("entry").hidden=true;$("navstudio").classList.remove("on");
+ var el=$("pagev");el.hidden=false;
+ el.innerHTML='<div class="phead"><input id="pgname" class="pgname" maxlength="40" aria-label="Page name"><button id="pgdel" type="button">Delete page</button></div>'+
+  '<div id="feed" class="feed"><p class="hint">Loading...</p></div>'+
+  '<div class="composer"><div id="pprev"></div><textarea id="ptext" maxlength="4000" aria-label="Write a post" placeholder="'+esc(pg.hint||"Write something")+'"></textarea>'+
+  '<div class="row"><button class="primary" id="ppost" type="button">Post</button><button id="pfile" type="button">Add image</button><input id="pimg" type="file" accept="image/*" hidden><span class="hint" style="margin:0">Ctrl+V (Cmd+V on Mac) pastes a screenshot. Ctrl+Enter posts.</span></div></div>';
+ $("pgname").value=pg.name;renderSide();window.scrollTo(0,0);
+ try{feedPosts=await loadPosts(pid)}catch(e){toast("Could not load this page")}
+ if(curPage!==pid)return;
+ renderFeed();var t=$("ptext");if(t)t.focus()}
+async function doPost(){var t=$("ptext").value.trim();if(!t&&!pend){toast("Write something or paste an image first");return}
+ var btn=$("ppost"),pid=curPage;btn.disabled=true;
+ try{var post={text:t};
+  if(pend){
+   if(store.db){if(store.assets){try{post.aid=(await store.assets.upload(dataToBlob(pend),{type:"image/jpeg"})).id}catch(e){toast("The image could not be saved")}}else toast("Image storage is unavailable here")}
+   else post.src=pend}
+  var rec=await addPost(pid,post);
+  if(curPage===pid){feedPosts.push(rec);$("ptext").value="";pend=null;renderPrev();renderFeed();var f=$("feed");if(f&&f.lastElementChild)f.lastElementChild.scrollIntoView({block:"nearest"})}
+ }catch(e){toast(e&&e.code==="quota_exceeded"?"Storage is full":"Could not post")}
+ finally{btn.disabled=false}}
+async function createPage(){var inp=$("newpg"),name=inp.value.trim();if(!name)return;
+ var mx=-1;Object.keys(pages).forEach(function(k){if(pages[k].order>mx)mx=pages[k].order});
+ var p={id:newId(),name:name.slice(0,40),hint:"Write something",order:mx+1,created:Date.now()};
+ try{await putPage(p);inp.value="";$("addrow").hidden=true;renderSide();showPage(p.id)}catch(e){toast("Could not add the page")}}
+function sortedPages(){return Object.keys(pages).map(function(k){return pages[k]}).sort(function(a,b){return (a.order-b.order)||(a.created-b.created)})}
+async function applyOrder(arr){var changed=[];
+ arr.forEach(function(p,i){if(pages[p.id].order!==i){pages[p.id].order=i;changed.push(p.id)}});
+ renderSide();
+ try{for(var i=0;i<changed.length;i++)await putPage(pages[changed[i]])}catch(e){toast("Could not save the new order")}}
+function movePage(id,dir){var arr=sortedPages(),i=arr.findIndex(function(p){return p.id===id}),j=i+dir;if(i<0||j<0||j>=arr.length)return;
+ var t=arr[i];arr[i]=arr[j];arr[j]=t;applyOrder(arr)}
+function movePageTo(from,to){if(!from||from===to)return;var arr=sortedPages(),fi=arr.findIndex(function(p){return p.id===from}),ti=arr.findIndex(function(p){return p.id===to});
+ if(fi<0||ti<0)return;var m=arr.splice(fi,1)[0];arr.splice(ti,0,m);applyOrder(arr)}
+function gripEl(id,name){var g=document.createElement("button");g.type="button";g.className="grip";g.dataset.id=id;
+ g.setAttribute("aria-label","Drag to reorder "+name+". Arrow keys move it up or down.");
+ g.innerHTML='<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+ g.addEventListener("keydown",function(e){if(e.key==="ArrowUp"||e.key==="ArrowDown"){e.preventDefault();movePage(id,e.key==="ArrowUp"?-1:1);var n=$("pglist").querySelector('.grip[data-id="'+id+'"]');if(n)n.focus()}});
+ g.addEventListener("pointerdown",function(e){if(e.button>0)return;e.preventDefault();
+  var row=g.closest(".navrow"),rows=[].slice.call($("pglist").querySelectorAll(".navrow")),from=rows.indexOf(row),target=from;
+  try{g.setPointerCapture(e.pointerId)}catch(_){}
+  row.classList.add("dragging");document.body.classList.add("grabbing");
+  function clear(){rows.forEach(function(r){r.classList.remove("drop-before","drop-after")})}
+  function move(ev){var others=rows.filter(function(r){return r!==row}),m=0;
+   others.forEach(function(r){var b=r.getBoundingClientRect();if(ev.clientY>b.top+b.height/2)m++});
+   target=m;clear();if(m<others.length)others[m].classList.add("drop-before");else if(others.length)others[others.length-1].classList.add("drop-after")}
+  function end(ev){g.removeEventListener("pointermove",move);g.removeEventListener("pointerup",end);g.removeEventListener("pointercancel",end);
+   row.classList.remove("dragging");document.body.classList.remove("grabbing");clear();
+   if(ev.type==="pointerup"&&target!==from){var arr=sortedPages();if(arr[target])movePageTo(id,arr[target].id)}}
+  g.addEventListener("pointermove",move);g.addEventListener("pointerup",end);g.addEventListener("pointercancel",end)});
+ return g}
+/* Yearly P&L */
+var settings={bal:{}},pnlYear=0,SKEY="stockspot-settings-v1",pfFocus=null;
+async function loadSettings(){try{
+ if(store.db){var s=await store.db.doc("meta/settings").get();if(s.exists)settings=Object.assign({bal:{}},clone(s.data()))}
+ else{var o=JSON.parse(localStorage.getItem(SKEY)||"null");if(o)settings=Object.assign({bal:{}},o)}
+ if(!settings.bal)settings.bal={}}catch(e){}}
+async function saveSettings(){try{if(store.db)await store.db.doc("meta/settings").set(settings);else localStorage.setItem(SKEY,JSON.stringify(settings))}catch(e){toast("Could not save that")}}
+function fmtPct(v){return v==null?"-":(v>0?"+":"")+v.toFixed(2)+"%"}
+function dailyPnl(){var seen={},map={};
+ Object.keys(entries).forEach(function(k){(entries[k].trades||[]).forEach(function(t){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(t.d||"")||typeof t.p!=="number")return;
+  var key=[t.t,t.s,t.d,t.tm||"",t.ot||"",t.q,t.p.toFixed(4)].join("|");if(seen[key])return;seen[key]=1;
+  var m=map[t.d]||(map[t.d]={d:t.d,pnl:0,n:0});m.pnl+=t.p;m.n++})});
+ return Object.keys(map).sort().map(function(k){return map[k]})}
+function yearsOf(days){var s={};days.forEach(function(r){s[r.d.slice(0,4)]=1});return Object.keys(s).sort()}
+function pickYear(days){if(pnlYear)return pnlYear;var cy=String(new Date().getFullYear()),ys=yearsOf(days);return +(ys.indexOf(cy)>-1?cy:ys.length?ys[ys.length-1]:cy)}
+function pnlModel(days,yr){var bal=+settings.bal[yr]||0,cum=0,rows=[],w=0,l=0,best=null,worst=null;
+ days.filter(function(r){return r.d.slice(0,4)===String(yr)}).forEach(function(r){
+  var base=bal+cum,pct=(bal>0&&base>0)?r.pnl/base*100:null;cum+=r.pnl;
+  var row={d:r.d,n:r.n,pnl:r.pnl,pct:pct,cum:cum,cumPct:bal>0?cum/bal*100:null};rows.push(row);
+  if(r.pnl>0)w++;else if(r.pnl<0)l++;
+  if(!best||r.pnl>best.pnl)best=row;if(!worst||r.pnl<worst.pnl)worst=row});
+ return {yr:yr,bal:bal,rows:rows,total:cum,totalPct:bal>0?cum/bal*100:null,w:w,l:l,best:best,worst:worst,avg:rows.length?cum/rows.length:0}}
+function renderPnl(){var el=$("pnlcard");if(!el)return;
+ var days=dailyPnl(),yr=pickYear(days),m=pnlModel(days,yr),head='<button class="plbtn" id="pnlopen" type="button" aria-label="Open yearly P&amp;L full screen"><span class="pl-lab"><span>'+yr+' P&amp;L</span><span aria-hidden="true">⤢</span></span>';
+ if(!m.rows.length)el.innerHTML=head+'<b>$0.00</b><span class="pl-sub">Save a day to start your year</span></button>';
+ else{var up=m.total>=0;
+  el.innerHTML=head+'<b class="'+(up?"gain":"loss")+'">'+sgn(m.total)+'</b><span class="pl-sub">'+(m.totalPct==null?"":fmtPct(m.totalPct)+", ")+m.rows.length+(m.rows.length===1?" day":" days")+'</span>'+sparkline([0].concat(m.rows.map(function(r){return r.cum})),up)+'</button>'}
+ if(!$("pnlfull").hidden)renderPnlFull()}
+function chartCum(rows){if(!rows.length)return "";
+ var pts=[0].concat(rows.map(function(r){return r.cum})),W=800,H=240,L=64,R=12,T=12,B=26,mn=Math.min.apply(null,pts),mx=Math.max.apply(null,pts);if(mn===mx){mn-=1;mx+=1}
+ var X=function(i){return L+(W-L-R)*i/(pts.length-1)},Y=function(v){return T+(H-T-B)*(1-(v-mn)/(mx-mn))};
+ var d=pts.map(function(v,i){return (i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)}).join(" "),col="var(--"+(pts[pts.length-1]>=0?"gain":"loss")+")";
+ var zero=(mn<0&&mx>0)?'<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(0).toFixed(1)+'" y2="'+Y(0).toFixed(1)+'" stroke="var(--line)" stroke-dasharray="4 4"/>':"";
+ var dots=rows.map(function(r,i){return '<circle cx="'+X(i+1).toFixed(1)+'" cy="'+Y(r.cum).toFixed(1)+'" r="3.5" fill="'+col+'"><title>'+esc(dayLabel(r.d))+': '+money(r.cum)+' total</title></circle>'}).join("");
+ return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Cumulative P&amp;L for the year">'+zero+
+  '<text x="'+(L-6)+'" y="'+(Y(mx)+4)+'" text-anchor="end" font-size="12" fill="var(--mute)">'+money(Math.round(mx))+'</text>'+
+  '<text x="'+(L-6)+'" y="'+(Y(mn)+4)+'" text-anchor="end" font-size="12" fill="var(--mute)">'+money(Math.round(mn))+'</text>'+
+  '<text x="'+L+'" y="'+(H-6)+'" font-size="12" fill="var(--mute)">Start</text><text x="'+(W-R)+'" y="'+(H-6)+'" text-anchor="end" font-size="12" fill="var(--mute)">'+esc(dayLabel(rows[rows.length-1].d))+'</text>'+
+  '<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="2.5" stroke-linejoin="round"/>'+dots+'</svg>'}
+function chartDaily(rows){var n=rows.length;if(!n)return "";
+ var W=800,H=200,L=64,R=12,T=12,B=26,vals=rows.map(function(r){return r.pnl}),mx=Math.max.apply(null,vals.concat([0])),mn=Math.min.apply(null,vals.concat([0]));if(mx===mn)mx=1;
+ var Y=function(v){return T+(H-T-B)*(1-(v-mn)/(mx-mn))},bw=(W-L-R)/n,w=Math.max(2,Math.min(40,bw*0.7)),z=Y(0);
+ var bars=rows.map(function(r,i){var y=Math.min(Y(r.pnl),z),h=Math.max(1,Math.abs(Y(r.pnl)-z));
+  return '<rect x="'+(L+bw*i+(bw-w)/2).toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" fill="var(--'+(r.pnl>=0?"gain":"loss")+')"><title>'+esc(dayLabel(r.d))+': '+sgn(r.pnl)+'</title></rect>'}).join("");
+ return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Daily P&amp;L bars"><line x1="'+L+'" x2="'+(W-R)+'" y1="'+z.toFixed(1)+'" y2="'+z.toFixed(1)+'" stroke="var(--line)"/>'+
+  '<text x="'+(L-6)+'" y="'+(Y(mx)+4)+'" text-anchor="end" font-size="12" fill="var(--mute)">'+money(Math.round(mx))+'</text>'+
+  '<text x="'+(L-6)+'" y="'+(Y(mn)+4)+'" text-anchor="end" font-size="12" fill="var(--mute)">'+money(Math.round(mn))+'</text>'+
+  '<text x="'+L+'" y="'+(H-6)+'" font-size="12" fill="var(--mute)">'+esc(dayLabel(rows[0].d))+'</text><text x="'+(W-R)+'" y="'+(H-6)+'" text-anchor="end" font-size="12" fill="var(--mute)">'+esc(dayLabel(rows[n-1].d))+'</text>'+bars+'</svg>'}
+function renderPnlFull(){var el=$("pnlfull"),days=dailyPnl(),yrs=yearsOf(days),yr=pickYear(days);
+ if(yrs.indexOf(String(yr))<0){yrs.push(String(yr));yrs.sort()}
+ var m=pnlModel(days,yr),t=function(v,l,c){return '<div class="t"><b'+(c?' class="'+c+'"':'')+'>'+v+'</b><span>'+l+'</span></div>'};
+ var h='<div class="pf-in"><div class="pf-head"><h2 class="pf-title">Yearly P&amp;L</h2><div class="pf-ctl">'+
+  '<label>Year<select id="pfyear">'+yrs.map(function(y){return '<option'+(String(y)===String(yr)?' selected':'')+'>'+y+'</option>'}).join("")+'</select></label>'+
+  '<label>Starting balance ($)<input id="pfbal" inputmode="decimal" value="'+(m.bal||"")+'" placeholder="for % returns" aria-label="Starting balance for '+yr+'"></label>'+
+  '<button class="primary" id="pfclose" type="button">Close</button></div></div>';
+ if(!m.rows.length){el.innerHTML=h+'<p class="hint">No saved days in '+yr+' yet. Generate something or press "Save day to Publishes" in Studio, and each day counts here.</p></div>';return}
+ h+='<div class="ss">'+t(sgn(m.total)+(m.totalPct==null?"":" ("+fmtPct(m.totalPct)+")"),yr+" P&amp;L",m.total>=0?"gain":"loss")+
+  t(m.rows.length,"Trading days")+t(m.w+" green / "+m.l+" red","Days")+
+  t(sgn(m.best.pnl),"Best day, "+esc(dayLabel(m.best.d)),"gain")+t(sgn(m.worst.pnl),"Worst day, "+esc(dayLabel(m.worst.d)),m.worst.pnl<0?"loss":"")+t(sgn(m.avg),"Average per day",m.avg>=0?"gain":"loss")+'</div>';
+ if(!m.bal)h+='<p class="ssnote">Enter your starting balance for '+yr+' to see percent returns.</p>';
+ h+='<h3>Cumulative P&amp;L</h3>'+chartCum(m.rows)+'<h3>Daily P&amp;L</h3>'+chartDaily(m.rows)+
+  '<h3>Days</h3><div class="scroll"><table><thead><tr><th>Day</th><th class="n">Trades</th><th class="n">P&amp;L $</th><th class="n">P&amp;L %</th><th class="n">Running $</th><th class="n">Running %</th></tr></thead><tbody>'+
+  m.rows.slice().reverse().map(function(r){var c=r.pnl>=0?"gain":"loss";return '<tr><td>'+esc(dayLabel(r.d))+'</td><td class="n">'+r.n+'</td><td class="n '+c+'">'+sgn(r.pnl)+'</td><td class="n '+c+'">'+fmtPct(r.pct)+'</td><td class="n">'+sgn(r.cum)+'</td><td class="n">'+fmtPct(r.cumPct)+'</td></tr>'}).join("")+
+  '</tbody></table></div><p class="ssnote">Daily % is the day\'s P&amp;L divided by your balance at the start of that day. Based on days saved in Publishes. Self-reported.</p></div>';
+ el.innerHTML=h}
+function openPnl(){pfFocus=document.activeElement;$("pnlfull").hidden=false;document.body.style.overflow="hidden";renderPnlFull();var c=$("pfclose");if(c)c.focus()}
+function closePnl(){$("pnlfull").hidden=true;document.body.style.overflow="";var b=$("pnlopen")||pfFocus;if(b&&b.focus)b.focus()}
+$("pnlcard").addEventListener("click",function(ev){if(ev.target.closest&&ev.target.closest("#pnlopen"))openPnl()});
+$("pnlfull").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("button");if(b&&b.id==="pfclose")closePnl()});
+$("pnlfull").addEventListener("change",function(ev){var t=ev.target;
+ if(t.id==="pfyear"){pnlYear=+t.value;renderPnl();return}
+ if(t.id==="pfbal"){var v=num(t.value),yr=pickYear(dailyPnl());settings.bal[yr]=(isNaN(v)||v<=0)?0:v;saveSettings();renderPnl()}});
+document.addEventListener("keydown",function(ev){if($("pnlfull").hidden)return;
+ if(ev.key==="Escape"){ev.preventDefault();closePnl();return}
+ if(ev.key==="Tab"){var f=$("pnlfull").querySelectorAll("button,select,input"),a=f[0],z=f[f.length-1];
+  if(!f.length)return;if(ev.shiftKey&&document.activeElement===a){ev.preventDefault();z.focus()}else if(!ev.shiftKey&&document.activeElement===z){ev.preventDefault();a.focus()}}});
+$("addpg").addEventListener("click",function(){var r=$("addrow");r.hidden=!r.hidden;if(!r.hidden)$("newpg").focus()});
+$("newpgok").addEventListener("click",createPage);
+$("newpg").addEventListener("keydown",function(ev){if(ev.key==="Enter"){ev.preventDefault();createPage()}if(ev.key==="Escape")$("addrow").hidden=true});
+$("pagev").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
+ if(b.id==="ppost"){doPost();return}
+ if(b.id==="pfile"){$("pimg").click();return}
+ if(b.dataset.rm){pend=null;renderPrev();return}
+ if(b.id==="pgdel"){confirmTwice(b,"Click again to delete this page",async function(){var id=curPage;try{await delPage(id);showStudio();toast("Page deleted")}catch(e){toast("Could not delete")}});return}
+ if(b.dataset.del){var pid=curPage,id2=b.dataset.del;confirmTwice(b,"Delete?",async function(){try{await delPost(pid,id2);feedPosts=feedPosts.filter(function(p){return p.id!==id2});if(curPage===pid)renderFeed()}catch(e){toast("Could not delete")}})}});
+$("pagev").addEventListener("change",function(ev){var t=ev.target;
+ if(t.id==="pimg"){composerAdd(t.files);t.value="";return}
+ if(t.id==="pgname"&&pages[curPage]){var v=t.value.trim()||pages[curPage].name;t.value=v;var p=Object.assign({},pages[curPage],{name:v});putPage(p).then(renderSide,function(){toast("Could not rename")})}});
+$("pagev").addEventListener("keydown",function(ev){if(ev.target.id==="ptext"&&ev.key==="Enter"&&(ev.ctrlKey||ev.metaKey)){ev.preventDefault();doPost()}});
+restore();loadImgs();showStats();renderImgs();initStore();
+})();
+</script>
 </body>
 </html>
