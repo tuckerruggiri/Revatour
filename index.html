@@ -143,9 +143,9 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
     <input type="file" id="file" accept=".csv,text/csv" aria-label="Upload trades CSV">
     <label class="hint" style="display:block;margin-top:10px">How to count trades from fills
       <select id="grouping" style="display:block;margin-top:6px;max-width:100%">
-        <option value="exit">Every exit order is a trade (each sell of a long, each buy that covers a short)</option>
+        <option value="grouped" selected>Group scale-ins and scale-outs into one trade until you are flat (recommended)</option>
         <option value="entry">One trade per entry (each buy or short matched to your exits in order)</option>
-        <option value="grouped">Group scale-ins and scale-outs into one trade until you are flat</option>
+        <option value="exit">Every exit order is a trade (each sell of a long, each buy that covers a short)</option>
       </select></label>
     <details style="margin-top:12px"><summary>Or paste rows copied from thinkorswim (include the header row)</summary>
       <textarea id="paste" aria-label="Pasted trade history" style="margin-top:8px" placeholder="Exec Time, Spread, Side, Qty, Pos Effect, Symbol, ..."></textarea>
