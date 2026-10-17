@@ -141,6 +141,12 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
     <h2>Step 1: Upload your trades</h2>
     <p class="hint">Upload a CSV. A thinkorswim Account Statement export works: individual fills are paired into round-trip trades (longs and shorts) and P&amp;L is calculated for you. Other CSVs need columns like symbol, side, quantity, entry, exit, date, P&amp;L.</p>
     <input type="file" id="file" accept=".csv,text/csv" aria-label="Upload trades CSV">
+    <label class="hint" style="display:block;margin-top:10px">How to count trades from fills
+      <select id="grouping" style="display:block;margin-top:6px;max-width:100%">
+        <option value="grouped" selected>Group scale-ins and scale-outs into one trade until you are flat (recommended)</option>
+        <option value="entry">One trade per entry (each buy or short matched to your exits in order)</option>
+        <option value="exit">Every exit order is a trade (each sell of a long, each buy that covers a short)</option>
+      </select></label>
     <details style="margin-top:12px"><summary>Or paste rows copied from thinkorswim (include the header row)</summary>
       <textarea id="paste" aria-label="Pasted trade history" style="margin-top:8px" placeholder="Exec Time, Spread, Side, Qty, Pos Effect, Symbol, ..."></textarea>
       <div class="row"><button id="pastego" type="button">Import pasted rows</button></div></details>
@@ -222,20 +228,49 @@ function num(v){if(v==null)return NaN;var s=String(v).trim(),neg=/^\(.*\)$/.test
 function tsOf(s){var m=/(\d{1,2})\/(\d{1,2})\/(\d{2,4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/.exec(s||"");if(!m)return NaN;var y=+m[3];if(y<100)y+=2000;return Date.UTC(y,+m[1]-1,+m[2],+(m[4]||0),+(m[5]||0),+(m[6]||0))}
 function isoOf(s){var m=/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/.exec(s||"");if(!m)return s||"";var y=+m[3];if(y<100)y+=2000;return y+"-"+("0"+m[1]).slice(-2)+"-"+("0"+m[2]).slice(-2)}
 function timeOf(s){var m=/(\d{1,2}:\d{2}(?::\d{2})?)\s*$/.exec((s||"").trim());return m?m[1]:""}
-function importTOS(rows){
+function importTOS(rows,mode){var split=(mode==="entry");
  var nm2=function(x){return x.toLowerCase().replace(/[^a-z0-9]/g,"")},hi=-1,k,H;
  for(k=0;k<Math.min(rows.length,500);k++){H=rows[k].map(nm2);if(H.indexOf("exectime")>-1&&H.indexOf("poseffect")>-1&&H.indexOf("symbol")>-1){hi=k;break}}
  if(hi<0)return null;
- var ix={t:H.indexOf("exectime"),sd:H.indexOf("side"),q:H.indexOf("qty"),pe:H.indexOf("poseffect"),s:H.indexOf("symbol"),ex:H.indexOf("exp"),st:H.indexOf("strike"),ty:H.indexOf("type"),np:H.indexOf("netprice"),p:H.indexOf("price")};
+ var ix={ot:H.indexOf("ordertype"),t:H.indexOf("exectime"),sd:H.indexOf("side"),q:H.indexOf("qty"),pe:H.indexOf("poseffect"),s:H.indexOf("symbol"),ex:H.indexOf("exp"),st:H.indexOf("strike"),ty:H.indexOf("type"),np:H.indexOf("netprice"),p:H.indexOf("price")};
  if(ix.sd<0||ix.q<0)return null;
  var fills=[],skip=0;
  for(k=hi+1;k<rows.length;k++){var r=rows[k];if(!/\d{1,2}\/\d{1,2}\/\d{2,4}/.test(r[ix.t]||""))break;
   var g=function(i){return i<0?"":(r[i]||"").trim()};
   var pr=num(g(ix.np>-1?ix.np:ix.p)),q=Math.abs(num(g(ix.q)));
   if(isNaN(pr)||isNaN(q)||!g(ix.s)){skip++;continue}
-  fills.push({ts:tsOf(r[ix.t]),raw:r[ix.t],buy:/buy/i.test(g(ix.sd)),open:/open/i.test(g(ix.pe)),sym:g(ix.s).toUpperCase(),key:[g(ix.s),g(ix.ex),g(ix.st),g(ix.ty)].join("|"),mult:g(ix.ex)?100:1,q:q,p:pr,seq:k})}
+  fills.push({ts:tsOf(r[ix.t]),raw:r[ix.t],buy:/buy/i.test(g(ix.sd)),open:/open/i.test(g(ix.pe)),sym:g(ix.s).toUpperCase(),key:[g(ix.s),g(ix.ex),g(ix.st),g(ix.ty)].join("|"),mult:g(ix.ex)?100:1,q:q,p:pr,ordt:g(ix.ot),seq:k})}
  fills.sort(function(a,b){return (a.ts-b.ts)||((b.open?1:0)-(a.open?1:0))||(a.seq-b.seq)});
  var S={},out=[];
+ if(mode==="exit"){
+  var lastG={};
+  fills.forEach(function(f){if(f.open)return;var gk=f.key+"|"+f.buy+"|"+f.p+"|"+f.ordt,g=lastG[gk];
+   if(g&&f.ts-g.last<=2000){f.gid=g.id;g.last=f.ts}else{var id=f.seq;lastG[gk]={id:id,last:f.ts};f.gid=id}});
+  var G={};
+  fills.forEach(function(f){
+   var dir=f.open?(f.buy?1:-1):(f.buy?-1:1),id=f.key+"|"+dir,s=S[id]||(S[id]={dir:dir,oq:0,avg:0,tot:0,ot:""});
+   if(f.open){if(!s.oq)s.ot=timeOf(f.raw);s.avg=(s.avg*s.oq+f.p*f.q)/(s.oq+f.q);s.oq+=f.q;return}
+   var m=Math.min(f.q,s.oq);if(m<=0){skip++;return}
+   if(f.q>m)skip++;
+   var g=G[f.gid]||(G[f.gid]={t:f.sym,s:dir>0?"Long":"Short",q:0,ec:0,xc:0,p:0,ot:s.ot,d:isoOf(f.raw),tm:timeOf(f.raw),ts:f.ts});
+   g.q+=m;g.ec+=s.avg*m;g.xc+=f.p*m;g.p+=(f.p-s.avg)*m*dir*f.mult;g.tm=timeOf(f.raw);
+   s.oq-=m;if(s.oq<=1e-9){s.oq=0;s.avg=0}});
+  Object.keys(G).forEach(function(k){var g=G[k];out.push({t:g.t,s:g.s,q:g.q,e:g.ec/g.q,x:g.xc/g.q,d:g.d,tm:g.tm,ot:g.ot,u:"",n:"",p:g.p,ts:g.ts})});
+  out.sort(function(a,b){return a.ts-b.ts});out.forEach(function(o){delete o.ts});
+  var left=0;Object.keys(S).forEach(function(k){if(S[k].oq>1e-9)left++});
+  return {n:out.length,skipped:skip,trades:out,hdr:"thinkorswim Trade History",tos:true,mode:"exit",openLeft:left}}
+ if(split){var L={};
+  fills.forEach(function(f){
+   var dir=f.open?(f.buy?1:-1):(f.buy?-1:1),id=f.key+"|"+dir,ls=L[id]||(L[id]=[]);
+   if(f.open){ls.push({q:f.q,p:f.p,rem:f.q,cq:0,cv:0,ot:timeOf(f.raw),dir:dir,sym:f.sym,mult:f.mult});return}
+   var left=f.q;
+   while(left>1e-9&&ls.length&&ls[0].rem>1e-9){var l=ls[0],m=Math.min(left,l.rem);
+    l.rem-=m;l.cq+=m;l.cv+=f.p*m;left-=m;
+    if(l.rem<=1e-9){ls.shift();out.push({t:l.sym,s:l.dir>0?"Long":"Short",q:l.q,e:l.p,x:l.cv/l.cq,d:isoOf(f.raw),tm:timeOf(f.raw),ot:l.ot,u:"",n:"",p:(l.cv/l.cq-l.p)*l.q*l.dir*l.mult})}}
+   if(left>1e-9)skip++});
+  var open=0;Object.keys(L).forEach(function(k){open+=L[k].length});
+  out.sort(function(a,b){return (a.d+" "+a.tm)<(b.d+" "+b.tm)?-1:1});
+  return {n:out.length,skipped:skip,trades:out,hdr:"thinkorswim Trade History",tos:true,mode:"entry",openLeft:open}}
  fills.forEach(function(f){
   var dir=f.open?(f.buy?1:-1):(f.buy?-1:1),id=f.key+"|"+dir,s=S[id]||(S[id]={dir:dir,oq:0,avg:0,tot:0,cost:0,cq:0,cv:0,pnl:0});
   if(f.open){if(!s.tot)s.ot=timeOf(f.raw);s.avg=(s.avg*s.oq+f.p*f.q)/(s.oq+f.q);s.oq+=f.q;s.tot+=f.q;s.cost+=f.p*f.q;return}
@@ -243,11 +278,11 @@ function importTOS(rows){
   if(f.q>m)skip++;
   s.pnl+=(f.p-s.avg)*m*s.dir*f.mult;s.cq+=m;s.cv+=f.p*m;s.oq-=m;
   if(s.oq<=1e-9){out.push({t:f.sym,s:s.dir>0?"Long":"Short",q:s.tot,e:s.cost/s.tot,x:s.cv/s.cq,d:isoOf(f.raw),tm:timeOf(f.raw),ot:s.ot||"",u:"",n:"",p:s.pnl});delete S[id]}});
- return {n:out.length,skipped:skip,trades:out,hdr:"thinkorswim Trade History",tos:true,openLeft:Object.keys(S).length}}
-function importCSV(text){
+ return {n:out.length,skipped:skip,trades:out,hdr:"thinkorswim Trade History",tos:true,mode:"grouped",openLeft:Object.keys(S).length}}
+function importCSV(text,mode){
  var head=text.slice(0,3000),D=((head.match(/\t/g)||[]).length>(head.match(/,/g)||[]).length)?"\t":",";
  var rows=parseCSV(text,D);if(rows.length<2){return {n:0,skipped:0,err:"The file needs a header row and at least one trade."}}
- var tos=importTOS(rows);if(tos)return tos;
+ var tos=importTOS(rows,mode);if(tos)return tos;
  var nm=function(x){return x.toLowerCase().replace(/[^a-z0-9]/g,"")},hi=0,k0;
  for(k0=0;k0<Math.min(rows.length,80);k0++){if(rows[k0].some(function(x){return MAP.sym.indexOf(nm(x))>-1})){hi=k0;break}}
  rows=rows.slice(hi);
@@ -273,13 +308,15 @@ function showStats(){
  if(!s.n){el.hidden=true;$("tstatus").textContent="No trades loaded.";return}
  $("tstatus").textContent=s.n+" trades loaded.";el.hidden=false;
  el.innerHTML='<div class="stat"><b class="'+(s.net>=0?"gain":"loss")+'">'+money(s.net)+'</b><span>Net P&amp;L</span></div><div class="stat"><b>'+Math.round(s.wr*100)+'%</b><span>Win rate</span></div><div class="stat"><b>'+(s.pf===Infinity?"n/a":s.pf.toFixed(2))+'</b><span>Profit factor</span></div><div class="stat"><b class="loss">'+money(-s.dd)+'</b><span>Max drawdown</span></div>'}
+var lastText="";
+$("grouping").addEventListener("change",function(){if(!lastText)return;var r=importCSV(lastText,this.value);if(r.err||!r.n)return;setTrades(r.trades,r.n+" trades");note(r)});
 function note(r){var ts=$("tstatus");
- if(r.tos){ts.textContent+=" Built from individual fills into round-trip trades. P&L is before commissions and fees."+(r.skipped?" "+r.skipped+" fills skipped because no matching open was in the file.":"")+(r.openLeft?" "+r.openLeft+" open position(s) not counted.":"")}
+ if(r.tos){ts.textContent+=" Built from individual fills into round-trip trades ("+({exit:"one per exit order",entry:"one per entry",grouped:"grouped until flat"}[r.mode]||"grouped until flat")+"). P&L is before commissions and fees."+(r.skipped?" "+r.skipped+" fills skipped because no matching open was in the file.":"")+(r.openLeft?" "+r.openLeft+" open position(s) not counted.":"")}
  else if(r.skipped)ts.textContent+=" "+r.skipped+" rows skipped (missing symbol or P&L)."}
 function setTrades(arr,msg){trades=arr;showStats();persist();renderImgs();if(msg)toast(msg)}
 $("file").addEventListener("change",function(ev){
  var f=ev.target.files[0];if(!f)return;var rd=new FileReader();
- rd.onload=function(){var r=importCSV(String(rd.result));
+ rd.onload=function(){lastText=String(rd.result);var r=importCSV(lastText,$("grouping").value);
   if(r.err){$("tstatus").textContent=r.err;return}
   if(!r.n){$("tstatus").textContent="No trades could be read from this file. Each row needs a symbol plus either a P&L column or entry price, exit price and quantity. Columns found: "+r.hdr;ev.target.value="";return}
   setTrades(r.trades,r.n+" trades imported");note(r);ev.target.value=""};
@@ -289,7 +326,7 @@ $("demo").addEventListener("click",function(){
  setTrades(s.map(function(r){return {t:r[0],s:r[1],q:r[2],e:r[3],x:r[4],d:r[5],u:r[6],n:r[7],p:(r[4]-r[3])*r[2]*(r[1]==="Short"?-1:1)}}),"Sample trades loaded")});
 $("clear").addEventListener("click",function(){setTrades([],"Trades cleared")});
 $("pastego").addEventListener("click",function(){var t=$("paste").value;if(!t.trim()){$("tstatus").textContent="Paste the rows first, including the header row.";return}
- var r=importCSV(t);if(r.err){$("tstatus").textContent=r.err;return}
+ lastText=t;var r=importCSV(t,$("grouping").value);if(r.err){$("tstatus").textContent=r.err;return}
  if(!r.n){$("tstatus").textContent="No trades could be read from the pasted text.";return}
  setTrades(r.trades,r.n+" trades imported");note(r)});
 ids.forEach(function(i){$(i).addEventListener("input",persist)});
