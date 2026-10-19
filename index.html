@@ -118,6 +118,20 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 #pprev img{display:block;max-height:140px;width:auto;border-radius:6px;border:1px solid var(--line)}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:6px;opacity:0;pointer-events:none}
 #toast.on{opacity:1}
+
+.hm-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.hm-top .sub{margin:6px 0 0}
+.hm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0}
+.hm-tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.hm-tile b{display:block;font:800 1.45rem/1.1 "Bricolage Grotesque",sans-serif}
+.hm-tile span{color:var(--mute);font-size:.8rem}
+.hm-days{display:grid;gap:6px;margin-top:10px}
+.hm-day{display:flex;justify-content:space-between;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:9px 12px;font:inherit;cursor:pointer}
+.hm-day[disabled]{cursor:default;opacity:.85}
+.hm-day:hover:not([disabled]){border-color:var(--accent)}
+.hm-day small{color:var(--mute)}
+.coach-meta{color:var(--mute);font-size:.82rem;margin-top:10px}
+.hm-pages{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 </style>
 </head>
 <body>
@@ -126,14 +140,16 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <div class="brand">Stockspot</div>
   <div id="acct" style="display:flex;align-items:center;gap:8px;margin:2px 0 10px;font-size:.82rem;color:var(--mute)"><span id="whoami" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span><button id="logout" type="button" style="border:1px solid var(--line);background:none;color:var(--ink);border-radius:7px;padding:4px 9px;font:inherit;cursor:pointer">Log out</button></div>
   <div id="pnlcard"></div>
-  <button class="nav on" id="navstudio" type="button">Studio</button>
+  <button class="nav on" id="navhome" type="button">Home</button>
+  <button class="nav" id="navstudio" type="button">Studio</button>
   <div class="sechead"><span>Pages</span><button id="addpg" class="x show" type="button" aria-label="Add a page">+</button></div>
   <div id="addrow" hidden><input id="newpg" maxlength="40" placeholder="Page name" aria-label="New page name"><button id="newpgok" type="button">Add</button></div>
   <div id="pglist"></div>
   <button class="nav fold" id="navfold" type="button" aria-expanded="true"><span><span id="foldc">▾</span> Publishes</span><span id="foldn" class="badge"></span></button>
   <div id="pubs"></div>
 </aside>
-<div class="wrap" id="studio">
+<div class="wrap" id="home"><p class="hint">Loading your record...</p></div>
+<div class="wrap" id="studio" hidden>
   <h1>Stockspot Studio</h1>
   <p class="sub">Upload your trades and your material. Get a guru page, blog post, social posts, newsletter or book chapter written from your real record.</p>
 
@@ -507,7 +523,7 @@ async function initStore(){
   if(store.db){var snap=await store.db.collection("entries").get();snap.docs.forEach(function(d){if(d.exists)entries[d.id]=clone(d.data())})}
   else entries=JSON.parse(localStorage.getItem(KEYJ)||"{}")
  }catch(e){try{entries=JSON.parse(localStorage.getItem(KEYJ)||"{}")}catch(e2){entries={}}}
- await loadPages();await loadSettings();renderSide()}
+ await loadPages();await loadSettings();await loadCoach();renderSide();showHome()}
 async function putEntry(ent){
  if(store.db)await store.db.doc("entries/"+ent.date).set(ent);
  else{var all=JSON.parse(localStorage.getItem(KEYJ)||"{}");all[ent.date]=ent;localStorage.setItem(KEYJ,JSON.stringify(all))}
@@ -556,9 +572,9 @@ function renderSide(){
  if(!ds.length){var p2=document.createElement("p");p2.className="side-empty";p2.textContent="Nothing saved yet. Generate something or save a day and it appears here.";box.appendChild(p2);return}
  ds.forEach(function(d){box.appendChild(navRow(dayLabel(d),(entries[d].outputs||[]).length||"",d===curDate&&!$("entry").hidden,function(){renderEntry(d)},
   async function(){try{await delEntry(d)}catch(e){toast("Could not delete")}},"Delete "+dayLabel(d)))})}
-function showStudio(){$("studio").hidden=false;$("entry").hidden=true;$("pagev").hidden=true;curDate="";curPage="";$("navstudio").classList.add("on");renderSide()}
+function showStudio(){$("home").hidden=true;$("navhome").classList.remove("on");$("studio").hidden=false;$("entry").hidden=true;$("pagev").hidden=true;curDate="";curPage="";$("navstudio").classList.add("on");renderSide()}
 function renderEntry(date){var ent=entries[date];if(!ent){showStudio();return}
- curDate=date;curPage="";$("pagev").hidden=true;$("studio").hidden=true;var el=$("entry");el.hidden=false;$("navstudio").classList.remove("on");
+ curDate=date;curPage="";$("home").hidden=true;$("navhome").classList.remove("on");$("pagev").hidden=true;$("studio").hidden=true;var el=$("entry");el.hidden=false;$("navstudio").classList.remove("on");
  var outs=ent.outputs||[],top=withCtx(ent,entImgs(ent),function(){return {s:statsHTML(),g:galHTML()}});
  var h='<h1>'+esc(dayLabel(date))+'</h1><p class="sub">Saved in Publishes. '+outs.length+' generated '+(outs.length===1?'piece':'pieces')+'.</p>'+
   '<div class="row" style="margin:0 0 16px"><button id="eopen" type="button">Open in Studio</button><button id="edel" type="button">Delete this page</button></div>'+top.s;
@@ -641,7 +657,7 @@ async function composerAdd(files){if(!files||!files.length)return;
  for(var i=0;i<files.length;i++){if(/^image\//.test(files[i].type)){try{pend=await shrink(files[i],1400);renderPrev();toast("Image added. Press Post.")}catch(e){toast("Could not read that image")}return}}}
 async function showPage(pid){var pg=pages[pid];if(!pg){showStudio();return}
  curPage=pid;curDate="";pend=null;feedPosts=[];
- $("studio").hidden=true;$("entry").hidden=true;$("navstudio").classList.remove("on");
+ $("home").hidden=true;$("navhome").classList.remove("on");$("studio").hidden=true;$("entry").hidden=true;$("navstudio").classList.remove("on");
  var el=$("pagev");el.hidden=false;
  el.innerHTML='<div class="phead"><input id="pgname" class="pgname" maxlength="40" aria-label="Page name"><button id="pgdel" type="button">Delete page</button></div>'+
   '<div id="feed" class="feed"><p class="hint">Loading...</p></div>'+
@@ -781,6 +797,98 @@ $("pagev").addEventListener("change",function(ev){var t=ev.target;
  if(t.id==="pimg"){composerAdd(t.files);t.value="";return}
  if(t.id==="pgname"&&pages[curPage]){var v=t.value.trim()||pages[curPage].name;t.value=v;var p=Object.assign({},pages[curPage],{name:v});putPage(p).then(renderSide,function(){toast("Could not rename")})}});
 $("pagev").addEventListener("keydown",function(ev){if(ev.target.id==="ptext"&&ev.key==="Enter"&&(ev.ctrlKey||ev.metaKey)){ev.preventDefault();doPost()}});
+
+/* Home + AI coach */
+var coach=null,coachCtl=null,CKEY="stockspot-coach-v1";
+function allTrades(){var seen={},out=[];
+ Object.keys(entries).sort().forEach(function(k){(entries[k].trades||[]).forEach(function(t){
+  if(typeof t.p!=="number")return;
+  var key=[t.t,t.s,t.d,t.tm||"",t.ot||"",t.q,t.p.toFixed(4)].join("|");if(seen[key])return;seen[key]=1;out.push(t)})});
+ return out}
+function mins(x){var m=/^(\d{1,2}):(\d{2})/.exec(x||"");return m?(+m[1])*60+(+m[2]):null}
+function holdOf(t){var a=mins(t.ot),b=mins(t.tm);return(a==null||b==null||b<a)?null:b-a}
+function agg(arr,kf){var m={};arr.forEach(function(t){var k=kf(t);if(k==null||k==="")return;var o=m[k]||(m[k]={n:0,w:0,p:0});o.n++;o.p+=t.p;if(t.p>0)o.w++});return m}
+function aggLines(m,top){var ks=Object.keys(m).sort(function(a,b){return m[b].n-m[a].n}).slice(0,top||12);
+ return ks.map(function(k){var o=m[k];return "- "+k+": "+o.n+" trades, "+Math.round(o.w/o.n*100)+"% winners, net "+money(o.p)}).join("\n")}
+var WD=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+async function coachInput(){
+ var all=allTrades();if(!all.length)return null;
+ var s=withCtx({trades:all},[],stats),days=dailyPnl(),g=0,r=0,bd=null,wd=null;
+ days.forEach(function(d){if(d.pnl>0)g++;else if(d.pnl<0)r++;if(!bd||d.pnl>bd.pnl)bd=d;if(!wd||d.pnl<wd.pnl)wd=d});
+ var ord=all.slice().sort(function(a,b){return ((a.d||"")+" "+startOf(a))<((b.d||"")+" "+startOf(b))?-1:1});
+ var cur=0,mx=0;ord.forEach(function(t){if(t.p<0){cur++;if(cur>mx)mx=cur}else cur=0});
+ var hw=[],hl=[];all.forEach(function(t){var h=holdOf(t);if(h==null)return;(t.p>0?hw:hl).push(h)});
+ var avg=function(a){return a.length?(a.reduce(function(x,y){return x+y},0)/a.length):null};
+ var L=[];
+ L.push("OVERALL (all saved days)\n- "+s.n+" closed trades across "+days.length+" trading days"+(s.first?" ("+s.first+" to "+s.last+")":"")+"\n- Net P&L "+money(s.net)+" (before commissions and fees)\n- Win rate "+Math.round(s.wr*100)+"%, profit factor "+(s.pf===Infinity?"n/a":s.pf.toFixed(2))+"\n- Average win "+money(s.aw)+", average loss "+money(-s.al)+"\n- Max drawdown "+money(-s.dd)+"\n- Green days "+g+", red days "+r+(bd?"; best day "+bd.d+" "+money(bd.pnl)+", worst day "+wd.d+" "+money(wd.pnl):"")+"\n- Longest losing streak "+mx+" trades");
+ L.push("BY SYMBOL (most traded first)\n"+aggLines(agg(all,function(t){return t.t}),12));
+ L.push("BY SIDE\n"+aggLines(agg(all,function(t){return t.s}),3));
+ var su=agg(all,function(t){return t.u});if(Object.keys(su).length)L.push("BY SETUP TAG\n"+aggLines(su,10));
+ L.push("BY WEEKDAY\n"+aggLines(agg(all,function(t){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(t.d||"");return m?WD[new Date(+m[1],+m[2]-1,+m[3]).getDay()]:null}),7));
+ var hr=agg(all,function(t){var m=mins(startOf(t));return m==null?null:("0"+Math.floor(m/60)).slice(-2)+":00"});
+ if(Object.keys(hr).length)L.push("BY ENTRY HOUR (clock times exactly as recorded in the file; the time zone is unknown, so do not assume market hours)\n"+aggLines(hr,12));
+ if(hw.length||hl.length)L.push("HOLD TIME (minutes)\n- Winners: "+(avg(hw)==null?"n/a":avg(hw).toFixed(1))+" average over "+hw.length+" trades\n- Losers: "+(avg(hl)==null?"n/a":avg(hl).toFixed(1))+" average over "+hl.length+" trades");
+ var notes=[],budget=9000;
+ var pk=sortedPages();
+ for(var i=0;i<pk.length;i++){var ps=[];try{ps=await loadPosts(pk[i].id)}catch(e){}
+  ps=ps.filter(function(p){return p.text}).slice(-30);
+  if(!ps.length)continue;var blk="PAGE: "+pk[i].name+"\n"+ps.map(function(p){return "- "+String(p.text).replace(/\s+/g," ").slice(0,500)}).join("\n");
+  if(blk.length>budget)blk=blk.slice(0,budget);budget-=blk.length;notes.push(blk);if(budget<=200)break}
+ var fields=[["Strategies and rules","strat"],["Ideas and theses","ideas"],["Lessons from losers","lessons"],["What you trade","niche"]].map(function(f){var v=$(f[1])&&$(f[1]).value.trim();return v?f[0]+": "+v.replace(/\s+/g," ").slice(0,800):""}).filter(Boolean);
+ if(fields.length)notes.push("STUDIO FIELDS\n"+fields.join("\n"));
+ return {n:s.n,days:days.length,text:L.join("\n\n"),notes:notes.join("\n\n")}}
+function coachPrompt(d){
+ return "You are a trading coach reviewing a trader's own journal data. Write an honest, specific review that helps them improve and find their niche.\n\n"+
+ "RULES\n- Use only the numbers in the data below. Never invent figures or trades.\n- Samples can be small. When a group has fewer than 10 trades, say the result may be noise. If the whole record is under 30 trades, say conclusions are early.\n- Describe patterns as correlation, not proof.\n- This is education about the trader's own habits. Do not tell them to buy or sell any security, do not predict prices, and do not promise results.\n- No markdown tables. Plain prose and short bullet lists only.\n- Be direct and kind. Skip filler.\n\n"+
+ "OUTPUT: use exactly these section headings, in this order, each starting with ## :\n## Snapshot\n2 or 3 sentences on where the record stands.\n## What's working\nBullets, each tied to a number.\n## What's not working\nBullets, each tied to a number.\n## Strong areas\nWhere the data says they have an edge (symbols, side, timing, hold time, setups).\n## Weak areas\nWhere they lose money or behave inconsistently.\n## Your niche\nOne sentence naming the niche the data points to, then the evidence. If there is not enough data, say what to track to find it.\n## Strategies to test next\nThree experiments. Each one: a concrete rule, how many trades to run it, and the number that decides if it worked.\n## Questions to answer in your journal\nThree questions drawn from their own notes and results.\n\n"+
+ "TRADER DATA\n"+d.text+(d.notes?"\n\nTHEIR OWN NOTES\n"+d.notes:"")}
+async function loadCoach(){try{if(store.db){var d=await store.db.doc("meta/coach").get();if(d.exists)coach=clone(d.data())}else coach=JSON.parse(localStorage.getItem(CKEY)||"null")}catch(e){}}
+async function saveCoach(){try{if(store.db)await store.db.doc("meta/coach").set(coach);else localStorage.setItem(CKEY,JSON.stringify(coach))}catch(e){toast("Could not save the review")}}
+function coachBody(){return coach&&coach.md?'<div class="out" id="cout">'+md(coach.md)+'</div><p class="coach-meta">Based on '+coach.n+' trades. Generated '+esc(new Date(coach.ts).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}))+'. Not financial advice.</p>':'<div class="out" id="cout" hidden></div>'}
+function renderHome(){var el=$("home");if(!el)return;
+ var all=allTrades(),days=dailyPnl(),yr=pickYear(days),m=pnlModel(days,yr),s=all.length?withCtx({trades:all},[],stats):null;
+ var who=($("whoami")&&$("whoami").textContent)||"";
+ var h='<div class="hm-top"><div><h1>Home</h1><p class="sub">'+(who?esc(who)+". ":"")+'Your record at a glance. Saved days only.</p></div><div class="row" style="margin:0"><button class="primary" id="hstudio" type="button">Open Studio</button></div></div>';
+ if(!s){h+='<section><h2>No trades yet</h2><p class="hint">Upload your thinkorswim statement in Studio, generate or save the day, and your stats, equity curve and AI review appear here.</p></section>'}
+ else{
+  var t=function(v,l,c){return '<div class="hm-tile"><b'+(c?' class="'+c+'"':'')+'>'+v+'</b><span>'+l+'</span></div>'};
+  h+='<div class="hm-grid">'+
+   t(sgn(m.total)+(m.totalPct==null?"":" ("+fmtPct(m.totalPct)+")"),yr+" P&amp;L",m.total>=0?"gain":"loss")+
+   t(sgn(s.net),"All-time P&amp;L, "+s.n+" trades",s.net>=0?"gain":"loss")+
+   t(Math.round(s.wr*100)+"%","Win rate")+t(s.pf===Infinity?"n/a":s.pf.toFixed(2),"Profit factor")+
+   t(money(s.aw),"Average win","gain")+t(money(-s.al),"Average loss","loss")+t(money(-s.dd),"Max drawdown","loss")+t(String(days.length),"Trading days")+'</div>';
+  h+='<section><h2>Equity curve</h2>'+sparkline(s.pts,s.net>=0)+(m.bal?'':'<p class="hint">Add your starting balance in the P&amp;L card (top left) to see percent returns.</p>')+'</section>';
+  var rec=days.slice(-8).reverse();
+  h+='<section><h2>Recent days</h2><div class="hm-days">'+rec.map(function(d){var has=!!entries[d.d];
+   return '<button type="button" class="hm-day" '+(has?'data-day="'+d.d+'"':'disabled')+'><span>'+esc(dayLabel(d.d))+' <small>'+d.n+(d.n===1?' trade':' trades')+'</small></span><b class="'+(d.pnl>=0?"gain":"loss")+'">'+sgn(d.pnl)+'</b></button>'}).join("")+'</div></section>'}
+ h+='<section><h2>AI coach</h2><p class="hint">Reads your saved trades and your page notes, then tells you what is working, what is not, your strong and weak areas, and the niche your record points to.</p>'+
+  '<div class="row"><button class="primary" id="chgo" type="button">'+(coach&&coach.md?"Run a fresh review":"Analyze my record")+'</button><button id="chstop" type="button" hidden>Stop</button></div><div class="status" id="cstatus"></div>'+coachBody()+'</section>';
+ var pk=sortedPages();
+ if(pk.length)h+='<section><h2>Your pages</h2><div class="hm-pages">'+pk.map(function(p){return '<button type="button" data-pg="'+esc(p.id)+'"># '+esc(p.name)+'</button>'}).join("")+'</div></section>';
+ el.innerHTML=h}
+function showHome(){curDate="";curPage="";$("studio").hidden=true;$("entry").hidden=true;$("pagev").hidden=true;$("home").hidden=false;$("navstudio").classList.remove("on");$("navhome").classList.add("on");renderHome();renderSide();window.scrollTo(0,0)}
+async function runCoach(){
+ var d=await coachInput();
+ if(!d){$("cstatus").textContent="Save at least one day with trades first.";return}
+ var sample=null;try{sample=await claude.use("sample")}catch(e){}
+ if(!sample){$("cstatus").textContent="AI is not available right now.";return}
+ coachCtl=new AbortController();$("chgo").disabled=true;$("chstop").hidden=false;$("cstatus").textContent="Reading your record...";
+ var out=$("cout"),text="";out.hidden=false;out.innerHTML="";
+ try{
+  await sample(coachPrompt(d),{cache:false,signal:coachCtl.signal,modelTier:"default",onText:function(u){text=u.text;out.innerHTML=md(u.text)}});
+  coach={md:text,ts:Date.now(),n:d.n};await saveCoach();renderHome();$("cstatus").textContent="Done."
+ }catch(e){var c=e&&e.code;
+  $("cstatus").textContent=c==="rate_limited"?"Too many requests. Wait a moment and try again.":(coachCtl.signal.aborted?"Stopped.":"The review failed. Try again.");
+  if(text&&coachCtl.signal.aborted){coach={md:text,ts:Date.now(),n:d.n};await saveCoach()}
+ }finally{var b=$("chgo");if(b)b.disabled=false;var sb=$("chstop");if(sb)sb.hidden=true}}
+$("navhome").addEventListener("click",showHome);
+$("home").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
+ if(b.id==="hstudio"){showStudio();return}
+ if(b.id==="chgo"){runCoach();return}
+ if(b.id==="chstop"){if(coachCtl)coachCtl.abort();return}
+ if(b.dataset.day){renderEntry(b.dataset.day);return}
+ if(b.dataset.pg){showPage(b.dataset.pg)}});
+
 restore();loadImgs();showStats();renderImgs();initStore();
 })();
 </script>
