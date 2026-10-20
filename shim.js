@@ -96,7 +96,7 @@
 
   var downloads = {
     save: async function (o) {
-      var blob = new Blob([o.data], { type: /\.html$/.test(o.filename) ? 'text/html' : 'text/markdown' });
+      var blob = (o.data instanceof Blob) ? o.data : new Blob([o.data], { type: /\.html$/.test(o.filename) ? 'text/html' : 'text/markdown' });
       var a = document.createElement('a');
       a.href = URL.createObjectURL(blob); a.download = o.filename;
       document.body.appendChild(a); a.click(); a.remove();
