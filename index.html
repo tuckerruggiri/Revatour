@@ -593,7 +593,7 @@ function renderEntry(date){var ent=entries[date];if(!ent){showStudio();return}
  curDate=date;curPage="";$("home").hidden=true;$("navhome").classList.remove("on");$("pagev").hidden=true;$("studio").hidden=true;var el=$("entry");el.hidden=false;$("navstudio").classList.remove("on");
  var outs=ent.outputs||[],top=withCtx(ent,entImgs(ent),function(){return {s:statsHTML(),g:galHTML()}});
  var h='<h1>'+esc(dayLabel(date))+'</h1><p class="sub">Saved in Publishes. '+outs.length+' generated '+(outs.length===1?'piece':'pieces')+'.</p>'+
-  '<div class="row" style="margin:0 0 16px"><button id="eopen" type="button">Open in Studio</button><button id="edel" type="button">Delete this page</button></div>'+top.s;
+  '<div class="row" style="margin:0 0 16px"><button id="eopen" type="button">Open in Studio</button><button id="eadd" type="button">Add picture</button><input id="efile" type="file" accept="image/*" multiple hidden><button id="edel" type="button">Delete this page</button></div>'+top.s;
  if(!outs.length)h+='<p class="hint">Nothing generated for this day yet. Open it in Studio and press Generate.</p>';
  outs.slice().reverse().forEach(function(o,k){var i=outs.length-1-k;
   h+='<details class="saved"'+(k===0?' open':'')+'><summary>'+esc(FMTNAME[o.fmt]||o.fmt||"Piece")+', '+esc(new Date(o.ts).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}))+'</summary><div class="out">'+md(o.md)+'</div><div class="row"><button type="button" data-a="copy" data-i="'+i+'">Copy text</button><button type="button" data-a="md" data-i="'+i+'">Download .md</button><button type="button" data-a="html" data-i="'+i+'">Download .html</button><button type="button" data-a="del" data-i="'+i+'">Delete this piece</button></div></details>'});
@@ -606,12 +606,22 @@ function confirmTwice(b,label,fn){if(b.dataset.armed){delete b.dataset.armed;fn(
  var t=b.textContent;b.dataset.armed="1";b.textContent=label;setTimeout(function(){if(b.dataset.armed){delete b.dataset.armed;b.textContent=t}},3000)}
 $("navstudio").addEventListener("click",showStudio);
 $("navfold").addEventListener("click",function(){var b=$("pubs"),open=b.hidden;b.hidden=!open;this.setAttribute("aria-expanded",open?"true":"false");$("foldc").textContent=open?"▾":"▸"});
+$("entry").addEventListener("change",async function(ev){
+ var inp=ev.target;if(!inp||inp.id!=="efile")return;var ent=entries[curDate];if(!ent||!inp.files.length)return;
+ var date=curDate,n=clone(ent);n.imgs=n.imgs||[];var added=0;
+ for(var i=0;i<inp.files.length;i++){var f=inp.files[i];if(!/^image\//.test(f.type))continue;if(n.imgs.length>=12){toast("Limit is 12 pictures");break}
+  try{var d=await shrink(f),m={cap:"",tid:""};
+   if(store.db&&store.assets){m.aid=(await store.assets.upload(dataToBlob(d),{type:"image/jpeg"})).id}else m.src=d;
+   n.imgs.push(m);added++}catch(e){toast("Could not save that picture")}}
+ inp.value="";if(!added)return;n.updated=Date.now();
+ try{await putEntry(n);entries[date]=n;if(curDate===date)renderEntry(date);toast(added+" picture"+(added>1?"s":"")+" added")}catch(e){toast("Could not save")}});
 $("saveday").addEventListener("click",async function(){
  if(!trades.length&&!imgs.length){toast("Add trades or charts first");return}
  try{var d=await saveEntry(null);toast("Saved to Publishes, "+dayLabel(d))}catch(e){toast("Could not save")}});
 $("entry").addEventListener("click",async function(ev){
  var b=ev.target.closest&&ev.target.closest("button");if(!b)return;var ent=entries[curDate];if(!ent)return;
  if(b.id==="eopen"){openInStudio(ent);return}
+ if(b.id==="eadd"){$("efile").click();return}
  if(b.id==="edel"){confirmTwice(b,"Click again to delete this page",async function(){try{await delEntry(curDate)}catch(e){toast("Could not delete")}});return}
  var a=b.dataset.a,i=+b.dataset.i,o=(ent.outputs||[])[i];if(!a||!o)return;
  if(a==="copy"){try{navigator.clipboard.writeText(o.md).then(function(){toast("Copied")},function(){toast("Copy blocked by browser")})}catch(e){toast("Copy blocked by browser")}}
