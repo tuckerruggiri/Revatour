@@ -45,9 +45,9 @@ button:disabled{opacity:.55;cursor:default}
 .pastebox{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;margin:8px 0 10px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
 .pastebox:focus-visible,.pastebox.on{border-color:var(--accent);outline:none;background:var(--bg)}
 .pastebox span{color:var(--mute);font-size:.88rem}
-.imglist{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px}
+.imglist{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,200px));gap:12px;margin-top:12px}
 .imgc{border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--bg);display:flex;flex-direction:column;gap:6px}
-.imgc img{width:100%;height:auto;border-radius:4px}
+.imgc img{width:100%;height:120px;object-fit:cover;object-position:top;border-radius:4px;cursor:zoom-in}.imgc label{font-size:.82rem;display:flex;flex-direction:row;gap:6px;align-items:center;justify-content:flex-start}.imgc input[type=checkbox]{width:auto;margin:0}.imgc select,.imgc input[type=text],.imgc input:not([type]){font-size:.85rem;max-width:100%}
 .out h1,.out h2,.out h3{margin:18px 0 6px}
 .out h1{font-size:1.9rem}.out h2{font-size:1.4rem}.out h3{font-size:1.1rem}
 .out p{margin:8px 0}.out ul{margin:8px 0;padding-left:22px}
@@ -444,7 +444,7 @@ function refreshOut(){if(lastMd)$("out").innerHTML=compose(lastMd)}
 function saveImgs(){refreshOut();try{localStorage.setItem(KEYI,JSON.stringify(imgs))}catch(e){toast("Charts are too big to keep after you close this page")}}
 function loadImgs(){try{imgs=JSON.parse(localStorage.getItem(KEYI)||"[]")}catch(e){imgs=[]}}
 function shrink(file,W){return new Promise(function(res,rej){var u=URL.createObjectURL(file),im=new Image();
- im.onload=function(){var sc=Math.min(1,(W||1000)/im.width),c=document.createElement("canvas");c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL("image/jpeg",0.82))};
+ im.onload=function(){var sc=Math.min(1,(W||900)/im.width),c=document.createElement("canvas");c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL("image/jpeg",0.78))};
  im.onerror=function(){URL.revokeObjectURL(u);rej()};im.src=u})}
 async function addImgs(files){var n=0;
  for(var i=0;i<files.length;i++){var f=files[i];if(!/^image\//.test(f.type))continue;if(imgs.length>=12){toast("Limit is 12 charts");break}
@@ -459,6 +459,8 @@ function renderImgs(){var el=$("imglist");if(!el)return;el.innerHTML="";
   sortedTrades().forEach(function(t){var o=document.createElement("option");o.value=tkey(t);o.textContent=optLabel(t,multi);if(o.value===m.tid)o.selected=true;sel.appendChild(o)});
   sel.onchange=function(){m.tid=sel.value;saveImgs()};d.appendChild(sel);
   var cap=document.createElement("input");cap.maxLength=160;cap.placeholder="Caption: what the chart shows";cap.value=m.cap||"";cap.setAttribute("aria-label","Caption");cap.oninput=function(){m.cap=cap.value};cap.onchange=saveImgs;d.appendChild(cap);
+  var lb=document.createElement("label"),ck=document.createElement("input");ck.type="checkbox";ck.checked=!!m.sl;ck.onchange=function(){m.sl=ck.checked;saveImgs()};lb.appendChild(ck);lb.appendChild(document.createTextNode("Use as a carousel slide"));d.appendChild(lb);
+  im.onclick=function(){window.open(m.src||"","_blank")};
   var rm=document.createElement("button");rm.type="button";rm.textContent="Remove";rm.onclick=function(){imgs.splice(i,1);saveImgs();renderImgs()};d.appendChild(rm);
   el.appendChild(d)})}
 $("imgfile").addEventListener("change",function(ev){addImgs(ev.target.files).then(function(){ev.target.value=""})});
@@ -525,12 +527,12 @@ function dayLabel(iso){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(iso||"");if(!m)ret
  return d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric",year:(+m[1]!==new Date().getFullYear())?"numeric":undefined})}
 function clone(o){return JSON.parse(JSON.stringify(o))}
 function withCtx(ent,arr,fn){var t0=trades,i0=imgs;trades=ent.trades||[];imgs=arr;try{return fn()}finally{trades=t0;imgs=i0}}
-function entImgs(ent){return (ent.imgs||[]).map(function(m){return {src:m.src||blobUrl(m.aid),aid:m.aid||"",cap:m.cap||"",tid:m.tid||""}})}
+function entImgs(ent){return (ent.imgs||[]).map(function(m){return {src:m.src||blobUrl(m.aid),aid:m.aid||"",cap:m.cap||"",tid:m.tid||"",sl:m.sl?1:0}})}
 function dataToBlob(u){var p=u.split(","),mime=(/:(.*?);/.exec(p[0])||[0,"image/jpeg"])[1],bin=atob(p[1]),a=new Uint8Array(bin.length),i;for(i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:mime})}
 function blobToData(b){return new Promise(function(r){var fr=new FileReader();fr.onload=function(){r(fr.result)};fr.onerror=function(){r("")};fr.readAsDataURL(b)})}
 async function inlineImgs(arr){var out=[];for(var i=0;i<arr.length;i++){var m=arr[i],src=m.src;
  if(src&&src.indexOf("data:")!==0){try{src=(await blobToData(await (await fetch(src)).blob()))||src}catch(e){}}
- out.push({src:src,cap:m.cap,tid:m.tid})}return out}
+ out.push({src:src,cap:m.cap,tid:m.tid,sl:m.sl})}return out}
 function pageShell(body,title){return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(title)+'</title><style>body{font:17px/1.6 system-ui,sans-serif;max-width:720px;margin:0 auto;padding:32px 18px;color:#10202e}h1,h2,h3{line-height:1.2}a{color:#1d4ed8}footer{margin-top:40px;font-size:.85rem;color:#5b6b78}'+DLCSS+'</style></head><body>'+body+'<footer>Self-reported record. Not financial advice.</footer></body></html>'}
 async function initStore(){
  try{if(typeof claude!=="undefined"&&claude.use){store.db=await claude.use("db");store.assets=await claude.use("assets")}}catch(e){}
@@ -551,8 +553,8 @@ async function delEntry(d){
 async function imgRecords(){var list=[],skipped=0;
  for(var i=0;i<imgs.length;i++){var m=imgs[i];
   if(store.db&&store.assets&&!m.aid&&m.src&&m.src.indexOf("data:")===0){try{var r=await store.assets.upload(dataToBlob(m.src),{type:"image/jpeg"});m.aid=r.id}catch(e){}}
-  if(store.db){if(m.aid)list.push({aid:m.aid,cap:m.cap||"",tid:m.tid||""});else skipped++}
-  else list.push({src:m.src,aid:m.aid||"",cap:m.cap||"",tid:m.tid||""})}
+  if(store.db){if(m.aid)list.push({aid:m.aid,cap:m.cap||"",tid:m.tid||"",sl:m.sl?1:0});else skipped++}
+  else list.push({src:m.src,aid:m.aid||"",cap:m.cap||"",tid:m.tid||"",sl:m.sl?1:0})}
  try{localStorage.setItem(KEYI,JSON.stringify(imgs))}catch(e){}
  return {list:list,skipped:skipped}}
 async function saveEntry(out){
@@ -599,7 +601,7 @@ function renderEntry(date){var ent=entries[date];if(!ent){showStudio();return}
   h+='<details class="saved"'+(k===0?' open':'')+'><summary>'+esc(FMTNAME[o.fmt]||o.fmt||"Piece")+', '+esc(new Date(o.ts).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}))+'</summary><div class="out">'+md(o.md)+'</div><div class="row"><button type="button" data-a="copy" data-i="'+i+'">Copy text</button><button type="button" data-a="md" data-i="'+i+'">Download .md</button><button type="button" data-a="html" data-i="'+i+'">Download .html</button><button type="button" data-a="del" data-i="'+i+'">Delete this piece</button></div></details>'});
  el.innerHTML=h+top.g;renderSide();window.scrollTo(0,0)}
 function openInStudio(ent){setTrades(clone(ent.trades||[]));
- imgs=entImgs(ent).map(function(m,i){return {id:"o"+i,src:m.src,aid:m.aid,cap:m.cap,tid:m.tid}});
+ imgs=entImgs(ent).map(function(m,i){return {id:"o"+i,src:m.src,aid:m.aid,cap:m.cap,tid:m.tid,sl:m.sl?1:0}});
  try{localStorage.setItem(KEYI,JSON.stringify(imgs))}catch(e){}
  renderImgs();lastMd="";$("result").hidden=true;showStudio();toast("Opened in Studio")}
 function confirmTwice(b,label,fn){if(b.dataset.armed){delete b.dataset.armed;fn();return}
@@ -1042,6 +1044,11 @@ function sFeature(D,f,idx,im){var pal=D.pal,t=f.t,col=t.p>=0?pal.up:pal.dn,out="
 function sLesson(D,P){var pal=D.pal,sz=P.lesson.length>150?56:66,ls=wrapT(P.lesson,sz,900,.48,8);
  return igCap(P.lesson_title||"The lesson",80,150,26,pal.a,8)+'<text x="70" y="470" font-family="'+HEADF+'" font-size="340" fill="'+pal.a+'" opacity=".45">“</text>'+
   '<text font-family="'+HEADF+'" font-style="italic" font-size="'+sz+'" fill="'+pal.ink+'">'+tsp(ls,80,580,sz*1.32)+'</text>'}
+function sPhoto(D,m,idx){var pal=D.pal,cp=wrapT(m.cap||"",44,920,.5,3),ah=cp.length?830:1000,cid="cp"+idx;
+ return igCap(m.cap?"From my screen":"On my screen",80,150,26,pal.a,8)+
+  '<defs><clipPath id="'+cid+'"><rect x="80" y="200" width="920" height="'+ah+'" rx="28"/></clipPath></defs><rect x="76" y="196" width="928" height="'+(ah+8)+'" rx="32" fill="#000" fill-opacity=".5"/>'+
+  '<image href="'+m.src+'" x="80" y="200" width="920" height="'+ah+'" preserveAspectRatio="xMidYMid meet" clip-path="url(#'+cid+')"/><rect x="80" y="200" width="920" height="'+ah+'" rx="28" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="2"/>'+
+  (cp.length?'<text font-family="'+SANSF+'" font-size="44" fill="'+pal.ink+'">'+tsp(cp,80,1085,56)+'</text>':"")}
 function sCta(D,P){var pal=D.pal,ls=wrapT(P.cta||"Follow along for the next session.",100,920,.5,4);
  return igCap("Until next session",80,150,26,pal.a,8)+'<text font-family="'+HEADF+'" font-weight="700" font-size="100" fill="'+pal.ink+'">'+tsp(ls,80,420,108)+'</text>'+
   (D.handle?'<text x="80" y="'+(420+ls.length*108+60)+'" font-family="'+SANSF+'" font-size="48" font-weight="700" fill="'+pal.a+'">'+xe(D.handle)+'</text>':"")+
@@ -1058,6 +1065,7 @@ async function igBuild(){var P=igState.P,s=stats();
  if(!feats.length){var b=s.best[0],w=s.worst[0];if(b)feats.push({t:b,label:"Best trade",text:"My best trade of the session."});if(w&&w!==b)feats.push({t:w,label:"Toughest trade",text:"My weakest trade of the session."})}
  var bodies=[sCover(D,P),sStats(D,P),sChart(D,P)];
  feats.forEach(function(f,i){var key=tkey(f.t),im=null;pics.forEach(function(m){if(m.tid===key&&!im)im=m});bodies.push(sFeature(D,f,i,im))});
+ pics.forEach(function(m,i){if(m.sl&&m.src)bodies.push(sPhoto(D,m,i))});
  if(P.lesson)bodies.push(sLesson(D,P));
  bodies.push(sCta(D,P));
  var N=bodies.length,art=artSVG(N,pal,seed);
