@@ -6,6 +6,7 @@
 <title>Stockspot Studio</title>
 <style>html:not(.authed) body{visibility:hidden}</style>
 <script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="shim.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -132,6 +133,12 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .hm-day small{color:var(--mute)}
 .coach-meta{color:var(--mute);font-size:.82rem;margin-top:10px}
 .hm-pages{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+
+.ig-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin:12px 0}
+.ig-card{display:flex;flex-direction:column;gap:6px}
+.ig-card img{width:100%;height:auto;aspect-ratio:4/5;border-radius:10px;border:1px solid var(--line);display:block;background:var(--bg)}
+.ig-card button{align-self:flex-start}
+#igcap{width:100%;min-height:200px}
 </style>
 </head>
 <body>
@@ -201,6 +208,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
           <option value="page">Guru page (website copy)</option>
           <option value="blog">Blog post</option>
           <option value="social">Social posts (10)</option>
+          <option value="ig">Instagram carousel (slide images, caption, hashtags)</option>
           <option value="news">Newsletter issue</option>
           <option value="book">Book outline and first chapter</option>
         </select></label>
@@ -211,6 +219,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
     <div class="status" id="gstatus"></div>
     <div id="result" hidden>
       <div class="out" id="out"></div>
+      <div id="igwrap" hidden></div>
       <div class="row"><button id="copy" type="button">Copy text</button><button id="dlmd" type="button">Download .md</button><button id="dlhtml" type="button">Download .html</button></div>
     </div>
     <p class="warn">Generated from the data you provide. Your record is self-reported and not verified. Review everything before publishing. Nothing here is financial advice.</p>
@@ -366,6 +375,7 @@ function prompt(){
  else P.push("RECORD: no trades uploaded. Do not state any performance figures.");
  [["strat","STRATEGIES AND RULES"],["ideas","IDEAS AND THESES"],["alerts","PAST ALERTS"],["watch","WATCHLIST"],["videos","VIDEOS (title | link)"],["lessons","LESSONS FROM LOSERS"]].forEach(function(p){if(v(p[0]))P.push(p[1]+":\n"+v(p[0]).slice(0,4000))});
  if(imgs.length)P.push("CHARTS: the page will show "+imgs.length+" trade chart screenshot(s) below your writing. You may say 'see the charts below' but do not describe what they show.");
+ if($("fmt").value==="ig")P.push(igTradeBlock());
  P.push("TASK: "+FMT[$("fmt").value]);return P.join("\n\n")}
 
 /* Output blocks */
@@ -423,7 +433,9 @@ function galHTML(){if(!imgs.length)return "";
   var c=t.p>=0?"gain":"loss",time=t.tm?(t.ot&&t.ot!==t.tm?esc(t.ot)+" to "+esc(t.tm):esc(t.tm)):"";
   return '<figure class="tc">'+img+'<figcaption><div class="tc-top"><div class="tc-id"><div class="tc-name"><span class="tc-sym">'+esc(t.t)+'</span><span class="tc-side">'+esc(t.s)+'</span></div><span class="tc-day">'+esc(dayLabel(t.d||""))+'</span></div><span class="tc-pnl '+c+'">'+sgn(t.p)+'</span></div>'+
    '<dl class="tc-meta">'+(t.e!=null?'<div><dt>Entry</dt><dd>'+px(t.e)+'</dd></div>':'')+(t.x!=null?'<div><dt>Exit</dt><dd>'+px(t.x)+'</dd></div>':'')+(t.q?'<div><dt>Size</dt><dd>'+t.q+' shares</dd></div>':'')+(time?'<div class="wide"><dt>Time</dt><dd>'+time+'</dd></div>':'')+'</dl>'+cap+'</figcaption></figure>'}).join("")+'</div>'}
-function compose(text,fm){var f=fm||$("fmt").value,html=md(text);
+function compose(text,fm){var f=fm||$("fmt").value,html;
+ if(f==="ig"&&/^\s*COVER_/m.test(text))return '<p class="hint">Designing your carousel...</p>';
+ html=md(text);
  if(f==="page"||f==="news"){var sh=statsHTML(),m=/<h[1-3]>[^<]*track record[^<]*<\/h[1-3]>/i.exec(html);
   if(sh)html=m?html.slice(0,m.index+m[0].length)+sh+html.slice(m.index+m[0].length):sh+html}
  if(f==="page"||f==="blog"||f==="news")html+=galHTML();
@@ -477,9 +489,13 @@ $("go").addEventListener("click",async function(){
  if(!trades.length&&!ids.some(function(i){return i!=="name"&&i!=="niche"&&$(i).value.trim()})){$("gstatus").textContent="Add trades or some material first.";return}
  var sample=null;try{sample=await claude.use("sample")}catch(e){}
  if(!sample){$("gstatus").textContent="AI generation is not available in this view. Open the published page in claude.ai.";return}
+ var isIG=$("fmt").value==="ig";$("igwrap").hidden=true;$("igwrap").innerHTML="";igState=null;
  ctl=new AbortController();busy(true);$("gstatus").textContent="Writing...";$("result").hidden=false;$("out").innerHTML="";lastMd="";
  try{
   await sample(prompt(),{cache:false,signal:ctl.signal,modelTier:"default",onText:function(u){lastMd=u.text;$("out").innerHTML=compose(u.text)}});
+  if(isIG){var igp=parseIG(lastMd);
+   if(igp){lastMd=igMarkdown(igp);igState={P:igp,seed:1};$("out").innerHTML=compose(lastMd,"ig");try{await igShow()}catch(e3){toast("The slide images could not be drawn")}}
+   else{$("out").innerHTML=md(lastMd);$("gstatus").textContent="The carousel came back in an unexpected format. Press Generate to try again."}}
   $("gstatus").textContent="Done. Saving to Publishes...";
   try{var sd=await saveEntry({fmt:$("fmt").value,voice:$("voice").value,md:lastMd});$("gstatus").textContent="Done. Saved to Publishes, "+dayLabel(sd)+". Review before you publish."}
   catch(e2){$("gstatus").textContent="Done, but saving to Publishes failed"+(e2&&e2.code==="quota_exceeded"?": storage is full.":".")}
@@ -888,6 +904,182 @@ $("home").addEventListener("click",function(ev){var b=ev.target.closest&&ev.targ
  if(b.id==="chstop"){if(coachCtl)coachCtl.abort();return}
  if(b.dataset.day){renderEntry(b.dataset.day);return}
  if(b.dataset.pg){showPage(b.dataset.pg)}});
+
+
+/* Instagram carousel */
+var IGW=1080,IGH=1350,igList=[],igState=null;
+var HEADF="Georgia,'Times New Roman',serif",SANSF="'Helvetica Neue',Helvetica,Arial,sans-serif";
+FMT.ig="Create an Instagram carousel (a swipeable set of image slides plus a caption) from this trading record. Reply with EXACTLY these labelled lines and nothing else: no markdown, no code fences, no preamble. Ignore the markdown-only instruction above.\n"+
+ "COVER_KICKER: a short label, 3 words max, like TODAY'S SESSION\n"+
+ "COVER_HEADLINE: a bold hook for the cover, 8 words max, true to the numbers\n"+
+ "COVER_SUB: one line under the headline, 14 words max\n"+
+ "STATS_TITLE: title for the numbers slide, 6 words max\n"+
+ "CHART_TITLE: title for the equity curve slide, 6 words max\n"+
+ "CHART_NOTE: one honest sentence about the curve, 18 words max\n"+
+ "FEATURE: T# | LABEL | takeaway   (two or three FEATURE lines, each using a different trade id from the TRADES list. LABEL is 3 words max like BEST TRADE or COSTLY LESSON. Takeaway is 22 words max, a lesson or observation from the trader's data.)\n"+
+ "LESSON_TITLE: 5 words max\n"+
+ "LESSON: the single most useful lesson of the session, 30 words max, first person\n"+
+ "CTA: a closing line for the last slide, 12 words max, no promises of profit\n"+
+ "CAPTION: then the Instagram caption on the following lines: a hook first line, 3 to 6 short lines of story in the trader's voice, and a question for comments. Plain text, a few emojis allowed. Do not include hashtags here.\n"+
+ "HASHTAGS: 18 relevant hashtags separated by spaces (mix broad trading tags and specific ones)";
+function igTradeBlock(){var all=sortedTrades();
+ if(all.length>40){var keep={};all.slice().sort(function(a,b){return Math.abs(b.p)-Math.abs(a.p)}).slice(0,40).forEach(function(t){keep[tkey(t)+"|"+startOf(t)]=1});all=all.filter(function(t){return keep[tkey(t)+"|"+startOf(t)]})}
+ igList=all;
+ return "TRADES (refer to them by id):\n"+igList.map(function(t,i){return "T"+(i+1)+": "+t.t+" "+t.s+(startOf(t)?" "+(t.ot&&t.ot!==t.tm?t.ot+"-"+t.tm:t.tm):"")+(t.e!=null?" entry "+t.e.toFixed(2):"")+(t.x!=null?" exit "+t.x.toFixed(2):"")+(t.q?" size "+t.q:"")+" P&L "+money(t.p)+(t.u?" ["+t.u+"]":"")+(t.n?" - "+t.n:"")}).join("\n")}
+function parseIG(text){var P={feat:[],caption:"",tags:""},key=null,cap=[];
+ String(text).split(/\r?\n/).forEach(function(l){
+  var m=/^\s*(COVER_KICKER|COVER_HEADLINE|COVER_SUB|STATS_TITLE|CHART_TITLE|CHART_NOTE|FEATURE|LESSON_TITLE|LESSON|CTA|CAPTION|HASHTAGS)\s*:\s*(.*)$/.exec(l.replace(/\*\*/g,""));
+  if(m){key=m[1];var v=m[2].trim();
+   if(key==="FEATURE"){var f=v.split("|").map(function(x){return x.trim()});if(f.length>=3)P.feat.push({id:f[0].toUpperCase().replace(/[^T0-9]/g,""),label:f[1],text:f.slice(2).join(" | ")});key=null}
+   else if(key==="CAPTION"){cap=v?[v]:[]}
+   else if(key==="HASHTAGS"){P.tags=v}
+   else{P[key.toLowerCase()]=v}
+   return}
+  if(key==="CAPTION")cap.push(l);else if(key==="HASHTAGS"&&l.trim())P.tags+=" "+l.trim()});
+ P.caption=cap.join("\n").trim();
+ if(!P.cover_headline||!P.caption)return null;
+ var seen={};P.tagList=(P.tags.match(/#[A-Za-z0-9_]+/g)||[]).filter(function(t){var k=t.toLowerCase();if(seen[k])return false;seen[k]=1;return true}).slice(0,25);
+ return P}
+function igMarkdown(P){var L=["# Instagram carousel","## Caption",P.caption,"## Hashtags",P.tagList.join(" "),"## Slides","1. Cover: "+P.cover_headline+(P.cover_sub?" ("+P.cover_sub+")":""),"2. Numbers: "+(P.stats_title||"The numbers"),"3. Equity curve: "+(P.chart_title||"The day in a line")+(P.chart_note?" - "+P.chart_note:"")];
+ P.feat.forEach(function(f,i){L.push((4+i)+". "+f.label+" ("+f.id+"): "+f.text)});
+ if(P.lesson)L.push((4+P.feat.length)+". "+(P.lesson_title||"Lesson")+": "+P.lesson);
+ if(P.cta)L.push((5+P.feat.length)+". Closing: "+P.cta);
+ return L.join("\n\n").replace(/\n\n(\d+\. )/g,"\n$1").replace("## Slides\n","## Slides\n\n")}
+function xe(x){return String(x==null?"":x).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function wrapT(text,size,maxW,k,maxLines){k=k||.52;var max=Math.max(4,Math.floor(maxW/(size*k))),words=String(text||"").split(/\s+/).filter(Boolean),out=[],cur="";
+ words.forEach(function(w){if(!cur)cur=w;else if((cur+" "+w).length<=max)cur+=" "+w;else{out.push(cur);cur=w}});if(cur)out.push(cur);
+ if(maxLines&&out.length>maxLines){out=out.slice(0,maxLines);out[maxLines-1]=out[maxLines-1].replace(/[\s,.;:]*$/,"")+"..."}return out}
+function tsp(lines,x,y,lh){return lines.map(function(l,i){return '<tspan x="'+x+'" y="'+(y+i*lh).toFixed(0)+'">'+xe(l)+'</tspan>'}).join("")}
+function hashS(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function rng(seed){var a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+var PALS={
+ emerald:{n:"Emerald",bg:["#03201c","#0a4a3f"],a:"#3ee0bf",b:"#f5d77a",ink:"#f3fbf8",up:"#4ff0cb",dn:"#ff9a8f"},
+ midnight:{n:"Midnight",bg:["#0b1030","#2a1559"],a:"#8fb0ff",b:"#ff9ecb",ink:"#f4f6ff",up:"#5ee6c3",dn:"#ff8f9e"},
+ sunset:{n:"Sunset",bg:["#2a0b1f","#7a2a2a"],a:"#ffb36b",b:"#ff6f91",ink:"#fff6ee",up:"#8cf0c8",dn:"#ffd0c8"},
+ mono:{n:"Mono",bg:["#0b0b0c","#26262b"],a:"#ffffff",b:"#b7bcc7",ink:"#ffffff",up:"#8cf0c8",dn:"#ff9b94"}};
+function pickPal(net){var el=$("igpal"),v=el?el.value:"auto";if(PALS[v])return PALS[v];return net>0?PALS.emerald:net<0?PALS.midnight:PALS.mono}
+function artSVG(N,pal,seed){var W=IGW*N,H=IGH,r=rng(seed),p=[],i;
+ p.push('<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+pal.bg[0]+'"/><stop offset="1" stop-color="'+pal.bg[1]+'"/></linearGradient>'+
+  '<radialGradient id="vg" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></radialGradient>'+
+  '<linearGradient id="sc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".35"/><stop offset=".5" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".4"/></linearGradient>'+
+  '<filter id="bl" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="110"/></filter>'+
+  '<filter id="gr"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter></defs>');
+ p.push('<rect width="'+W+'" height="'+H+'" fill="url(#bg)"/>');
+ for(i=0;i<N*2+1;i++){var cx=r()*W,cy=H*(.08+r()*.84),rad=250+r()*270,col=r()>.5?pal.a:pal.b;p.push('<circle cx="'+cx.toFixed(0)+'" cy="'+cy.toFixed(0)+'" r="'+rad.toFixed(0)+'" fill="'+col+'" opacity="'+(.16+r()*.16).toFixed(2)+'" filter="url(#bl)"/>')}
+ var g="";for(var x=0;x<=W;x+=90)g+="M"+x+" 0V"+H;for(var y=0;y<=H;y+=90)g+="M0 "+y+"H"+W;
+ p.push('<path d="'+g+'" stroke="'+pal.a+'" stroke-opacity=".05" stroke-width="1" fill="none"/>');
+ var n=Math.floor(W/34),y0=H*.64,v=0,cs="";
+ for(i=0;i<n;i++){var o=y0+v,d=(r()-.48)*64;v+=d;if(v>170)v=170;if(v<-320)v=-320;var c=y0+v,hi=Math.max(o,c)+r()*44,lo=Math.min(o,c)-r()*44,x2=i*34+17,up=c<o;
+  cs+='<path d="M'+x2+" "+hi.toFixed(0)+"V"+lo.toFixed(0)+'" stroke="'+(up?pal.a:pal.b)+'" stroke-width="3" opacity=".28"/><rect x="'+(x2-9)+'" y="'+Math.min(o,c).toFixed(0)+'" width="18" height="'+Math.max(6,Math.abs(c-o)).toFixed(0)+'" fill="'+(up?pal.a:pal.b)+'" opacity="'+(up?.2:.13)+'"/>'}
+ p.push(cs);
+ p.push('<rect width="'+W+'" height="'+H+'" fill="url(#sc)"/>');
+ p.push('<rect width="'+W+'" height="'+H+'" fill="#fff" opacity=".07" filter="url(#gr)"/>');
+ p.push('<rect width="'+W+'" height="'+H+'" fill="url(#vg)"/>');
+ return p.join("")}
+function igCap(t,x,y,sz,fill,ls,anchor,w){return '<text x="'+x+'" y="'+y+'" font-family="'+SANSF+'" font-size="'+(sz||26)+'" letter-spacing="'+(ls==null?6:ls)+'" font-weight="700" fill="'+fill+'"'+(anchor?' text-anchor="'+anchor+'"':'')+'>'+xe(String(t).toUpperCase())+'</text>'}
+function bigNum(t){return t.length<=7?190:t.length<=9?150:t.length<=11?120:96}
+function sCover(D,P){var pal=D.pal,hs=P.cover_headline,sz=hs.length>44?88:hs.length>30?104:122,ls=wrapT(hs,sz,920,.5,4),y=330,lh=sz*1.06,out="";
+ out+=igCap(P.cover_kicker||"Trading recap",80,150,26,pal.a,8);
+ out+='<text x="80" y="194" font-family="'+SANSF+'" font-size="28" fill="'+pal.ink+'" opacity=".7">'+xe(D.period)+'</text>';
+ out+='<text font-family="'+HEADF+'" font-weight="700" font-size="'+sz+'" fill="'+pal.ink+'">'+tsp(ls,80,y,lh)+'</text>';
+ var sy=y+ls.length*lh-sz*.1+20;
+ if(P.cover_sub)out+='<text font-family="'+SANSF+'" font-size="38" fill="'+pal.ink+'" opacity=".85">'+tsp(wrapT(P.cover_sub,38,880,.52,3),80,sy+30,52)+'</text>';
+ var net=sgn(D.s.net),ns=bigNum(net);
+ out+='<text x="80" y="1040" font-family="'+HEADF+'" font-weight="700" font-size="'+ns+'" fill="'+(D.s.net>=0?pal.up:pal.dn)+'">'+xe(net)+'</text>';
+ out+=igCap("Net P&L  ·  "+D.s.n+(D.s.n===1?" trade":" trades"),80,1100,26,pal.ink,6).replace('fill="'+pal.ink+'"','fill="'+pal.ink+'" opacity=".75"');
+ return out}
+function card(x,y,w,h,label,val,col,pal){var vs=val.length>9?64:val.length>7?76:90;
+ return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="28" fill="#fff" fill-opacity=".08" stroke="#fff" stroke-opacity=".16"/>'+igCap(label,x+36,y+62,22,pal.ink,5).replace('fill="'+pal.ink+'"','fill="'+pal.ink+'" opacity=".7"')+
+  '<text x="'+(x+36)+'" y="'+(y+h-52)+'" font-family="'+HEADF+'" font-weight="700" font-size="'+vs+'" fill="'+col+'">'+xe(val)+'</text>'}
+function titleBlock(t,pal,kick){var ls=wrapT(t,84,920,.5,3);return igCap(kick,80,150,26,pal.a,8)+'<text font-family="'+HEADF+'" font-weight="700" font-size="84" fill="'+pal.ink+'">'+tsp(ls,80,250,92)+'</text>'}
+function sStats(D,P){var pal=D.pal,s=D.s,pf=s.pf===Infinity?"n/a":s.pf.toFixed(2),out=titleBlock(P.stats_title||"The numbers",pal,"By the numbers"),X=[80,560],Y=[440,690,940],w=440,h=220,j=0;
+ [["Net P&L",sgn(s.net),s.net>=0?pal.up:pal.dn],["Win rate",Math.round(s.wr*100)+"%",pal.ink],["Profit factor",pf,pal.ink],["Trades",String(s.n),pal.ink],["Average win",money(s.aw),pal.up],["Average loss",money(-s.al),pal.dn]].forEach(function(c,i){out+=card(X[i%2],Y[Math.floor(i/2)],w,h,c[0],c[1],c[2],pal)});
+ return out}
+function sChart(D,P){var pal=D.pal,pts=D.s.pts,out=titleBlock(P.chart_title||"The day in a line",pal,"Equity curve");
+ if(P.chart_note)out+='<text font-family="'+SANSF+'" font-size="36" fill="'+pal.ink+'" opacity=".85">'+tsp(wrapT(P.chart_note,36,900,.52,2),80,432,48)+'</text>';
+ var x0=100,x1=1000,y0=620,y1=1130,mn=Math.min.apply(null,pts.concat([0])),mx=Math.max.apply(null,pts.concat([0]));if(mx===mn){mx+=1;mn-=1}
+ var X=function(i){return x0+(x1-x0)*i/Math.max(1,pts.length-1)},Y=function(v){return y1-(y1-y0)*(v-mn)/(mx-mn)};
+ var d=pts.map(function(v,i){return (i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)}).join(" "),last=pts[pts.length-1],col=last>=0?pal.up:pal.dn;
+ out+='<defs><linearGradient id="af" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+col+'" stop-opacity=".38"/><stop offset="1" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs>';
+ out+='<rect x="60" y="'+(y0-60)+'" width="960" height="'+(y1-y0+150)+'" rx="32" fill="#000" fill-opacity=".22" stroke="#fff" stroke-opacity=".12"/>';
+ out+='<line x1="'+x0+'" x2="'+x1+'" y1="'+Y(0).toFixed(1)+'" y2="'+Y(0).toFixed(1)+'" stroke="#fff" stroke-opacity=".35" stroke-dasharray="10 12" stroke-width="2"/>';
+ out+='<path d="'+d+' L'+X(pts.length-1).toFixed(1)+" "+Y(0).toFixed(1)+" L"+X(0).toFixed(1)+" "+Y(0).toFixed(1)+' Z" fill="url(#af)"/>';
+ out+='<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>';
+ out+='<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(last).toFixed(1)+'" r="16" fill="'+col+'"/><circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(last).toFixed(1)+'" r="30" fill="'+col+'" fill-opacity=".25"/>';
+ out+='<text x="'+x1+'" y="'+(y0-14)+'" text-anchor="end" font-family="'+HEADF+'" font-weight="700" font-size="56" fill="'+col+'">'+xe(sgn(last))+'</text>';
+ out+=igCap("Trade by trade, start to finish",80,1200,22,pal.ink,4).replace('fill="'+pal.ink+'"','fill="'+pal.ink+'" opacity=".6"');
+ return out}
+function sFeature(D,f,idx,im){var pal=D.pal,t=f.t,col=t.p>=0?pal.up:pal.dn,out="",lab=String(f.label||"Trade").toUpperCase(),pw=Math.min(900,60+lab.length*21);
+ out+='<rect x="80" y="110" width="'+pw+'" height="56" rx="28" fill="'+pal.a+'" fill-opacity=".18" stroke="'+pal.a+'" stroke-opacity=".6"/>'+igCap(lab,110,148,24,pal.a,5);
+ out+='<text x="80" y="330" font-family="'+HEADF+'" font-weight="700" font-size="150" fill="'+pal.ink+'">'+xe(t.t)+'</text>';
+ var tm=startOf(t)?(t.ot&&t.ot!==t.tm?t.ot+" to "+t.tm:t.tm):"";
+ out+=igCap(t.s+(tm?"  ·  "+tm:""),84,386,26,pal.ink,5).replace('fill="'+pal.ink+'"','fill="'+pal.ink+'" opacity=".75"');
+ var pn=sgn(t.p);out+='<text x="1000" y="330" text-anchor="end" font-family="'+HEADF+'" font-weight="700" font-size="'+(pn.length<=8?100:80)+'" fill="'+col+'">'+xe(pn)+'</text>';
+ var ay=440,ah=500;
+ if(im&&im.src){var cid="cl"+idx;
+  out+='<defs><clipPath id="'+cid+'"><rect x="80" y="'+ay+'" width="920" height="'+ah+'" rx="28"/></clipPath></defs><rect x="76" y="'+(ay-4)+'" width="928" height="'+(ah+8)+'" rx="32" fill="#000" fill-opacity=".35"/>'+
+   '<image href="'+im.src+'" x="80" y="'+ay+'" width="920" height="'+ah+'" preserveAspectRatio="xMidYMid slice" clip-path="url(#'+cid+')"/><rect x="80" y="'+ay+'" width="920" height="'+ah+'" rx="28" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="2"/>'}
+ else{
+  var px=function(v){return v==null?"-":"$"+Number(v).toFixed(2)},mv=(t.e&&t.x!=null)?((t.x-t.e)/t.e*100*(t.s==="Short"?-1:1)):null;
+  out+='<rect x="80" y="'+ay+'" width="920" height="'+ah+'" rx="28" fill="#fff" fill-opacity=".08" stroke="#fff" stroke-opacity=".16"/>';
+  out+=igCap("Entry",140,ay+90,24,pal.ink,5).replace('fill="'+pal.ink+'"','fill="'+pal.ink+'" opacity=".65"')+'<text x="140" y="'+(ay+190)+'" font-family="'+HEADF+'" font-weight="700" font-size="96" fill="'+pal.ink+'">'+xe(px(t.e))+'</text>';
+  out+=igCap("Exit",540,ay+90,24,pal.ink,5).replace('fill="'+pal.ink+'"','fill="'+pal.ink+'" opacity=".65"')+'<text x="540" y="'+(ay+190)+'" font-family="'+HEADF+'" font-weight="700" font-size="96" fill="'+col+'">'+xe(px(t.x))+'</text>';
+  out+='<path d="M140 '+(ay+260)+'H860" stroke="'+col+'" stroke-width="6" stroke-linecap="round" opacity=".7"/><path d="M830 '+(ay+240)+'L862 '+(ay+260)+'L830 '+(ay+280)+'" fill="none" stroke="'+col+'" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>';
+  out+='<text x="140" y="'+(ay+370)+'" font-family="'+SANSF+'" font-size="40" fill="'+pal.ink+'" opacity=".85">'+xe((t.q?t.q+" shares":"")+(mv!=null?(t.q?"  ·  ":"")+(mv>=0?"+":"")+mv.toFixed(2)+"% move":""))+'</text>';
+  out+='<text x="140" y="'+(ay+440)+'" font-family="'+SANSF+'" font-size="28" fill="'+pal.ink+'" opacity=".55">Add a chart screenshot to this trade to show it here</text>'}
+ out+='<text font-family="'+SANSF+'" font-size="40" fill="'+pal.ink+'">'+tsp(wrapT(f.text,40,920,.52,4),80,1010,54)+'</text>';
+ return out}
+function sLesson(D,P){var pal=D.pal,sz=P.lesson.length>150?56:66,ls=wrapT(P.lesson,sz,900,.48,8);
+ return igCap(P.lesson_title||"The lesson",80,150,26,pal.a,8)+'<text x="70" y="470" font-family="'+HEADF+'" font-size="340" fill="'+pal.a+'" opacity=".45">“</text>'+
+  '<text font-family="'+HEADF+'" font-style="italic" font-size="'+sz+'" fill="'+pal.ink+'">'+tsp(ls,80,580,sz*1.32)+'</text>'}
+function sCta(D,P){var pal=D.pal,ls=wrapT(P.cta||"Follow along for the next session.",100,920,.5,4);
+ return igCap("Until next session",80,150,26,pal.a,8)+'<text font-family="'+HEADF+'" font-weight="700" font-size="100" fill="'+pal.ink+'">'+tsp(ls,80,420,108)+'</text>'+
+  (D.handle?'<text x="80" y="'+(420+ls.length*108+60)+'" font-family="'+SANSF+'" font-size="48" font-weight="700" fill="'+pal.a+'">'+xe(D.handle)+'</text>':"")+
+  '<text x="80" y="1210" font-family="'+SANSF+'" font-size="26" fill="'+pal.ink+'" opacity=".6">Self-reported results. Not financial advice.</text>'}
+async function igBuild(){var P=igState.P,s=stats();
+ if(!s.n)return [];
+ var pal=pickPal(s.net),seed=hashS((s.first||"x")+s.n+(s.net.toFixed(2)))+(igState.seed||1)*7919;
+ var nm=$("name").value.trim(),handle=nm?(nm.charAt(0)==="@"?nm:(/\s/.test(nm)?nm:"@"+nm)):"";
+ var period=s.first?(s.first===s.last?dayLabel(s.first):dayLabel(s.first)+"  to  "+dayLabel(s.last)):"";
+ var D={pal:pal,s:s,period:period,handle:handle},byId={};igList.forEach(function(t,i){byId["T"+(i+1)]=t});
+ if(!igList.length){igList=sortedTrades()}
+ var pics=await inlineImgs(imgs),feats=[],used={};
+ P.feat.forEach(function(f){var t=byId[f.id];if(t&&!used[f.id]&&feats.length<3){used[f.id]=1;feats.push({t:t,label:f.label,text:f.text})}});
+ if(!feats.length){var b=s.best[0],w=s.worst[0];if(b)feats.push({t:b,label:"Best trade",text:"My best trade of the session."});if(w&&w!==b)feats.push({t:w,label:"Toughest trade",text:"My weakest trade of the session."})}
+ var bodies=[sCover(D,P),sStats(D,P),sChart(D,P)];
+ feats.forEach(function(f,i){var key=tkey(f.t),im=null;pics.forEach(function(m){if(m.tid===key&&!im)im=m});bodies.push(sFeature(D,f,i,im))});
+ if(P.lesson)bodies.push(sLesson(D,P));
+ bodies.push(sCta(D,P));
+ var N=bodies.length,art=artSVG(N,pal,seed);
+ return bodies.map(function(b,i){
+  var foot='<text x="80" y="1296" font-family="'+SANSF+'" font-size="26" fill="'+pal.ink+'" opacity=".7">'+xe(handle)+'</text><text x="1000" y="1296" text-anchor="end" font-family="'+SANSF+'" font-size="26" fill="'+pal.ink+'" opacity=".7">'+(i+1)+" / "+N+'</text>';
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="'+(i*IGW)+' 0 '+IGW+' '+IGH+'" width="'+IGW+'" height="'+IGH+'">'+art+'<g transform="translate('+(i*IGW)+',0)">'+b+foot+'</g></svg>'})}
+function svgToPng(svg){return new Promise(function(res,rej){var im=new Image();
+ im.onload=function(){var c=document.createElement("canvas");c.width=IGW;c.height=IGH;var g=c.getContext("2d");g.fillStyle="#111";g.fillRect(0,0,IGW,IGH);g.drawImage(im,0,0,IGW,IGH);c.toBlob(function(b){b?res(b):rej(new Error("png"))},"image/jpeg",0.92)};
+ im.onerror=function(){rej(new Error("img"))};im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg)})}
+function igCaptionText(){var P=igState.P;return P.caption+"\n\nSelf-reported results. Not financial advice.\n\n"+P.tagList.join(" ")}
+async function igShow(){var wrap=$("igwrap");if(!igState)return;
+ var svgs=await igBuild();igState.svgs=svgs;
+ var keepCap=$("igcap")?$("igcap").value:null,palv=$("igpal")?$("igpal").value:"auto";
+ wrap.hidden=false;
+ wrap.innerHTML='<h2 style="margin-top:22px">Your carousel</h2><p class="hint">'+svgs.length+' slides, sized 1080 by 1350 for Instagram. The artwork runs across the slides, so they line up as you swipe.</p>'+
+  '<div class="row"><label style="display:flex;gap:8px;align-items:center">Style <select id="igpal"><option value="auto">Match the day</option>'+Object.keys(PALS).map(function(k){return '<option value="'+k+'">'+PALS[k].n+'</option>'}).join("")+'</select></label><button id="igshuffle" type="button">Shuffle the art</button><button class="primary" id="igzip" type="button">Download all (ZIP)</button></div>'+
+  '<div class="ig-grid">'+svgs.map(function(sv,i){return '<div class="ig-card"><img alt="Slide '+(i+1)+' of '+svgs.length+'" src="data:image/svg+xml;charset=utf-8,'+encodeURIComponent(sv)+'"><button type="button" data-ig="'+i+'">Download slide '+(i+1)+'</button></div>'}).join("")+'</div>'+
+  '<h3 style="margin:18px 0 6px;font-size:1.05rem">Caption and hashtags</h3><textarea id="igcap" aria-label="Instagram caption"></textarea><div class="row"><button id="igcopy" type="button">Copy caption and hashtags</button></div>'+
+  '<p class="hint">Instagram only accepts posts from its app. Download the slides, send them to your phone, choose New post, select all slides in order, and paste the caption.</p>';
+ $("igpal").value=palv;$("igcap").value=keepCap!=null?keepCap:igCaptionText()}
+$("igwrap").addEventListener("click",async function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b||!igState||!igState.svgs)return;
+ var day=(stats().last||todayISO());
+ if(b.dataset.ig!=null){try{var i=+b.dataset.ig;await save("stockspot-"+day+"-slide-"+(i+1)+".jpg",await svgToPng(igState.svgs[i]))}catch(e){toast("Could not make that image")}return}
+ if(b.id==="igshuffle"){igState.seed=(igState.seed||1)+1;igShow();return}
+ if(b.id==="igcopy"){try{navigator.clipboard.writeText($("igcap").value).then(function(){toast("Copied")},function(){toast("Copy blocked by browser")})}catch(e){toast("Copy blocked by browser")}return}
+ if(b.id==="igzip"){b.disabled=true;var old=b.textContent;b.textContent="Making images...";
+  try{
+   if(typeof JSZip==="undefined"){for(var k=0;k<igState.svgs.length;k++)await save("stockspot-"+day+"-slide-"+(k+1)+".jpg",await svgToPng(igState.svgs[k]))}
+   else{var z=new JSZip();for(var j=0;j<igState.svgs.length;j++)z.file("slide-"+(j+1)+".jpg",await svgToPng(igState.svgs[j]));z.file("caption.txt",$("igcap").value);await save("stockspot-"+day+"-carousel.zip",await z.generateAsync({type:"blob"}))}
+  }catch(e){toast("Could not make the images")}
+  b.disabled=false;b.textContent=old}});
+$("igwrap").addEventListener("change",function(ev){if(ev.target.id==="igpal")igShow()});
 
 restore();loadImgs();showStats();renderImgs();initStore();
 })();
