@@ -227,11 +227,13 @@
     sendMsg: async function (cid, text) { await ready; var r = await sb.from('ss_channel_msgs').insert({ channel_id: cid, author_id: uid, text: text }); if (r.error) throw r.error; },
     delMsg: async function (id) { await ready; var r = await sb.from('ss_channel_msgs').delete().eq('id', id); if (r.error) throw r.error; },
     mirrorPosts: async function (cid, list) { await ready;
-      var ex = await sb.from('ss_channel_posts').select('id,post_key').eq('channel_id', cid); if (ex.error) throw ex.error;
-      var have = {}; (ex.data || []).forEach(function (r) { have[r.post_key] = r.id; });
+      var ex = await sb.from('ss_channel_posts').select('id,post_key,text,imgs').eq('channel_id', cid); if (ex.error) throw ex.error;
+      var have = {}, rowOf = {}; (ex.data || []).forEach(function (r) { have[r.post_key] = r.id; rowOf[r.post_key] = r; });
       var want = {}; list.forEach(function (p) { want[p.key] = 1; });
       var add = list.filter(function (p) { return !have[p.key]; }).map(function (p) { return { channel_id: cid, post_key: p.key, text: p.text || '', imgs: p.imgs || [], created_at: new Date(p.ts || Date.now()).toISOString() }; });
       if (add.length) { var i = await sb.from('ss_channel_posts').insert(add); if (i.error) throw i.error; }
+      var chg = list.filter(function (p) { var r = rowOf[p.key]; return r && ((r.text || '') !== (p.text || '') || JSON.stringify(r.imgs || []) !== JSON.stringify(p.imgs || [])); });
+      for (var c = 0; c < chg.length; c++) { var up = await sb.from('ss_channel_posts').update({ text: chg[c].text || '', imgs: chg[c].imgs || [] }).eq('id', have[chg[c].key]); if (up.error) throw up.error; }
       var gone = (ex.data || []).filter(function (r) { return !want[r.post_key]; }).map(function (r) { return r.id; });
       if (gone.length) { var d = await sb.from('ss_channel_posts').delete().in('id', gone); if (d.error) throw d.error; } },
     channelPosts: async function (cid) { await ready; var r = await sb.from('ss_channel_posts').select('*').eq('channel_id', cid).order('created_at', { ascending: false }).limit(100); if (r.error) throw r.error;
