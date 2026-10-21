@@ -539,7 +539,11 @@ function renderImgs(){var el=$("imglist");if(!el)return;el.innerHTML="";
   el.appendChild(d)})}
 $("imgfile").addEventListener("change",function(ev){addImgs(ev.target.files).then(function(){ev.target.value=""})});
 document.addEventListener("paste",function(ev){var fs=ev.clipboardData&&ev.clipboardData.files;
- if(fs&&fs.length&&Array.prototype.some.call(fs,function(f){return /^image\//.test(f.type)})){ev.preventDefault();if(!$("profilev").hidden){wallAdd(fs);return}if(!$("pagev").hidden){if(pages[curPage]&&pages[curPage].parent)composerAdd(fs);return}if($("studio").hidden)return;addImgs(fs);var pb=$("pastebox");pb.classList.add("on");setTimeout(function(){pb.classList.remove("on")},900)}});
+ if(fs&&fs.length&&Array.prototype.some.call(fs,function(f){return /^image\//.test(f.type)})){ev.preventDefault();var tg=ev.target||{},inEdit=editing&&tg.closest&&tg.closest(".editing");
+  if(tg.id==="edtext"||inEdit){editAddFiles(fs);return}
+  if(tg.id==="chatin"){chatAddFiles(fs);return}
+  if(!$("profilev").hidden){if($("wtext"))wallAdd(fs);else if($("chatin"))chatAddFiles(fs);return}
+  if(!$("pagev").hidden){if(pages[curPage]&&pages[curPage].parent)composerAdd(fs);return}if($("studio").hidden)return;addImgs(fs);var pb=$("pastebox");pb.classList.add("on");setTimeout(function(){pb.classList.remove("on")},900)}});
 $("pastebox").addEventListener("click",function(){this.focus()});
 $("pastebox").addEventListener("dragover",function(ev){ev.preventDefault()});
 $("pastebox").addEventListener("drop",function(ev){ev.preventDefault();if(ev.dataTransfer&&ev.dataTransfer.files.length)addImgs(ev.dataTransfer.files)});
@@ -891,8 +895,8 @@ function openPageSettings(pid){var pg=pages[pid];if(!pg)return;var old=$("pset")
  document.body.appendChild(d);var prev=document.activeElement;
  var nm=d.querySelector("#ps-name"),pv=d.querySelector("#ps-priv"),fp=d.querySelector("#ps-fpost");
  nm.value=pg.name;if(pv){pv.checked=pg.priv!==false;fp.checked=!!pg.fpost;fp.disabled=pv.checked}
- function save(){var p=pages[pid];if(!p)return;var v=nm.value.trim()||p.name;
-  putPage(Object.assign({},p,{name:v,priv:pv?pv.checked:p.priv,fpost:pv?(pv.checked?false:fp.checked):p.fpost})).then(function(){if(pv){fp.checked=!!pages[pid].fpost;fp.disabled=pv.checked}renderSide();if(curPage===pid){var h=$("pgname");if(h)h.value=v;commNote()}},function(){toast("Could not save")})}
+ function save(){var p=pages[pid];if(!p)return;var v=nm.value.trim()||p.name,wasPriv=p.priv!==false;
+  putPage(Object.assign({},p,{name:v,priv:pv?pv.checked:p.priv,fpost:pv?(pv.checked?false:fp.checked):p.fpost})).then(function(){if(pv){fp.checked=!!pages[pid].fpost;fp.disabled=pv.checked}renderSide();if(curPage===pid){var h=$("pgname");if(h)h.value=v;commNote();if(pv&&(pages[pid].priv!==false)!==wasPriv)showPage(pid)}},function(){toast("Could not save")})}
  nm.onchange=save;if(pv){pv.onchange=save;fp.onchange=save}
  function close(){d.remove();document.removeEventListener("keydown",esc2);try{prev&&prev.focus()}catch(e){}}
  function esc2(e){if(e.key==="Escape")close()}document.addEventListener("keydown",esc2);
@@ -1195,7 +1199,7 @@ function syncPub(){var So=S();if(!So||!So.syncChannels)return Promise.resolve();
  var list=[];Object.keys(pages).forEach(function(k){var p=pages[k];if(p.parent&&pages[p.parent]&&p.priv===false)list.push({page_id:k,name:p.name,parent_name:pages[p.parent].name,fpost:!!p.fpost})});
  syncing=So.syncChannels(list).then(function(m){chMap=m||{};setTimeout(mirrorAll,50);return chMap}).catch(function(){return chMap});return syncing}
 function chatHTML(canPost,note){return '<h2 class="chhead">Chat</h2>'+(note?'<p class="hint" style="margin:0 0 8px" id="chnote">'+note+'</p>':'')+'<div id="chatlist" class="chatlist" aria-live="polite"><p class="hint">Loading...</p></div>'+
- (canPost?'<div id="chprev" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div><div class="row" style="margin:8px 0 0"><input id="chatin" maxlength="2000" placeholder="Message this channel. Use $TSLA for tickers." aria-label="Message this channel" style="flex:1;min-width:0"><button type="button" id="chatpic" aria-label="Add a picture">Add picture</button><input id="chimg" type="file" accept="image/*" multiple hidden><button class="primary" id="chatsend" type="button">Send</button></div>':'')}
+ (canPost?'<div id="chprev" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div><div class="row" style="margin:8px 0 0"><input id="chatin" maxlength="2000" placeholder="Message this channel. Paste a screenshot with Ctrl+V." aria-label="Message this channel" style="flex:1;min-width:0"><button type="button" id="chatpic" aria-label="Add a picture">Add picture</button><input id="chimg" type="file" accept="image/*" multiple hidden><button class="primary" id="chatsend" type="button">Send</button></div>':'')}
 var chatPend=[];
 function renderChPrev(){var e=$("chprev");if(!e)return;e.innerHTML=chatPend.map(function(u,i){return '<div class="pthumb"><img alt="Picture to send" src="'+u+'"><button type="button" data-chrm="'+i+'" aria-label="Remove picture">✕</button></div>'}).join("")}
 async function chatAddFiles(files){files=files?Array.prototype.slice.call(files):[];
