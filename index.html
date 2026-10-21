@@ -183,6 +183,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .hm-day:hover:not([disabled]){border-color:var(--accent)}
 .hm-day small{color:var(--mute)}
 .coach-meta{color:var(--mute);font-size:.82rem;margin-top:10px}
+.hm-big{display:block;font:800 1.9rem/1.1 "Bricolage Grotesque",sans-serif;margin:4px 0}.hm-lab{color:var(--mute);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}.hm-today{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.tk-chip{border:1px solid var(--line);background:var(--bg);color:var(--accent,#1d4ed8);font:inherit;font-weight:700;border-radius:999px;padding:6px 12px;cursor:pointer}.tk-chip small{color:var(--mute);font-weight:400}
 .hm-pages{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 
 .ig-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin:12px 0}
@@ -1272,24 +1273,23 @@ async function loadCoach(){try{if(store.db){var d=await store.db.doc("meta/coach
 async function saveCoach(){try{if(store.db)await store.db.doc("meta/coach").set(coach);else localStorage.setItem(CKEY,JSON.stringify(coach))}catch(e){toast("Could not save the review")}}
 function coachBody(){return coach&&coach.md?'<div class="out ptxt coachbox" id="cout">'+rich(coach.md)+'</div><p class="coach-meta">Based on '+coach.n+' trades. Generated '+esc(new Date(coach.ts).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}))+'. Not financial advice.</p>':'<div class="out ptxt coachbox" id="cout" hidden></div>'}
 function renderHome(){var el=$("home");if(!el)return;
- var all=allTrades(),days=dailyPnl(),yr=pickYear(days),m=pnlModel(days,yr),s=all.length?withCtx({trades:all},[],stats):null;
+ var days=dailyPnl(),td=todayISO(),today=null;days.forEach(function(d){if(d.d===td)today=d});
  var who=($("whoami")&&$("whoami").textContent)||"";
- var h='<div class="hm-top"><div><h1>Home</h1><p class="sub">'+(who?esc(who)+". ":"")+'Your record at a glance. Saved days only.</p></div><div class="row" style="margin:0"><button class="primary" id="hstudio" type="button">Open Studio</button></div></div>';
- if(!s){h+='<section><h2>No trades yet</h2><p class="hint">Upload your thinkorswim statement in Studio, generate or save the day, and your stats, equity curve and AI review appear here.</p></section>'}
- else{
-  var t=function(v,l,c){return '<div class="hm-tile"><b'+(c?' class="'+c+'"':'')+'>'+v+'</b><span>'+l+'</span></div>'};
-  h+='<div class="hm-grid">'+
-   t(sgn(m.total)+(m.totalPct==null?"":" ("+fmtPct(m.totalPct)+")"),yr+" P&amp;L",m.total>=0?"gain":"loss")+
-   t(sgn(s.net),"All-time P&amp;L, "+s.n+" trades",s.net>=0?"gain":"loss")+
-   t(Math.round(s.wr*100)+"%","Win rate")+t(s.pf===Infinity?"n/a":s.pf.toFixed(2),"Profit factor")+
-   t(money(s.aw),"Average win","gain")+t(money(-s.al),"Average loss","loss")+t(money(-s.dd),"Max drawdown","loss")+t(String(days.length),"Trading days")+'</div>';
-  h+='<section><h2>Equity curve</h2>'+sparkline(s.pts,s.net>=0)+(m.bal?'':'<p class="hint">Add your starting balance in the P&amp;L card (top left) to see percent returns.</p>')+'</section>';
-  var rec=days.slice(-8).reverse();
-  h+='<section><h2>Recent days</h2><div class="hm-days">'+rec.map(function(d){var has=!!entries[d.d];
-   return '<button type="button" class="hm-day" '+(has?'data-day="'+d.d+'"':'disabled')+'><span>'+esc(dayLabel(d.d))+' <small>'+d.n+(d.n===1?' trade':' trades')+'</small></span><b class="'+(d.pnl>=0?"gain":"loss")+'">'+sgn(d.pnl)+'</b></button>'}).join("")+'</div></section>'}
+ var h='<div class="hm-top"><div><h1>Home</h1><p class="sub">'+(who?esc(who)+". ":"")+esc(dayLabel(td))+'</p></div></div>';
+ h+='<section class="hm-today"><div><span class="hm-lab">Today</span>'+(today?'<b class="hm-big '+(today.pnl>=0?"gain":"loss")+'">'+sgn(today.pnl)+'</b><span class="hint">'+today.n+(today.n===1?" trade":" trades")+' saved</span>':'<b class="hm-big">No trades saved yet</b><span class="hint">Upload your statement in Studio to log the day.</span>')+'</div><button class="primary" id="hstudio" type="button">'+(today?"Open Studio":"Log today's trades")+'</button></section>';
+ h+='<section><h2>Trending $tickers</h2><div id="hmtrend" class="hm-pages"><span class="hint">Loading...</span></div></section>';
+ h+='<section><div class="hm-top" style="margin:0"><h2 style="margin:0">Notifications</h2><button type="button" id="hmnall">See all</button></div><div id="hmnotif" class="nlist"><span class="hint">Loading...</span></div></section>';
+ var rec=days.slice(-5).reverse();
+ if(rec.length)h+='<section><h2>Recent days</h2><div class="hm-days">'+rec.map(function(d){var has=!!entries[d.d];
+  return '<button type="button" class="hm-day" '+(has?'data-day="'+d.d+'"':'disabled')+'><span>'+esc(dayLabel(d.d))+' <small>'+d.n+(d.n===1?' trade':' trades')+'</small></span><b class="'+(d.pnl>=0?"gain":"loss")+'">'+sgn(d.pnl)+'</b></button>'}).join("")+'</div></section>';
  var pk=sortedPages();
  if(pk.length)h+='<section><h2>Your pages</h2><div class="hm-pages">'+pk.map(function(p){return '<button type="button" data-pg="'+esc(p.id)+'"># '+esc(p.name)+'</button>'}).join("")+'</div></section>';
- el.innerHTML=h}
+ el.innerHTML=h;
+ var So=S();
+ if(!So){var t=$("hmtrend");if(t)t.innerHTML='<span class="hint">Not available here.</span>';var n=$("hmnotif");if(n)n.innerHTML='<span class="hint">Not available here.</span>';return}
+ So.trending().then(function(L){var t=$("hmtrend");if(!t)return;t.innerHTML=L.length?L.map(function(x){return '<button type="button" class="tk-chip" data-tk="'+esc(x.sym)+'">$'+esc(x.sym)+' <small>'+x.n+'</small></button>'}).join(""):'<span class="hint">No $tickers on walls this week. Post one on your wall, like $SPY.</span>'}).catch(function(){var t=$("hmtrend");if(t)t.innerHTML='<span class="hint">Could not load.</span>'});
+ So.notifs().then(function(L){var n=$("hmnotif");if(!n)return;L=L.slice(0,3);
+  n.innerHTML=L.length?L.map(function(x){var what=x.type==="wall_post"?"wrote on your wall":"commented on a post";return '<button type="button" class="nitem'+(x.read?"":" unread")+'" data-hmn="1"><span><b>@'+esc(x.actor.username)+'</b> '+what+'</span>'+(x.snippet?'<span class="nsnip">'+esc(x.snippet)+'</span>':'')+'<small>'+esc(postWhen(x.ts))+'</small></button>'}).join(""):'<span class="hint">Nothing yet. Wall posts and comments show up here.</span>'}).catch(function(){var n=$("hmnotif");if(n)n.innerHTML='<span class="hint">Could not load.</span>'})}
 function showHome(){curDate="";curPage="";$("studio").hidden=true;$("entry").hidden=true;$("pagev").hidden=true;$("home").hidden=false;$("navstudio").classList.remove("on");$("navhome").classList.add("on");renderHome();renderSide();window.scrollTo(0,0)}
 async function postCoach(){var So=S();if(!coach||!coach.md||coach.posted||!So)return;
  try{await So.addPost(So.uid(),coach.md.trim()+"\n\nSelf-reported results. Not financial advice.",[]);coach.posted=true;await saveCoach();
@@ -1311,6 +1311,7 @@ async function runCoach(){
 $("navhome").addEventListener("click",showHome);
 $("home").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
  if(b.id==="hstudio"){showStudio();return}
+ if(b.id==="hmnall"||b.dataset.hmn){showNotifs();return}
  if(b.id==="chgo"){runCoach();return}
  if(b.id==="chstop"){if(coachCtl)coachCtl.abort();return}
  if(b.dataset.day){renderEntry(b.dataset.day);return}

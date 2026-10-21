@@ -175,6 +175,12 @@
       return rows.map(function (n) { return { id: n.id, type: n.type, post_id: n.post_id, snippet: n.snippet || '', read: n.read, ts: new Date(n.created_at).getTime(), actor: pickName(names, n.actor_id) }; });
     },
     unread: async function () { await ready; var r = await sb.from('ss_notifications').select('id', { count: 'exact', head: true }).eq('read', false); return r.count || 0; },
+    trending: async function () {
+      await ready; var since = new Date(Date.now() - 7 * 864e5).toISOString();
+      var r = await sb.from('ss_wall_posts').select('text').gte('created_at', since).limit(500); if (r.error) throw r.error;
+      var c = {}; (r.data || []).forEach(function (p) { var seen = {}; String(p.text || '').replace(/\$([A-Z]{1,5})(?![A-Za-z0-9])/g, function (m, x) { if (!seen[x]) { seen[x] = 1; c[x] = (c[x] || 0) + 1; } }); });
+      return Object.keys(c).map(function (k) { return { sym: k, n: c[k] }; }).sort(function (a, b) { return b.n - a.n; }).slice(0, 10);
+    },
     postOwner: async function (postId) { await ready; var r = await sb.from('ss_wall_posts').select('owner_id').eq('id', postId).maybeSingle(); if (!r.data) return null; var n = await namesFor([r.data.owner_id]); return pickName(n, r.data.owner_id); },
     markRead: async function (ids) { await ready; var q = sb.from('ss_notifications').update({ read: true }).eq('read', false); if (ids && ids.length) q = q.in('id', ids); var r = await q; return r.error ? r.error.message : ''; }
   };
