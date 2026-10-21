@@ -150,6 +150,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .ptabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
 .pf-sec{margin:22px 0 8px;font-size:1.1rem}.pf-av.sm{width:72px;height:72px;font-size:1.6rem}
 .wp-who{display:inline-flex;align-items:center;gap:6px}.pf-av.xs{width:24px;height:24px;font-size:.75rem}
+.chatlist{max-height:380px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:8px 12px;display:flex;flex-direction:column;gap:10px}.cmsg .cmh{display:flex;align-items:center;gap:8px;font-size:.82rem}.cmsg .ptxt{margin-top:2px}
 .wp-actions{margin-top:8px;display:flex;gap:18px;align-items:center}.wact{border:0;background:none;color:var(--mute);font:inherit;font-size:.9rem;padding:4px 2px;cursor:pointer;border-radius:6px;display:inline-flex;gap:5px;align-items:center}.wact:hover{color:var(--ink)}.wact.on{color:var(--accent,#1d4ed8);font-weight:700}
 .wmwrap{position:relative;display:inline-block}.wdots{opacity:.7;font-size:1.1rem}.wmenu{position:absolute;right:0;top:28px;z-index:30;min-width:170px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;display:flex;flex-direction:column}
 .wmenu button{border:0;background:none;color:var(--ink);text-align:left;font:inherit;padding:9px 10px;border-radius:6px;cursor:pointer}.wmenu button:hover{background:var(--bg)}.wp-flag{color:var(--mute);font-size:.78rem;margin-bottom:4px}.rp-q{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-top:4px;background:var(--bg)}
@@ -614,7 +615,7 @@ async function initStore(){
   if(store.db){var snap=await store.db.collection("entries").get();snap.docs.forEach(function(d){if(d.exists)entries[d.id]=clone(d.data())})}
   else entries=JSON.parse(localStorage.getItem(KEYJ)||"{}")
  }catch(e){try{entries=JSON.parse(localStorage.getItem(KEYJ)||"{}")}catch(e2){entries={}}}
- await loadPages();await loadSettings();applyDefaults();await loadProfile();await loadCoach();renderSide();showHome();try{var hm=/^#p=(.+)$/.exec(location.hash);if(hm&&pages[hm[1]])showPage(hm[1])}catch(e){}}
+ await loadPages();schedSync();await loadSettings();applyDefaults();await loadProfile();await loadCoach();renderSide();showHome();try{var hm=/^#p=(.+)$/.exec(location.hash);if(hm&&pages[hm[1]])showPage(hm[1])}catch(e){}}
 async function putEntry(ent){
  if(store.db)await store.db.doc("entries/"+ent.date).set(ent);
  else{var all=JSON.parse(localStorage.getItem(KEYJ)||"{}");all[ent.date]=ent;localStorage.setItem(KEYJ,JSON.stringify(all))}
@@ -734,7 +735,7 @@ async function putPage(p){
  var rec={name:p.name,hint:p.hint||"",order:p.order||0,created:p.created||Date.now(),parent:p.parent||"",priv:p.priv!==false,fpost:!!p.fpost};
  if(store.db)await store.db.doc("pages/"+p.id).set(rec);
  else{var o=lsGet()||{pages:{}},ex=o.pages[p.id];o.pages[p.id]=Object.assign({posts:ex?ex.posts||[]:[]},rec);lsPut(o)}
- pages[p.id]=Object.assign({id:p.id},rec)}
+ pages[p.id]=Object.assign({id:p.id},rec);schedSync()}
 async function seedPages(){for(var i=0;i<SEED.length;i++)await putPage({id:newId(),name:SEED[i][0],hint:SEED[i][1],order:i,created:Date.now()+i})}
 async function loadPages(){pages={};
  try{
@@ -767,7 +768,7 @@ async function delPage(pid){
   for(var i=0;i<s.docs.length;i++)await store.db.doc("pages/"+pid+"/posts/"+s.docs[i].id).delete();
   await store.db.doc("pages/"+pid).delete()}
  else{var o=lsGet();if(o){delete o.pages[pid];lsPut(o)}}
- delete pages[pid]}
+ delete pages[pid];schedSync()}
 function postWhen(ts){var d=new Date(ts);return d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+", "+d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}
 function rich(t){return esc(t).replace(/\$([A-Z]{1,5})(?![A-Za-z0-9])/g,function(m,x){return '<button type="button" class="tk" data-tk="'+x+'">$'+x+'</button>'}).replace(/(^|[\s(])@([A-Za-z0-9_]{3,20})(?![A-Za-z0-9_])/g,function(m,p,x){return p+'<button type="button" class="tk un" data-un="'+x+'">@'+x+'</button>'})}
 function renderFeed(){var el=$("feed");if(!el)return;
@@ -792,11 +793,13 @@ async function showPage(pid){var pg=pages[pid];if(!pg){showStudio();return}
   '<div id="feed" class="feed"></div>'+
   (par?'<p class="hint" id="commnote"></p>'+
   '<div class="composer"><div id="pprev"></div><textarea id="ptext" maxlength="4000" aria-label="Write a post" placeholder="'+esc(pg.hint||"Write something")+'"></textarea>'+
-  '<div class="row"><button class="primary" id="ppost" type="button">Post</button><button id="pfile" type="button">Add images</button><input id="pimg" type="file" accept="image/*" multiple hidden><span class="hint" style="margin:0">Ctrl+V (Cmd+V on Mac) pastes a screenshot. Ctrl+Enter posts.</span></div></div>':'');
+  '<div class="row"><button class="primary" id="ppost" type="button">Post</button><button id="pfile" type="button">Add images</button><input id="pimg" type="file" accept="image/*" multiple hidden><span class="hint" style="margin:0">Ctrl+V (Cmd+V on Mac) pastes a screenshot. Ctrl+Enter posts.</span></div></div><div id="pgchat"></div>':'');
  $("pgname").value=pg.name;commNote();renderSide();window.scrollTo(0,0);
  try{feedPosts=await loadPosts(pid)}catch(e){toast("Could not load this page")}
  if(curPage!==pid)return;
  if(!par&&feedPosts.length){var fe=$("feed");fe.insertAdjacentHTML("beforebegin",'<h2 class="chhead">Earlier posts</h2><p class="hint" style="margin:0 0 8px">Posts made here before channels existed. New posts go inside a channel.</p>')}
+ if(par&&pg.priv===false){var cb=$("pagev").querySelector("#pgchat");if(cb){var cid=chMap[pid];if(!cid&&syncing)await syncing;cid=chMap[pid];if(!cid){try{await syncPub();cid=chMap[pid]}catch(e){}}
+   if(cid&&curPage===pid){var pf=$("profilev");if(pf&&pf.querySelector("#chatlist"))pf.innerHTML="";cb.innerHTML=chatHTML(true,esc(chanNote(pg)));startChat(cid,true)}else cb.innerHTML='<p class="hint">Chat is getting set up. Reopen this channel in a moment.</p>'}}
  renderFeed();var t=$("ptext");
  if(par){var go=function(){if(curPage===pid)window.scrollTo(0,document.documentElement.scrollHeight)},touched=false,mark=function(){touched=true};
   window.addEventListener("wheel",mark,{once:true,passive:true});window.addEventListener("touchmove",mark,{once:true,passive:true});
@@ -847,14 +850,14 @@ function openPageMenu(pid){var pg=pages[pid];if(!pg)return;closeMenu();var cat=!
   if(m==="del"){confirmTwice(b,"Tap again to delete",async function(){var par=pg2.parent;try{await delPage(pid);close();if(!pages[curPage]){if(par&&pages[par])showPage(par);else showStudio()}else renderSide();toast("Deleted")}catch(x){toast("Could not delete")}})}})}
 function commNote(){var el=$("commnote"),pg=pages[curPage];if(!el||!pg)return;
  if(!pg.parent){el.textContent="";return}
- el.textContent=pg.priv!==false?"Private: only you can post here.":(pg.fpost?"Followers will be able to post in this "+(pg.parent?"channel":"page")+" once public channels launch.":"Followers can read this but not post.")}
+ el.textContent=pg.priv!==false?"Private: only you can see and post here.":"Your posts here stay private to you. A public chat for followers shows below."}
 function openPageSettings(pid){var pg=pages[pid];if(!pg)return;var old=$("pset");if(old)old.remove();
  var kids=pg.parent?[]:kidsOf(pid).length,d=document.createElement("div");d.id="pset";d.className="psetbg";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label","Settings for "+pg.name);
  d.innerHTML='<div class="pset"><h2>'+esc(pg.name)+' <span class="pill">'+(pg.parent?"Channel":"Page")+'</span></h2>'+
   '<label>Name<input id="ps-name" maxlength="40"></label>'+
   '<label class="chk"><input type="checkbox" id="ps-priv"> Private: only I can post here</label>'+
   '<label class="chk"><input type="checkbox" id="ps-fpost"> Let followers post here</label>'+
-  '<p class="hint" style="margin:0 0 8px">These choices are saved now. Public channels open to followers are coming; while Private is on, followers can never post.</p>'+
+  '<p class="hint" style="margin:0 0 8px">Private: only you see this channel. Turn Private off to open a public chat room in this channel that anyone can read. Tick \"Let followers post here\" to let people who follow you chat too. Your own posts here always stay private.</p>'+
   '<div class="row"><button class="primary" id="ps-close" type="button">Done</button><button id="ps-del" type="button">Delete '+(pg.parent?"channel":"page")+'</button></div></div>';
  document.body.appendChild(d);var prev=document.activeElement;
  var nm=d.querySelector("#ps-name"),pv=d.querySelector("#ps-priv"),fp=d.querySelector("#ps-fpost");
@@ -1128,12 +1131,12 @@ function renderProfile(){var A=window.stockspotAuth||{},el=$("profilev"),self=pv
   (self?'<button id="pfedit" type="button" class="primary">Edit profile</button>':'<span class="row" style="margin:0"><button id="pffollow" type="button" class="primary" aria-pressed="false">Follow</button><button id="pfwrite" type="button">Write on @'+esc(nm)+"'s wall</button></span>")+'</div>'+
   '<div class="pf-bio">'+((self?prof.bio:pv.bio)?rich(self?prof.bio:pv.bio):'<span class="hint">'+(self?"No bio yet. Add one with Edit profile.":"No bio yet.")+'</span>')+'</div>'+
   '<div class="pf-counts"><button type="button" data-fp="following"><b id="cfing">0</b> Following</button><button type="button" data-fp="followers"><b id="cfers">0</b> Followers</button></div>'+
-  '<div id="fpanel" class="pf-panel" hidden></div>'+(since?'<div class="pf-since">Member since '+esc(since)+'</div>':'')+'</div></div>'+
+  '<div id="pchans"></div><div id="fpanel" class="pf-panel" hidden></div>'+(since?'<div class="pf-since">Member since '+esc(since)+'</div>':'')+'</div></div>'+
   (self?'<h2 class="pf-sec">Record at a glance</h2>'+recordBlock()+
   '<div class="ptabs" role="tablist"><button type="button" role="tab" data-ptab="wall" aria-selected="'+(profTab==="wall")+'">Wall</button><button type="button" role="tab" data-ptab="coach" aria-selected="'+(profTab==="coach")+'">AI coach</button></div>':
   '<h2 class="pf-sec">Wall</h2>')+
   (self&&profTab==="coach"?coachTab():wallTab());
- wpend=[];renderWPrev();loadFollowInfo()}
+ wpend=[];renderWPrev();loadFollowInfo();loadProfChannels()}
 async function smartSearch(v){var q=String(v||"").trim();if(!q)return;
  if(q.charAt(0)==="$"){lookupTicker(q);return}
  if(q.charAt(0)==="@"){showUserProfile(q);return}
@@ -1142,6 +1145,35 @@ async function smartSearch(v){var q=String(v||"").trim();if(!q)return;
  if(/^[A-Za-z]{1,5}(\.[A-Za-z])?$/.test(q)){lookupTicker(q);return}
  toast("No trader or ticker found. Use @name or $TSLA")}
 function lookupTicker(v){var t=String(v||"").replace(/^\$/,"").trim().toUpperCase();if(!/^[A-Z]{1,5}(\.[A-Z])?$/.test(t)){toast("Enter a ticker like $TSLA")}else showTicker(t)}
+var chMap={},syncT=0,syncing=null,chat=null,chatTimer=0;
+function schedSync(){clearTimeout(syncT);syncT=setTimeout(function(){syncPub()},600)}
+function syncPub(){var So=S();if(!So||!So.syncChannels)return Promise.resolve();
+ var list=[];Object.keys(pages).forEach(function(k){var p=pages[k];if(p.parent&&pages[p.parent]&&p.priv===false)list.push({page_id:k,name:p.name,parent_name:pages[p.parent].name,fpost:!!p.fpost})});
+ syncing=So.syncChannels(list).then(function(m){chMap=m||{};return chMap}).catch(function(){return chMap});return syncing}
+function chatHTML(canPost,note){return '<h2 class="chhead">Chat</h2>'+(note?'<p class="hint" style="margin:0 0 8px" id="chnote">'+note+'</p>':'')+'<div id="chatlist" class="chatlist" aria-live="polite"><p class="hint">Loading...</p></div>'+
+ (canPost?'<div class="row" style="margin:8px 0 0"><input id="chatin" maxlength="2000" placeholder="Message this channel. Use $TSLA for tickers." aria-label="Message this channel" style="flex:1;min-width:0"><button class="primary" id="chatsend" type="button">Send</button></div>':'')}
+async function loadChat(keepScroll){var So=S();if(!So||!chat||!$("chatlist"))return;var cid=chat.cid,el=$("chatlist");
+ var L;try{L=await So.chatMsgs(cid)}catch(e){if(chat&&chat.cid===cid&&el===$("chatlist"))el.innerHTML='<p class="hint">Could not load the chat.</p>';return}
+ if(!chat||chat.cid!==cid||!$("chatlist"))return;el=$("chatlist");var me=So.uid(),nearBottom=el.scrollHeight-el.scrollTop-el.clientHeight<60;
+ el.innerHTML=L.length?L.map(function(m){var can=m.author.id===me||chat.mine;return '<div class="cmsg"><div class="cmh"><button type="button" class="tk un" data-un="'+esc(m.author.username)+'">@'+esc(m.author.username)+'</button> <span class="hint" style="margin:0">'+esc(postWhen(m.ts))+'</span>'+(can?' <button class="x" type="button" data-cmdel="'+esc(m.id)+'" aria-label="Delete message">✕</button>':'')+'</div><div class="ptxt">'+rich(m.text)+'</div></div>'}).join(""):'<p class="hint">No messages yet. Say something.</p>';
+ if(!keepScroll||nearBottom)el.scrollTop=el.scrollHeight}
+function startChat(cid,mine){chat={cid:cid,mine:!!mine};clearInterval(chatTimer);loadChat();chatTimer=setInterval(function(){if(!chat||!$("chatlist")||document.hidden){if(!$("chatlist")){clearInterval(chatTimer);chat=null}return}loadChat(true)},8000)}
+async function chatSend(){var So=S(),i=$("chatin");if(!So||!i||!chat)return;var t=i.value.trim();if(!t)return;var b=$("chatsend");if(b)b.disabled=true;
+ try{await So.sendMsg(chat.cid,t);i.value="";await loadChat()}catch(e){toast("Could not send. You may need to follow this trader first.")}finally{if(b)b.disabled=false;i.focus()}}
+function chanNote(pg){return pg.fpost?"Public: your followers can chat here.":"Public: followers can read the chat but not post."}
+async function openChannel(id){var So=S();if(!So)return;var c=null;try{c=await So.channelInfo(id)}catch(e){}
+ if(!c){toast("That channel is not available");return}
+ var pc=$("pgchat");if(pc)pc.innerHTML="";
+ hideViews();var el=$("profilev");el.hidden=false;
+ var canPost=c.mine||(c.fpost&&c.iFollow),note=c.mine?"This is your public channel.":(c.fpost?(c.iFollow?"You can chat here because you follow @"+esc(c.owner.username)+".":"Follow @"+esc(c.owner.username)+" to chat here."):"Read only. Only @"+esc(c.owner.username)+" can post here.");
+ el.innerHTML='<button class="crumb" type="button" data-backprof="'+esc(c.owner.username)+'">&larr; @'+esc(c.owner.username)+'</button><h1># '+esc(c.name)+'</h1><p class="sub">'+(c.parent_name?"in "+esc(c.parent_name)+" · ":"")+'by @'+esc(c.owner.username)+'</p>'+
+  (!canPost&&c.fpost&&!c.iFollow?'<div class="row"><button class="primary" type="button" data-chfollow="'+esc(c.owner.id)+'" data-cid="'+esc(c.id)+'">Follow @'+esc(c.owner.username)+'</button></div>':'')+chatHTML(canPost,note);
+ window.scrollTo(0,0);startChat(c.id,c.mine)}
+async function loadProfChannels(){var So=S(),el=$("pchans");if(!So||!So.channelsOf||!el||!pv.id)return;var id=pv.id,L=[];
+ try{L=await So.channelsOf(id)}catch(e){return}
+ if(pv.id!==id||!$("pchans"))return;el=$("pchans");if(!L.length){el.innerHTML="";return}
+ var g={};L.forEach(function(c){(g[c.parent_name||"Channels"]=g[c.parent_name||"Channels"]||[]).push(c)});
+ el.innerHTML='<h2 class="pf-sec">Public channels</h2>'+Object.keys(g).map(function(k){return '<div class="hint" style="margin:6px 0 4px">'+esc(k)+'</div><div class="hm-pages">'+g[k].map(function(c){return '<button type="button" class="tk-chip" data-chan="'+esc(c.id)+'"># '+esc(c.name)+'</button>'}).join("")+'</div>'}).join("")}
 var fInfo=null;
 async function loadFollowInfo(){var So=S();if(!So||!pv.id)return;var id=pv.id;
  try{var f=await So.followInfo(id);if(pv.id!==id)return;fInfo=f;var a=$("cfers"),b=$("cfing");if(a)a.textContent=f.followers;if(b)b.textContent=f.following;paintFollowBtn()}catch(e){}}
@@ -1201,7 +1233,7 @@ async function showNotifs(){hideViews();$("navnotif").classList.add("on");$("not
  try{notifs=await So.notifs()}catch(e){notifs=[];toast("Could not load notifications")}renderNotifs();nextNotifBadge(notifs.filter(function(n){return !n.read}).length)}
 function renderNotifs(){var el=$("notifv"),un=notifs.filter(function(n){return !n.read}).length;
  el.innerHTML='<div class="hm-top"><div><h1>Notifications</h1><p class="sub">Posts and comments on your wall.</p></div>'+(un?'<button type="button" id="nmark">Mark all read</button>':'')+'</div>'+
-  (notifs.length?'<div class="nlist">'+notifs.map(function(n){var what=n.type==="follow"?"started following you":n.type==="wall_post"?"wrote on your wall":n.type==="like"?"liked your post":n.type==="repost"?"reposted your post":"commented on a post";
+  (notifs.length?'<div class="nlist">'+notifs.map(function(n){var what=n.type==="channel_msg"?"posted in your channel":n.type==="follow"?"started following you":n.type==="wall_post"?"wrote on your wall":n.type==="like"?"liked your post":n.type==="repost"?"reposted your post":"commented on a post";
    return '<button type="button" class="nitem'+(n.read?"":" unread")+'" data-nid="'+esc(n.id)+'"><span><b>@'+esc(n.actor.username)+'</b> '+what+'</span>'+(n.snippet?'<span class="nsnip">'+esc(n.snippet)+'</span>':'')+'<small>'+esc(postWhen(n.ts))+'</small></button>'}).join("")+'</div>':'<p class="hint">Nothing yet. When someone writes on your wall or comments, it shows up here.</p>')}
 function renderWPrev(){var e=$("wprev");if(!e)return;e.style.cssText="display:flex;gap:8px;flex-wrap:wrap";e.innerHTML=wpend.map(function(u,i){return '<div class="pthumb"><img alt="Image to post" src="'+u+'"><button type="button" data-wrm="'+i+'" aria-label="Remove image '+(i+1)+'">✕</button></div>'}).join("")}
 async function wallAdd(files){files=files?Array.prototype.slice.call(files):[];var n=0;
@@ -1265,7 +1297,13 @@ async function showTicker(sym){var prevProfile=!$("profilev").hidden,prevPage=cu
  else{var m2='<span class="hint">Market data is not available here.</span>';fill("tkquote",m2);fill("tkchart",m2);fill("tkabout",m2);fill("tknews",m2)}
  var posts=[];try{if(So)posts=So.tickerPosts?await So.tickerPosts(sym):[]}catch(e){}
  var tw=$("tkwall");if(tw&&!$("tickerv").hidden)tw.innerHTML=posts.length?posts.map(function(p){return '<article class="post"><div class="pmeta"><span class="wp-who">'+avatarHTML("xs",p.author.avatar_url,p.author.username)+'<button type="button" class="tk un" data-un="'+esc(p.author.username)+'">@'+esc(p.author.username)+'</button> &middot; '+esc(postWhen(p.ts))+'</span></div><div class="ptxt">'+rich(p.text)+'</div></article>'}).join(""):'<p class="hint">Nobody has posted about $'+esc(sym)+' yet. Post one from your wall.</p>'}
+document.addEventListener("keydown",function(ev){if(ev.target&&ev.target.id==="chatin"&&ev.key==="Enter"){ev.preventDefault();chatSend()}});
 document.addEventListener("click",function(ev){if(wmenu&&!(ev.target.closest&&ev.target.closest(".wmwrap"))){wmenu="";if($("wall"))renderWall()}var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
+ if(b.dataset.chan){ev.preventDefault();openChannel(b.dataset.chan);return}
+ if(b.dataset.backprof){ev.preventDefault();showUserProfile(b.dataset.backprof);return}
+ if(b.dataset.chfollow){ev.preventDefault();var cid2=b.dataset.cid;S().follow(b.dataset.chfollow,true).then(function(){toast("Following");openChannel(cid2)}).catch(function(){toast("Could not follow")});return}
+ if(b.id==="chatsend"){chatSend();return}
+ if(b.dataset.cmdel){S().delMsg(b.dataset.cmdel).then(function(){loadChat(true)}).catch(function(){toast("Could not delete")});return}
  if(b.dataset.tk){ev.preventDefault();showTicker(b.dataset.tk);return}
  if(b.dataset.un){ev.preventDefault();showUserProfile(b.dataset.un);return}
  if(b.id==="tkback"){(tkBack||showHome)();return}});
@@ -1277,6 +1315,7 @@ $("notifv").addEventListener("click",async function(ev){var b=ev.target.closest&
  if(b.dataset.nid){var n=notifs.find(function(x){return x.id===b.dataset.nid});if(!n)return;
   if(!n.read){So.markRead([n.id]);n.read=true;nextNotifBadge(notifs.filter(function(x){return !x.read}).length)}
   if(n.type==="follow"){await showUserProfile(n.actor.username);return}
+  if(n.type==="channel_msg"){await openChannel(n.post_id);return}
   var owner=null;try{owner=await So.postOwner(n.post_id)}catch(e){}
   if(n.post_id&&n.type==="comment")openCm[n.post_id]=1;
   if(!owner||owner.id===So.uid()){profTab="wall";await showProfile()}else await showUserProfile(owner.username);
@@ -1386,7 +1425,7 @@ function renderHome(){var el=$("home");if(!el)return;
    return '<article class="post"><div class="pmeta"><span class="wp-who">'+avatarHTML("xs",p.author.avatar_url,p.author.username)+'<button type="button" class="tk un" data-un="'+esc(p.author.username)+'">@'+esc(p.author.username)+'</button> &middot; '+esc(postWhen(p.ts))+'</span></div>'+(p.text?'<div class="ptxt">'+rich(p.text)+'</div>':'')+(pics?'<div class="pics n'+Math.min(p.imgs.length,8)+'">'+pics+'</div>':'')+'</article>'}).join("")+'</div>':'<p class="hint" style="margin:0">Nobody you follow has posted yet.</p>'}).catch(function(){var f=$("hmfeed");if(f)f.innerHTML='<p class="hint" style="margin:0">Could not load.</p>'});
  So.trending().then(function(L){var t=$("hmtrend");if(!t)return;t.innerHTML=L.length?L.map(function(x){return '<button type="button" class="tk-chip" data-tk="'+esc(x.sym)+'">$'+esc(x.sym)+' <small>'+x.n+'</small></button>'}).join(""):'<span class="hint">No $tickers on walls this week. Post one on your wall, like $SPY.</span>'}).catch(function(){var t=$("hmtrend");if(t)t.innerHTML='<span class="hint">Could not load.</span>'});
  So.notifs().then(function(L){var n=$("hmnotif");if(!n)return;L=L.slice(0,3);
-  n.innerHTML=L.length?L.map(function(x){var what=x.type==="follow"?"started following you":x.type==="wall_post"?"wrote on your wall":x.type==="like"?"liked your post":x.type==="repost"?"reposted your post":"commented on a post";return '<button type="button" class="nitem'+(x.read?"":" unread")+'" data-hmn="1"><span><b>@'+esc(x.actor.username)+'</b> '+what+'</span>'+(x.snippet?'<span class="nsnip">'+esc(x.snippet)+'</span>':'')+'<small>'+esc(postWhen(x.ts))+'</small></button>'}).join(""):'<span class="hint">Nothing yet. Wall posts and comments show up here.</span>'}).catch(function(){var n=$("hmnotif");if(n)n.innerHTML='<span class="hint">Could not load.</span>'})}
+  n.innerHTML=L.length?L.map(function(x){var what=x.type==="channel_msg"?"posted in your channel":x.type==="follow"?"started following you":x.type==="wall_post"?"wrote on your wall":x.type==="like"?"liked your post":x.type==="repost"?"reposted your post":"commented on a post";return '<button type="button" class="nitem'+(x.read?"":" unread")+'" data-hmn="1"><span><b>@'+esc(x.actor.username)+'</b> '+what+'</span>'+(x.snippet?'<span class="nsnip">'+esc(x.snippet)+'</span>':'')+'<small>'+esc(postWhen(x.ts))+'</small></button>'}).join(""):'<span class="hint">Nothing yet. Wall posts and comments show up here.</span>'}).catch(function(){var n=$("hmnotif");if(n)n.innerHTML='<span class="hint">Could not load.</span>'})}
 function showHome(){curDate="";curPage="";$("studio").hidden=true;$("entry").hidden=true;$("pagev").hidden=true;$("home").hidden=false;$("navstudio").classList.remove("on");$("navhome").classList.add("on");renderHome();renderSide();window.scrollTo(0,0)}
 async function postCoach(){var So=S();if(!coach||!coach.md||coach.posted||!So)return;
  try{await So.addPost(So.uid(),coach.md.trim()+"\n\nSelf-reported results. Not financial advice.",[]);coach.posted=true;await saveCoach();
