@@ -142,7 +142,10 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .ptabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
 .pf-sec{margin:22px 0 8px;font-size:1.1rem}.pf-av.sm{width:72px;height:72px;font-size:1.6rem}
 .wp-who{display:inline-flex;align-items:center;gap:6px}.pf-av.xs{width:24px;height:24px;font-size:.75rem}
-.wp-actions{margin-top:8px}.linkbtn{border:0;background:none;color:var(--mute);font:inherit;font-size:.85rem;padding:0;cursor:pointer}.linkbtn:hover{color:var(--ink)}
+.wp-actions{margin-top:8px;display:flex;gap:18px;align-items:center}.wact{border:0;background:none;color:var(--mute);font:inherit;font-size:.9rem;padding:4px 2px;cursor:pointer;border-radius:6px;display:inline-flex;gap:5px;align-items:center}.wact:hover{color:var(--ink)}.wact.on{color:var(--accent,#1d4ed8);font-weight:700}
+.wmwrap{position:relative;display:inline-block}.wdots{opacity:.7;font-size:1.1rem}.wmenu{position:absolute;right:0;top:28px;z-index:30;min-width:170px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;display:flex;flex-direction:column}
+.wmenu button{border:0;background:none;color:var(--ink);text-align:left;font:inherit;padding:9px 10px;border-radius:6px;cursor:pointer}.wmenu button:hover{background:var(--bg)}.wp-flag{color:var(--mute);font-size:.78rem;margin-bottom:4px}.rp-q{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-top:4px;background:var(--bg)}
+.linkbtn{border:0;background:none;color:var(--mute);font:inherit;font-size:.85rem;padding:0;cursor:pointer}.linkbtn:hover{color:var(--ink)}
 .cms{margin-top:8px;border-top:1px solid var(--line);padding-top:8px}.cm{margin:0 0 8px;font-size:.92rem}
 .nlist{display:flex;flex-direction:column;gap:8px;margin-top:12px}.nitem{display:flex;flex-direction:column;gap:2px;text-align:left;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;color:var(--ink);cursor:pointer}
 .nitem.unread{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}.nitem small{color:var(--mute)}.nsnip{color:var(--mute);overflow-wrap:anywhere}
@@ -934,6 +937,7 @@ function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["
  '<div class="set-card"><h2>Account</h2><p class="hint" style="margin:0 0 6px">Signed in as <b>'+esc(A.email||"")+'</b>'+(A.username?' (@'+esc(A.username)+')':'')+'</p>'+
  '<label>New password<input type="password" id="setpw" autocomplete="new-password" placeholder="At least 8 characters"></label>'+
  '<div class="row"><button id="setpwgo" type="button">Change password</button><button id="setout" type="button">Log out</button></div><p class="hint" id="setpwmsg" role="status"></p></div>'+
+ '<div class="set-card"><h2>Muted and blocked</h2><div id="hidlist"><p class="hint" style="margin:0">Loading...</p></div></div>'+
  '<div class="set-card"><h2>Preferences</h2><p class="hint" style="margin:0">Used as your defaults in Studio.</p>'+
  '<label>Name or handle for your pages and carousels<input type="text" id="setname" maxlength="60" placeholder="e.g. tucker_trades"></label>'+
  '<label>Appearance<select id="settheme"><option value="auto">Match my device</option><option value="light">Light</option><option value="dark">Dark</option></select></label>'+
@@ -946,7 +950,10 @@ function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["
  '<label class="chk"><input type="checkbox" id="settos"> Tell me when broker connection is ready</label>'+
  '<div class="row"><button class="primary" id="gostudio" type="button">Go to Studio to import</button></div></div>'+
  '<div class="set-card"><h2>Your data</h2><p class="hint" style="margin:0">Download everything you have saved here (days, trades, generated text, settings) as one file.</p><div class="row"><button id="setexp" type="button">Download my data (.json)</button></div></div>';
- $("setname").value=settings.name||"";$("setvoice").value=settings.voice||vs[0];$("setgrp").value=settings.grouping||"grouped";$("settos").checked=!!settings.tosNotify;paintTheme()}
+ $("setname").value=settings.name||"";$("setvoice").value=settings.voice||vs[0];$("setgrp").value=settings.grouping||"grouped";$("settos").checked=!!settings.tosNotify;paintTheme();fillHidden()}
+async function fillHidden(){var el=$("hidlist"),So=S();if(!el)return;if(!So){el.innerHTML='<p class="hint" style="margin:0">Not available here.</p>';return}
+ try{var h=await So.hidden();var rows=h.mutes.map(function(u){return [u,"mute","Muted"]}).concat(h.blocks.map(function(u){return [u,"block","Blocked"]}));
+  el.innerHTML=rows.length?rows.map(function(r){return '<div class="row" style="margin:4px 0;align-items:center;justify-content:space-between"><span><b>@'+esc(r[0].username)+'</b> <span class="hint" style="margin:0">'+r[2]+'</span></span><button type="button" data-unhide="'+r[1]+'" data-id="'+esc(r[0].id)+'">Undo</button></div>'}).join(""):'<p class="hint" style="margin:0">You have not muted or blocked anyone.</p>'}catch(e){el.innerHTML='<p class="hint" style="margin:0">Could not load.</p>'}}
 $("navset").addEventListener("click",showSettings);
 $("settingsv").addEventListener("change",function(ev){var t=ev.target;
  if(t.id==="settheme"){setTheme(t.value);return}
@@ -955,6 +962,7 @@ $("settingsv").addEventListener("change",function(ev){var t=ev.target;
  else if(t.id==="setgrp"){settings.grouping=t.value;$("grouping").value=t.value;saveSettings();toast("Saved")}
  else if(t.id==="settos"){settings.tosNotify=t.checked;saveSettings();toast("Saved")}});
 $("settingsv").addEventListener("click",async function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;var A=window.stockspotAuth||{};
+ if(b.dataset.unhide){try{await S()[b.dataset.unhide](b.dataset.id,false);toast("Undone")}catch(e){toast("Could not undo")}fillHidden();return}
  if(b.id==="gostudio"){showStudio();return}
  if(b.id==="setout"){if(A.logout)A.logout();return}
  if(b.id==="setpwgo"){var pw=$("setpw").value,m=$("setpwmsg");if(pw.length<8){m.textContent="Use at least 8 characters.";return}
@@ -1110,12 +1118,23 @@ function renderProfile(){var A=window.stockspotAuth||{},el=$("profilev"),self=pv
   '<h2 class="pf-sec">Wall</h2>')+
   (self&&profTab==="coach"?coachTab():wallTab());
  wpend=[];renderWPrev()}
+var wmenu="",likeView=null;
 function wallPostHTML(p){var A=window.stockspotAuth||{},me=S()?S().uid():"",mine=p.author.id===me,owner=pv.id===me,L=p.imgs||[],
   pics=L.map(function(m){return m.src?'<img alt="Posted image" src="'+esc(m.src)+'">':""}).join(""),open=!!openCm[p.id];
  var cm=p.comments.map(function(c){return '<div class="cm"><div><button type="button" class="tk un" data-un="'+esc(c.author.username)+'">@'+esc(c.author.username)+'</button> <span class="hint" style="margin:0">'+esc(postWhen(c.ts))+'</span>'+((c.author.id===me||owner)?' <button class="x" type="button" data-cdel="'+esc(c.id)+'" aria-label="Delete comment">✕</button>':'')+'</div><div class="ptxt">'+rich(c.text)+'</div></div>'}).join("");
- return '<article class="post" data-pid="'+esc(p.id)+'"><div class="pmeta"><span class="wp-who">'+avatarHTML("xs",p.author.avatar_url,p.author.username)+'<button type="button" class="tk un" data-un="'+esc(p.author.username)+'">@'+esc(p.author.username)+'</button> &middot; '+esc(postWhen(p.ts))+'</span>'+((mine||owner)?'<button class="x" type="button" data-wdel="'+esc(p.id)+'" aria-label="Delete post">✕</button>':'')+'</div>'+
-  (p.text?'<div class="ptxt">'+rich(p.text)+'</div>':'')+(pics?'<div class="pics n'+Math.min(L.length,8)+'">'+pics+'</div>':'')+
-  '<div class="wp-actions"><button type="button" class="linkbtn" data-ctog="'+esc(p.id)+'">'+(p.comments.length?p.comments.length+(p.comments.length===1?" comment":" comments"):"Comment")+'</button></div>'+
+ var tid=p.isRepost&&p.orig?p.orig.id:p.id,menu="";
+ if(wmenu===p.id){menu='<div class="wmenu" role="menu"><button type="button" role="menuitem" data-wm="likes" data-id="'+esc(p.id)+'">View Likes</button>'+
+  (owner?'<button type="button" role="menuitem" data-wm="pin" data-id="'+esc(p.id)+'">'+(p.pinned?"Unpin Post":"Pin Post")+'</button>':'')+
+  ((mine||owner)?'<button type="button" role="menuitem" data-wm="del" data-id="'+esc(p.id)+'">Delete Post</button>':'')+
+  (!mine?'<button type="button" role="menuitem" data-wm="mute" data-id="'+esc(p.author.id)+'" data-nm="'+esc(p.author.username)+'">Mute @'+esc(p.author.username)+'</button><button type="button" role="menuitem" data-wm="report" data-id="'+esc(p.id)+'">Report</button><button type="button" role="menuitem" data-wm="block" data-id="'+esc(p.author.id)+'" data-nm="'+esc(p.author.username)+'">Block</button>':'')+'</div>'}
+ var body=p.isRepost?(p.orig?'<div class="rp-q"><div class="pmeta"><span class="wp-who">'+avatarHTML("xs",p.orig.author.avatar_url,p.orig.author.username)+'<button type="button" class="tk un" data-un="'+esc(p.orig.author.username)+'">@'+esc(p.orig.author.username)+'</button> &middot; '+esc(postWhen(p.orig.ts))+'</span></div>'+(p.orig.text?'<div class="ptxt">'+rich(p.orig.text)+'</div>':'')+((p.orig.imgs||[]).length?'<div class="pics n'+Math.min(p.orig.imgs.length,8)+'">'+p.orig.imgs.map(function(m){return m.src?'<img alt="Posted image" src="'+esc(m.src)+'">':""}).join("")+'</div>':'')+'</div>':'<p class="hint">The original post is gone.</p>'):
+  (p.text?'<div class="ptxt">'+rich(p.text)+'</div>':'')+(pics?'<div class="pics n'+Math.min(L.length,8)+'">'+pics+'</div>':'');
+ return '<article class="post" data-pid="'+esc(p.id)+'">'+(p.pinned?'<div class="wp-flag">📌 Pinned</div>':'')+(p.isRepost?'<div class="wp-flag">🔁 @'+esc(p.author.username)+' reposted</div>':'')+
+  '<div class="pmeta"><span class="wp-who">'+avatarHTML("xs",p.author.avatar_url,p.author.username)+'<button type="button" class="tk un" data-un="'+esc(p.author.username)+'">@'+esc(p.author.username)+'</button> &middot; '+esc(postWhen(p.ts))+'</span>'+
+  '<span class="wmwrap"><button class="x wdots" type="button" data-wmo="'+esc(p.id)+'" aria-label="More options" aria-haspopup="menu" aria-expanded="'+(wmenu===p.id)+'">⋯</button>'+menu+'</span></div>'+body+
+  '<div class="wp-actions"><button type="button" class="wact" data-ctog="'+esc(p.id)+'" aria-label="Comments"><span aria-hidden="true">💬</span> '+(p.comments.length||"")+'</button>'+
+  '<button type="button" class="wact'+(p.myRepost?" on":"")+'" data-rp="'+esc(p.id)+'" aria-label="'+(p.myRepost?"Undo repost":"Repost")+'" aria-pressed="'+(!!p.myRepost)+'"><span aria-hidden="true">🔁</span> '+(p.repostCount||"")+'</button>'+
+  '<button type="button" class="wact'+(p.liked?" on":"")+'" data-lk="'+esc(p.id)+'" aria-label="'+(p.liked?"Unlike":"Like")+'" aria-pressed="'+(!!p.liked)+'"><span aria-hidden="true">'+(p.liked?"❤️":"🤍")+'</span> '+(p.likeCount||"")+'</button></div>'+
   (open?'<div class="cms">'+cm+'<div class="row" style="margin:6px 0 0"><input class="cin" data-cin="'+esc(p.id)+'" maxlength="1000" placeholder="Write a comment" aria-label="Write a comment" style="flex:1;min-width:0"><button type="button" data-cpost="'+esc(p.id)+'">Reply</button></div></div>':'')+'</article>'}
 function renderWall(){var el=$("wall");if(!el)return;el.innerHTML=wall.length?wall.map(wallPostHTML).join(""):'<p class="hint">'+(pv.self?"Nothing on your wall yet. Post your first thought or a chart.":"Nothing on @"+esc(pv.username)+"'s wall yet. Be the first to write something.")+'</p>'}
 async function wallPost(){var So=S();if(!So){toast("Wall is not available here");return}var t=$("wtext").value.trim();if(!t&&!wpend.length){toast("Write something or add an image first");return}
@@ -1123,6 +1142,25 @@ async function wallPost(){var So=S();if(!So){toast("Wall is not available here")
  try{var imgs=[];for(var k=0;k<wpend.length;k++){try{imgs.push({src:await So.uploadImage(dataToBlob(wpend[k]))})}catch(e){toast("An image could not be saved")}}
   await So.addPost(pv.id,t,imgs);$("wtext").value="";wpend=[];renderWPrev();wall=await So.wall(pv.id);renderWall();toast(pv.self?"Posted":"Posted on @"+pv.username+"'s wall")}
  catch(e){toast("Could not post")}finally{btn.disabled=false}}
+async function wallReload(){wall=await S().wall(pv.id);renderWall()}
+async function wallMenu(act,id,nm,btn){var So=S();if(!So)return;wmenu="";
+ try{
+  if(act==="likes"){var L=await So.likers(id);showLikes(L);renderWall();return}
+  if(act==="pin"){var p=wall.find(function(x){return x.id===id});await So.pin(id,!(p&&p.pinned));await wallReload();toast(p&&p.pinned?"Unpinned":"Pinned to the top");return}
+  if(act==="del"){await So.delPost(id);await wallReload();toast("Deleted");return}
+  if(act==="mute"){await So.mute(id,true);await wallReload();toast("Muted @"+nm+". Undo in Settings.");return}
+  if(act==="block"){await So.block(id,true);await wallReload();toast("Blocked @"+nm+". Undo in Settings.");return}
+  if(act==="report"){await So.report(id,"");renderWall();toast("Reported. Thank you.");return}
+ }catch(e){renderWall();toast("That did not work")}}
+function showLikes(L){var old=$("likesdlg");if(old)old.remove();var d=document.createElement("div");d.id="likesdlg";d.className="psetbg";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label","Likes");
+ d.innerHTML='<div class="pset"><h2>Likes</h2>'+(L.length?'<div class="nlist">'+L.map(function(u){return '<button type="button" class="nitem" data-un="'+esc(u.username)+'" data-closelk="1"><span><b>@'+esc(u.username)+'</b></span></button>'}).join("")+'</div>':'<p class="hint">No likes yet.</p>')+'<div class="row"><button id="likesclose" type="button">Close</button></div></div>';
+ document.body.appendChild(d);function close(){d.remove();document.removeEventListener("keydown",k)}function k(e){if(e.key==="Escape")close()}document.addEventListener("keydown",k);
+ d.addEventListener("click",function(e){if(e.target===d||e.target.id==="likesclose"||e.target.closest("[data-closelk]"))close()});var c=$("likesclose");if(c)c.focus()}
+async function wallLike(id){var So=S(),p=wall.find(function(x){return x.id===id});if(!So||!p)return;
+ try{if(p.liked){await So.unlike(id);p.liked=false;p.likeCount=Math.max(0,p.likeCount-1)}else{await So.like(id);p.liked=true;p.likeCount++}renderWall()}catch(e){toast("Could not like")}}
+async function wallRepost(id){var So=S(),p=wall.find(function(x){return x.id===id});if(!So||!p)return;
+ try{if(p.myRepost){await So.delPost(p.myRepost);toast("Repost removed")}else{await So.repost(p.isRepost&&p.orig?p.orig.id:id);toast("Reposted to your wall")}
+  await wallReload()}catch(e){toast("Could not repost")}}
 async function wallComment(pid){var So=S(),inp=document.querySelector('[data-cin="'+pid+'"]');if(!So||!inp)return;var t=inp.value.trim();if(!t)return;
  try{await So.addComment(pid,t);openCm[pid]=1;wall=await So.wall(pv.id);renderWall()}catch(e){toast("Could not comment")}}
 /* Notifications */
@@ -1133,7 +1171,7 @@ async function showNotifs(){hideViews();$("navnotif").classList.add("on");$("not
  try{notifs=await So.notifs()}catch(e){notifs=[];toast("Could not load notifications")}renderNotifs();nextNotifBadge(notifs.filter(function(n){return !n.read}).length)}
 function renderNotifs(){var el=$("notifv"),un=notifs.filter(function(n){return !n.read}).length;
  el.innerHTML='<div class="hm-top"><div><h1>Notifications</h1><p class="sub">Posts and comments on your wall.</p></div>'+(un?'<button type="button" id="nmark">Mark all read</button>':'')+'</div>'+
-  (notifs.length?'<div class="nlist">'+notifs.map(function(n){var what=n.type==="wall_post"?"wrote on your wall":"commented on a post";
+  (notifs.length?'<div class="nlist">'+notifs.map(function(n){var what=n.type==="wall_post"?"wrote on your wall":n.type==="like"?"liked your post":n.type==="repost"?"reposted your post":"commented on a post";
    return '<button type="button" class="nitem'+(n.read?"":" unread")+'" data-nid="'+esc(n.id)+'"><span><b>@'+esc(n.actor.username)+'</b> '+what+'</span>'+(n.snippet?'<span class="nsnip">'+esc(n.snippet)+'</span>':'')+'<small>'+esc(postWhen(n.ts))+'</small></button>'}).join("")+'</div>':'<p class="hint">Nothing yet. When someone writes on your wall or comments, it shows up here.</p>')}
 function renderWPrev(){var e=$("wprev");if(!e)return;e.style.cssText="display:flex;gap:8px;flex-wrap:wrap";e.innerHTML=wpend.map(function(u,i){return '<div class="pthumb"><img alt="Image to post" src="'+u+'"><button type="button" data-wrm="'+i+'" aria-label="Remove image '+(i+1)+'">✕</button></div>'}).join("")}
 async function wallAdd(files){files=files?Array.prototype.slice.call(files):[];var n=0;
@@ -1182,7 +1220,7 @@ async function showTicker(sym){var prevProfile=!$("profilev").hidden,prevPage=cu
  var mine=[];try{var So2=S();if(So2)mine=await So2.wall(So2.uid())}catch(e){}
  var re=new RegExp("\\$"+sym+"(?![A-Za-z0-9])"),m=mine.filter(function(p){return re.test(p.text||"")});
  var tw=$("tkwall");if(tw)tw.innerHTML=m.length?m.map(function(p){return '<article class="post"><div class="pmeta"><span>'+esc(postWhen(p.ts))+'</span></div><div class="ptxt">'+rich(p.text)+'</div></article>'}).join(""):'<p class="hint">No posts on your wall mention $'+esc(sym)+' yet.</p>'}
-document.addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
+document.addEventListener("click",function(ev){if(wmenu&&!(ev.target.closest&&ev.target.closest(".wmwrap"))){wmenu="";if($("wall"))renderWall()}var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
  if(b.dataset.tk){ev.preventDefault();showTicker(b.dataset.tk);return}
  if(b.dataset.un){ev.preventDefault();showUserProfile(b.dataset.un);return}
  if(b.id==="tkback"){(tkBack||showHome)();return}});
@@ -1211,6 +1249,10 @@ $("profilev").addEventListener("click",function(ev){var b=ev.target.closest&&ev.
   p.innerHTML='<b>'+(w==="followers"?"Followers":"Following")+' (0)</b><p class="hint" style="margin:6px 0 0">'+(w==="followers"?"No followers yet. People will be able to follow you once public profiles launch.":"You are not following anyone yet. Following arrives with public profiles.")+'</p>';return}
  if(b.id==="pfwrite"){var wt=$("wtext");if(wt){wt.scrollIntoView({block:"center"});wt.focus()}return}
  if(b.id==="findgo"){showUserProfile($("findu").value);return}
+ if(b.dataset.wmo){var mo=b.dataset.wmo;wmenu=wmenu===mo?"":mo;renderWall();return}
+ if(b.dataset.wm){if(b.dataset.wm==="del"||b.dataset.wm==="block"){if(!b.dataset.armed){b.dataset.armed="1";b.textContent=b.dataset.wm==="del"?"Delete? Tap again":"Block? Tap again";return}}wallMenu(b.dataset.wm,b.dataset.id,b.dataset.nm,b);return}
+ if(b.dataset.lk){wallLike(b.dataset.lk);return}
+ if(b.dataset.rp){wallRepost(b.dataset.rp);return}
  if(b.dataset.ctog){var q=b.dataset.ctog;if(openCm[q])delete openCm[q];else openCm[q]=1;renderWall();var ci=document.querySelector('[data-cin="'+q+'"]');if(ci)ci.focus();return}
  if(b.dataset.cpost){wallComment(b.dataset.cpost);return}
  if(b.dataset.cdel){var cid=b.dataset.cdel;confirmTwice(b,"Delete?",async function(){try{await S().delComment(cid);wall=await S().wall(pv.id);renderWall()}catch(e){toast("Could not delete")}});return}
@@ -1289,7 +1331,7 @@ function renderHome(){var el=$("home");if(!el)return;
  if(!So){var t=$("hmtrend");if(t)t.innerHTML='<span class="hint">Not available here.</span>';var n=$("hmnotif");if(n)n.innerHTML='<span class="hint">Not available here.</span>';return}
  So.trending().then(function(L){var t=$("hmtrend");if(!t)return;t.innerHTML=L.length?L.map(function(x){return '<button type="button" class="tk-chip" data-tk="'+esc(x.sym)+'">$'+esc(x.sym)+' <small>'+x.n+'</small></button>'}).join(""):'<span class="hint">No $tickers on walls this week. Post one on your wall, like $SPY.</span>'}).catch(function(){var t=$("hmtrend");if(t)t.innerHTML='<span class="hint">Could not load.</span>'});
  So.notifs().then(function(L){var n=$("hmnotif");if(!n)return;L=L.slice(0,3);
-  n.innerHTML=L.length?L.map(function(x){var what=x.type==="wall_post"?"wrote on your wall":"commented on a post";return '<button type="button" class="nitem'+(x.read?"":" unread")+'" data-hmn="1"><span><b>@'+esc(x.actor.username)+'</b> '+what+'</span>'+(x.snippet?'<span class="nsnip">'+esc(x.snippet)+'</span>':'')+'<small>'+esc(postWhen(x.ts))+'</small></button>'}).join(""):'<span class="hint">Nothing yet. Wall posts and comments show up here.</span>'}).catch(function(){var n=$("hmnotif");if(n)n.innerHTML='<span class="hint">Could not load.</span>'})}
+  n.innerHTML=L.length?L.map(function(x){var what=x.type==="wall_post"?"wrote on your wall":x.type==="like"?"liked your post":x.type==="repost"?"reposted your post":"commented on a post";return '<button type="button" class="nitem'+(x.read?"":" unread")+'" data-hmn="1"><span><b>@'+esc(x.actor.username)+'</b> '+what+'</span>'+(x.snippet?'<span class="nsnip">'+esc(x.snippet)+'</span>':'')+'<small>'+esc(postWhen(x.ts))+'</small></button>'}).join(""):'<span class="hint">Nothing yet. Wall posts and comments show up here.</span>'}).catch(function(){var n=$("hmnotif");if(n)n.innerHTML='<span class="hint">Could not load.</span>'})}
 function showHome(){curDate="";curPage="";$("studio").hidden=true;$("entry").hidden=true;$("pagev").hidden=true;$("home").hidden=false;$("navstudio").classList.remove("on");$("navhome").classList.add("on");renderHome();renderSide();window.scrollTo(0,0)}
 async function postCoach(){var So=S();if(!coach||!coach.md||coach.posted||!So)return;
  try{await So.addPost(So.uid(),coach.md.trim()+"\n\nSelf-reported results. Not financial advice.",[]);coach.posted=true;await saveCoach();
