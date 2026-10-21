@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Stockspot Studio</title>
 <style>html:not(.authed) body{visibility:hidden}</style>
+<script>try{var _t=localStorage.getItem("ss-theme");if(_t==="light"||_t==="dark")document.documentElement.setAttribute("data-theme",_t)}catch(e){}</script>
 <script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="shim.js"></script>
@@ -45,7 +46,7 @@ button:disabled{opacity:.55;cursor:default}
 .pastebox{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;margin:8px 0 10px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
 .pastebox:focus-visible,.pastebox.on{border-color:var(--accent);outline:none;background:var(--bg)}
 .pastebox span{color:var(--mute);font-size:.88rem}
-.set-card{background:var(--card,#fff);border:1px solid var(--line);border-radius:12px;padding:18px;margin:14px 0}
+.set-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin:14px 0}
 .set-card h2{margin:0 0 4px;font-size:1.1rem}.set-card label{display:block;margin:10px 0;font-size:.9rem}
 .set-card input[type=text],.set-card input[type=password],.set-card select{display:block;margin-top:4px;width:100%;max-width:380px}
 .set-card .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
@@ -180,7 +181,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <div class="shell">
 <aside id="side" aria-label="Journal">
   <div class="brand">Stockspot</div>
-  <div id="acct" style="display:flex;align-items:center;gap:8px;margin:2px 0 10px;font-size:.82rem;color:var(--mute)"><span id="whoami" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span><button id="logout" type="button" style="border:1px solid var(--line);background:none;color:var(--ink);border-radius:7px;padding:4px 9px;font:inherit;cursor:pointer">Log out</button></div>
+  <div id="acct" style="display:flex;align-items:center;gap:8px;margin:2px 0 10px;font-size:.82rem;color:var(--mute)"><span id="whoami" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span><button id="themebtn" type="button" aria-label="Switch between light and dark" title="Light / dark" style="border:1px solid var(--line);background:none;color:var(--ink);border-radius:7px;padding:4px 8px;font:inherit;cursor:pointer;line-height:1"></button><button id="logout" type="button" style="border:1px solid var(--line);background:none;color:var(--ink);border-radius:7px;padding:4px 9px;font:inherit;cursor:pointer">Log out</button></div>
   <div id="pnlcard"></div>
   <button class="nav on" id="navhome" type="button">Home</button>
   <button class="nav" id="navprofile" type="button">Profile</button>
@@ -859,6 +860,17 @@ function gripEl(id,name){var g=document.createElement("button");g.type="button";
    if(ev.type==="pointerup"&&target!==from){var arr=sortedPages();if(arr[target])movePageTo(id,arr[target].id)}}
   g.addEventListener("pointermove",move);g.addEventListener("pointerup",end);g.addEventListener("pointercancel",end)});
  return g}
+/* Theme */
+function themeMode(){try{var t=localStorage.getItem("ss-theme");return t==="light"||t==="dark"?t:"auto"}catch(e){return "auto"}}
+function effTheme(){var m=themeMode();if(m!=="auto")return m;return window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}
+function setTheme(m){try{if(m==="light"||m==="dark")localStorage.setItem("ss-theme",m);else localStorage.removeItem("ss-theme")}catch(e){}
+ if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m);else document.documentElement.removeAttribute("data-theme");
+ paintTheme()}
+function paintTheme(){var b=$("themebtn");if(b){var d=effTheme()==="dark";b.textContent=d?"☀":"☾";b.title=d?"Switch to light":"Switch to dark";b.setAttribute("aria-label",b.title)}
+ var sel=$("settheme");if(sel)sel.value=themeMode()}
+$("themebtn").addEventListener("click",function(){setTheme(effTheme()==="dark"?"light":"dark")});
+if(window.matchMedia){try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",paintTheme)}catch(e){}}
+paintTheme();
 /* Settings */
 function applyDefaults(){try{
  if(settings.name&&!$("name").value.trim())$("name").value=settings.name;
@@ -875,6 +887,7 @@ function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["
  '<div class="row"><button id="setpwgo" type="button">Change password</button><button id="setout" type="button">Log out</button></div><p class="hint" id="setpwmsg" role="status"></p></div>'+
  '<div class="set-card"><h2>Preferences</h2><p class="hint" style="margin:0">Used as your defaults in Studio.</p>'+
  '<label>Name or handle for your pages and carousels<input type="text" id="setname" maxlength="60" placeholder="e.g. tucker_trades"></label>'+
+ '<label>Appearance<select id="settheme"><option value="auto">Match my device</option><option value="light">Light</option><option value="dark">Dark</option></select></label>'+
  '<label>Default writing voice<select id="setvoice">'+vs.map(function(v){return '<option>'+v+'</option>'}).join("")+'</select></label>'+
  '<label>Default way to count trades<select id="setgrp"><option value="grouped">Group scale-ins and scale-outs until flat (recommended)</option><option value="entry">One trade per entry</option><option value="exit">Every exit order is a trade</option></select></label></div>'+
  '<div class="set-card"><h2>Broker: thinkorswim <span class="pill">Statement import</span></h2>'+
@@ -884,9 +897,10 @@ function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["
  '<label class="chk"><input type="checkbox" id="settos"> Tell me when broker connection is ready</label>'+
  '<div class="row"><button class="primary" id="gostudio" type="button">Go to Studio to import</button></div></div>'+
  '<div class="set-card"><h2>Your data</h2><p class="hint" style="margin:0">Download everything you have saved here (days, trades, generated text, settings) as one file.</p><div class="row"><button id="setexp" type="button">Download my data (.json)</button></div></div>';
- $("setname").value=settings.name||"";$("setvoice").value=settings.voice||vs[0];$("setgrp").value=settings.grouping||"grouped";$("settos").checked=!!settings.tosNotify}
+ $("setname").value=settings.name||"";$("setvoice").value=settings.voice||vs[0];$("setgrp").value=settings.grouping||"grouped";$("settos").checked=!!settings.tosNotify;paintTheme()}
 $("navset").addEventListener("click",showSettings);
 $("settingsv").addEventListener("change",function(ev){var t=ev.target;
+ if(t.id==="settheme"){setTheme(t.value);return}
  if(t.id==="setname"){settings.name=t.value.trim();$("name").value=settings.name;saveSettings();toast("Saved")}
  else if(t.id==="setvoice"){settings.voice=t.value;$("voice").value=t.value;saveSettings();toast("Saved")}
  else if(t.id==="setgrp"){settings.grouping=t.value;$("grouping").value=t.value;saveSettings();toast("Saved")}
