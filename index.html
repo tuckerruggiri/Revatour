@@ -570,9 +570,9 @@ $("pastebox").addEventListener("dragover",function(ev){ev.preventDefault()});
 $("pastebox").addEventListener("drop",function(ev){ev.preventDefault();if(ev.dataTransfer&&ev.dataTransfer.files.length)addImgs(ev.dataTransfer.files)});
 
 /* Markdown */
-function inline(s){return s.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\*(.+?)\*/g,"<i>$1</i>").replace(/(https?:\/\/[^\s<)]+)/g,'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')}
+function inline(s){return s.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\*(.+?)\*/g,"<i>$1</i>").replace(/(https?:\/\/[^\s<)]+)/g,'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>').replace(/(^|[^A-Za-z0-9&])\$([A-Z]{1,5})(?![A-Za-z0-9])/g,function(m,p,x){return p+'<button type="button" class="tk" data-tk="'+x+'">$'+x+'</button>'})}
 function md(t){var out=[],ul=false,tb=0;
- t.split("\n").forEach(function(l){var m,e=esc(l);
+ t.split("\n").forEach(function(l){var m,e=esc(tickify(l));
   if(/^\s*\|/.test(l)){if(/^[\s|:\-]+$/.test(l))return;var c=e.trim().replace(/^\||\|$/g,"").split("|");
    if(ul){out.push("</ul>");ul=false}
    if(!tb){out.push("<table><thead><tr>"+c.map(function(x){return "<th>"+inline(x.trim())+"</th>"}).join("")+"</tr></thead><tbody>");tb=1}
@@ -594,6 +594,7 @@ $("go").addEventListener("click",async function(){
  ctl=new AbortController();busy(true);$("gstatus").textContent="Writing...";$("result").hidden=false;$("out").innerHTML="";lastMd="";
  try{
   await sample(prompt(),{cache:false,signal:ctl.signal,modelTier:"default",onText:function(u){lastMd=u.text;$("out").innerHTML=compose(u.text)}});
+  if(!isIG)lastMd=tickify(lastMd);
   if(isIG){var igp=parseIG(lastMd);
    if(igp){lastMd=igMarkdown(igp);igState={P:igp,seed:1};$("out").innerHTML=compose(lastMd,"ig");try{await igShow()}catch(e3){toast("The slide images could not be drawn")}}
    else{$("out").innerHTML=md(lastMd);$("gstatus").textContent="The carousel came back in an unexpected format. Press Generate to try again."}}
@@ -615,7 +616,7 @@ $("copy").addEventListener("click",function(){if(!lastMd)return;try{navigator.cl
 $("dlmd").addEventListener("click",function(){if(lastMd)save("stockspot-"+$("fmt").value+".md",lastMd)});
 $("dlhtml").addEventListener("click",function(){if(!lastMd)return;
  var t=($("name").value.trim()||"Trader")+" | Stockspot";
- var h='<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(t)+'</title><style>body{font:17px/1.6 system-ui,sans-serif;max-width:720px;margin:0 auto;padding:32px 18px;color:#10202e}h1,h2,h3{line-height:1.2}a{color:#1d4ed8}footer{margin-top:40px;font-size:.85rem;color:#5b6b78}'+DLCSS+'</style></head><body>'+compose(lastMd)+'<footer>Self-reported record. Not financial advice.</footer></body></html>';
+ var h='<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(t)+'</title><style>body{font:17px/1.6 system-ui,sans-serif;max-width:720px;margin:0 auto;padding:32px 18px;color:#10202e}h1,h2,h3{line-height:1.2}a{color:#1d4ed8}footer{margin-top:40px;font-size:.85rem;color:#5b6b78}'+DLCSS+'</style></head><body>'+compose(lastMd).replace(/<button type="button" class="tk" data-tk="[A-Z]+">(\$[A-Z]+)<\/button>/g,"$1")+'<footer>Self-reported record. Not financial advice.</footer></body></html>';
  save("stockspot-"+$("fmt").value+".html",h)});
 
 /* Journal */
