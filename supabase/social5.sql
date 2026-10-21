@@ -23,3 +23,4 @@ drop policy if exists "cposts update" on public.ss_channel_posts;
 create policy "cposts update" on public.ss_channel_posts for update to authenticated
   using (exists (select 1 from public.ss_channels c where c.id = channel_id and c.owner_id = auth.uid()))
   with check (exists (select 1 from public.ss_channels c where c.id = channel_id and c.owner_id = auth.uid()));
+alter table public.ss_channel_posts add column if not exists edited boolean not null default false;

@@ -150,6 +150,25 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .ptabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
 .pf-sec{margin:22px 0 8px;font-size:1.1rem}.pf-av.sm{width:72px;height:72px;font-size:1.6rem}
 .wp-who{display:inline-flex;align-items:center;gap:6px}.pf-av.xs{width:24px;height:24px;font-size:.75rem}
+.dc-stream{height:calc(100vh - 320px);min-height:300px;overflow-y:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px 10px 0 0;padding:10px 0}
+.dc-welcome{padding:8px 16px 14px;border-bottom:1px solid var(--line);margin-bottom:6px}.dc-welcome h3{margin:0;font:800 1.35rem "Bricolage Grotesque",sans-serif}
+.dc-msg{position:relative;display:flex;gap:14px;padding:1px 16px}.dc-msg.first{margin-top:14px}.dc-msg:hover{background:rgba(127,127,127,.09)}
+.dc-avw{flex:none;width:40px}.dc-av{width:40px;height:40px;border-radius:50%;object-fit:cover;display:block}.dc-av0{display:grid;place-items:center;color:#10202e;font-weight:800}
+.dc-gap{flex:none;width:40px;font-size:.62rem;color:var(--mute);text-align:right;padding-top:5px;opacity:0}.dc-msg:hover .dc-gap{opacity:1}
+.dc-main{min-width:0;flex:1}.dc-h{display:flex;align-items:baseline;gap:8px}.dc-name{border:0;background:none;padding:0;font:700 1rem "Instrument Sans",sans-serif;cursor:pointer}.dc-name:hover{text-decoration:underline}.dc-t{color:var(--mute);font-size:.74rem}
+.dc-body{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}.dc-ed{color:var(--mute);font-size:.7rem}
+.dc-imgs{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.dc-imgs img{max-width:min(100%,540px);max-height:380px;border-radius:8px;cursor:zoom-in;object-fit:contain;display:block;border:1px solid var(--line)}
+.dc-imgs.n2 img,.dc-imgs.n3 img,.dc-imgs.n4 img{max-width:calc(50% - 2px);max-height:240px;object-fit:cover}
+.dc-acts{position:absolute;right:14px;top:-12px;display:none;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:2px;box-shadow:0 2px 8px rgba(0,0,0,.18)}.dc-msg:hover .dc-acts,.dc-msg:focus-within .dc-acts{display:flex}
+@media (hover:none){.dc-acts{display:flex;top:-8px;opacity:.85}}
+.dc-b{border:0;background:none;color:var(--ink);font:inherit;font-size:.8rem;padding:4px 8px;border-radius:6px;cursor:pointer}.dc-b:hover{background:var(--bg)}
+.dc-msg.editing{background:rgba(127,127,127,.09);padding-top:8px;padding-bottom:8px}.dc-msg.editing textarea{width:100%}
+.dc-comp{background:var(--panel);border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;padding:10px 12px}.dc-prev{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}.dc-prev:empty{display:none}
+.dc-bar{display:flex;align-items:flex-end;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:6px 8px}
+.dc-plus{flex:none;width:34px;height:34px;border-radius:50%;border:0;background:var(--line);color:var(--ink);font-size:1.4rem;line-height:1;cursor:pointer;padding:0}.dc-plus:hover{filter:brightness(.92)}
+.dc-bar .dc-ta{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--ink);font:inherit;resize:none;max-height:160px;min-height:34px;line-height:22px;padding:6px 4px;box-shadow:none}
+.dc-send{flex:none}
+.lbx{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.86);display:grid;place-items:center;padding:16px;cursor:zoom-out}.lbx img{max-width:96vw;max-height:92vh;border-radius:8px}.lbx button{position:absolute;top:14px;right:16px;border:0;background:rgba(255,255,255,.18);color:#fff;border-radius:50%;width:38px;height:38px;font-size:1rem;cursor:pointer}
 .chatlist{max-height:380px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:8px 12px;display:flex;flex-direction:column;gap:10px}.cmsg .cmh{display:flex;align-items:center;gap:8px;font-size:.82rem}.cmsg .ptxt{margin-top:2px}
 .wp-actions{margin-top:8px;display:flex;gap:18px;align-items:center}.wact{border:0;background:none;color:var(--mute);font:inherit;font-size:.9rem;padding:4px 2px;cursor:pointer;border-radius:6px;display:inline-flex;gap:5px;align-items:center}.wact:hover{color:var(--ink)}.wact.on{color:var(--accent,#1d4ed8);font-weight:700}
 .wmwrap{position:relative;display:inline-block}.wdots{opacity:.7;font-size:1.1rem}.wmenu{position:absolute;right:0;top:28px;z-index:30;min-width:170px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;display:flex;flex-direction:column}
@@ -778,7 +797,7 @@ function rich(t){return esc(t).replace(/\$([A-Z]{1,5})(?![A-Za-z0-9])/g,function
 var editing=null;
 function postImgs(p){return (p.imgs&&p.imgs.length)?p.imgs.slice():((p.src||p.aid)?[p.aid?{aid:p.aid}:{src:p.src}]:[])}
 function imgUrl(m){return m.src||(m.aid?blobUrl(m.aid):"")}
-function renderFeed(){var el=$("feed");if(!el)return;
+function renderFeed(){var el=$("feed");if(!el)return;if(pages[curPage]&&pages[curPage].parent){renderStream();return}
  if(!feedPosts.length){el.innerHTML=(pages[curPage]&&pages[curPage].parent)?'<p class="hint">Nothing here yet. Post your first one below.</p>':"";return}
  el.innerHTML=feedPosts.map(function(p){
   if(editing&&editing.id===p.id){var th=editing.imgs.map(function(m,i){var u=imgUrl(m);return u?'<div class="pthumb"><img alt="Picture on this post" src="'+esc(u)+'"><button type="button" data-edrm="o'+i+'" aria-label="Remove picture">✕</button></div>':""}).join("")+editing.adds.map(function(u,i){return '<div class="pthumb"><img alt="New picture" src="'+u+'"><button type="button" data-edrm="n'+i+'" aria-label="Remove new picture">✕</button></div>'}).join("");
@@ -823,21 +842,14 @@ async function showPage(pid){var pg=pages[pid];if(!pg){showStudio();return}
  var par=pg.parent&&pages[pg.parent],kids=par?[]:kidsOf(pid);
  el.innerHTML=(par?'<button class="crumb" type="button" data-go="'+esc(par.id)+'">&larr; '+esc(par.name)+'</button>':'')+'<div class="phead"><input id="pgname" class="pgname" maxlength="40" aria-label="'+(par?'Channel':'Page')+' name"><button id="pgedit" type="button" class="primary">Edit</button><button id="pgset" type="button" aria-label="Options">Options &hellip;</button></div>'+
   (par?'':'<h2 class="chhead">Channels</h2><div class="chlist">'+(kids.length?kids.map(function(k){return '<button class="chcard" type="button" data-go="'+esc(k.id)+'"><span># '+esc(k.name)+'</span><span class="chev">&rsaquo;</span></button>'}).join(""):'<p class="hint" style="margin:0">No channels yet. Chat and posts live inside channels, so add one to get started.</p>')+'</div><div class="chips"><input id="chname" maxlength="40" placeholder="New channel name" aria-label="New channel name"><button class="primary" type="button" id="chadd">Add channel</button></div>')+
-  '<div id="feed" class="feed"></div>'+
-  (par?'<p class="hint" id="commnote"></p>'+
-  '<div class="composer"><div id="pprev"></div><textarea id="ptext" maxlength="4000" aria-label="Write a post" placeholder="'+esc(pg.hint||"Write something")+'"></textarea>'+
-  '<div class="row"><button class="primary" id="ppost" type="button">Post</button><button id="pfile" type="button">Add images</button><input id="pimg" type="file" accept="image/*" multiple hidden><span class="hint" style="margin:0">Ctrl+V (Cmd+V on Mac) pastes a screenshot. Ctrl+Enter posts.</span></div></div><div id="pgchat"></div>':'');
+  (par?'<p class="hint" id="commnote" style="margin:0 0 8px"></p><div id="feed" class="dc-stream" aria-live="polite"></div>'+dcComposer({prev:"pprev",pic:"pfile",file:"pimg",ta:"ptext",send:"ppost",max:4000,ph:"Message #"+pg.name}):'<div id="feed" class="feed"></div>');
  $("pgname").value=pg.name;commNote();renderSide();window.scrollTo(0,0);
  try{feedPosts=await loadPosts(pid)}catch(e){toast("Could not load this page")}
  if(curPage!==pid)return;
  if(!par&&feedPosts.length){var fe=$("feed");fe.insertAdjacentHTML("beforebegin",'<h2 class="chhead">Earlier posts</h2><p class="hint" style="margin:0 0 8px">Posts made here before channels existed. New posts go inside a channel.</p>')}
- if(par&&pg.priv===false){var cb=$("pagev").querySelector("#pgchat");if(cb){var cid=chMap[pid];if(!cid&&syncing)await syncing;cid=chMap[pid];if(!cid){try{await syncPub();cid=chMap[pid]}catch(e){}}
-   if(cid&&curPage===pid){var pf=$("profilev");if(pf&&pf.querySelector("#chatlist"))pf.innerHTML="";cb.innerHTML=chatHTML(true,esc(chanNote(pg)));startChat(cid,true)}else cb.innerHTML='<p class="hint">Chat is getting set up. Reopen this channel in a moment.</p>'}}
+ if(par&&pg.priv===false){var cid=chMap[pid];if(!cid&&syncing)await syncing;cid=chMap[pid];if(!cid){try{await syncPub();cid=chMap[pid]}catch(e){}}
+   if(cid&&curPage===pid)startChat(cid,true,true)}
  renderFeed();var t=$("ptext");
- if(par){var go=function(){if(curPage===pid)window.scrollTo(0,document.documentElement.scrollHeight)},touched=false,mark=function(){touched=true};
-  window.addEventListener("wheel",mark,{once:true,passive:true});window.addEventListener("touchmove",mark,{once:true,passive:true});
-  go();requestAnimationFrame(go);
-  [].forEach.call(document.querySelectorAll("#feed img"),function(im){if(!im.complete)im.addEventListener("load",function(){if(!touched)go()})})}
  if(t)t.focus({preventScroll:true})}
 async function doPost(){if(!pages[curPage]||!pages[curPage].parent)return;
  var t=$("ptext").value.trim();if(!t&&!pend.length){toast("Write something or paste an image first");return}
@@ -848,7 +860,7 @@ async function doPost(){if(!pages[curPage]||!pages[curPage].parent)return;
     if(store.db){if(store.assets){try{post.imgs.push({aid:(await store.assets.upload(dataToBlob(pend[k]),{type:"image/jpeg"})).id})}catch(e){toast("An image could not be saved")}}else toast("Image storage is unavailable here")}
     else post.imgs.push({src:pend[k]})}}
   var rec=await addPost(pid,post);
-  if(curPage===pid){feedPosts.push(rec);$("ptext").value="";pend=[];renderPrev();renderFeed();var f=$("feed");if(f&&f.lastElementChild)f.lastElementChild.scrollIntoView({block:"nearest"})}
+  if(curPage===pid){feedPosts.push(rec);$("ptext").value="";pend=[];renderPrev();var f=$("feed");if(f)f.dataset.stick="1";var tp=$("ptext");if(tp)tp.style.height="";renderFeed()}
  }catch(e){toast(e&&e.code==="quota_exceeded"?"Storage is full":"Could not post")}
  finally{btn.disabled=false}}
 async function createPage(){var inp=$("newpg"),name=inp.value.trim();if(!name)return;
@@ -883,7 +895,7 @@ function openPageMenu(pid){var pg=pages[pid];if(!pg)return;closeMenu();var cat=!
   if(m==="del"){confirmTwice(b,"Tap again to delete",async function(){var par=pg2.parent;try{await delPage(pid);close();if(!pages[curPage]){if(par&&pages[par])showPage(par);else showStudio()}else renderSide();toast("Deleted")}catch(x){toast("Could not delete")}})}})}
 function commNote(){var el=$("commnote"),pg=pages[curPage];if(!el||!pg)return;
  if(!pg.parent){el.textContent="";return}
- el.textContent=pg.priv!==false?"Private: only you can see and post here.":"Public: anyone signed in can see your posts and pictures in this channel, and the chat below."}
+ el.textContent=pg.priv!==false?"Private: only you can see and post here.":"Public: anyone signed in can see this channel."}
 function openPageSettings(pid){var pg=pages[pid];if(!pg)return;var old=$("pset");if(old)old.remove();
  var kids=pg.parent?[]:kidsOf(pid).length,d=document.createElement("div");d.id="pset";d.className="psetbg";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label","Settings for "+pg.name);
  d.innerHTML='<div class="pset"><h2>'+esc(pg.name)+' <span class="pill">'+(pg.parent?"Channel":"Page")+'</span></h2>'+
@@ -1121,7 +1133,7 @@ $("pagev").addEventListener("change",function(ev){var t=ev.target;
  if(t.id==="edimg"){editAddFiles(t.files);t.value="";return}
  if(t.id==="pgname"&&pages[curPage]){var v=t.value.trim()||pages[curPage].name;t.value=v;var p=Object.assign({},pages[curPage],{name:v});putPage(p).then(renderSide,function(){toast("Could not rename")})}});
 $("pagev").addEventListener("keydown",function(ev){if(ev.target.id==="chname"&&ev.key==="Enter"){ev.preventDefault();createChannel(curPage,ev.target.value);return}
- if(ev.target.id==="ptext"&&ev.key==="Enter"&&(ev.ctrlKey||ev.metaKey)){ev.preventDefault();doPost()}});
+ if(ev.target.id==="ptext"&&ev.key==="Enter"&&!ev.shiftKey&&!ev.isComposing){ev.preventDefault();doPost()}});
 
 /* Profile, wall, ticker pages */
 var prof={bio:"",aid:"",src:""},wall=[],wpend=[],profTab="wall",pv={self:true},openCm={},notifs=[],synced=false;
@@ -1192,41 +1204,71 @@ function schedMirror(pid){clearTimeout(mirT[pid]);mirT[pid]=setTimeout(function(
 async function mirrorChannel(pid){var So=S(),pg=pages[pid];if(!So||!So.mirrorPosts||!pg||!pg.parent||pg.priv!==false)return;
  try{if(syncing)await syncing;var cid=chMap[pid];if(!cid)return;var L=await loadPosts(pid);
   var out=L.map(function(p){var src=(p.imgs&&p.imgs.length)?p.imgs:((p.src||p.aid)?[{src:p.src,aid:p.aid}]:[]);
-   var imgs=src.map(function(m){var u=m.src||(m.aid?blobUrl(m.aid):"");return /^https?:\/\//.test(u)?{src:u}:null}).filter(Boolean);return {key:p.id,text:p.text||"",imgs:imgs,ts:p.ts}});
+   var imgs=src.map(function(m){var u=m.src||(m.aid?blobUrl(m.aid):"");return /^https?:\/\//.test(u)?{src:u}:null}).filter(Boolean);return {key:p.id,text:p.text||"",imgs:imgs,ts:p.ts,edited:!!p.edited}});
   await So.mirrorPosts(cid,out)}catch(e){}}
 function mirrorAll(){Object.keys(pages).forEach(function(k){if(pages[k].parent&&pages[k].priv===false)mirrorChannel(k)})}
 function syncPub(){var So=S();if(!So||!So.syncChannels)return Promise.resolve();
  var list=[];Object.keys(pages).forEach(function(k){var p=pages[k];if(p.parent&&pages[p.parent]&&p.priv===false)list.push({page_id:k,name:p.name,parent_name:pages[p.parent].name,fpost:!!p.fpost})});
  syncing=So.syncChannels(list).then(function(m){chMap=m||{};setTimeout(mirrorAll,50);return chMap}).catch(function(){return chMap});return syncing}
-function chatHTML(canPost,note){return '<h2 class="chhead">Chat</h2>'+(note?'<p class="hint" style="margin:0 0 8px" id="chnote">'+note+'</p>':'')+'<div id="chatlist" class="chatlist" aria-live="polite"><p class="hint">Loading...</p></div>'+
- (canPost?'<div id="chprev" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div><div class="row" style="margin:8px 0 0"><input id="chatin" maxlength="2000" placeholder="Message this channel. Paste a screenshot with Ctrl+V." aria-label="Message this channel" style="flex:1;min-width:0"><button type="button" id="chatpic" aria-label="Add a picture">Add picture</button><input id="chimg" type="file" accept="image/*" multiple hidden><button class="primary" id="chatsend" type="button">Send</button></div>':'')}
+function dcTime(ts){var d=new Date(ts),n=new Date(),t=d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}),k=function(x){return x.getFullYear()*10000+x.getMonth()*100+x.getDate()},y=new Date(n);y.setDate(n.getDate()-1);
+ return k(d)===k(n)?"Today at "+t:k(d)===k(y)?"Yesterday at "+t:d.toLocaleDateString()+" "+t}
+var DCC=["#f0b232","#5ad1b4","#7aa2ff","#ff8a7a","#c792ea","#6fd36f","#ffb86c","#4cc9f0"];
+function dcColor(n){var h=0;String(n).split("").forEach(function(c){h=(h*31+c.charCodeAt(0))>>>0});return DCC[h%DCC.length]}
+function dcAv(u){var url=u.avatar_url||"";return url?'<img class="dc-av" alt="" src="'+esc(url)+'">':'<span class="dc-av dc-av0" style="background:'+dcColor(u.username)+'">'+esc((u.username||"?").charAt(0).toUpperCase())+'</span>'}
+function dcImgs(L){var u=(L||[]).map(function(m){return imgUrl(m)}).filter(Boolean);if(!u.length)return "";return '<div class="dc-imgs n'+Math.min(u.length,4)+'">'+u.map(function(x){return '<img class="dcimg" data-lb="1" alt="Picture" src="'+esc(x)+'">'}).join("")+'</div>'}
+function dcEditForm(it){var th=editing.imgs.map(function(m,i){var u=imgUrl(m);return u?'<div class="pthumb"><img alt="Picture on this post" src="'+esc(u)+'"><button type="button" data-edrm="o'+i+'" aria-label="Remove picture">✕</button></div>':""}).join("")+editing.adds.map(function(u,i){return '<div class="pthumb"><img alt="New picture" src="'+u+'"><button type="button" data-edrm="n'+i+'" aria-label="Remove new picture">✕</button></div>'}).join("");
+ return '<div class="dc-msg editing first" data-eid="'+esc(it.id)+'"><div class="dc-gap"></div><div class="dc-main"><div class="dc-h"><span class="dc-t">Editing message</span></div><textarea id="edtext" maxlength="4000" aria-label="Edit your message" rows="4"></textarea><div style="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0">'+th+'</div>'+
+  '<div class="row" style="margin:0"><button class="primary" type="button" data-edsave="1">Save</button><button type="button" data-edadd="1">Add picture</button><input id="edimg" type="file" accept="image/*" multiple hidden><button type="button" data-edcancel="1">Cancel</button></div></div></div>'}
+function streamHTML(items,name){items=items.slice().sort(function(a,b){return a.ts-b.ts});
+ var h='<div class="dc-welcome"><h3>Welcome to # '+esc(name)+'</h3><p class="hint" style="margin:4px 0 0">This is the start of the channel.</p></div>',prev=null;
+ items.forEach(function(it){
+  if(editing&&it.kind==="post"&&editing.id===it.id){h+=dcEditForm(it);prev=null;return}
+  var grp=prev&&prev.author.id===it.author.id&&it.ts-prev.ts<420000&&new Date(it.ts).toDateString()===new Date(prev.ts).toDateString();prev=it;
+  var acts=(it.canEdit?'<button type="button" class="dc-b" data-edit="'+esc(it.id)+'" aria-label="Edit message">Edit</button>':'')+(it.canDel?'<button type="button" class="dc-b" '+it.delAttr+'="'+esc(it.id)+'" aria-label="Delete message">Delete</button>':'');
+  h+='<div class="dc-msg'+(grp?'':' first')+'">'+(grp?'<div class="dc-gap">'+esc(new Date(it.ts).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}))+'</div>':'<div class="dc-avw">'+dcAv(it.author)+'</div>')+
+   '<div class="dc-main">'+(grp?'':'<div class="dc-h"><button type="button" class="dc-name tk un" style="color:'+dcColor(it.author.username)+'" data-un="'+esc(it.author.username)+'">'+esc(it.author.username)+'</button><span class="dc-t">'+esc(dcTime(it.ts))+'</span></div>')+
+   (it.text?'<div class="dc-body">'+rich(it.text)+(it.edited?' <span class="dc-ed">(edited)</span>':'')+'</div>':(it.edited?'<span class="dc-ed">(edited)</span>':''))+dcImgs(it.imgs)+'</div>'+(acts?'<div class="dc-acts">'+acts+'</div>':'')+'</div>'});
+ return h}
+function dcPaint(el,html,reset){var first=reset||!el.dataset.init,nb=el.scrollHeight-el.scrollTop-el.clientHeight<80||el.dataset.stick==="1",st=el.scrollTop;
+ el.innerHTML=html;if(first){el.dataset.init="1";el.dataset.stick="1";el.addEventListener("scroll",function(){el.dataset.stick=(el.scrollHeight-el.scrollTop-el.clientHeight<80)?"1":"0"})}
+ if(first||nb)el.scrollTop=el.scrollHeight;else el.scrollTop=st;
+ [].forEach.call(el.querySelectorAll("img"),function(im){if(!im.complete)im.addEventListener("load",function(){if(el.dataset.stick==="1")el.scrollTop=el.scrollHeight})})}
+function dcComposer(o){return '<div class="dc-comp"><div id="'+o.prev+'" class="dc-prev"></div><div class="dc-bar"><button type="button" class="dc-plus" id="'+o.pic+'" aria-label="Add a picture">+</button><input id="'+o.file+'" type="file" accept="image/*" multiple hidden><textarea id="'+o.ta+'" class="dc-ta" rows="1" maxlength="'+o.max+'" placeholder="'+esc(o.ph)+'" aria-label="Message"></textarea><button type="button" class="primary dc-send" id="'+o.send+'">Send</button></div></div>'}
+function ownerItems(){var A=window.stockspotAuth||{},So=S(),me={id:So?So.uid():"me",username:A.username||"you",avatar_url:myAvUrl()},out=[];
+ feedPosts.forEach(function(p){out.push({kind:"post",id:p.id,author:me,text:p.text||"",imgs:postImgs(p),ts:p.ts,edited:p.edited,canEdit:true,canDel:true,delAttr:"data-del"})});
+ if(chat&&chat.page)(chat.msgs||[]).forEach(function(m){out.push({kind:"chat",id:m.id,author:m.author,text:m.text,imgs:m.imgs||[],ts:m.ts,canDel:true,delAttr:"data-cmdel"})});
+ return out}
+function renderStream(){var el=$("feed"),pg=pages[curPage];if(!el||!pg)return;dcPaint(el,streamHTML(ownerItems(),pg.name));
+ if(editing){var t=$("edtext");if(t&&!t.dataset.init){t.value=editing.text;t.dataset.init="1";t.focus({preventScroll:true})}}}
+function renderVisitor(){var el=$("dcstream");if(!el||!chat)return;var me=S().uid(),c=chat.info,items=[];
+ (chat.posts||[]).forEach(function(p){items.push({kind:"mpost",id:p.id,author:c.owner,text:p.text,imgs:p.imgs||[],ts:p.ts,edited:p.edited,canDel:false})});
+ (chat.msgs||[]).forEach(function(m){items.push({kind:"chat",id:m.id,author:m.author,text:m.text,imgs:m.imgs||[],ts:m.ts,canDel:m.author.id===me||chat.mine,delAttr:"data-cmdel"})});
+ dcPaint(el,streamHTML(items,c.name))}
 var chatPend=[];
 function renderChPrev(){var e=$("chprev");if(!e)return;e.innerHTML=chatPend.map(function(u,i){return '<div class="pthumb"><img alt="Picture to send" src="'+u+'"><button type="button" data-chrm="'+i+'" aria-label="Remove picture">✕</button></div>'}).join("")}
 async function chatAddFiles(files){files=files?Array.prototype.slice.call(files):[];
  for(var i=0;i<files.length;i++){if(!/^image\//.test(files[i].type))continue;if(chatPend.length>=4){toast("Up to 4 pictures per message");break}
   try{chatPend.push(await shrink(files[i],1400))}catch(e){toast("Could not read that image")}}
  renderChPrev()}
-async function loadChat(keepScroll){var So=S();if(!So||!chat||!$("chatlist"))return;var cid=chat.cid,el=$("chatlist");
- var L;try{L=await So.chatMsgs(cid)}catch(e){if(chat&&chat.cid===cid&&el===$("chatlist"))el.innerHTML='<p class="hint">Could not load the chat.</p>';return}
- if(!chat||chat.cid!==cid||!$("chatlist"))return;el=$("chatlist");var me=So.uid(),nearBottom=el.scrollHeight-el.scrollTop-el.clientHeight<60;
- el.innerHTML=L.length?L.map(function(m){var can=m.author.id===me||chat.mine;return '<div class="cmsg"><div class="cmh"><button type="button" class="tk un" data-un="'+esc(m.author.username)+'">@'+esc(m.author.username)+'</button> <span class="hint" style="margin:0">'+esc(postWhen(m.ts))+'</span>'+(can?' <button class="x" type="button" data-cmdel="'+esc(m.id)+'" aria-label="Delete message">✕</button>':'')+'</div>'+(m.text?'<div class="ptxt">'+rich(m.text)+'</div>':'')+((m.imgs||[]).length?'<div class="pics n'+Math.min(m.imgs.length,4)+'">'+m.imgs.map(function(x){return x.src?'<img alt="Picture in chat" src="'+esc(x.src)+'">':""}).join("")+'</div>':'')+'</div>'}).join(""):'<p class="hint">No messages yet. Say something.</p>';
- if(!keepScroll||nearBottom)el.scrollTop=el.scrollHeight}
-function startChat(cid,mine){if(!chat||chat.cid!==cid){chatPend=[]}chat={cid:cid,mine:!!mine};renderChPrev();clearInterval(chatTimer);loadChat();chatTimer=setInterval(function(){if(!chat||!$("chatlist")||document.hidden){if(!$("chatlist")){clearInterval(chatTimer);chat=null}return}loadChat(true)},8000)}
+async function loadChat(){var So=S();if(!So||!chat)return;var cid=chat.cid,mine=chat;
+ try{var L=await So.chatMsgs(cid);if(chat!==mine)return;chat.msgs=L;if(!chat.page&&So.channelPosts){chat.posts=await So.channelPosts(cid);if(chat!==mine)return}}catch(e){return}
+ if(chat.page)renderFeed();else renderVisitor()}
+function chatAlive(){if(!chat)return false;return chat.page?(!$("pagev").hidden&&$("feed")&&chMap[curPage]===chat.cid):($("dcstream")&&!$("profilev").hidden)}
+function startChat(cid,mine,page,info){if(!chat||chat.cid!==cid){chatPend=[]}chat={cid:cid,mine:!!mine,page:!!page,info:info||null,msgs:[],posts:[]};renderChPrev();clearInterval(chatTimer);loadChat();
+ chatTimer=setInterval(function(){if(!chatAlive()){clearInterval(chatTimer);chat=null;return}if(!document.hidden)loadChat()},8000)}
 async function chatSend(){var So=S(),i=$("chatin");if(!So||!i||!chat)return;var t=i.value.trim();if(!t&&!chatPend.length)return;var b=$("chatsend");if(b)b.disabled=true;
  try{var imgs=[];for(var k=0;k<chatPend.length;k++){try{imgs.push({src:await So.uploadImage(dataToBlob(chatPend[k]))})}catch(e){toast("A picture could not be saved")}}
   if(!t&&!imgs.length){return}
-  await So.sendMsg(chat.cid,t,imgs);i.value="";chatPend=[];renderChPrev();await loadChat()}catch(e){toast("Could not send. You may need to follow this trader first.")}finally{if(b)b.disabled=false;i.focus()}}
-function chanNote(pg){return pg.fpost?"Public: everyone can see your posts here. Your followers can chat.":"Public: everyone can see your posts here. Only you can chat."}
+  await So.sendMsg(chat.cid,t,imgs);i.value="";i.style.height="";chatPend=[];renderChPrev();var st=$("dcstream");if(st)st.dataset.stick="1";await loadChat()}catch(e){toast("Could not send. You may need to follow this trader first.")}finally{if(b)b.disabled=false;i.focus()}}
+function chanNote(pg){return pg.fpost?"Public: everyone can see this channel. Your followers can chat.":"Public: everyone can see this channel. Only you can post."}
 async function openChannel(id){var So=S();if(!So)return;var c=null;try{c=await So.channelInfo(id)}catch(e){}
  if(!c){toast("That channel is not available");return}
- var pc=$("pgchat");if(pc)pc.innerHTML="";
  hideViews();var el=$("profilev");el.hidden=false;
- var canPost=c.mine||(c.fpost&&c.iFollow),note=c.mine?"This is your public channel.":(c.fpost?(c.iFollow?"You can chat here because you follow @"+esc(c.owner.username)+".":"Follow @"+esc(c.owner.username)+" to chat here."):"Read only. Only @"+esc(c.owner.username)+" can post here.");
+ var canPost=c.mine||(c.fpost&&c.iFollow),note=c.mine?"This is your public channel.":(c.fpost?(c.iFollow?"":"Follow @"+esc(c.owner.username)+" to chat here."):"Read only. Only @"+esc(c.owner.username)+" can post here.");
  el.innerHTML='<button class="crumb" type="button" data-backprof="'+esc(c.owner.username)+'">&larr; @'+esc(c.owner.username)+'</button><h1># '+esc(c.name)+'</h1><p class="sub">'+(c.parent_name?"in "+esc(c.parent_name)+" · ":"")+'by @'+esc(c.owner.username)+'</p>'+
-  (!canPost&&c.fpost&&!c.iFollow?'<div class="row"><button class="primary" type="button" data-chfollow="'+esc(c.owner.id)+'" data-cid="'+esc(c.id)+'">Follow @'+esc(c.owner.username)+'</button></div>':'')+'<h2 class="chhead">Posts</h2><div id="chposts" class="feed"><p class="hint">Loading...</p></div>'+chatHTML(canPost,note);
- window.scrollTo(0,0);startChat(c.id,c.mine);
- So.channelPosts(c.id).then(function(L){var e=$("chposts");if(!e)return;e.innerHTML=L.length?L.map(function(p){var pics=(p.imgs||[]).map(function(m){return m.src?'<img alt="Posted image" src="'+esc(m.src)+'">':""}).join("");
-   return '<article class="post"><div class="pmeta"><span>'+esc(postWhen(p.ts))+'</span></div>'+(p.text?'<div class="ptxt">'+rich(p.text)+'</div>':'')+(pics?'<div class="pics n'+Math.min(p.imgs.length,8)+'">'+pics+'</div>':'')+'</article>'}).join(""):'<p class="hint">No posts here yet.</p>'}).catch(function(){var e=$("chposts");if(e)e.innerHTML='<p class="hint">Could not load posts.</p>'})}
+  '<div id="dcstream" class="dc-stream" aria-live="polite"><p class="hint" style="padding:12px 16px">Loading...</p></div>'+
+  (canPost?dcComposer({prev:"chprev",pic:"chatpic",file:"chimg",ta:"chatin",send:"chatsend",max:2000,ph:"Message #"+c.name}):'<div class="dc-comp"><div class="dc-bar" style="justify-content:space-between"><span class="hint" style="margin:6px 8px">'+(note||"")+'</span>'+(c.fpost&&!c.iFollow?'<button class="primary" type="button" data-chfollow="'+esc(c.owner.id)+'" data-cid="'+esc(c.id)+'">Follow @'+esc(c.owner.username)+'</button>':'')+'</div></div>');
+ window.scrollTo(0,0);startChat(c.id,c.mine,false,c)}
 async function loadProfChannels(){var So=S(),el=$("pchans");if(!So||!So.channelsOf||!el||!pv.id)return;var id=pv.id,L=[];
  try{L=await So.channelsOf(id)}catch(e){return}
  if(pv.id!==id||!$("pchans"))return;el=$("pchans");if(!L.length){el.innerHTML="";return}
@@ -1355,9 +1397,11 @@ async function showTicker(sym){var prevProfile=!$("profilev").hidden,prevPage=cu
  else{var m2='<span class="hint">Market data is not available here.</span>';fill("tkquote",m2);fill("tkchart",m2);fill("tkabout",m2);fill("tknews",m2)}
  var posts=[];try{if(So)posts=So.tickerPosts?await So.tickerPosts(sym):[]}catch(e){}
  var tw=$("tkwall");if(tw&&!$("tickerv").hidden)tw.innerHTML=posts.length?posts.map(function(p){return '<article class="post"><div class="pmeta"><span class="wp-who">'+avatarHTML("xs",p.author.avatar_url,p.author.username)+'<button type="button" class="tk un" data-un="'+esc(p.author.username)+'">@'+esc(p.author.username)+'</button> &middot; '+esc(postWhen(p.ts))+'</span></div><div class="ptxt">'+rich(p.text)+'</div></article>'}).join(""):'<p class="hint">Nobody has posted about $'+esc(sym)+' yet. Post one from your wall.</p>'}
+document.addEventListener("input",function(ev){var t=ev.target;if(t&&t.classList&&t.classList.contains("dc-ta")){t.style.height="auto";t.style.height=Math.min(t.scrollHeight,160)+"px"}});
 document.addEventListener("change",function(ev){if(ev.target&&ev.target.id==="chimg"){chatAddFiles(ev.target.files);ev.target.value=""}});
-document.addEventListener("keydown",function(ev){if(ev.target&&ev.target.id==="chatin"&&ev.key==="Enter"){ev.preventDefault();chatSend()}});
-document.addEventListener("click",function(ev){if(wmenu&&!(ev.target.closest&&ev.target.closest(".wmwrap"))){wmenu="";if($("wall"))renderWall()}var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
+document.addEventListener("keydown",function(ev){if(ev.target&&ev.target.id==="chatin"&&ev.key==="Enter"&&!ev.shiftKey&&!ev.isComposing){ev.preventDefault();chatSend()}});
+function openLightbox(src){var old=$("lbx");if(old)old.remove();var d=document.createElement("div");d.id="lbx";d.className="lbx";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label","Picture");d.innerHTML='<img alt="Picture" src="'+esc(src)+'"><button type="button" aria-label="Close">✕</button>';document.body.appendChild(d);function k(e){if(e.key==="Escape")close()}function close(){d.remove();document.removeEventListener("keydown",k)}document.addEventListener("keydown",k);d.addEventListener("click",close)}
+document.addEventListener("click",function(ev){var im=ev.target;if(im&&im.dataset&&im.dataset.lb==="1"){openLightbox(im.getAttribute("src"));return}if(wmenu&&!(ev.target.closest&&ev.target.closest(".wmwrap"))){wmenu="";if($("wall"))renderWall()}var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
  if(b.dataset.chan){ev.preventDefault();openChannel(b.dataset.chan);return}
  if(b.dataset.backprof){ev.preventDefault();showUserProfile(b.dataset.backprof);return}
  if(b.dataset.chfollow){ev.preventDefault();var cid2=b.dataset.cid;S().follow(b.dataset.chfollow,true).then(function(){toast("Following");openChannel(cid2)}).catch(function(){toast("Could not follow")});return}
