@@ -35,12 +35,15 @@ module.exports = async (req, res) => {
   const hit = cache.get(sym);
   if (hit && Date.now() - hit.t < TTL) return res.status(200).json(hit.data);
 
-  const [q, o, d, n] = await Promise.all([
-    av('GLOBAL_QUOTE', { symbol: sym }, key),
-    av('OVERVIEW', { symbol: sym }, key),
-    av('TIME_SERIES_DAILY', { symbol: sym, outputsize: 'compact' }, key),
-    av('NEWS_SENTIMENT', { tickers: sym, limit: '8', sort: 'LATEST' }, key),
-  ]);
+  // Free keys allow about 1 request per second, so run them one after another
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const q = await av('GLOBAL_QUOTE', { symbol: sym }, key);
+  await sleep(1100);
+  const d = await av('TIME_SERIES_DAILY', { symbol: sym, outputsize: 'compact' }, key);
+  await sleep(1100);
+  const o = await av('OVERVIEW', { symbol: sym }, key);
+  await sleep(1100);
+  const n = await av('NEWS_SENTIMENT', { tickers: sym, limit: '8', sort: 'LATEST' }, key);
 
   const out = { configured: true, symbol: sym, ts: Date.now() };
   const g = q.error ? null : q['Global Quote'];
@@ -61,7 +64,8 @@ module.exports = async (req, res) => {
     out.news = n.feed.slice(0, 8).map((x) => ({ title: x.title, url: x.url, source: x.source, time: x.time_published }));
   } else out.newsError = n.error || 'no data';
 
-  if (out.quote || out.daily) cache.set(sym, { t: Date.now(), data: out });
+  // only cache complete results so a rate-limited section is retried next time
+  if (out.quote && out.daily && out.about) cache.set(sym, { t: Date.now(), data: out });
   res.setHeader('Cache-Control', 'private, max-age=60');
   return res.status(200).json(out);
 };
