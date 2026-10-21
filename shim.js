@@ -223,8 +223,8 @@
     chatMsgs: async function (cid) { await ready; var r = await sb.from('ss_channel_msgs').select('*').eq('channel_id', cid).order('created_at', { ascending: false }).limit(200); if (r.error) throw r.error;
       var hide = {}; try { var m1 = await sb.from('ss_mutes').select('target_id'), m2 = await sb.from('ss_blocks').select('target_id'); (m1.data || []).concat(m2.data || []).forEach(function (x) { hide[x.target_id] = 1; }); } catch (e) {}
       var rows = (r.data || []).filter(function (m) { return m.author_id === uid || !hide[m.author_id]; }).reverse(), n = await namesFor(rows.map(function (m) { return m.author_id; }));
-      return rows.map(function (m) { return { id: m.id, author: pickName(n, m.author_id), text: m.text, ts: new Date(m.created_at).getTime() }; }); },
-    sendMsg: async function (cid, text) { await ready; var r = await sb.from('ss_channel_msgs').insert({ channel_id: cid, author_id: uid, text: text }); if (r.error) throw r.error; },
+      return rows.map(function (m) { return { id: m.id, author: pickName(n, m.author_id), text: m.text, imgs: m.imgs || [], ts: new Date(m.created_at).getTime() }; }); },
+    sendMsg: async function (cid, text, imgs) { await ready; var row = { channel_id: cid, author_id: uid, text: text || '' }; if (imgs && imgs.length) row.imgs = imgs; var r = await sb.from('ss_channel_msgs').insert(row); if (r.error) throw r.error; },
     delMsg: async function (id) { await ready; var r = await sb.from('ss_channel_msgs').delete().eq('id', id); if (r.error) throw r.error; },
     mirrorPosts: async function (cid, list) { await ready;
       var ex = await sb.from('ss_channel_posts').select('id,post_key,text,imgs').eq('channel_id', cid); if (ex.error) throw ex.error;
