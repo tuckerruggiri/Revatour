@@ -68,6 +68,7 @@ button:disabled{opacity:.55;cursor:default}
 .nav.on{background:var(--bg);color:var(--ink);font-weight:600}
 .nav.sub{padding-left:26px}
 .nav.fold{margin-top:10px;font-weight:600}
+.badge:empty{display:none}
 .badge{font-size:.75rem;color:var(--mute);border:1px solid var(--line);border-radius:99px;padding:0 7px}
 .side-empty{color:var(--mute);font-size:.85rem;padding:6px 10px}
 details.saved{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:12px}
@@ -140,6 +141,11 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .ptabs{display:flex;border-bottom:1px solid var(--line);margin:22px 0 12px}.ptabs button{flex:1;border:0;background:none;color:var(--mute);font:inherit;font-weight:600;padding:12px 8px;cursor:pointer;border-bottom:3px solid transparent;border-radius:0}
 .ptabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
 .pf-sec{margin:22px 0 8px;font-size:1.1rem}.pf-av.sm{width:72px;height:72px;font-size:1.6rem}
+.wp-who{display:inline-flex;align-items:center;gap:6px}.pf-av.xs{width:24px;height:24px;font-size:.75rem}
+.wp-actions{margin-top:8px}.linkbtn{border:0;background:none;color:var(--mute);font:inherit;font-size:.85rem;padding:0;cursor:pointer}.linkbtn:hover{color:var(--ink)}
+.cms{margin-top:8px;border-top:1px solid var(--line);padding-top:8px}.cm{margin:0 0 8px;font-size:.92rem}
+.nlist{display:flex;flex-direction:column;gap:8px;margin-top:12px}.nitem{display:flex;flex-direction:column;gap:2px;text-align:left;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;color:var(--ink);cursor:pointer}
+.nitem.unread{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}.nitem small{color:var(--mute)}.nsnip{color:var(--mute);overflow-wrap:anywhere}
 .sheetbg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:85;display:flex;align-items:flex-end;justify-content:center}
 .sheet{background:var(--bg);width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:8px 14px calc(18px + env(safe-area-inset-bottom,0px));max-height:90vh;overflow:auto;animation:up .18s ease-out}
 @keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
@@ -197,6 +203,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <button class="nav" id="navstudio" type="button">Studio</button>
   <button class="nav" id="navpub" type="button">Publishes <span id="navpubn" class="badge"></span></button>
   <button class="nav" id="navcoach" type="button">AI Coach</button>
+  <button class="nav" id="navnotif" type="button">Notifications <span id="navnotn" class="badge" hidden></span></button>
   <button class="nav" id="navset" type="button">Settings</button>
   <div class="sechead"><span>Pages</span><button id="addpg" class="x show" type="button" aria-label="Add a page">+</button></div>
   <div id="addrow" hidden><input id="newpg" maxlength="40" placeholder="Page name" aria-label="New page name"><button id="newpgok" type="button">Add</button></div>
@@ -208,6 +215,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <div class="wrap" id="settingsv" hidden></div>
 <div class="wrap" id="profilev" hidden></div>
 <div class="wrap" id="pubv" hidden></div>
+<div class="wrap" id="notifv" hidden></div>
 <div class="wrap" id="tickerv" hidden></div>
 <div class="wrap" id="studio" hidden>
   <h1>Stockspot Studio</h1>
@@ -749,7 +757,7 @@ async function delPage(pid){
  else{var o=lsGet();if(o){delete o.pages[pid];lsPut(o)}}
  delete pages[pid]}
 function postWhen(ts){var d=new Date(ts);return d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+", "+d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}
-function rich(t){return esc(t).replace(/\$([A-Z]{1,5})(?![A-Za-z0-9])/g,function(m,x){return '<button type="button" class="tk" data-tk="'+x+'">$'+x+'</button>'})}
+function rich(t){return esc(t).replace(/\$([A-Z]{1,5})(?![A-Za-z0-9])/g,function(m,x){return '<button type="button" class="tk" data-tk="'+x+'">$'+x+'</button>'}).replace(/(^|[\s(])@([A-Za-z0-9_]{3,20})(?![A-Za-z0-9_])/g,function(m,p,x){return p+'<button type="button" class="tk un" data-un="'+x+'">@'+x+'</button>'})}
 function renderFeed(){var el=$("feed");if(!el)return;
  if(!feedPosts.length){el.innerHTML=(pages[curPage]&&pages[curPage].parent)?'<p class="hint">Nothing here yet. Post your first one below.</p>':"";return}
  el.innerHTML=feedPosts.map(function(p){var L=(p.imgs&&p.imgs.length)?p.imgs:((p.src||p.aid)?[{src:p.src,aid:p.aid}]:[]),pics=L.map(function(m){var u=m.src||(m.aid?blobUrl(m.aid):"");return u?'<img alt="Posted screenshot" src="'+esc(u)+'">':""}).join("");
@@ -916,8 +924,8 @@ function applyDefaults(){try{
  if(settings.name&&!$("name").value.trim())$("name").value=settings.name;
  if(settings.voice)$("voice").value=settings.voice;
  if(settings.grouping&&$("grouping"))$("grouping").value=settings.grouping}catch(e){}}
-["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
-function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv"].forEach(function(i){$(i).hidden=true});$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
+["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
+function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv"].forEach(function(i){$(i).hidden=true});$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
  $("navhome").classList.remove("on");$("navstudio").classList.remove("on");$("navset").classList.add("on");
  curDate="";curPage="";renderSettings();$("settingsv").hidden=false;window.scrollTo(0,0)}
 function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["Direct and plain-spoken","Professional and measured","Energetic and motivational","Analytical and data-first"];
@@ -1048,49 +1056,88 @@ $("pagev").addEventListener("keydown",function(ev){if(ev.target.id==="chname"&&e
  if(ev.target.id==="ptext"&&ev.key==="Enter"&&(ev.ctrlKey||ev.metaKey)){ev.preventDefault();doPost()}});
 
 /* Profile, wall, ticker pages */
-var prof={bio:"",aid:"",src:""},wall=[],wpend=[],profTab="wall";
+var prof={bio:"",aid:"",src:""},wall=[],wpend=[],profTab="wall",pv={self:true},openCm={},notifs=[],synced=false;
+function S(){return window.stockspotSocial||null}
 async function loadProfile(){try{if(store.db){var d=await store.db.doc("meta/profile").get();if(d.exists)prof=Object.assign({bio:"",aid:"",src:""},clone(d.data()))}
  else{var o=JSON.parse(localStorage.getItem("ss-prof")||"null");if(o)prof=Object.assign(prof,o)}}catch(e){}}
 async function saveProfile(){if(store.db)await store.db.doc("meta/profile").set(prof);else localStorage.setItem("ss-prof",JSON.stringify(prof))}
-function avatarHTML(cls){var u=prof.src||(prof.aid?blobUrl(prof.aid):""),A=window.stockspotAuth||{};
- return '<div class="pf-av'+(cls?" "+cls:"")+'">'+(u?'<img alt="" src="'+esc(u)+'">':esc(((A.username||A.email||"?").charAt(0)||"?").toUpperCase()))+'</div>'}
-function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv"].forEach(function(i){$(i).hidden=true});
- ["navhome","navstudio","navset","navprofile","navpub","navcoach"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
+function myAvUrl(){return prof.src||(prof.aid?blobUrl(prof.aid):"")}
+function avatarHTML(cls,url,name){var A=window.stockspotAuth||{},u=url!=null?url:myAvUrl(),nm=name||A.username||A.email||"?";
+ return '<div class="pf-av'+(cls?" "+cls:"")+'">'+(u?'<img alt="" src="'+esc(u)+'">':esc((nm.charAt(0)||"?").toUpperCase()))+'</div>'}
+function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv"].forEach(function(i){$(i).hidden=true});
+ ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
 function paintProfNav(){$("navprofile").classList.toggle("on",profTab!=="coach");$("navcoach").classList.toggle("on",profTab==="coach")}
-async function showProfile(){hideViews();paintProfNav();$("profilev").hidden=false;renderProfile();renderSide();window.scrollTo(0,0);
- try{wall=await loadPosts("__wall")}catch(e){wall=[]}renderWall()}
 function recordBlock(){var all=allTrades();if(!all.length)return '<div class="pf-panel hint" style="margin:8px 0">No saved trades yet. Save a day in Studio and your record shows here.</div>';
  var days=dailyPnl(),yr=pickYear(days),m=pnlModel(days,yr),s=withCtx({trades:all},[],stats);
  var t=function(v,l,c){return '<div class="hm-tile"><b'+(c?' class="'+c+'"':'')+'>'+v+'</b><span>'+l+'</span></div>'};
  return '<div class="hm-grid">'+t(sgn(m.total),yr+" P&amp;L",m.total>=0?"gain":"loss")+t(sgn(s.net),"All-time, "+s.n+" trades",s.net>=0?"gain":"loss")+t(Math.round(s.wr*100)+"%","Win rate")+t(s.pf===Infinity?"n/a":s.pf.toFixed(2),"Profit factor")+'</div>'+sparkline(s.pts,s.net>=0)+'<p class="hint" style="margin:4px 0 0">Self-reported from your saved days. Not verified.</p>'}
-function wallTab(){return '<div class="composer" style="position:static;border-top:0;padding-top:0"><div id="wprev" class="wprev"></div><textarea id="wtext" maxlength="4000" aria-label="Post to your wall" placeholder="What is on your mind? Use $TSLA to tag a ticker."></textarea>'+
-  '<div class="row"><button class="primary" id="wpost" type="button">Post</button><button id="wfile" type="button">Add images</button><input id="wimg" type="file" accept="image/*" multiple hidden></div></div>'+
-  '<div id="wall" class="feed"><p class="hint">Loading...</p></div>'}
 function coachTab(){return '<section style="margin-top:14px"><p class="hint">Reads your saved trades and your page notes, then tells you what is working, what is not, your strong and weak areas, and the niche your record points to.</p>'+
   '<div class="row"><button class="primary" id="chgo" type="button">'+(coach&&coach.md?"Run a fresh review":"Analyze my record")+'</button><button id="chstop" type="button" hidden>Stop</button>'+(coach&&coach.md?'<button id="chpost" type="button"'+(coach.posted?' disabled':'')+'>'+(coach.posted?'Posted to wall':'Post to wall')+'</button>':'')+'</div><div class="status" id="cstatus"></div>'+coachBody()+'</section>'}
-function renderProfile(){var A=window.stockspotAuth||{},el=$("profilev"),since=A.created?new Date(A.created).toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"}):"";
- el.innerHTML='<div class="pf-head">'+avatarHTML()+'<div class="pf-main"><div class="pf-top"><div><h1>@'+esc(A.username||"you")+'</h1></div><button id="pfedit" type="button" class="primary">Edit profile</button></div>'+
-  '<div class="pf-bio">'+(prof.bio?rich(prof.bio):'<span class="hint">No bio yet. Add one with Edit profile.</span>')+'</div>'+
+async function showProfile(){hideViews();paintProfNav();$("profilev").hidden=false;var A=window.stockspotAuth||{},So=S();
+ pv={self:true,id:So?So.uid():"",username:A.username||"",bio:prof.bio,avatar:myAvUrl(),created:A.created};
+ renderProfile();renderSide();window.scrollTo(0,0);
+ if(!So){wall=[];renderWall();return}
+ try{if(!synced){synced=true;So.updateMyProfile({bio:prof.bio||"",avatar_url:myAvUrl()});await migrateWall()}}catch(e){}
+ try{wall=await So.wall(pv.id)}catch(e){wall=[];toast("Could not load your wall")}
+ renderWall()}
+async function migrateWall(){var So=S(),old=[];try{old=await loadPosts("__wall")}catch(e){}
+ for(var i=0;i<old.length;i++){var p=old[i],imgs=(p.imgs||[]).map(function(m){return {src:m.src||(m.aid?blobUrl(m.aid):"")}}).filter(function(m){return m.src});
+  if(!imgs.length&&(p.src||p.aid))imgs=[{src:p.src||blobUrl(p.aid)}];
+  await So.addPost(So.uid(),p.text||"",imgs,p.ts);await delPost("__wall",p.id)}}
+async function showUserProfile(name){var So=S(),A=window.stockspotAuth||{};if(!So)return;name=String(name||"").replace(/^@/,"").trim();if(!name)return;
+ if(name.toLowerCase()===String(A.username||"").toLowerCase()){profTab="wall";showProfile();return}
+ var r=null;try{r=await So.profileByName(name)}catch(e){}
+ if(!r){toast("No trader named @"+name);return}
+ if(r.id===So.uid()){profTab="wall";showProfile();return}
+ hideViews();$("profilev").hidden=false;pv={self:false,id:r.id,username:r.username,bio:r.bio||"",avatar:r.avatar_url||"",created:r.created_at};
+ profTab="wall";renderProfile();renderSide();window.scrollTo(0,0);
+ try{wall=await So.wall(pv.id)}catch(e){wall=[]}renderWall()}
+function wallTab(){var who=pv.self?"your":"@"+esc(pv.username)+"'s";
+ return '<div class="composer" id="wcomposer" style="position:static;border-top:0;padding-top:0"><div id="wprev" class="wprev"></div><textarea id="wtext" maxlength="4000" aria-label="Write on '+who+' wall" placeholder="'+(pv.self?"What is on your mind? Use $TSLA to tag a ticker.":"Write on @"+esc(pv.username)+"'s wall")+'"></textarea>'+
+  '<div class="row"><button class="primary" id="wpost" type="button">'+(pv.self?"Post":"Post to @"+esc(pv.username)+"'s wall")+'</button><button id="wfile" type="button">Add images</button><input id="wimg" type="file" accept="image/*" multiple hidden></div></div>'+
+  '<div id="wall" class="feed"><p class="hint">Loading...</p></div>'}
+function renderProfile(){var A=window.stockspotAuth||{},el=$("profilev"),self=pv.self,cd=self?A.created:pv.created,since=cd?new Date(cd).toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"}):"",nm=pv.username||"you";
+ if(!self)profTab="wall";
+ el.innerHTML='<div class="row" style="margin:0 0 14px"><input id="findu" maxlength="21" placeholder="Find a trader: @username" aria-label="Find a trader by username" style="max-width:260px"><button type="button" id="findgo">Go</button></div>'+
+  '<div class="pf-head">'+avatarHTML("",self?myAvUrl():pv.avatar,nm)+'<div class="pf-main"><div class="pf-top"><div><h1>@'+esc(nm)+'</h1></div>'+
+  (self?'<button id="pfedit" type="button" class="primary">Edit profile</button>':'<button id="pfwrite" type="button" class="primary">Write on @'+esc(nm)+"'s wall</button>")+'</div>'+
+  '<div class="pf-bio">'+((self?prof.bio:pv.bio)?rich(self?prof.bio:pv.bio):'<span class="hint">'+(self?"No bio yet. Add one with Edit profile.":"No bio yet.")+'</span>')+'</div>'+
   '<div class="pf-counts"><button type="button" data-fp="following"><b>0</b> Following</button><button type="button" data-fp="followers"><b>0</b> Followers</button></div>'+
   '<div id="fpanel" class="pf-panel" hidden></div>'+(since?'<div class="pf-since">Member since '+esc(since)+'</div>':'')+'</div></div>'+
-  '<h2 class="pf-sec">Record at a glance</h2>'+recordBlock()+
-  '<div class="ptabs" role="tablist"><button type="button" role="tab" data-ptab="wall" aria-selected="'+(profTab==="wall")+'">Wall</button><button type="button" role="tab" data-ptab="coach" aria-selected="'+(profTab==="coach")+'">AI coach</button></div>'+
-  (profTab==="coach"?coachTab():wallTab());
+  (self?'<h2 class="pf-sec">Record at a glance</h2>'+recordBlock()+
+  '<div class="ptabs" role="tablist"><button type="button" role="tab" data-ptab="wall" aria-selected="'+(profTab==="wall")+'">Wall</button><button type="button" role="tab" data-ptab="coach" aria-selected="'+(profTab==="coach")+'">AI coach</button></div>':
+  '<h2 class="pf-sec">Wall</h2>')+
+  (self&&profTab==="coach"?coachTab():wallTab());
  wpend=[];renderWPrev()}
+function wallPostHTML(p){var A=window.stockspotAuth||{},me=S()?S().uid():"",mine=p.author.id===me,owner=pv.id===me,L=p.imgs||[],
+  pics=L.map(function(m){return m.src?'<img alt="Posted image" src="'+esc(m.src)+'">':""}).join(""),open=!!openCm[p.id];
+ var cm=p.comments.map(function(c){return '<div class="cm"><div><button type="button" class="tk un" data-un="'+esc(c.author.username)+'">@'+esc(c.author.username)+'</button> <span class="hint" style="margin:0">'+esc(postWhen(c.ts))+'</span>'+((c.author.id===me||owner)?' <button class="x" type="button" data-cdel="'+esc(c.id)+'" aria-label="Delete comment">✕</button>':'')+'</div><div class="ptxt">'+rich(c.text)+'</div></div>'}).join("");
+ return '<article class="post" data-pid="'+esc(p.id)+'"><div class="pmeta"><span class="wp-who">'+avatarHTML("xs",p.author.avatar_url,p.author.username)+'<button type="button" class="tk un" data-un="'+esc(p.author.username)+'">@'+esc(p.author.username)+'</button> &middot; '+esc(postWhen(p.ts))+'</span>'+((mine||owner)?'<button class="x" type="button" data-wdel="'+esc(p.id)+'" aria-label="Delete post">✕</button>':'')+'</div>'+
+  (p.text?'<div class="ptxt">'+rich(p.text)+'</div>':'')+(pics?'<div class="pics n'+Math.min(L.length,8)+'">'+pics+'</div>':'')+
+  '<div class="wp-actions"><button type="button" class="linkbtn" data-ctog="'+esc(p.id)+'">'+(p.comments.length?p.comments.length+(p.comments.length===1?" comment":" comments"):"Comment")+'</button></div>'+
+  (open?'<div class="cms">'+cm+'<div class="row" style="margin:6px 0 0"><input class="cin" data-cin="'+esc(p.id)+'" maxlength="1000" placeholder="Write a comment" aria-label="Write a comment" style="flex:1;min-width:0"><button type="button" data-cpost="'+esc(p.id)+'">Reply</button></div></div>':'')+'</article>'}
+function renderWall(){var el=$("wall");if(!el)return;el.innerHTML=wall.length?wall.map(wallPostHTML).join(""):'<p class="hint">'+(pv.self?"Nothing on your wall yet. Post your first thought or a chart.":"Nothing on @"+esc(pv.username)+"'s wall yet. Be the first to write something.")+'</p>'}
+async function wallPost(){var So=S();if(!So){toast("Wall is not available here");return}var t=$("wtext").value.trim();if(!t&&!wpend.length){toast("Write something or add an image first");return}
+ var btn=$("wpost");btn.disabled=true;
+ try{var imgs=[];for(var k=0;k<wpend.length;k++){try{imgs.push({src:await So.uploadImage(dataToBlob(wpend[k]))})}catch(e){toast("An image could not be saved")}}
+  await So.addPost(pv.id,t,imgs);$("wtext").value="";wpend=[];renderWPrev();wall=await So.wall(pv.id);renderWall();toast(pv.self?"Posted":"Posted on @"+pv.username+"'s wall")}
+ catch(e){toast("Could not post")}finally{btn.disabled=false}}
+async function wallComment(pid){var So=S(),inp=document.querySelector('[data-cin="'+pid+'"]');if(!So||!inp)return;var t=inp.value.trim();if(!t)return;
+ try{await So.addComment(pid,t);openCm[pid]=1;wall=await So.wall(pv.id);renderWall()}catch(e){toast("Could not comment")}}
+/* Notifications */
+function nextNotifBadge(n){var b=$("navnotn");if(b){b.textContent=n>0?n:"";b.hidden=!(n>0)}}
+async function pollNotifs(){var So=S();if(!So)return;try{nextNotifBadge(await So.unread())}catch(e){}}
+async function showNotifs(){hideViews();$("navnotif").classList.add("on");$("notifv").hidden=false;$("notifv").innerHTML='<h1>Notifications</h1><p class="hint">Loading...</p>';renderSide();window.scrollTo(0,0);
+ var So=S();if(!So){$("notifv").innerHTML='<h1>Notifications</h1><p class="hint">Not available here.</p>';return}
+ try{notifs=await So.notifs()}catch(e){notifs=[];toast("Could not load notifications")}renderNotifs();nextNotifBadge(notifs.filter(function(n){return !n.read}).length)}
+function renderNotifs(){var el=$("notifv"),un=notifs.filter(function(n){return !n.read}).length;
+ el.innerHTML='<div class="hm-top"><div><h1>Notifications</h1><p class="sub">Posts and comments on your wall.</p></div>'+(un?'<button type="button" id="nmark">Mark all read</button>':'')+'</div>'+
+  (notifs.length?'<div class="nlist">'+notifs.map(function(n){var what=n.type==="wall_post"?"wrote on your wall":"commented on a post";
+   return '<button type="button" class="nitem'+(n.read?"":" unread")+'" data-nid="'+esc(n.id)+'"><span><b>@'+esc(n.actor.username)+'</b> '+what+'</span>'+(n.snippet?'<span class="nsnip">'+esc(n.snippet)+'</span>':'')+'<small>'+esc(postWhen(n.ts))+'</small></button>'}).join("")+'</div>':'<p class="hint">Nothing yet. When someone writes on your wall or comments, it shows up here.</p>')}
 function renderWPrev(){var e=$("wprev");if(!e)return;e.style.cssText="display:flex;gap:8px;flex-wrap:wrap";e.innerHTML=wpend.map(function(u,i){return '<div class="pthumb"><img alt="Image to post" src="'+u+'"><button type="button" data-wrm="'+i+'" aria-label="Remove image '+(i+1)+'">✕</button></div>'}).join("")}
-function postHTML(p,delAttr){var L=(p.imgs&&p.imgs.length)?p.imgs:((p.src||p.aid)?[{src:p.src,aid:p.aid}]:[]),pics=L.map(function(m){var u=m.src||(m.aid?blobUrl(m.aid):"");return u?'<img alt="Posted screenshot" src="'+esc(u)+'">':""}).join("");
- return '<article class="post"><div class="pmeta"><span>'+esc(postWhen(p.ts))+'</span><button class="x" type="button" '+delAttr+'="'+esc(p.id)+'" aria-label="Delete post">✕</button></div>'+(p.text?'<div class="ptxt">'+rich(p.text)+'</div>':'')+(pics?'<div class="pics n'+Math.min(L.length,8)+'">'+pics+'</div>':'')+'</article>'}
-function renderWall(){var el=$("wall");if(!el)return;el.innerHTML=wall.length?wall.slice().reverse().map(function(p){return postHTML(p,"data-wdel")}).join(""):'<p class="hint">Nothing on your wall yet. Post your first thought or a chart.</p>'}
 async function wallAdd(files){files=files?Array.prototype.slice.call(files):[];var n=0;
  for(var i=0;i<files.length;i++){if(!/^image\//.test(files[i].type))continue;if(wpend.length>=8){toast("Up to 8 images per post");break}try{wpend.push(await shrink(files[i],1400));n++}catch(e){toast("Could not read that image")}}
  if(n)renderWPrev()}
-async function wallPost(){var t=$("wtext").value.trim();if(!t&&!wpend.length){toast("Write something or add an image first");return}
- var btn=$("wpost");btn.disabled=true;
- try{var post={text:t};
-  if(wpend.length){post.imgs=[];for(var k=0;k<wpend.length;k++){
-   if(store.db){if(store.assets){try{post.imgs.push({aid:(await store.assets.upload(dataToBlob(wpend[k]),{type:"image/jpeg"})).id})}catch(e){toast("An image could not be saved")}}}else post.imgs.push({src:wpend[k]})}}
-  var rec=await addPost("__wall",post);wall.push(rec);$("wtext").value="";wpend=[];renderWPrev();renderWall()}
- catch(e){toast("Could not post")}finally{btn.disabled=false}}
 function editProfile(){var A=window.stockspotAuth||{},old=$("pset");if(old)old.remove();var tmp={src:prof.src||(prof.aid?blobUrl(prof.aid):""),data:"",rm:false};
  var d=document.createElement("div");d.id="pset";d.className="psetbg";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label","Edit profile");
  d.innerHTML='<div class="pset"><h2>Edit profile</h2><div class="row" style="margin:0 0 8px;align-items:center"><div id="epav"></div><div><button type="button" id="epph">Change photo</button> <button type="button" id="eprm">Remove</button><input type="file" id="epfile" accept="image/*" hidden></div></div>'+
@@ -1110,7 +1157,7 @@ function editProfile(){var A=window.stockspotAuth||{},old=$("pset");if(old)old.r
    prof.bio=$("epbio").value.trim();
    if(tmp.rm){prof.aid="";prof.src=""}
    else if(tmp.data){if(store.db&&store.assets){prof.aid=(await store.assets.upload(dataToBlob(tmp.data),{type:"image/jpeg"})).id;prof.src=""}else{prof.src=tmp.data;prof.aid=""}}
-   await saveProfile();close();renderProfile();renderWall();renderSide();toast("Profile saved")}
+   await saveProfile();try{if(S())await S().updateMyProfile({bio:prof.bio,avatar_url:myAvUrl()})}catch(x){}close();pv.bio=prof.bio;renderProfile();renderWall();renderSide();toast("Profile saved")}
   catch(e){m.textContent="Could not save. Try again.";b.disabled=false}};
  $("epuser").focus()}
 function squareImg(file,N){return new Promise(function(res,rej){var u=URL.createObjectURL(file),im=new Image();
@@ -1131,14 +1178,25 @@ async function showTicker(sym){var prevProfile=!$("profilev").hidden,prevPage=cu
  else h+='<div class="hm-grid">'+tile("Trades",String(all.length))+tile("Net P&amp;L",'<span class="'+(net>=0?"gain":"loss")+'">'+sgn(net)+'</span>')+tile("Win rate",Math.round(wins/all.length*100)+"%")+'</div>';
  h+='<h2 class="pf-sec">On your wall</h2><div id="tkwall" class="feed"><p class="hint">Loading...</p></div>';
  el.innerHTML=h;window.scrollTo(0,0);
- try{if(!wall.length)wall=await loadPosts("__wall")}catch(e){}
- var re=new RegExp("\\$"+sym+"(?![A-Za-z0-9])"),m=wall.filter(function(p){return re.test(p.text||"")});
- var tw=$("tkwall");if(tw)tw.innerHTML=m.length?m.slice().reverse().map(function(p){return postHTML(p,"data-nodel")}).join(""):'<p class="hint">No posts on your wall mention $'+esc(sym)+' yet.</p>'}
+ var mine=[];try{var So2=S();if(So2)mine=await So2.wall(So2.uid())}catch(e){}
+ var re=new RegExp("\\$"+sym+"(?![A-Za-z0-9])"),m=mine.filter(function(p){return re.test(p.text||"")});
+ var tw=$("tkwall");if(tw)tw.innerHTML=m.length?m.map(function(p){return '<article class="post"><div class="pmeta"><span>'+esc(postWhen(p.ts))+'</span></div><div class="ptxt">'+rich(p.text)+'</div></article>'}).join(""):'<p class="hint">No posts on your wall mention $'+esc(sym)+' yet.</p>'}
 document.addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
  if(b.dataset.tk){ev.preventDefault();showTicker(b.dataset.tk);return}
+ if(b.dataset.un){ev.preventDefault();showUserProfile(b.dataset.un);return}
  if(b.id==="tkback"){(tkBack||showHome)();return}});
 $("navprofile").addEventListener("click",function(){profTab="wall";showProfile()});
 $("navcoach").addEventListener("click",function(){profTab="coach";showProfile()});
+$("navnotif").addEventListener("click",showNotifs);
+$("notifv").addEventListener("click",async function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;var So=S();
+ if(b.id==="nmark"){await So.markRead();notifs.forEach(function(n){n.read=true});renderNotifs();nextNotifBadge(0);return}
+ if(b.dataset.nid){var n=notifs.find(function(x){return x.id===b.dataset.nid});if(!n)return;
+  if(!n.read){So.markRead([n.id]);n.read=true;nextNotifBadge(notifs.filter(function(x){return !x.read}).length)}
+  var owner=null;try{owner=await So.postOwner(n.post_id)}catch(e){}
+  if(n.post_id&&n.type==="comment")openCm[n.post_id]=1;
+  if(!owner||owner.id===So.uid()){profTab="wall";await showProfile()}else await showUserProfile(owner.username);
+  var el=document.querySelector('[data-pid="'+n.post_id+'"]');if(el)el.scrollIntoView({block:"center"})}});
+pollNotifs();setInterval(pollNotifs,60000);
 $("profilev").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
  if(b.id==="pfedit"){editProfile();return}
  if(b.dataset.ptab){profTab=b.dataset.ptab;paintProfNav();renderProfile();if(profTab==="wall")renderWall();return}
@@ -1150,9 +1208,16 @@ $("profilev").addEventListener("click",function(ev){var b=ev.target.closest&&ev.
  if(b.dataset.wrm!=null){wpend.splice(+b.dataset.wrm,1);renderWPrev();return}
  if(b.dataset.fp){var p=$("fpanel"),w=b.dataset.fp;if(!p.hidden&&p.dataset.k===w){p.hidden=true;return}p.dataset.k=w;p.hidden=false;
   p.innerHTML='<b>'+(w==="followers"?"Followers":"Following")+' (0)</b><p class="hint" style="margin:6px 0 0">'+(w==="followers"?"No followers yet. People will be able to follow you once public profiles launch.":"You are not following anyone yet. Following arrives with public profiles.")+'</p>';return}
- if(b.dataset.wdel){var id=b.dataset.wdel;confirmTwice(b,"Delete?",async function(){try{await delPost("__wall",id);wall=wall.filter(function(p){return p.id!==id});renderWall()}catch(e){toast("Could not delete")}})}});
+ if(b.id==="pfwrite"){var wt=$("wtext");if(wt){wt.scrollIntoView({block:"center"});wt.focus()}return}
+ if(b.id==="findgo"){showUserProfile($("findu").value);return}
+ if(b.dataset.ctog){var q=b.dataset.ctog;if(openCm[q])delete openCm[q];else openCm[q]=1;renderWall();var ci=document.querySelector('[data-cin="'+q+'"]');if(ci)ci.focus();return}
+ if(b.dataset.cpost){wallComment(b.dataset.cpost);return}
+ if(b.dataset.cdel){var cid=b.dataset.cdel;confirmTwice(b,"Delete?",async function(){try{await S().delComment(cid);wall=await S().wall(pv.id);renderWall()}catch(e){toast("Could not delete")}});return}
+ if(b.dataset.wdel){var id=b.dataset.wdel;confirmTwice(b,"Delete?",async function(){try{await S().delPost(id);wall=wall.filter(function(p){return p.id!==id});renderWall()}catch(e){toast("Could not delete")}})}});
 $("profilev").addEventListener("change",function(ev){if(ev.target.id==="wimg"){wallAdd(ev.target.files);}});
-$("profilev").addEventListener("keydown",function(ev){if(ev.target.id==="wtext"&&ev.key==="Enter"&&(ev.ctrlKey||ev.metaKey)){ev.preventDefault();wallPost()}});
+$("profilev").addEventListener("keydown",function(ev){if(ev.target.id==="findu"&&ev.key==="Enter"){ev.preventDefault();showUserProfile(ev.target.value);return}
+ if(ev.target.dataset&&ev.target.dataset.cin&&ev.key==="Enter"){ev.preventDefault();wallComment(ev.target.dataset.cin);return}
+ if(ev.target.id==="wtext"&&ev.key==="Enter"&&(ev.ctrlKey||ev.metaKey)){ev.preventDefault();wallPost()}});
 /* Home + AI coach */
 var coach=null,coachCtl=null,CKEY="stockspot-coach-v1";
 function allTrades(){var seen={},out=[];
@@ -1226,9 +1291,9 @@ function renderHome(){var el=$("home");if(!el)return;
  if(pk.length)h+='<section><h2>Your pages</h2><div class="hm-pages">'+pk.map(function(p){return '<button type="button" data-pg="'+esc(p.id)+'"># '+esc(p.name)+'</button>'}).join("")+'</div></section>';
  el.innerHTML=h}
 function showHome(){curDate="";curPage="";$("studio").hidden=true;$("entry").hidden=true;$("pagev").hidden=true;$("home").hidden=false;$("navstudio").classList.remove("on");$("navhome").classList.add("on");renderHome();renderSide();window.scrollTo(0,0)}
-async function postCoach(){if(!coach||!coach.md||coach.posted)return;
- try{var rec=await addPost("__wall",{text:coach.md.trim()+"\n\nSelf-reported results. Not financial advice."});wall.push(rec);coach.posted=true;await saveCoach();
-  profTab="wall";paintProfNav();renderProfile();renderWall();toast("Posted to your wall")}catch(e){toast("Could not post")}}
+async function postCoach(){var So=S();if(!coach||!coach.md||coach.posted||!So)return;
+ try{await So.addPost(So.uid(),coach.md.trim()+"\n\nSelf-reported results. Not financial advice.",[]);coach.posted=true;await saveCoach();
+  profTab="wall";showProfile();toast("Posted to your wall")}catch(e){toast("Could not post")}}
 async function runCoach(){
  var d=await coachInput();
  if(!d){$("cstatus").textContent="Save at least one day with trades first.";return}
