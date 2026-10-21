@@ -771,11 +771,40 @@ async function delPage(pid){
  delete pages[pid];schedSync()}
 function postWhen(ts){var d=new Date(ts);return d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+", "+d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}
 function rich(t){return esc(t).replace(/\$([A-Z]{1,5})(?![A-Za-z0-9])/g,function(m,x){return '<button type="button" class="tk" data-tk="'+x+'">$'+x+'</button>'}).replace(/(^|[\s(])@([A-Za-z0-9_]{3,20})(?![A-Za-z0-9_])/g,function(m,p,x){return p+'<button type="button" class="tk un" data-un="'+x+'">@'+x+'</button>'})}
+var editing=null;
+function postImgs(p){return (p.imgs&&p.imgs.length)?p.imgs.slice():((p.src||p.aid)?[p.aid?{aid:p.aid}:{src:p.src}]:[])}
+function imgUrl(m){return m.src||(m.aid?blobUrl(m.aid):"")}
 function renderFeed(){var el=$("feed");if(!el)return;
  if(!feedPosts.length){el.innerHTML=(pages[curPage]&&pages[curPage].parent)?'<p class="hint">Nothing here yet. Post your first one below.</p>':"";return}
- el.innerHTML=feedPosts.map(function(p){var L=(p.imgs&&p.imgs.length)?p.imgs:((p.src||p.aid)?[{src:p.src,aid:p.aid}]:[]),pics=L.map(function(m){var u=m.src||(m.aid?blobUrl(m.aid):"");return u?'<img alt="Posted screenshot" src="'+esc(u)+'">':""}).join("");
-  return '<article class="post"><div class="pmeta"><span>'+esc(postWhen(p.ts))+'</span><button class="x" type="button" data-del="'+esc(p.id)+'" aria-label="Delete post">✕</button></div>'+
-   (p.text?'<div class="ptxt">'+rich(p.text)+'</div>':'')+(pics?'<div class="pics n'+Math.min(L.length,8)+'">'+pics+'</div>':'')+'</article>'}).join("")}
+ el.innerHTML=feedPosts.map(function(p){
+  if(editing&&editing.id===p.id){var th=editing.imgs.map(function(m,i){var u=imgUrl(m);return u?'<div class="pthumb"><img alt="Picture on this post" src="'+esc(u)+'"><button type="button" data-edrm="o'+i+'" aria-label="Remove picture">✕</button></div>':""}).join("")+editing.adds.map(function(u,i){return '<div class="pthumb"><img alt="New picture" src="'+u+'"><button type="button" data-edrm="n'+i+'" aria-label="Remove new picture">✕</button></div>'}).join("");
+   return '<article class="post editing" data-eid="'+esc(p.id)+'"><div class="pmeta"><span>Editing post from '+esc(postWhen(p.ts))+'</span></div><textarea id="edtext" maxlength="4000" aria-label="Edit your post" rows="4"></textarea><div style="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0">'+th+'</div>'+
+    '<div class="row" style="margin:0"><button class="primary" type="button" data-edsave="1">Save</button><button type="button" data-edadd="1">Add picture</button><input id="edimg" type="file" accept="image/*" multiple hidden><button type="button" data-edcancel="1">Cancel</button></div></article>'}
+  var L=postImgs(p),pics=L.map(function(m){var u=imgUrl(m);return u?'<img alt="Posted screenshot" src="'+esc(u)+'">':""}).join("");
+  return '<article class="post"><div class="pmeta"><span>'+esc(postWhen(p.ts))+(p.edited?' · edited':'')+'</span><span><button class="linkbtn" type="button" data-edit="'+esc(p.id)+'" aria-label="Edit post">Edit</button> <button class="x" type="button" data-del="'+esc(p.id)+'" aria-label="Delete post">✕</button></span></div>'+
+   (p.text?'<div class="ptxt">'+rich(p.text)+'</div>':'')+(pics?'<div class="pics n'+Math.min(L.length,8)+'">'+pics+'</div>':'')+'</article>'}).join("");
+ if(editing){var t=$("edtext");if(t&&!t.dataset.init){t.value=editing.text;t.dataset.init="1";t.focus()}}}
+async function updatePost(pid,id,rec){
+ if(store.db)await store.db.doc("pages/"+pid+"/posts/"+id).set(rec);
+ else{var o=lsGet();if(o&&o.pages[pid]){o.pages[pid].posts=(o.pages[pid].posts||[]).map(function(p){return p.id===id?Object.assign({id:id},rec):p});lsPut(o)}}
+ schedMirror(pid)}
+async function editAddFiles(files){files=files?Array.prototype.slice.call(files):[];if(!editing)return;
+ for(var i=0;i<files.length;i++){if(!/^image\//.test(files[i].type))continue;if(editing.imgs.length+editing.adds.length>=8){toast("Up to 8 images per post");break}
+  try{editing.adds.push(await shrink(files[i],1400))}catch(e){toast("Could not read that image")}}
+ var t=$("edtext");if(t)editing.text=t.value;var keep=$("edtext");renderFeed();var t2=$("edtext");if(t2){t2.value=editing.text}}
+async function editSave(){if(!editing)return;var pid=curPage,e=editing,t=$("edtext"),text=t?t.value.trim():e.text,btn=document.querySelector("[data-edsave]");
+ if(!text&&!e.imgs.length&&!e.adds.length){toast("Write something or keep a picture");return}
+ if(btn)btn.disabled=true;
+ try{var imgs=e.imgs.slice();
+  for(var k=0;k<e.adds.length;k++){
+   if(store.db){if(store.assets){try{imgs.push({aid:(await store.assets.upload(dataToBlob(e.adds[k]),{type:"image/jpeg"})).id})}catch(x){toast("An image could not be saved")}}else toast("Image storage is unavailable here")}
+   else imgs.push({src:e.adds[k]})}
+  var old=feedPosts.find(function(p){return p.id===e.id});if(!old)return;
+  var rec={ts:old.ts,text:text,edited:Date.now()};if(imgs.length)rec.imgs=imgs;
+  await updatePost(pid,e.id,rec);
+  Object.keys(old).forEach(function(k){if(k!=="id")delete old[k]});Object.assign(old,rec);
+  editing=null;if(curPage===pid)renderFeed();toast("Saved")
+ }catch(x){toast("Could not save the edit")}finally{if(btn)btn.disabled=false}}
 function renderPrev(){var el=$("pprev");if(!el)return;
  el.innerHTML=pend.map(function(u,i){return '<div class="pthumb"><img alt="Image to post" src="'+u+'"><button type="button" data-rm="'+i+'" aria-label="Remove image '+(i+1)+'">✕</button></div>'}).join("")}
 async function composerAdd(files){files=files?Array.prototype.slice.call(files):[];if(!files.length)return;
@@ -783,7 +812,7 @@ async function composerAdd(files){files=files?Array.prototype.slice.call(files):
   try{pend.push(await shrink(files[i],1400));n++}catch(e){toast("Could not read that image")}}
  if(n){renderPrev();toast(n+" image"+(n>1?"s":"")+" added. Press Post.")}}
 async function showPage(pid){var pg=pages[pid];if(!pg){showStudio();return}
- curPage=pid;curDate="";pend=[];feedPosts=[];
+ curPage=pid;curDate="";pend=[];feedPosts=[];editing=null;
  if(pg.parent&&pages[pg.parent]&&!openCats[pg.parent]){openCats[pg.parent]=1;saveOpen()}
  $("home").hidden=true;$("navhome").classList.remove("on");$("studio").hidden=true;$("entry").hidden=true;$("navstudio").classList.remove("on");
  var el=$("pagev");el.hidden=false;
@@ -1077,9 +1106,15 @@ $("pagev").addEventListener("click",function(ev){var b=ev.target.closest&&ev.tar
  if(b.id==="chadd"){createChannel(curPage,$("chname").value);return}
  if(b.id==="pgedit"){openPageSettings(curPage);return}
  if(b.id==="pgset"){openPageMenu(curPage);return}
+ if(b.dataset.edit){var ep=feedPosts.find(function(p){return p.id===b.dataset.edit});if(ep){editing={id:ep.id,text:ep.text||"",imgs:postImgs(ep),adds:[]};renderFeed()}return}
+ if(b.dataset.edcancel){editing=null;renderFeed();return}
+ if(b.dataset.edsave){editSave();return}
+ if(b.dataset.edadd){var fi=$("edimg");if(fi)fi.click();return}
+ if(b.dataset.edrm){var q=b.dataset.edrm,ix=+q.slice(1);var tx=$("edtext");if(tx&&editing)editing.text=tx.value;if(q.charAt(0)==="o")editing.imgs.splice(ix,1);else editing.adds.splice(ix,1);var tx2=editing.text;renderFeed();var tn=$("edtext");if(tn)tn.value=tx2;return}
  if(b.dataset.del){var pid=curPage,id2=b.dataset.del;confirmTwice(b,"Delete?",async function(){try{await delPost(pid,id2);feedPosts=feedPosts.filter(function(p){return p.id!==id2});if(curPage===pid)renderFeed()}catch(e){toast("Could not delete")}})}});
 $("pagev").addEventListener("change",function(ev){var t=ev.target;
  if(t.id==="pimg"){composerAdd(t.files);t.value="";return}
+ if(t.id==="edimg"){editAddFiles(t.files);t.value="";return}
  if(t.id==="pgname"&&pages[curPage]){var v=t.value.trim()||pages[curPage].name;t.value=v;var p=Object.assign({},pages[curPage],{name:v});putPage(p).then(renderSide,function(){toast("Could not rename")})}});
 $("pagev").addEventListener("keydown",function(ev){if(ev.target.id==="chname"&&ev.key==="Enter"){ev.preventDefault();createChannel(curPage,ev.target.value);return}
  if(ev.target.id==="ptext"&&ev.key==="Enter"&&(ev.ctrlKey||ev.metaKey)){ev.preventDefault();doPost()}});
