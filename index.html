@@ -123,6 +123,16 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .pics img{width:100%;height:100%;object-fit:cover;max-height:520px}.pics.n1 img{object-fit:contain}
 #pprev{display:flex;gap:8px;flex-wrap:wrap}.pthumb{position:relative}.pthumb img{height:84px;width:auto;border-radius:6px;border:1px solid var(--line);display:block}
 .pthumb button{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.65);color:#fff;border:0;border-radius:50%;width:22px;height:22px;cursor:pointer;line-height:1;padding:0}
+.sheetbg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:85;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:8px 14px calc(18px + env(safe-area-inset-bottom,0px));max-height:90vh;overflow:auto;animation:up .18s ease-out}
+@keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
+.sheet .grab{width:44px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 12px}
+.sheet h2{margin:0 4px 12px;font-size:1.15rem}.mgroup{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin:0 0 12px;overflow:hidden}
+.mitem{display:flex;gap:14px;align-items:center;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:transparent;padding:15px 16px;font:inherit;font-size:1rem;color:var(--ink);cursor:pointer;border-radius:0}
+.mitem:last-child{border-bottom:0}.mitem:hover,.mitem:focus-visible{background:var(--bg)}.mitem.danger{color:#d63a3a}
+.chhead{font-size:1rem;margin:18px 0 8px}.chlist{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.chcard{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;color:var(--ink);cursor:pointer}
+.chcard:hover{border-color:var(--ink)}.chev{color:var(--mute);font-size:1.3rem;line-height:1}
 .psetbg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:80;display:grid;place-items:center;padding:16px}
 .pset{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:20px;width:100%;max-width:420px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .pset h2{margin:0 0 10px;font-size:1.2rem}.pset label{display:block;margin:10px 0;font-size:.9rem}.pset input[type=text],.pset input:not([type]){display:block;width:100%;margin-top:4px}
@@ -485,7 +495,7 @@ function renderImgs(){var el=$("imglist");if(!el)return;el.innerHTML="";
   el.appendChild(d)})}
 $("imgfile").addEventListener("change",function(ev){addImgs(ev.target.files).then(function(){ev.target.value=""})});
 document.addEventListener("paste",function(ev){var fs=ev.clipboardData&&ev.clipboardData.files;
- if(fs&&fs.length&&Array.prototype.some.call(fs,function(f){return /^image\//.test(f.type)})){ev.preventDefault();if(!$("pagev").hidden){composerAdd(fs);return}if($("studio").hidden)return;addImgs(fs);var pb=$("pastebox");pb.classList.add("on");setTimeout(function(){pb.classList.remove("on")},900)}});
+ if(fs&&fs.length&&Array.prototype.some.call(fs,function(f){return /^image\//.test(f.type)})){ev.preventDefault();if(!$("pagev").hidden){if(pages[curPage]&&pages[curPage].parent)composerAdd(fs);return}if($("studio").hidden)return;addImgs(fs);var pb=$("pastebox");pb.classList.add("on");setTimeout(function(){pb.classList.remove("on")},900)}});
 $("pastebox").addEventListener("click",function(){this.focus()});
 $("pastebox").addEventListener("dragover",function(ev){ev.preventDefault()});
 $("pastebox").addEventListener("drop",function(ev){ev.preventDefault();if(ev.dataTransfer&&ev.dataTransfer.files.length)addImgs(ev.dataTransfer.files)});
@@ -561,7 +571,7 @@ async function initStore(){
   if(store.db){var snap=await store.db.collection("entries").get();snap.docs.forEach(function(d){if(d.exists)entries[d.id]=clone(d.data())})}
   else entries=JSON.parse(localStorage.getItem(KEYJ)||"{}")
  }catch(e){try{entries=JSON.parse(localStorage.getItem(KEYJ)||"{}")}catch(e2){entries={}}}
- await loadPages();await loadSettings();applyDefaults();await loadCoach();renderSide();showHome()}
+ await loadPages();await loadSettings();applyDefaults();await loadCoach();renderSide();showHome();try{var hm=/^#p=(.+)$/.exec(location.hash);if(hm&&pages[hm[1]])showPage(hm[1])}catch(e){}}
 async function putEntry(ent){
  if(store.db)await store.db.doc("entries/"+ent.date).set(ent);
  else{var all=JSON.parse(localStorage.getItem(KEYJ)||"{}");all[ent.date]=ent;localStorage.setItem(KEYJ,JSON.stringify(all))}
@@ -599,10 +609,10 @@ function navRow(label,badge,on,onClick,onDel,delLabel,mv){
  var x=document.createElement("button");x.type="button";x.className="x";x.textContent="✕";x.setAttribute("aria-label",delLabel);
  x.onclick=function(ev){ev.stopPropagation();confirmTwice(x,"Delete?",onDel)};row.appendChild(x);return row}
 function holdOpen(btn,pid){var t=null,fired=false;
- btn.addEventListener("pointerdown",function(e){if(e.button>0)return;fired=false;clearTimeout(t);t=setTimeout(function(){fired=true;openPageSettings(pid)},550)});
+ btn.addEventListener("pointerdown",function(e){if(e.button>0)return;fired=false;clearTimeout(t);t=setTimeout(function(){fired=true;openPageMenu(pid)},550)});
  ["pointerup","pointerleave","pointercancel","pointermove"].forEach(function(n){btn.addEventListener(n,function(){clearTimeout(t)})});
  btn.addEventListener("click",function(e){if(fired){e.stopImmediatePropagation();e.preventDefault();fired=false}},true);
- btn.addEventListener("contextmenu",function(e){e.preventDefault();clearTimeout(t);openPageSettings(pid)})}
+ btn.addEventListener("contextmenu",function(e){e.preventDefault();clearTimeout(t);openPageMenu(pid)})}
 function renderSide(){
  renderPnl();
  var pl=$("pglist");pl.innerHTML="";
@@ -710,7 +720,7 @@ async function delPage(pid){
  delete pages[pid]}
 function postWhen(ts){var d=new Date(ts);return d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+", "+d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}
 function renderFeed(){var el=$("feed");if(!el)return;
- if(!feedPosts.length){el.innerHTML='<p class="hint">Nothing here yet. Post your first one below.</p>';return}
+ if(!feedPosts.length){el.innerHTML=(pages[curPage]&&pages[curPage].parent)?'<p class="hint">Nothing here yet. Post your first one below.</p>':"";return}
  el.innerHTML=feedPosts.map(function(p){var L=(p.imgs&&p.imgs.length)?p.imgs:((p.src||p.aid)?[{src:p.src,aid:p.aid}]:[]),pics=L.map(function(m){var u=m.src||(m.aid?blobUrl(m.aid):"");return u?'<img alt="Posted screenshot" src="'+esc(u)+'">':""}).join("");
   return '<article class="post"><div class="pmeta"><span>'+esc(postWhen(p.ts))+'</span><button class="x" type="button" data-del="'+esc(p.id)+'" aria-label="Delete post">✕</button></div>'+
    (p.text?'<div class="ptxt">'+esc(p.text)+'</div>':'')+(pics?'<div class="pics n'+Math.min(L.length,8)+'">'+pics+'</div>':'')+'</article>'}).join("")}
@@ -725,17 +735,19 @@ async function showPage(pid){var pg=pages[pid];if(!pg){showStudio();return}
  $("home").hidden=true;$("navhome").classList.remove("on");$("studio").hidden=true;$("entry").hidden=true;$("navstudio").classList.remove("on");
  var el=$("pagev");el.hidden=false;
  var par=pg.parent&&pages[pg.parent],kids=par?[]:kidsOf(pid);
- el.innerHTML=(par?'<button class="crumb" type="button" data-go="'+esc(par.id)+'">&larr; '+esc(par.name)+'</button>':'')+'<div class="phead"><input id="pgname" class="pgname" maxlength="40" aria-label="'+(par?'Channel':'Page')+' name"><button id="pgset" type="button">'+(par?'Channel':'Page')+' settings</button></div>'+
-  (par?'':'<div class="chips" aria-label="Channels">'+kids.map(function(k){return '<button class="chip" type="button" data-go="'+esc(k.id)+'"># '+esc(k.name)+'</button>'}).join("")+'<input id="chname" maxlength="40" placeholder="New channel name" aria-label="New channel name"><button type="button" id="chadd">Add channel</button></div>')+
-  '<div id="feed" class="feed"><p class="hint">Loading...</p></div>'+
-  '<p class="hint" id="commnote"></p>'+
+ el.innerHTML=(par?'<button class="crumb" type="button" data-go="'+esc(par.id)+'">&larr; '+esc(par.name)+'</button>':'')+'<div class="phead"><input id="pgname" class="pgname" maxlength="40" aria-label="'+(par?'Channel':'Page')+' name"><button id="pgset" type="button" aria-label="Options">Options &hellip;</button></div>'+
+  (par?'':'<h2 class="chhead">Channels</h2><div class="chlist">'+(kids.length?kids.map(function(k){return '<button class="chcard" type="button" data-go="'+esc(k.id)+'"><span># '+esc(k.name)+'</span><span class="chev">&rsaquo;</span></button>'}).join(""):'<p class="hint" style="margin:0">No channels yet. Chat and posts live inside channels, so add one to get started.</p>')+'</div><div class="chips"><input id="chname" maxlength="40" placeholder="New channel name" aria-label="New channel name"><button class="primary" type="button" id="chadd">Add channel</button></div>')+
+  '<div id="feed" class="feed"></div>'+
+  (par?'<p class="hint" id="commnote"></p>'+
   '<div class="composer"><div id="pprev"></div><textarea id="ptext" maxlength="4000" aria-label="Write a post" placeholder="'+esc(pg.hint||"Write something")+'"></textarea>'+
-  '<div class="row"><button class="primary" id="ppost" type="button">Post</button><button id="pfile" type="button">Add images</button><input id="pimg" type="file" accept="image/*" multiple hidden><span class="hint" style="margin:0">Ctrl+V (Cmd+V on Mac) pastes a screenshot. Ctrl+Enter posts.</span></div></div>';
+  '<div class="row"><button class="primary" id="ppost" type="button">Post</button><button id="pfile" type="button">Add images</button><input id="pimg" type="file" accept="image/*" multiple hidden><span class="hint" style="margin:0">Ctrl+V (Cmd+V on Mac) pastes a screenshot. Ctrl+Enter posts.</span></div></div>':'');
  $("pgname").value=pg.name;commNote();renderSide();window.scrollTo(0,0);
  try{feedPosts=await loadPosts(pid)}catch(e){toast("Could not load this page")}
  if(curPage!==pid)return;
+ if(!par&&feedPosts.length){var fe=$("feed");fe.insertAdjacentHTML("beforebegin",'<h2 class="chhead">Earlier posts</h2><p class="hint" style="margin:0 0 8px">Posts made here before channels existed. New posts go inside a channel.</p>')}
  renderFeed();var t=$("ptext");if(t)t.focus()}
-async function doPost(){var t=$("ptext").value.trim();if(!t&&!pend.length){toast("Write something or paste an image first");return}
+async function doPost(){if(!pages[curPage]||!pages[curPage].parent)return;
+ var t=$("ptext").value.trim();if(!t&&!pend.length){toast("Write something or paste an image first");return}
  var btn=$("ppost"),pid=curPage;btn.disabled=true;
  try{var post={text:t};
   if(pend.length){post.imgs=[];
@@ -752,7 +764,32 @@ async function createPage(){var inp=$("newpg"),name=inp.value.trim();if(!name)re
  try{await putPage(p);inp.value="";$("addrow").hidden=true;renderSide();showPage(p.id)}catch(e){toast("Could not add the page")}}
 function sortedPages(){return Object.keys(pages).map(function(k){return pages[k]}).filter(function(p){return !p.parent||!pages[p.parent]}).sort(function(a,b){return (a.order-b.order)||(a.created-b.created)})}
 function kidsOf(pid){return Object.keys(pages).map(function(k){return pages[k]}).filter(function(p){return p.parent===pid}).sort(function(a,b){return (a.order-b.order)||(a.created-b.created)})}
+var IC={add:'<path d="M12 5v14M5 12h14"/>',pin:'<path d="M9 3h6l-1 6 3 3v2H7v-2l3-3-1-6zM12 14v7"/>',link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',edit:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',dup:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',del:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>'};
+function icon(k){return '<svg class="mi" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+IC[k]+'</svg>'}
+function closeMenu(){var m=$("pmenu");if(m)m.remove()}
+function openPageMenu(pid){var pg=pages[pid];if(!pg)return;closeMenu();var cat=!pg.parent,kind=cat?"category":"channel";
+ function item(id,ic,label,cls){return '<button type="button" class="mitem'+(cls?' '+cls:'')+'" data-m="'+id+'">'+icon(ic)+'<span>'+label+'</span></button>'}
+ var g1=(cat?item("addch","add","Create channel"):"")+item("pin","pin","Pin to top")+item("link","link","Copy link");
+ var g2=item("edit","edit","Edit "+kind)+item("dup","dup","Duplicate "+kind);
+ var g3=item("del","del","Delete "+kind,"danger");
+ var d=document.createElement("div");d.id="pmenu";d.className="sheetbg";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label",pg.name+" options");
+ d.innerHTML='<div class="sheet"><div class="grab"></div><h2>'+(cat?'# ':'# ')+esc(pg.name)+'</h2><div class="mgroup">'+g1+'</div><div class="mgroup">'+g2+'</div><div class="mgroup">'+g3+'</div></div>';
+ document.body.appendChild(d);var prev=document.activeElement;
+ function close(){closeMenu();document.removeEventListener("keydown",k);try{prev&&prev.focus()}catch(e){}}
+ function k(e){if(e.key==="Escape")close()}document.addEventListener("keydown",k);
+ d.addEventListener("click",async function(e){if(e.target===d){close();return}
+  var b=e.target.closest("button[data-m]");if(!b)return;var m=b.dataset.m,pg2=pages[pid];if(!pg2)return;
+  if(m==="addch"){close();await showPage(pid);var i=$("chname");if(i)i.focus();return}
+  if(m==="edit"){close();openPageSettings(pid);return}
+  if(m==="link"){close();var u=location.origin+location.pathname+"#p="+pid;try{await navigator.clipboard.writeText(u);toast("Link copied")}catch(x){toast(u)}return}
+  if(m==="pin"){close();var mn=0;Object.keys(pages).forEach(function(q){if((pages[q].parent||"")===(pg2.parent||"")&&pages[q].order<mn)mn=pages[q].order});
+   try{await putPage(Object.assign({},pg2,{order:mn-1}));renderSide();toast("Pinned to top")}catch(x){toast("Could not pin")}return}
+  if(m==="dup"){close();try{var base=Object.assign({},pg2,{id:newId(),name:(pg2.name+" copy").slice(0,40),created:Date.now()});base.order=(pg2.order||0)+0.5;await putPage(base);
+    if(!pg2.parent){var ks=kidsOf(pid);for(var j=0;j<ks.length;j++)await putPage(Object.assign({},ks[j],{id:newId(),parent:base.id,created:Date.now()+j}))}
+    var arr=sortedPages();await applyOrder(arr);renderSide();toast("Duplicated")}catch(x){toast("Could not duplicate")}return}
+  if(m==="del"){confirmTwice(b,"Tap again to delete",async function(){var par=pg2.parent;try{await delPage(pid);close();if(!pages[curPage]){if(par&&pages[par])showPage(par);else showStudio()}else renderSide();toast("Deleted")}catch(x){toast("Could not delete")}})}})}
 function commNote(){var el=$("commnote"),pg=pages[curPage];if(!el||!pg)return;
+ if(!pg.parent){el.textContent="";return}
  el.textContent=pg.priv!==false?"Private: only you can post here.":(pg.fpost?"Followers will be able to post in this "+(pg.parent?"channel":"page")+" once public pages and followers launch.":"Followers can read this but not post.")}
 function openPageSettings(pid){var pg=pages[pid];if(!pg)return;var old=$("pset");if(old)old.remove();
  var kids=pg.parent?[]:kidsOf(pid).length,d=document.createElement("div");d.id="pset";d.className="psetbg";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label","Settings for "+pg.name);
@@ -930,7 +967,7 @@ $("pagev").addEventListener("click",function(ev){var b=ev.target.closest&&ev.tar
  if(b.dataset.rm!=null&&b.dataset.rm!==""){pend.splice(+b.dataset.rm,1);renderPrev();return}
  if(b.dataset.go&&pages[b.dataset.go]){showPage(b.dataset.go);return}
  if(b.id==="chadd"){createChannel(curPage,$("chname").value);return}
- if(b.id==="pgset"){openPageSettings(curPage);return}
+ if(b.id==="pgset"){openPageMenu(curPage);return}
  if(b.dataset.del){var pid=curPage,id2=b.dataset.del;confirmTwice(b,"Delete?",async function(){try{await delPost(pid,id2);feedPosts=feedPosts.filter(function(p){return p.id!==id2});if(curPage===pid)renderFeed()}catch(e){toast("Could not delete")}})}});
 $("pagev").addEventListener("change",function(ev){var t=ev.target;
  if(t.id==="pimg"){composerAdd(t.files);t.value="";return}
