@@ -764,7 +764,12 @@ async function showPage(pid){var pg=pages[pid];if(!pg){showStudio();return}
  try{feedPosts=await loadPosts(pid)}catch(e){toast("Could not load this page")}
  if(curPage!==pid)return;
  if(!par&&feedPosts.length){var fe=$("feed");fe.insertAdjacentHTML("beforebegin",'<h2 class="chhead">Earlier posts</h2><p class="hint" style="margin:0 0 8px">Posts made here before channels existed. New posts go inside a channel.</p>')}
- renderFeed();var t=$("ptext");if(t)t.focus()}
+ renderFeed();var t=$("ptext");
+ if(par){var go=function(){if(curPage===pid)window.scrollTo(0,document.documentElement.scrollHeight)},touched=false,mark=function(){touched=true};
+  window.addEventListener("wheel",mark,{once:true,passive:true});window.addEventListener("touchmove",mark,{once:true,passive:true});
+  go();requestAnimationFrame(go);
+  [].forEach.call(document.querySelectorAll("#feed img"),function(im){if(!im.complete)im.addEventListener("load",function(){if(!touched)go()})})}
+ if(t)t.focus({preventScroll:true})}
 async function doPost(){if(!pages[curPage]||!pages[curPage].parent)return;
  var t=$("ptext").value.trim();if(!t&&!pend.length){toast("Write something or paste an image first");return}
  var btn=$("ppost"),pid=curPage;btn.disabled=true;
