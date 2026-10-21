@@ -118,7 +118,15 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .post{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
 .pmeta{display:flex;justify-content:space-between;align-items:center;color:var(--mute);font-size:.8rem;margin-bottom:4px}
 .ptxt{white-space:pre-wrap;overflow-wrap:anywhere}
-.post img{display:block;max-width:100%;height:auto;border-radius:6px;margin-top:8px;border:1px solid var(--line)}
+.post img{display:block;max-width:100%;height:auto;border-radius:6px;border:1px solid var(--line)}
+.pics{display:grid;gap:8px;margin-top:8px;grid-template-columns:1fr}.pics.n2,.pics.n4{grid-template-columns:1fr 1fr}.pics.n3,.pics.n5,.pics.n6,.pics.n7,.pics.n8{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.pics img{width:100%;height:100%;object-fit:cover;max-height:520px}.pics.n1 img{object-fit:contain}
+#pprev{display:flex;gap:8px;flex-wrap:wrap}.pthumb{position:relative}.pthumb img{height:84px;width:auto;border-radius:6px;border:1px solid var(--line);display:block}
+.pthumb button{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.65);color:#fff;border:0;border-radius:50%;width:22px;height:22px;cursor:pointer;line-height:1;padding:0}
+.navrow.chan{padding-left:20px}.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:4px 12px;font:inherit;font-size:.88rem;cursor:pointer;color:var(--ink)}
+.chips input{max-width:190px;padding:5px 10px}.crumb{background:none;border:0;color:var(--mute);cursor:pointer;font:inherit;padding:0;margin:0 0 6px}.crumb:hover{color:var(--ink)}
+.chanrow{display:flex;gap:6px;padding:2px 6px 6px 26px}.chanrow input{flex:1;min-width:0}
 .composer{position:sticky;bottom:0;background:var(--bg);padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
 .composer textarea{min-height:70px}
 #pprev{display:inline-block;margin-bottom:6px}
@@ -588,11 +596,19 @@ function navRow(label,badge,on,onClick,onDel,delLabel,mv){
 function renderSide(){
  renderPnl();
  var pl=$("pglist");pl.innerHTML="";
- var pk=Object.keys(pages).map(function(k){return pages[k]}).sort(function(a,b){return (a.order-b.order)||(a.created-b.created)});
+ var pk=sortedPages();
  if(!pk.length){var q=document.createElement("p");q.className="side-empty";q.textContent="No pages yet. Use + to add one.";pl.appendChild(q)}
  pk.forEach(function(p,i){var row=navRow("# "+p.name,"",p.id===curPage&&!$("pagev").hidden,function(){showPage(p.id)},
-  async function(){try{await delPage(p.id);if(curPage===p.id)showStudio();else renderSide();toast("Page deleted")}catch(e){toast("Could not delete")}},"Delete page "+p.name,gripEl(p.id,p.name));
-  pl.appendChild(row)});
+  async function(){try{await delPage(p.id);if(!pages[curPage])showStudio();else renderSide();toast("Page deleted")}catch(e){toast("Could not delete")}},"Delete page "+p.name,gripEl(p.id,p.name));
+  var ad=document.createElement("button");ad.type="button";ad.className="x show";ad.textContent="+";ad.title="Add a channel";ad.setAttribute("aria-label","Add a channel under "+p.name);
+  ad.onclick=function(ev){ev.stopPropagation();addChanFor=(addChanFor===p.id?"":p.id);renderSide();var i2=$("chanin");if(i2)i2.focus()};row.insertBefore(ad,row.lastChild);
+  pl.appendChild(row);
+  kidsOf(p.id).forEach(function(c){var cr=navRow(c.name,"",c.id===curPage&&!$("pagev").hidden,function(){showPage(c.id)},
+   async function(){try{await delPage(c.id);if(!pages[curPage])showStudio();else renderSide();toast("Channel deleted")}catch(e){toast("Could not delete")}},"Delete channel "+c.name);
+   cr.classList.add("chan");pl.appendChild(cr)});
+  if(addChanFor===p.id){var ar=document.createElement("div");ar.className="chanrow";
+   ar.innerHTML='<input id="chanin" maxlength="40" placeholder="Channel name" aria-label="New channel name"><button type="button" id="chanok">Add</button>';
+   pl.appendChild(ar)}});
  var box=$("pubs");box.innerHTML="";
  var ds=Object.keys(entries).sort().reverse();$("foldn").textContent=ds.length||"";
  if(!ds.length){var p2=document.createElement("p");p2.className="side-empty";p2.textContent="Nothing saved yet. Generate something or save a day and it appears here.";box.appendChild(p2);return}
@@ -639,13 +655,13 @@ $("entry").addEventListener("click",async function(ev){
  else if(a==="html"){var arr=await inlineImgs(entImgs(ent));var body=withCtx(ent,arr,function(){return compose(o.md,o.fmt)});save("stockspot-"+curDate+"-"+o.fmt+".html",pageShell(body,dayLabel(curDate)+" | Stockspot"))}
  else if(a==="del"){confirmTwice(b,"Click again to delete",async function(){var n=clone(ent);n.outputs.splice(i,1);n.updated=Date.now();try{await putEntry(n);renderEntry(curDate)}catch(e){toast("Could not delete")}})}});
 /* Pages (notes, setups, strategies, PNL) */
-var pages={},curPage="",pend=null,feedPosts=[],PKEY="stockspot-pages-v1";
+var pages={},curPage="",addChanFor="",pend=[],feedPosts=[],PKEY="stockspot-pages-v1";
 var SEED=[["Notes","Write a thought, a lesson, or a reminder"],["A+ Setups","Paste a screenshot of the setup and what made it A+"],["Fail Setups","Paste the setup that failed and what you would change"],["Strategies","Describe a strategy, a rule, or a checklist"],["PNL","Paste a screenshot of your P&L for the day"]];
 function newId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function lsGet(){try{return JSON.parse(localStorage.getItem(PKEY)||"null")}catch(e){return null}}
 function lsPut(o){localStorage.setItem(PKEY,JSON.stringify(o))}
 async function putPage(p){
- var rec={name:p.name,hint:p.hint||"",order:p.order||0,created:p.created||Date.now()};
+ var rec={name:p.name,hint:p.hint||"",order:p.order||0,created:p.created||Date.now(),parent:p.parent||""};
  if(store.db)await store.db.doc("pages/"+p.id).set(rec);
  else{var o=lsGet()||{pages:{}},ex=o.pages[p.id];o.pages[p.id]=Object.assign({posts:ex?ex.posts||[]:[]},rec);lsPut(o)}
  pages[p.id]=Object.assign({id:p.id},rec)}
@@ -658,7 +674,7 @@ async function loadPages(){pages={};
    if(!Object.keys(pages).length){var m=await store.db.doc("meta/state").get();if(!m.exists){await seedPages();await store.db.doc("meta/state").set({seeded:true})}}
   }else{
    var o=lsGet();
-   if(o){Object.keys(o.pages||{}).forEach(function(k){var p=o.pages[k];pages[k]={id:k,name:p.name,hint:p.hint,order:p.order,created:p.created}})}
+   if(o){Object.keys(o.pages||{}).forEach(function(k){var p=o.pages[k];pages[k]={id:k,name:p.name,hint:p.hint,order:p.order,created:p.created,parent:p.parent||""}})}
    else await seedPages()
   }
  }catch(e){}}
@@ -668,7 +684,7 @@ async function loadPosts(pid){
  var o=lsGet()||{pages:{}};return ((o.pages[pid]||{}).posts||[]).slice()}
 async function addPost(pid,post){
  var id=newId(),rec={ts:Date.now(),text:post.text||""};
- if(post.aid)rec.aid=post.aid;if(post.src)rec.src=post.src;
+ if(post.imgs&&post.imgs.length)rec.imgs=post.imgs;
  if(store.db)await store.db.doc("pages/"+pid+"/posts/"+id).set(rec);
  else{var o=lsGet()||{pages:{}},pg=o.pages[pid];if(!pg)throw new Error("missing");pg.posts=pg.posts||[];pg.posts.push(Object.assign({id:id},rec));lsPut(o)}
  return Object.assign({id:id},rec)}
@@ -676,6 +692,7 @@ async function delPost(pid,id){
  if(store.db)await store.db.doc("pages/"+pid+"/posts/"+id).delete();
  else{var o=lsGet();if(o&&o.pages[pid]){o.pages[pid].posts=(o.pages[pid].posts||[]).filter(function(p){return p.id!==id});lsPut(o)}}}
 async function delPage(pid){
+ for(var k in pages){if(pages[k].parent===pid)await delPage(k)}
  if(store.db){var s=await store.db.collection("pages/"+pid+"/posts").get();
   for(var i=0;i<s.docs.length;i++)await store.db.doc("pages/"+pid+"/posts/"+s.docs[i].id).delete();
   await store.db.doc("pages/"+pid).delete()}
@@ -684,40 +701,50 @@ async function delPage(pid){
 function postWhen(ts){var d=new Date(ts);return d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+", "+d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}
 function renderFeed(){var el=$("feed");if(!el)return;
  if(!feedPosts.length){el.innerHTML='<p class="hint">Nothing here yet. Post your first one below.</p>';return}
- el.innerHTML=feedPosts.map(function(p){var src=p.src||(p.aid?blobUrl(p.aid):"");
+ el.innerHTML=feedPosts.map(function(p){var L=(p.imgs&&p.imgs.length)?p.imgs:((p.src||p.aid)?[{src:p.src,aid:p.aid}]:[]),pics=L.map(function(m){var u=m.src||(m.aid?blobUrl(m.aid):"");return u?'<img alt="Posted screenshot" src="'+esc(u)+'">':""}).join("");
   return '<article class="post"><div class="pmeta"><span>'+esc(postWhen(p.ts))+'</span><button class="x" type="button" data-del="'+esc(p.id)+'" aria-label="Delete post">✕</button></div>'+
-   (p.text?'<div class="ptxt">'+esc(p.text)+'</div>':'')+(src?'<img alt="Posted screenshot" src="'+esc(src)+'">':'')+'</article>'}).join("")}
+   (p.text?'<div class="ptxt">'+esc(p.text)+'</div>':'')+(pics?'<div class="pics n'+Math.min(L.length,8)+'">'+pics+'</div>':'')+'</article>'}).join("")}
 function renderPrev(){var el=$("pprev");if(!el)return;
- el.innerHTML=pend?'<img alt="Image to post" src="'+pend+'"><button class="x show" type="button" data-rm="1" aria-label="Remove image">Remove image</button>':""}
-async function composerAdd(files){if(!files||!files.length)return;
- for(var i=0;i<files.length;i++){if(/^image\//.test(files[i].type)){try{pend=await shrink(files[i],1400);renderPrev();toast("Image added. Press Post.")}catch(e){toast("Could not read that image")}return}}}
+ el.innerHTML=pend.map(function(u,i){return '<div class="pthumb"><img alt="Image to post" src="'+u+'"><button type="button" data-rm="'+i+'" aria-label="Remove image '+(i+1)+'">✕</button></div>'}).join("")}
+async function composerAdd(files){files=files?Array.prototype.slice.call(files):[];if(!files.length)return;
+ var n=0;for(var i=0;i<files.length;i++){if(!/^image\//.test(files[i].type))continue;if(pend.length>=8){toast("Up to 8 images per post");break}
+  try{pend.push(await shrink(files[i],1400));n++}catch(e){toast("Could not read that image")}}
+ if(n){renderPrev();toast(n+" image"+(n>1?"s":"")+" added. Press Post.")}}
 async function showPage(pid){var pg=pages[pid];if(!pg){showStudio();return}
- curPage=pid;curDate="";pend=null;feedPosts=[];
+ curPage=pid;curDate="";pend=[];feedPosts=[];
  $("home").hidden=true;$("navhome").classList.remove("on");$("studio").hidden=true;$("entry").hidden=true;$("navstudio").classList.remove("on");
  var el=$("pagev");el.hidden=false;
- el.innerHTML='<div class="phead"><input id="pgname" class="pgname" maxlength="40" aria-label="Page name"><button id="pgdel" type="button">Delete page</button></div>'+
+ var par=pg.parent&&pages[pg.parent],kids=par?[]:kidsOf(pid);
+ el.innerHTML=(par?'<button class="crumb" type="button" data-go="'+esc(par.id)+'">&larr; '+esc(par.name)+'</button>':'')+'<div class="phead"><input id="pgname" class="pgname" maxlength="40" aria-label="'+(par?'Channel':'Page')+' name"><button id="pgdel" type="button">Delete '+(par?'channel':'page')+'</button></div>'+
+  (par?'':'<div class="chips" aria-label="Channels">'+kids.map(function(k){return '<button class="chip" type="button" data-go="'+esc(k.id)+'"># '+esc(k.name)+'</button>'}).join("")+'<input id="chname" maxlength="40" placeholder="New channel name" aria-label="New channel name"><button type="button" id="chadd">Add channel</button></div>')+
   '<div id="feed" class="feed"><p class="hint">Loading...</p></div>'+
   '<div class="composer"><div id="pprev"></div><textarea id="ptext" maxlength="4000" aria-label="Write a post" placeholder="'+esc(pg.hint||"Write something")+'"></textarea>'+
-  '<div class="row"><button class="primary" id="ppost" type="button">Post</button><button id="pfile" type="button">Add image</button><input id="pimg" type="file" accept="image/*" hidden><span class="hint" style="margin:0">Ctrl+V (Cmd+V on Mac) pastes a screenshot. Ctrl+Enter posts.</span></div></div>';
+  '<div class="row"><button class="primary" id="ppost" type="button">Post</button><button id="pfile" type="button">Add images</button><input id="pimg" type="file" accept="image/*" multiple hidden><span class="hint" style="margin:0">Ctrl+V (Cmd+V on Mac) pastes a screenshot. Ctrl+Enter posts.</span></div></div>';
  $("pgname").value=pg.name;renderSide();window.scrollTo(0,0);
  try{feedPosts=await loadPosts(pid)}catch(e){toast("Could not load this page")}
  if(curPage!==pid)return;
  renderFeed();var t=$("ptext");if(t)t.focus()}
-async function doPost(){var t=$("ptext").value.trim();if(!t&&!pend){toast("Write something or paste an image first");return}
+async function doPost(){var t=$("ptext").value.trim();if(!t&&!pend.length){toast("Write something or paste an image first");return}
  var btn=$("ppost"),pid=curPage;btn.disabled=true;
  try{var post={text:t};
-  if(pend){
-   if(store.db){if(store.assets){try{post.aid=(await store.assets.upload(dataToBlob(pend),{type:"image/jpeg"})).id}catch(e){toast("The image could not be saved")}}else toast("Image storage is unavailable here")}
-   else post.src=pend}
+  if(pend.length){post.imgs=[];
+   for(var k=0;k<pend.length;k++){
+    if(store.db){if(store.assets){try{post.imgs.push({aid:(await store.assets.upload(dataToBlob(pend[k]),{type:"image/jpeg"})).id})}catch(e){toast("An image could not be saved")}}else toast("Image storage is unavailable here")}
+    else post.imgs.push({src:pend[k]})}}
   var rec=await addPost(pid,post);
-  if(curPage===pid){feedPosts.push(rec);$("ptext").value="";pend=null;renderPrev();renderFeed();var f=$("feed");if(f&&f.lastElementChild)f.lastElementChild.scrollIntoView({block:"nearest"})}
+  if(curPage===pid){feedPosts.push(rec);$("ptext").value="";pend=[];renderPrev();renderFeed();var f=$("feed");if(f&&f.lastElementChild)f.lastElementChild.scrollIntoView({block:"nearest"})}
  }catch(e){toast(e&&e.code==="quota_exceeded"?"Storage is full":"Could not post")}
  finally{btn.disabled=false}}
 async function createPage(){var inp=$("newpg"),name=inp.value.trim();if(!name)return;
  var mx=-1;Object.keys(pages).forEach(function(k){if(pages[k].order>mx)mx=pages[k].order});
  var p={id:newId(),name:name.slice(0,40),hint:"Write something",order:mx+1,created:Date.now()};
  try{await putPage(p);inp.value="";$("addrow").hidden=true;renderSide();showPage(p.id)}catch(e){toast("Could not add the page")}}
-function sortedPages(){return Object.keys(pages).map(function(k){return pages[k]}).sort(function(a,b){return (a.order-b.order)||(a.created-b.created)})}
+function sortedPages(){return Object.keys(pages).map(function(k){return pages[k]}).filter(function(p){return !p.parent||!pages[p.parent]}).sort(function(a,b){return (a.order-b.order)||(a.created-b.created)})}
+function kidsOf(pid){return Object.keys(pages).map(function(k){return pages[k]}).filter(function(p){return p.parent===pid}).sort(function(a,b){return (a.order-b.order)||(a.created-b.created)})}
+async function createChannel(pid,name){name=(name||"").trim();if(!name||!pages[pid]||pages[pid].parent)return;
+ var mx=-1;kidsOf(pid).forEach(function(k){if(k.order>mx)mx=k.order});
+ var p={id:newId(),name:name.slice(0,40),hint:"Write something",order:mx+1,created:Date.now(),parent:pid};
+ try{await putPage(p);addChanFor="";renderSide();showPage(p.id)}catch(e){toast("Could not add the channel")}}
 async function applyOrder(arr){var changed=[];
  arr.forEach(function(p,i){if(pages[p.id].order!==i){pages[p.id].order=i;changed.push(p.id)}});
  renderSide();
@@ -731,7 +758,7 @@ function gripEl(id,name){var g=document.createElement("button");g.type="button";
  g.innerHTML='<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
  g.addEventListener("keydown",function(e){if(e.key==="ArrowUp"||e.key==="ArrowDown"){e.preventDefault();movePage(id,e.key==="ArrowUp"?-1:1);var n=$("pglist").querySelector('.grip[data-id="'+id+'"]');if(n)n.focus()}});
  g.addEventListener("pointerdown",function(e){if(e.button>0)return;e.preventDefault();
-  var row=g.closest(".navrow"),rows=[].slice.call($("pglist").querySelectorAll(".navrow")),from=rows.indexOf(row),target=from;
+  var row=g.closest(".navrow"),rows=[].slice.call($("pglist").querySelectorAll(".navrow:not(.chan)")),from=rows.indexOf(row),target=from;
   try{g.setPointerCapture(e.pointerId)}catch(_){}
   row.classList.add("dragging");document.body.classList.add("grabbing");
   function clear(){rows.forEach(function(r){r.classList.remove("drop-before","drop-after")})}
@@ -860,17 +887,22 @@ document.addEventListener("keydown",function(ev){if($("pnlfull").hidden)return;
   if(!f.length)return;if(ev.shiftKey&&document.activeElement===a){ev.preventDefault();z.focus()}else if(!ev.shiftKey&&document.activeElement===z){ev.preventDefault();a.focus()}}});
 $("addpg").addEventListener("click",function(){var r=$("addrow");r.hidden=!r.hidden;if(!r.hidden)$("newpg").focus()});
 $("newpgok").addEventListener("click",createPage);
+$("pglist").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("#chanok");if(b&&addChanFor)createChannel(addChanFor,$("chanin").value)});
+$("pglist").addEventListener("keydown",function(ev){if(ev.target.id==="chanin"){if(ev.key==="Enter"){ev.preventDefault();createChannel(addChanFor,ev.target.value)}if(ev.key==="Escape"){addChanFor="";renderSide()}}});
 $("newpg").addEventListener("keydown",function(ev){if(ev.key==="Enter"){ev.preventDefault();createPage()}if(ev.key==="Escape")$("addrow").hidden=true});
 $("pagev").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
  if(b.id==="ppost"){doPost();return}
  if(b.id==="pfile"){$("pimg").click();return}
- if(b.dataset.rm){pend=null;renderPrev();return}
- if(b.id==="pgdel"){confirmTwice(b,"Click again to delete this page",async function(){var id=curPage;try{await delPage(id);showStudio();toast("Page deleted")}catch(e){toast("Could not delete")}});return}
+ if(b.dataset.rm!=null&&b.dataset.rm!==""){pend.splice(+b.dataset.rm,1);renderPrev();return}
+ if(b.dataset.go&&pages[b.dataset.go]){showPage(b.dataset.go);return}
+ if(b.id==="chadd"){createChannel(curPage,$("chname").value);return}
+ if(b.id==="pgdel"){confirmTwice(b,(pages[curPage]&&kidsOf(curPage).length)?"Click again to delete this page and its channels":"Click again to delete this page",async function(){var id=curPage,par=pages[id]&&pages[id].parent;try{await delPage(id);if(par&&pages[par])showPage(par);else showStudio();toast("Page deleted")}catch(e){toast("Could not delete")}});return}
  if(b.dataset.del){var pid=curPage,id2=b.dataset.del;confirmTwice(b,"Delete?",async function(){try{await delPost(pid,id2);feedPosts=feedPosts.filter(function(p){return p.id!==id2});if(curPage===pid)renderFeed()}catch(e){toast("Could not delete")}})}});
 $("pagev").addEventListener("change",function(ev){var t=ev.target;
  if(t.id==="pimg"){composerAdd(t.files);t.value="";return}
  if(t.id==="pgname"&&pages[curPage]){var v=t.value.trim()||pages[curPage].name;t.value=v;var p=Object.assign({},pages[curPage],{name:v});putPage(p).then(renderSide,function(){toast("Could not rename")})}});
-$("pagev").addEventListener("keydown",function(ev){if(ev.target.id==="ptext"&&ev.key==="Enter"&&(ev.ctrlKey||ev.metaKey)){ev.preventDefault();doPost()}});
+$("pagev").addEventListener("keydown",function(ev){if(ev.target.id==="chname"&&ev.key==="Enter"){ev.preventDefault();createChannel(curPage,ev.target.value);return}
+ if(ev.target.id==="ptext"&&ev.key==="Enter"&&(ev.ctrlKey||ev.metaKey)){ev.preventDefault();doPost()}});
 
 /* Home + AI coach */
 var coach=null,coachCtl=null,CKEY="stockspot-coach-v1";
