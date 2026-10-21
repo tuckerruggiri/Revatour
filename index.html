@@ -488,6 +488,13 @@ var OUTRULES=[
  ".tpd th,.tpd td{padding:7px 12px;text-align:left;font-size:.95rem;border:0}.tpd th{color:var(--mute);font-weight:600;font-size:.8rem;border-bottom:1px solid var(--line)}",
  ".tpd th:last-child,.tpd td:last-child{text-align:right}.tpd tbody tr+tr td{border-top:1px solid var(--line)}",
  ".tpd tfoot td{font-weight:700;border-top:1px solid var(--line)}",
+ ".tpday{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:flex-start;margin:6px 0 18px}.tpday .tpd{flex:0 1 440px;min-width:260px;margin:0}",
+ ".tpc{flex:1 1 280px;min-width:240px;max-width:560px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}",
+ ".tpc h4{margin:0 0 8px;font-size:.8rem;font-weight:600;color:var(--mute)}",
+ ".tpr{display:grid;grid-template-columns:54px 1fr 66px;gap:10px;align-items:center;padding:4px 0;font-size:.85rem}.tpr .l{font-weight:700}",
+ ".tpt{display:flex;height:20px;position:relative}.tpt i{display:block;height:100%}.tpn{display:flex;justify-content:flex-end}.tpp{display:flex}",
+ ".tpt .ax{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--line)}.tpv{font-variant-numeric:tabular-nums;font-size:.8rem;text-align:right;white-space:nowrap;font-weight:600}.tpv.g{color:var(--gain)}.tpv.r{color:var(--loss)}",
+ ".tpn i{background:var(--loss);border-radius:4px 0 0 4px}.tpp i{background:var(--gain);border-radius:0 4px 4px 0}",
  ".gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:12px 0}",
  ".tc{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}",
  ".tc img{display:block;width:100%;height:auto;border-bottom:1px solid var(--line)}",
@@ -517,8 +524,11 @@ function tickerPnlHTML(){var days={},order=[];
  trades.forEach(function(t){var d=t.d||"";if(!days[d]){days[d]={};order.push(d)}days[d][t.t]=(days[d][t.t]||0)+(+t.p||0)});
  if(!order.length)return "";order.sort();
  var cell=function(v){return '<td class="'+(v>=0?"gain":"loss")+'">'+money(v)+'</td>'},sym=function(x){return /^[A-Z]{1,5}$/.test(x)?'<button type="button" class="tk" data-tk="'+x+'">$'+x+'</button>':esc(x)},all=0;
+ var chart=function(m){var ks=Object.keys(m).sort(function(a,b){return m[b]-m[a]}),mp=0,mn=0;ks.forEach(function(k){if(m[k]>mp)mp=m[k];if(-m[k]>mn)mn=-m[k]});var tot=mp+mn||1,lw=mn/tot*100,rw=mp/tot*100,sh=function(v){return (v<0?"-":"+")+"$"+Math.abs(v).toFixed(2)};
+  return '<div class="tpc" role="img" aria-label="P&L by ticker bar chart"><h4>P&amp;L by ticker</h4>'+ks.map(function(k){var v=m[k],w=Math.max(2,Math.abs(v)/(v<0?(mn||1):(mp||1))*100);
+   return '<div class="tpr"><span class="l">'+esc(k)+'</span><div class="tpt" style="gap:0"><div class="tpn" style="width:'+lw+'%">'+(v<0?'<i style="width:'+w+'%"></i>':'')+'</div><span class="ax" style="left:'+lw+'%"></span><div class="tpp" style="width:'+rw+'%">'+(v>=0?'<i style="width:'+w+'%"></i>':'')+'</div></div><span class="tpv '+(v<0?'r':'g')+'">'+sh(v)+'</span></div>'}).join("")+'</div>'};
  var blocks=order.map(function(d){var m=days[d],keys=Object.keys(m).sort(),sub=0;keys.forEach(function(k){sub+=m[k]});all+=sub;
-  return '<div class="tpd">'+(order.length>1||d?'<h4>'+esc(d?dayLabel(d):"Undated")+'</h4>':'')+'<table><thead><tr><th>Instrument</th><th>P/L Day</th></tr></thead><tbody>'+keys.map(function(k){return '<tr><td>'+sym(k)+'</td>'+cell(m[k])+'</tr>'}).join("")+'</tbody><tfoot><tr><td>Subtotal</td>'+cell(sub)+'</tr></tfoot></table></div>'});
+  return '<div class="tpday"><div class="tpd">'+(order.length>1||d?'<h4>'+esc(d?dayLabel(d):"Undated")+'</h4>':'')+'<table><thead><tr><th>Instrument</th><th>P/L Day</th></tr></thead><tbody>'+keys.map(function(k){return '<tr><td>'+sym(k)+'</td>'+cell(m[k])+'</tr>'}).join("")+'</tbody><tfoot><tr><td>Subtotal</td>'+cell(sub)+'</tr></tfoot></table></div>'+chart(m)+'</div>'});
  if(order.length>1)blocks.push('<div class="tpd"><table><tbody><tr><td><b>Overall Totals</b></td>'+cell(all)+'</tr></tbody></table></div>');
  return blocks.join("")}
 function statsHTML(){var s=stats();if(!s.n)return "";
