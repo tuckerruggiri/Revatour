@@ -45,6 +45,12 @@ button:disabled{opacity:.55;cursor:default}
 .pastebox{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;margin:8px 0 10px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
 .pastebox:focus-visible,.pastebox.on{border-color:var(--accent);outline:none;background:var(--bg)}
 .pastebox span{color:var(--mute);font-size:.88rem}
+.set-card{background:var(--card,#fff);border:1px solid var(--line);border-radius:12px;padding:18px;margin:14px 0}
+.set-card h2{margin:0 0 4px;font-size:1.1rem}.set-card label{display:block;margin:10px 0;font-size:.9rem}
+.set-card input[type=text],.set-card input[type=password],.set-card select{display:block;margin-top:4px;width:100%;max-width:380px}
+.set-card .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.set-card label.chk{display:flex;flex-direction:row;justify-content:flex-start;gap:8px;align-items:center}.set-card input[type=checkbox]{width:auto;margin:0}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:2px 10px;font-size:.78rem;color:var(--mute)}
 .imglist{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,200px));gap:12px;margin-top:12px}
 .imgc{border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--bg);display:flex;flex-direction:column;gap:6px}
 .imgc img{width:100%;height:120px;object-fit:cover;object-position:top;border-radius:4px;cursor:zoom-in}.imgc label{font-size:.82rem;display:flex;flex-direction:row;gap:6px;align-items:center;justify-content:flex-start}.imgc input[type=checkbox]{width:auto;margin:0}.imgc select,.imgc input[type=text],.imgc input:not([type]){font-size:.85rem;max-width:100%}
@@ -149,6 +155,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <div id="pnlcard"></div>
   <button class="nav on" id="navhome" type="button">Home</button>
   <button class="nav" id="navstudio" type="button">Studio</button>
+  <button class="nav" id="navset" type="button">Settings</button>
   <div class="sechead"><span>Pages</span><button id="addpg" class="x show" type="button" aria-label="Add a page">+</button></div>
   <div id="addrow" hidden><input id="newpg" maxlength="40" placeholder="Page name" aria-label="New page name"><button id="newpgok" type="button">Add</button></div>
   <div id="pglist"></div>
@@ -156,6 +163,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <div id="pubs"></div>
 </aside>
 <div class="wrap" id="home"><p class="hint">Loading your record...</p></div>
+<div class="wrap" id="settingsv" hidden></div>
 <div class="wrap" id="studio" hidden>
   <h1>Stockspot Studio</h1>
   <p class="sub">Upload your trades and your material. Get a guru page, blog post, social posts, newsletter or book chapter written from your real record.</p>
@@ -541,7 +549,7 @@ async function initStore(){
   if(store.db){var snap=await store.db.collection("entries").get();snap.docs.forEach(function(d){if(d.exists)entries[d.id]=clone(d.data())})}
   else entries=JSON.parse(localStorage.getItem(KEYJ)||"{}")
  }catch(e){try{entries=JSON.parse(localStorage.getItem(KEYJ)||"{}")}catch(e2){entries={}}}
- await loadPages();await loadSettings();await loadCoach();renderSide();showHome()}
+ await loadPages();await loadSettings();applyDefaults();await loadCoach();renderSide();showHome()}
 async function putEntry(ent){
  if(store.db)await store.db.doc("entries/"+ent.date).set(ent);
  else{var all=JSON.parse(localStorage.getItem(KEYJ)||"{}");all[ent.date]=ent;localStorage.setItem(KEYJ,JSON.stringify(all))}
@@ -735,6 +743,44 @@ function gripEl(id,name){var g=document.createElement("button");g.type="button";
    if(ev.type==="pointerup"&&target!==from){var arr=sortedPages();if(arr[target])movePageTo(id,arr[target].id)}}
   g.addEventListener("pointermove",move);g.addEventListener("pointerup",end);g.addEventListener("pointercancel",end)});
  return g}
+/* Settings */
+function applyDefaults(){try{
+ if(settings.name&&!$("name").value.trim())$("name").value=settings.name;
+ if(settings.voice)$("voice").value=settings.voice;
+ if(settings.grouping&&$("grouping"))$("grouping").value=settings.grouping}catch(e){}}
+["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("navset").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
+function showSettings(){["home","studio","entry","pagev"].forEach(function(i){$(i).hidden=true});
+ $("navhome").classList.remove("on");$("navstudio").classList.remove("on");$("navset").classList.add("on");
+ curDate="";curPage="";renderSettings();$("settingsv").hidden=false;window.scrollTo(0,0)}
+function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["Direct and plain-spoken","Professional and measured","Energetic and motivational","Analytical and data-first"];
+ el.innerHTML='<h1>Settings</h1>'+
+ '<div class="set-card"><h2>Account</h2><p class="hint" style="margin:0 0 6px">Signed in as <b>'+esc(A.email||"")+'</b>'+(A.username?' (@'+esc(A.username)+')':'')+'</p>'+
+ '<label>New password<input type="password" id="setpw" autocomplete="new-password" placeholder="At least 8 characters"></label>'+
+ '<div class="row"><button id="setpwgo" type="button">Change password</button><button id="setout" type="button">Log out</button></div><p class="hint" id="setpwmsg" role="status"></p></div>'+
+ '<div class="set-card"><h2>Preferences</h2><p class="hint" style="margin:0">Used as your defaults in Studio.</p>'+
+ '<label>Name or handle for your pages and carousels<input type="text" id="setname" maxlength="60" placeholder="e.g. tucker_trades"></label>'+
+ '<label>Default writing voice<select id="setvoice">'+vs.map(function(v){return '<option>'+v+'</option>'}).join("")+'</select></label>'+
+ '<label>Default way to count trades<select id="setgrp"><option value="grouped">Group scale-ins and scale-outs until flat (recommended)</option><option value="entry">One trade per entry</option><option value="exit">Every exit order is a trade</option></select></label></div>'+
+ '<div class="set-card"><h2>Broker: thinkorswim <span class="pill">Statement import</span></h2>'+
+ '<p class="hint" style="margin:0 0 8px">Works today: export your Account Statement and upload it in Studio, Step 1.</p>'+
+ '<ol class="hint" style="margin:0 0 8px;padding-left:20px"><li>In thinkorswim, open the <b>Monitor</b> tab, then <b>Account Statement</b>.</li><li>Set the date range (use one day for a daily recap).</li><li>Open the menu at the top right of that panel and choose <b>Export to File</b>, save the CSV.</li><li>Upload it in Studio, Step 1.</li></ol>'+
+ '<p class="hint"><b>Automatic connection: coming soon.</b> Connecting thinkorswim directly goes through Schwab\'s developer program, which needs Schwab to approve the app first. Not available yet.</p>'+
+ '<label class="chk"><input type="checkbox" id="settos"> Tell me when broker connection is ready</label>'+
+ '<div class="row"><button class="primary" id="gostudio" type="button">Go to Studio to import</button></div></div>'+
+ '<div class="set-card"><h2>Your data</h2><p class="hint" style="margin:0">Download everything you have saved here (days, trades, generated text, settings) as one file.</p><div class="row"><button id="setexp" type="button">Download my data (.json)</button></div></div>';
+ $("setname").value=settings.name||"";$("setvoice").value=settings.voice||vs[0];$("setgrp").value=settings.grouping||"grouped";$("settos").checked=!!settings.tosNotify}
+$("navset").addEventListener("click",showSettings);
+$("settingsv").addEventListener("change",function(ev){var t=ev.target;
+ if(t.id==="setname"){settings.name=t.value.trim();$("name").value=settings.name;saveSettings();toast("Saved")}
+ else if(t.id==="setvoice"){settings.voice=t.value;$("voice").value=t.value;saveSettings();toast("Saved")}
+ else if(t.id==="setgrp"){settings.grouping=t.value;$("grouping").value=t.value;saveSettings();toast("Saved")}
+ else if(t.id==="settos"){settings.tosNotify=t.checked;saveSettings();toast("Saved")}});
+$("settingsv").addEventListener("click",async function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;var A=window.stockspotAuth||{};
+ if(b.id==="gostudio"){showStudio();return}
+ if(b.id==="setout"){if(A.logout)A.logout();return}
+ if(b.id==="setpwgo"){var pw=$("setpw").value,m=$("setpwmsg");if(pw.length<8){m.textContent="Use at least 8 characters.";return}
+  m.textContent="Saving...";var r=A.setPassword?await A.setPassword(pw):"Not available";m.textContent=r?("Could not change it: "+r):"Password changed.";if(!r)$("setpw").value="";return}
+ if(b.id==="setexp"){var out={exported:new Date().toISOString(),settings:settings,days:entries};save("stockspot-data-"+todayISO()+".json",JSON.stringify(out,null,2))}});
 /* Yearly P&L */
 var settings={bal:{}},pnlYear=0,SKEY="stockspot-settings-v1",pfFocus=null;
 async function loadSettings(){try{

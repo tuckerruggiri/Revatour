@@ -28,6 +28,12 @@
       if (r.data && r.data.username) name = '@' + r.data.username;
     } catch (e) {}
     w.textContent = name;
+    window.stockspotAuth = {
+      email: session.user.email,
+      username: name.charAt(0) === '@' ? name.slice(1) : '',
+      logout: async function () { await sb.auth.signOut(); location.replace('login.html'); },
+      setPassword: async function (pw) { var r = await sb.auth.updateUser({ password: pw }); return r.error ? r.error.message : ''; }
+    };
   }
 
   function split(path) { var i = path.lastIndexOf('/'); return { parent: i < 0 ? '' : path.slice(0, i), id: path.slice(i + 1) }; }
@@ -96,7 +102,7 @@
 
   var downloads = {
     save: async function (o) {
-      var blob = (o.data instanceof Blob) ? o.data : new Blob([o.data], { type: /\.html$/.test(o.filename) ? 'text/html' : 'text/markdown' });
+      var blob = (o.data instanceof Blob) ? o.data : new Blob([o.data], { type: /\.html$/.test(o.filename) ? 'text/html' : /\.json$/.test(o.filename) ? 'application/json' : 'text/markdown' });
       var a = document.createElement('a');
       a.href = URL.createObjectURL(blob); a.download = o.filename;
       document.body.appendChild(a); a.click(); a.remove();
