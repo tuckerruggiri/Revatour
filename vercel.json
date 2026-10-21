@@ -5,6 +5,9 @@
     },
     "api/quote.js": {
       "maxDuration": 60
+    },
+    "api/schwab/[action].js": {
+      "maxDuration": 30
     }
   },
   "headers": [

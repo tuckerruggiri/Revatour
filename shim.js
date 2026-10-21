@@ -202,6 +202,10 @@
     market: async function (sym) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
       var r = await fetch('/api/quote?symbol=' + encodeURIComponent(sym), { headers: { Authorization: 'Bearer ' + tok } });
       if (!r.ok) throw new Error('quote failed'); return r.json(); },
+    schwab: async function (action, q, body) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
+      var url = '/api/schwab/' + action + (q ? '?' + new URLSearchParams(q).toString() : '');
+      var r = await fetch(url, { method: body ? 'POST' : 'GET', headers: Object.assign({ Authorization: 'Bearer ' + tok }, body ? { 'Content-Type': 'application/json' } : {}), body: body ? JSON.stringify(body) : undefined });
+      var j = await r.json().catch(function () { return {}; }); if (!r.ok) throw new Error(j.error || 'failed'); return j; },
     tickerPosts: async function (sym) { await ready;
       var r = await sb.from('ss_wall_posts').select('*').ilike('text', '%$' + sym + '%').is('repost_of', null).order('created_at', { ascending: false }).limit(60); if (r.error) throw r.error;
       var re = new RegExp('\\$' + sym + '(?![A-Za-z0-9])'), rows = (r.data || []).filter(function (p) { return re.test(p.text || ''); }).slice(0, 20), n = await namesFor(rows.map(function (p) { return p.author_id; }));

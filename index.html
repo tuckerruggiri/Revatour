@@ -257,6 +257,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <section>
     <h2>Step 1: Upload your trades</h2>
     <p class="hint">Upload a CSV. A thinkorswim Account Statement export works: individual fills are paired into round-trip trades (longs and shorts) and P&amp;L is calculated for you. Other CSVs need columns like symbol, side, quantity, entry, exit, date, P&amp;L.</p>
+    <div class="row" id="sbrow" style="margin:0 0 12px;align-items:center"><select id="sbrange" aria-label="Schwab date range"><option value="0">Today</option><option value="1">Yesterday</option><option value="5">Last 5 days</option></select><button class="primary" id="sbpull" type="button">Pull trades from Schwab</button><span class="hint" id="sbmsg" role="status" style="margin:0"></span></div>
     <input type="file" id="file" accept=".csv,text/csv" aria-label="Upload trades CSV">
     <label class="hint" style="display:block;margin-top:10px">How to count trades from fills
       <select id="grouping" style="display:block;margin-top:6px;max-width:100%">
@@ -639,7 +640,7 @@ async function initStore(){
   if(store.db){var snap=await store.db.collection("entries").get();snap.docs.forEach(function(d){if(d.exists)entries[d.id]=clone(d.data())})}
   else entries=JSON.parse(localStorage.getItem(KEYJ)||"{}")
  }catch(e){try{entries=JSON.parse(localStorage.getItem(KEYJ)||"{}")}catch(e2){entries={}}}
- await loadPages();schedSync();await loadSettings();applyDefaults();await loadProfile();await loadCoach();renderSide();showHome();try{var hm=/^#p=(.+)$/.exec(location.hash);if(hm&&pages[hm[1]])showPage(hm[1])}catch(e){}}
+ await loadPages();schedSync();await loadSettings();applyDefaults();await loadProfile();await loadCoach();renderSide();showHome();sbFinish();try{var hm=/^#p=(.+)$/.exec(location.hash);if(hm&&pages[hm[1]])showPage(hm[1])}catch(e){}}
 async function putEntry(ent){
  if(store.db)await store.db.doc("entries/"+ent.date).set(ent);
  else{var all=JSON.parse(localStorage.getItem(KEYJ)||"{}");all[ent.date]=ent;localStorage.setItem(KEYJ,JSON.stringify(all))}
@@ -1015,14 +1016,41 @@ function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["
  '<label>Appearance<select id="settheme"><option value="auto">Match my device</option><option value="light">Light</option><option value="dark">Dark</option></select></label>'+
  '<label>Default writing voice<select id="setvoice">'+vs.map(function(v){return '<option>'+v+'</option>'}).join("")+'</select></label>'+
  '<label>Default way to count trades<select id="setgrp"><option value="grouped">Group scale-ins and scale-outs until flat (recommended)</option><option value="entry">One trade per entry</option><option value="exit">Every exit order is a trade</option></select></label></div>'+
- '<div class="set-card"><h2>Broker: thinkorswim <span class="pill">Statement import</span></h2>'+
- '<p class="hint" style="margin:0 0 8px">Works today: export your Account Statement and upload it in Studio, Step 1.</p>'+
- '<ol class="hint" style="margin:0 0 8px;padding-left:20px"><li>In thinkorswim, open the <b>Monitor</b> tab, then <b>Account Statement</b>.</li><li>Set the date range (use one day for a daily recap).</li><li>Open the menu at the top right of that panel and choose <b>Export to File</b>, save the CSV.</li><li>Upload it in Studio, Step 1.</li></ol>'+
- '<p class="hint"><b>Automatic connection: coming soon.</b> Connecting thinkorswim directly goes through Schwab\'s developer program, which needs Schwab to approve the app first. Not available yet.</p>'+
- '<label class="chk"><input type="checkbox" id="settos"> Tell me when broker connection is ready</label>'+
- '<div class="row"><button class="primary" id="gostudio" type="button">Go to Studio to import</button></div></div>'+
+ '<div class="set-card"><h2>Broker: Schwab / thinkorswim <span class="pill" id="sbpill">Checking...</span></h2>'+
+ '<p class="hint" style="margin:0 0 8px" id="sbtxt">Connect your Schwab account to pull today\'s executed trades straight into Studio. Read-only: Revatour never places orders.</p>'+
+ '<div class="row"><button class="primary" id="sbconnect" type="button" hidden>Connect Schwab</button><button id="sbdisc" type="button" hidden>Disconnect</button><button id="gostudio" type="button">Go to Studio</button></div>'+
+ '<details style="margin-top:10px"><summary>Or import a thinkorswim statement file</summary><ol class="hint" style="margin:8px 0 0;padding-left:20px"><li>In thinkorswim, open the <b>Monitor</b> tab, then <b>Account Statement</b>.</li><li>Set the date range (use one day for a daily recap).</li><li>Open the menu at the top right of that panel and choose <b>Export to File</b>, save the CSV.</li><li>Upload it in Studio, Step 1.</li></ol></details></div>'+
  '<div class="set-card"><h2>Your data</h2><p class="hint" style="margin:0">Download everything you have saved here (days, trades, generated text, settings) as one file.</p><div class="row"><button id="setexp" type="button">Download my data (.json)</button></div></div>';
- $("setname").value=settings.name||"";$("setvoice").value=settings.voice||vs[0];$("setgrp").value=settings.grouping||"grouped";$("settos").checked=!!settings.tosNotify;paintTheme();fillHidden();paintInstall()}
+ $("setname").value=settings.name||"";$("setvoice").value=settings.voice||vs[0];$("setgrp").value=settings.grouping||"grouped";paintTheme();fillHidden();paintInstall();paintSchwab()}
+var sbState=null;
+async function sbStatus(){var So=S();if(!So||!So.schwab)return null;try{sbState=await So.schwab("status")}catch(e){sbState=null}return sbState}
+async function paintSchwab(){var pill=$("sbpill");if(!pill)return;var st=await sbStatus(),t=$("sbtxt"),c=$("sbconnect"),d=$("sbdisc");if(!$("sbpill"))return;
+ c.hidden=true;d.hidden=true;
+ if(!st){pill.textContent="Unavailable";t.textContent="Schwab connection is not available here.";return}
+ if(!st.configured){pill.textContent="Not set up";t.textContent="The site owner still needs to add the Schwab keys in Vercel (SCHWAB_APP_KEY and SCHWAB_APP_SECRET).";return}
+ if(st.connected){pill.textContent="Connected";t.textContent="Connected. Pull trades in Studio, Step 1. Schwab requires a fresh sign-in every 7 days"+(st.daysLeft<=2?" (yours expires in "+st.daysLeft+" day"+(st.daysLeft===1?"":"s")+", so reconnect soon)":" ("+st.daysLeft+" days left)")+".";c.textContent="Reconnect";c.hidden=false;d.hidden=false;return}
+ pill.textContent=st.expired?"Reconnect needed":"Not connected";t.textContent=st.expired?"Your Schwab sign-in expired (they last 7 days). Reconnect to keep pulling trades.":"Connect your Schwab account to pull executed trades straight into Studio. Read-only: Revatour never places orders.";c.textContent=st.expired?"Reconnect Schwab":"Connect Schwab";c.hidden=false}
+async function sbConnect(){var So=S();if(!So)return;try{var r=await So.schwab("start");if(r.url){location.href=r.url}else toast("Schwab is not set up yet")}catch(e){toast("Could not start the Schwab connection")}}
+function sbFinish(){try{var q=new URLSearchParams(location.search),m=/^#sb=(.+)$/.exec(location.hash),So=S();if(!q.has("schwab"))return;var v=q.get("schwab");history.replaceState(null,"",location.pathname);
+  if(v==="ok"&&m&&So){So.schwab("save",null,{blob:m[1]}).then(function(){toast("Schwab connected");sbState=null;if(!$("settingsv").hidden)paintSchwab()}).catch(function(e){toast("Schwab login worked, but saving failed: "+e.message)})}
+  else if(v==="denied")toast("Schwab connection was cancelled");else toast("Could not connect Schwab. Try again.")}catch(e){}}
+function sbRows(fills){var H=["Exec Time","Side","Qty","Pos Effect","Symbol","Exp","Strike","Type","Net Price","Order Type"];
+ return [H].concat(fills.map(function(f){return [f.exec,f.side,String(f.qty),f.effect,f.symbol,f.exp||"",f.strike===""||f.strike==null?"":String(f.strike),f.type,String(f.price),"LMT"]}))}
+async function sbPull(){var So=S(),msg=$("sbmsg"),b=$("sbpull");if(!So||!So.schwab){toast("Schwab is not available here");return}
+ var st=sbState||await sbStatus();
+ if(!st||!st.configured){msg.textContent="Schwab is not set up yet. See Settings.";return}
+ if(!st.connected){msg.textContent="Connect Schwab in Settings first.";return}
+ var back=+$("sbrange").value,to=etDay(0),from=etDay(back);b.disabled=true;msg.textContent="Pulling from Schwab...";
+ try{var r=await So.schwab("trades",{from:from,to:to});
+  if(r.reconnect){sbState=null;msg.textContent="Your Schwab sign-in expired. Reconnect in Settings.";return}
+  if(!r.fills||!r.fills.length){msg.textContent="No executed trades found for that range.";return}
+  var res=importTOS(sbRows(r.fills),$("grouping").value);
+  if(!res||!res.n){msg.textContent="Found fills but no completed round trips yet (positions may still be open).";return}
+  res.hdr="Schwab";setTrades(res.trades,res.n+" trades pulled from Schwab");msg.textContent="";note(res)
+ }catch(e){msg.textContent="Could not reach Schwab: "+e.message}finally{b.disabled=false}}
+function etDay(back){var p={},f=new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",year:"numeric",month:"2-digit",day:"2-digit"});
+ var d=new Date(Date.now()-back*864e5);f.formatToParts(d).forEach(function(x){p[x.type]=x.value});return p.year+"-"+p.month+"-"+p.day}
+$("sbpull").addEventListener("click",sbPull);
 function paintInstall(){var b=$("instgo"),m=$("instmsg");if(!b)return;var standalone=window.matchMedia&&matchMedia("(display-mode: standalone)").matches||navigator.standalone;
  if(standalone){b.hidden=true;if(m)m.textContent="You are using the installed app.";return}
  b.hidden=!window.__installEvt}
@@ -1036,11 +1064,11 @@ $("settingsv").addEventListener("change",function(ev){var t=ev.target;
  if(t.id==="setname"){settings.name=t.value.trim();$("name").value=settings.name;saveSettings();toast("Saved")}
  else if(t.id==="setvoice"){settings.voice=t.value;$("voice").value=t.value;saveSettings();toast("Saved")}
  else if(t.id==="setgrp"){settings.grouping=t.value;$("grouping").value=t.value;saveSettings();toast("Saved")}
- else if(t.id==="settos"){settings.tosNotify=t.checked;saveSettings();toast("Saved")}});
+ });
 $("settingsv").addEventListener("click",async function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;var A=window.stockspotAuth||{};
  if(b.dataset.unhide){try{await S()[b.dataset.unhide](b.dataset.id,false);toast("Undone")}catch(e){toast("Could not undo")}fillHidden();return}
  if(b.id==="instgo"){var ev0=window.__installEvt;if(ev0){ev0.prompt();try{await ev0.userChoice}catch(e){}window.__installEvt=null;paintInstall()}return}
- if(b.id==="gostudio"){showStudio();return}
+ if(b.id==="gostudio"){showStudio();return}if(b.id==="sbconnect"){sbConnect();return}if(b.id==="sbdisc"){var So0=S();if(So0)So0.schwab("disconnect",null,{}).then(function(){sbState=null;paintSchwab();toast("Schwab disconnected")});return}
  if(b.id==="setout"){if(A.logout)A.logout();return}
  if(b.id==="setpwgo"){var pw=$("setpw").value,m=$("setpwmsg");if(pw.length<8){m.textContent="Use at least 8 characters.";return}
   m.textContent="Saving...";var r=A.setPassword?await A.setPassword(pw):"Not available";m.textContent=r?("Could not change it: "+r):"Password changed.";if(!r)$("setpw").value="";return}
