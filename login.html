@@ -1,7 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+<meta charset="utf-8">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#1d4ed8">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Stockspot"><meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script>if("serviceWorker" in navigator)addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})});window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__installEvt=e;window.dispatchEvent(new Event("ss-installable"))});</script>
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Stockspot · Log in</title>
   <script>try{var _t=localStorage.getItem("ss-theme");if(_t==="light"||_t==="dark")document.documentElement.setAttribute("data-theme",_t)}catch(e){}</script>

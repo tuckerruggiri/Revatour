@@ -2,6 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#1d4ed8">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Stockspot"><meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script>if("serviceWorker" in navigator)addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})});window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__installEvt=e;window.dispatchEvent(new Event("ss-installable"))});</script>
+
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Stockspot Studio</title>
 <style>html:not(.authed) body{visibility:hidden}</style>
@@ -937,6 +945,9 @@ function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["
  '<div class="set-card"><h2>Account</h2><p class="hint" style="margin:0 0 6px">Signed in as <b>'+esc(A.email||"")+'</b>'+(A.username?' (@'+esc(A.username)+')':'')+'</p>'+
  '<label>New password<input type="password" id="setpw" autocomplete="new-password" placeholder="At least 8 characters"></label>'+
  '<div class="row"><button id="setpwgo" type="button">Change password</button><button id="setout" type="button">Log out</button></div><p class="hint" id="setpwmsg" role="status"></p></div>'+
+ '<div class="set-card"><h2>Install on your phone</h2><div id="instbox"><p class="hint" style="margin:0 0 8px">Put Stockspot on your home screen so it opens full screen like an app.</p>'+
+ '<ol class="hint" style="margin:0 0 8px;padding-left:20px"><li><b>iPhone (Safari):</b> tap the Share button, then <b>Add to Home Screen</b>, then <b>Add</b>.</li><li><b>Android (Chrome):</b> tap the ⋮ menu, then <b>Install app</b> (or <b>Add to Home screen</b>).</li><li><b>Computer (Chrome or Edge):</b> click the install icon at the right end of the address bar.</li></ol>'+
+ '<div class="row"><button class="primary" id="instgo" type="button" hidden>Install Stockspot</button></div><p class="hint" id="instmsg" role="status" style="margin:0"></p></div></div>'+
  '<div class="set-card"><h2>Muted and blocked</h2><div id="hidlist"><p class="hint" style="margin:0">Loading...</p></div></div>'+
  '<div class="set-card"><h2>Preferences</h2><p class="hint" style="margin:0">Used as your defaults in Studio.</p>'+
  '<label>Name or handle for your pages and carousels<input type="text" id="setname" maxlength="60" placeholder="e.g. tucker_trades"></label>'+
@@ -950,7 +961,11 @@ function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["
  '<label class="chk"><input type="checkbox" id="settos"> Tell me when broker connection is ready</label>'+
  '<div class="row"><button class="primary" id="gostudio" type="button">Go to Studio to import</button></div></div>'+
  '<div class="set-card"><h2>Your data</h2><p class="hint" style="margin:0">Download everything you have saved here (days, trades, generated text, settings) as one file.</p><div class="row"><button id="setexp" type="button">Download my data (.json)</button></div></div>';
- $("setname").value=settings.name||"";$("setvoice").value=settings.voice||vs[0];$("setgrp").value=settings.grouping||"grouped";$("settos").checked=!!settings.tosNotify;paintTheme();fillHidden()}
+ $("setname").value=settings.name||"";$("setvoice").value=settings.voice||vs[0];$("setgrp").value=settings.grouping||"grouped";$("settos").checked=!!settings.tosNotify;paintTheme();fillHidden();paintInstall()}
+function paintInstall(){var b=$("instgo"),m=$("instmsg");if(!b)return;var standalone=window.matchMedia&&matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+ if(standalone){b.hidden=true;if(m)m.textContent="You are using the installed app.";return}
+ b.hidden=!window.__installEvt}
+window.addEventListener("ss-installable",function(){paintInstall()});
 async function fillHidden(){var el=$("hidlist"),So=S();if(!el)return;if(!So){el.innerHTML='<p class="hint" style="margin:0">Not available here.</p>';return}
  try{var h=await So.hidden();var rows=h.mutes.map(function(u){return [u,"mute","Muted"]}).concat(h.blocks.map(function(u){return [u,"block","Blocked"]}));
   el.innerHTML=rows.length?rows.map(function(r){return '<div class="row" style="margin:4px 0;align-items:center;justify-content:space-between"><span><b>@'+esc(r[0].username)+'</b> <span class="hint" style="margin:0">'+r[2]+'</span></span><button type="button" data-unhide="'+r[1]+'" data-id="'+esc(r[0].id)+'">Undo</button></div>'}).join(""):'<p class="hint" style="margin:0">You have not muted or blocked anyone.</p>'}catch(e){el.innerHTML='<p class="hint" style="margin:0">Could not load.</p>'}}
@@ -963,6 +978,7 @@ $("settingsv").addEventListener("change",function(ev){var t=ev.target;
  else if(t.id==="settos"){settings.tosNotify=t.checked;saveSettings();toast("Saved")}});
 $("settingsv").addEventListener("click",async function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;var A=window.stockspotAuth||{};
  if(b.dataset.unhide){try{await S()[b.dataset.unhide](b.dataset.id,false);toast("Undone")}catch(e){toast("Could not undo")}fillHidden();return}
+ if(b.id==="instgo"){var ev0=window.__installEvt;if(ev0){ev0.prompt();try{await ev0.userChoice}catch(e){}window.__installEvt=null;paintInstall()}return}
  if(b.id==="gostudio"){showStudio();return}
  if(b.id==="setout"){if(A.logout)A.logout();return}
  if(b.id==="setpwgo"){var pw=$("setpw").value,m=$("setpwmsg");if(pw.length<8){m.textContent="Use at least 8 characters.";return}
