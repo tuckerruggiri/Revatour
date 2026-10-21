@@ -1209,23 +1209,38 @@ function squareImg(file,N){return new Promise(function(res,rej){var u=URL.create
  im.onload=function(){var c=document.createElement("canvas");c.width=c.height=N;var x=c.getContext("2d"),sz=Math.min(im.width,im.height);x.fillStyle="#fff";x.fillRect(0,0,N,N);x.drawImage(im,(im.width-sz)/2,(im.height-sz)/2,sz,sz,0,0,N,N);URL.revokeObjectURL(u);res(c.toDataURL("image/jpeg",0.85))};
  im.onerror=function(){URL.revokeObjectURL(u);rej()};im.src=u})}
 var tkBack=null;
+function compactNum(v){if(v==null)return "&mdash;";var a=Math.abs(v);return a>=1e12?(v/1e12).toFixed(2)+"T":a>=1e9?(v/1e9).toFixed(2)+"B":a>=1e6?(v/1e6).toFixed(2)+"M":v.toLocaleString()}
+function newsWhen(t){var m=/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})/.exec(t||"");if(!m)return "";return new Date(Date.UTC(+m[1],+m[2]-1,+m[3],+m[4],+m[5])).toLocaleDateString([],{month:"short",day:"numeric"})}
 async function showTicker(sym){var prevProfile=!$("profilev").hidden,prevPage=curPage,prevPageOpen=!$("pagev").hidden,prevHome=!$("home").hidden;
  tkBack=prevProfile?showProfile:(prevPageOpen&&prevPage?function(){showPage(prevPage)}:(prevHome?showHome:showStudio));
  hideViews();$("tickerv").hidden=false;
  var all=allTrades().filter(function(t){return String(t.t||"").toUpperCase()===sym}),el=$("tickerv");
  var net=all.reduce(function(a,t){return a+(t.p||0)},0),wins=all.filter(function(t){return t.p>0}).length;
  var tile=function(l,v){return '<div class="hm-tile"><b>'+v+'</b><span>'+l+'</span></div>'};
- var h='<button class="crumb" type="button" id="tkback">&larr; Back</button><h1>$'+esc(sym)+'</h1><p class="sub">Ticker page. Market data, chart, news and fundamentals are coming soon.</p>'+
-  '<div class="hm-grid">'+tile("Price","&mdash;")+tile("Open","&mdash;")+tile("Previous close","&mdash;")+tile("Day range","&mdash;")+'</div>'+
-  '<h2 class="pf-sec">Chart</h2><div class="pf-panel hint">Chart coming soon.</div><h2 class="pf-sec">News</h2><div class="pf-panel hint">News coming soon.</div><h2 class="pf-sec">Fundamentals</h2><div class="pf-panel hint">Fundamentals coming soon.</div>'+
+ var h='<button class="crumb" type="button" id="tkback">&larr; Back</button><h1>$'+esc(sym)+'</h1><p class="sub" id="tkname">&nbsp;</p>'+
+  '<div id="tkquote" class="hm-grid"><div class="hint">Loading market data...</div></div>'+
+  '<h2 class="pf-sec">Chart</h2><div class="pf-panel" id="tkchart"><span class="hint">Loading...</span></div>'+
+  '<h2 class="pf-sec">About</h2><div class="pf-panel" id="tkabout"><span class="hint">Loading...</span></div>'+
+  '<h2 class="pf-sec">News</h2><div class="pf-panel" id="tknews"><span class="hint">Loading...</span></div>'+
   '<h2 class="pf-sec">Your trades in $'+esc(sym)+'</h2>';
  if(!all.length)h+='<div class="pf-panel hint">No saved trades in this ticker yet.</div>';
  else h+='<div class="hm-grid">'+tile("Trades",String(all.length))+tile("Net P&amp;L",'<span class="'+(net>=0?"gain":"loss")+'">'+sgn(net)+'</span>')+tile("Win rate",Math.round(wins/all.length*100)+"%")+'</div>';
- h+='<h2 class="pf-sec">On your wall</h2><div id="tkwall" class="feed"><p class="hint">Loading...</p></div>';
+ h+='<h2 class="pf-sec">On Stockspot</h2><div id="tkwall" class="feed"><p class="hint">Loading...</p></div><p class="hint">Market data from Alpha Vantage, may be delayed. Not financial advice.</p>';
  el.innerHTML=h;window.scrollTo(0,0);
- var mine=[];try{var So2=S();if(So2)mine=await So2.wall(So2.uid())}catch(e){}
- var re=new RegExp("\\$"+sym+"(?![A-Za-z0-9])"),m=mine.filter(function(p){return re.test(p.text||"")});
- var tw=$("tkwall");if(tw)tw.innerHTML=m.length?m.map(function(p){return '<article class="post"><div class="pmeta"><span>'+esc(postWhen(p.ts))+'</span></div><div class="ptxt">'+rich(p.text)+'</div></article>'}).join(""):'<p class="hint">No posts on your wall mention $'+esc(sym)+' yet.</p>'}
+ var So=S();
+ function fill(id,html){if($("tickerv").hidden||!$(id))return;$(id).innerHTML=html}
+ if(So&&So.market)So.market(sym).then(function(M){
+  if(!M.configured){var nm='<span class="hint">Market data is not connected yet. Add the ALPHAVANTAGE_KEY in Vercel to turn it on.</span>';fill("tkquote",nm);fill("tkchart",nm);fill("tkabout",nm);fill("tknews",nm);return}
+  var q=M.quote;
+  if(M.about&&M.about.name){var nl=$("tkname");if(nl)nl.textContent=M.about.name+(M.about.sector?" · "+M.about.sector:"")}
+  fill("tkquote",q?tile("Price",money(q.price))+tile("Change",'<span class="'+((q.change||0)>=0?"gain":"loss")+'">'+(q.change>=0?"+":"")+(q.change==null?"":q.change.toFixed(2))+(q.pct==null?"":" ("+(q.pct>=0?"+":"")+q.pct.toFixed(2)+"%)")+'</span>')+tile("Open",money(q.open))+tile("Previous close",money(q.prev))+tile("Day range",money(q.low)+" - "+money(q.high))+tile("Volume",compactNum(q.volume)):'<span class="hint">No price available right now. The free data limit may be used up for today. Try again later.</span>');
+  var D=M.daily||[];fill("tkchart",D.length>1?sparkline(D.map(function(x){return x.c}),D[D.length-1].c>=D[0].c)+'<p class="hint" style="margin:6px 0 0">Last '+D.length+' trading days, closing price.</p>':'<span class="hint">Chart not available right now.</span>');
+  var A=M.about;fill("tkabout",A?'<div class="hm-grid">'+tile("Market cap",compactNum(A.cap))+tile("P/E",A.pe==null?"&mdash;":A.pe.toFixed(1))+tile("EPS",A.eps==null?"&mdash;":money(A.eps))+tile("Dividend yield",A.yield==null?"&mdash;":(A.yield*100).toFixed(2)+"%")+tile("52-week high",A.hi52==null?"&mdash;":money(A.hi52))+tile("52-week low",A.lo52==null?"&mdash;":money(A.lo52))+'</div>'+(A.desc?'<p class="hint" style="margin:8px 0 0">'+esc(A.desc)+(A.desc.length>=400?"...":"")+'</p>':""):'<span class="hint">No company details for this symbol (ETFs and some tickers have none).</span>');
+  fill("tknews",M.news&&M.news.length?'<div class="nlist">'+M.news.map(function(x){var u=/^https?:\/\//.test(x.url||"")?x.url:"";return (u?'<a class="nitem" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">':'<div class="nitem">')+'<span>'+esc(x.title)+'</span><small>'+esc(x.source||"")+(newsWhen(x.time)?" · "+newsWhen(x.time):"")+'</small>'+(u?'</a>':'</div>')}).join("")+'</div>':'<span class="hint">No recent headlines.</span>')
+ }).catch(function(){var m='<span class="hint">Could not load market data.</span>';fill("tkquote",m);fill("tkchart",m);fill("tkabout",m);fill("tknews",m)});
+ else{var m2='<span class="hint">Market data is not available here.</span>';fill("tkquote",m2);fill("tkchart",m2);fill("tkabout",m2);fill("tknews",m2)}
+ var posts=[];try{if(So)posts=So.tickerPosts?await So.tickerPosts(sym):[]}catch(e){}
+ var tw=$("tkwall");if(tw&&!$("tickerv").hidden)tw.innerHTML=posts.length?posts.map(function(p){return '<article class="post"><div class="pmeta"><span class="wp-who">'+avatarHTML("xs",p.author.avatar_url,p.author.username)+'<button type="button" class="tk un" data-un="'+esc(p.author.username)+'">@'+esc(p.author.username)+'</button> &middot; '+esc(postWhen(p.ts))+'</span></div><div class="ptxt">'+rich(p.text)+'</div></article>'}).join(""):'<p class="hint">Nobody has posted about $'+esc(sym)+' yet. Post one from your wall.</p>'}
 document.addEventListener("click",function(ev){if(wmenu&&!(ev.target.closest&&ev.target.closest(".wmwrap"))){wmenu="";if($("wall"))renderWall()}var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
  if(b.dataset.tk){ev.preventDefault();showTicker(b.dataset.tk);return}
  if(b.dataset.un){ev.preventDefault();showUserProfile(b.dataset.un);return}
