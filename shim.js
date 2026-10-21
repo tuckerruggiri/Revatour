@@ -151,16 +151,41 @@
     },
     wall: async function (ownerId) {
       await ready;
-      var r = await sb.from('ss_wall_posts').select('*').eq('owner_id', ownerId).order('created_at', { ascending: false }).limit(100);
+      var r = await sb.from('ss_wall_posts').select('*').eq('owner_id', ownerId).order('pinned', { ascending: false }).order('created_at', { ascending: false }).limit(100);
       if (r.error) throw r.error;
-      var posts = r.data || [], ids = posts.map(function (p) { return p.id; }), com = [];
-      if (ids.length) { var c = await sb.from('ss_wall_comments').select('*').in('post_id', ids).order('created_at', { ascending: true }); com = c.data || []; }
-      var names = await namesFor(posts.map(function (p) { return p.author_id; }).concat(com.map(function (c) { return c.author_id; })));
-      return posts.map(function (p) {
-        return { id: p.id, owner_id: p.owner_id, author: pickName(names, p.author_id), text: p.text, imgs: p.imgs || [], ts: new Date(p.created_at).getTime(),
-          comments: com.filter(function (c) { return c.post_id === p.id; }).map(function (c) { return { id: c.id, author: pickName(names, c.author_id), text: c.text, ts: new Date(c.created_at).getTime() }; }) };
+      var posts = r.data || [], ids = posts.map(function (p) { return p.id; }), com = [], likes = [], reps = [], origs = {};
+      var hide = {};
+      try { var m1 = await sb.from('ss_mutes').select('target_id'); var m2 = await sb.from('ss_blocks').select('target_id');
+        (m1.data || []).concat(m2.data || []).forEach(function (x) { hide[x.target_id] = 1; }); } catch (e) {}
+      if (ids.length) {
+        var c = await sb.from('ss_wall_comments').select('*').in('post_id', ids).order('created_at', { ascending: true }); com = c.data || [];
+        try { var l = await sb.from('ss_wall_likes').select('post_id,user_id').in('post_id', ids); likes = l.data || []; } catch (e) {}
+        try { var rp = await sb.from('ss_wall_posts').select('id,repost_of,author_id').in('repost_of', ids); reps = rp.data || []; } catch (e) {}
+      }
+      var oids = posts.map(function (p) { return p.repost_of; }).filter(Boolean);
+      if (oids.length) { var o = await sb.from('ss_wall_posts').select('*').in('id', oids); (o.data || []).forEach(function (x) { origs[x.id] = x; }); }
+      var names = await namesFor(posts.map(function (p) { return p.author_id; }).concat(com.map(function (c) { return c.author_id; })).concat(Object.keys(origs).map(function (k) { return origs[k].author_id; })));
+      return posts.filter(function (p) { return p.author_id === uid || !hide[p.author_id]; }).map(function (p) {
+        var ps = likes.filter(function (x) { return x.post_id === p.id; }), rr = reps.filter(function (x) { return x.repost_of === p.id; }), og = p.repost_of ? origs[p.repost_of] : null;
+        return { id: p.id, owner_id: p.owner_id, author: pickName(names, p.author_id), text: p.text, imgs: p.imgs || [], ts: new Date(p.created_at).getTime(), pinned: !!p.pinned,
+          likeCount: ps.length, liked: ps.some(function (x) { return x.user_id === uid; }),
+          repostCount: rr.length, myRepost: (rr.filter(function (x) { return x.author_id === uid; })[0] || {}).id || '',
+          orig: og ? { id: og.id, author: pickName(names, og.author_id), text: og.text, imgs: og.imgs || [], ts: new Date(og.created_at).getTime() } : null, isRepost: !!p.repost_of,
+          comments: com.filter(function (c) { return c.post_id === p.id && (c.author_id === uid || !hide[c.author_id]); }).map(function (c) { return { id: c.id, author: pickName(names, c.author_id), text: c.text, ts: new Date(c.created_at).getTime() }; }) };
       });
     },
+    like: async function (pid) { await ready; var r = await sb.from('ss_wall_likes').insert({ post_id: pid, user_id: uid }); if (r.error && r.error.code !== '23505') throw r.error; },
+    unlike: async function (pid) { await ready; var r = await sb.from('ss_wall_likes').delete().eq('post_id', pid).eq('user_id', uid); if (r.error) throw r.error; },
+    likers: async function (pid) { await ready; var r = await sb.from('ss_wall_likes').select('user_id,created_at').eq('post_id', pid).order('created_at', { ascending: false }).limit(200); if (r.error) throw r.error;
+      var n = await namesFor((r.data || []).map(function (x) { return x.user_id; })); return (r.data || []).map(function (x) { return pickName(n, x.user_id); }); },
+    repost: async function (pid) { await ready; var r = await sb.from('ss_wall_posts').insert({ owner_id: uid, author_id: uid, text: '', imgs: [], repost_of: pid }); if (r.error) throw r.error; },
+    pin: async function (pid, pin) { await ready; var r = await sb.rpc('ss_pin_post', { pid: pid, pin: !!pin }); if (r.error) throw r.error; },
+    mute: async function (id, on) { await ready; var r = on ? await sb.from('ss_mutes').upsert({ user_id: uid, target_id: id }) : await sb.from('ss_mutes').delete().eq('user_id', uid).eq('target_id', id); if (r.error) throw r.error; },
+    block: async function (id, on) { await ready; var r = on ? await sb.from('ss_blocks').upsert({ user_id: uid, target_id: id }) : await sb.from('ss_blocks').delete().eq('user_id', uid).eq('target_id', id); if (r.error) throw r.error; },
+    hidden: async function () { await ready; var m = await sb.from('ss_mutes').select('target_id'), b = await sb.from('ss_blocks').select('target_id');
+      var mi = (m.data || []).map(function (x) { return x.target_id; }), bi = (b.data || []).map(function (x) { return x.target_id; }), n = await namesFor(mi.concat(bi));
+      return { mutes: mi.map(function (i) { return pickName(n, i); }), blocks: bi.map(function (i) { return pickName(n, i); }) }; },
+    report: async function (pid, reason) { await ready; var r = await sb.from('ss_reports').insert({ reporter_id: uid, post_id: pid, reason: reason || '' }); if (r.error) throw r.error; },
     addPost: async function (ownerId, text, imgs, ts) {
       await ready; var row = { owner_id: ownerId, author_id: uid, text: text || '', imgs: imgs || [] };
       if (ts) row.created_at = new Date(ts).toISOString();
