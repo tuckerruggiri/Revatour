@@ -1195,15 +1195,23 @@ function syncPub(){var So=S();if(!So||!So.syncChannels)return Promise.resolve();
  var list=[];Object.keys(pages).forEach(function(k){var p=pages[k];if(p.parent&&pages[p.parent]&&p.priv===false)list.push({page_id:k,name:p.name,parent_name:pages[p.parent].name,fpost:!!p.fpost})});
  syncing=So.syncChannels(list).then(function(m){chMap=m||{};setTimeout(mirrorAll,50);return chMap}).catch(function(){return chMap});return syncing}
 function chatHTML(canPost,note){return '<h2 class="chhead">Chat</h2>'+(note?'<p class="hint" style="margin:0 0 8px" id="chnote">'+note+'</p>':'')+'<div id="chatlist" class="chatlist" aria-live="polite"><p class="hint">Loading...</p></div>'+
- (canPost?'<div class="row" style="margin:8px 0 0"><input id="chatin" maxlength="2000" placeholder="Message this channel. Use $TSLA for tickers." aria-label="Message this channel" style="flex:1;min-width:0"><button class="primary" id="chatsend" type="button">Send</button></div>':'')}
+ (canPost?'<div id="chprev" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div><div class="row" style="margin:8px 0 0"><input id="chatin" maxlength="2000" placeholder="Message this channel. Use $TSLA for tickers." aria-label="Message this channel" style="flex:1;min-width:0"><button type="button" id="chatpic" aria-label="Add a picture">Add picture</button><input id="chimg" type="file" accept="image/*" multiple hidden><button class="primary" id="chatsend" type="button">Send</button></div>':'')}
+var chatPend=[];
+function renderChPrev(){var e=$("chprev");if(!e)return;e.innerHTML=chatPend.map(function(u,i){return '<div class="pthumb"><img alt="Picture to send" src="'+u+'"><button type="button" data-chrm="'+i+'" aria-label="Remove picture">✕</button></div>'}).join("")}
+async function chatAddFiles(files){files=files?Array.prototype.slice.call(files):[];
+ for(var i=0;i<files.length;i++){if(!/^image\//.test(files[i].type))continue;if(chatPend.length>=4){toast("Up to 4 pictures per message");break}
+  try{chatPend.push(await shrink(files[i],1400))}catch(e){toast("Could not read that image")}}
+ renderChPrev()}
 async function loadChat(keepScroll){var So=S();if(!So||!chat||!$("chatlist"))return;var cid=chat.cid,el=$("chatlist");
  var L;try{L=await So.chatMsgs(cid)}catch(e){if(chat&&chat.cid===cid&&el===$("chatlist"))el.innerHTML='<p class="hint">Could not load the chat.</p>';return}
  if(!chat||chat.cid!==cid||!$("chatlist"))return;el=$("chatlist");var me=So.uid(),nearBottom=el.scrollHeight-el.scrollTop-el.clientHeight<60;
- el.innerHTML=L.length?L.map(function(m){var can=m.author.id===me||chat.mine;return '<div class="cmsg"><div class="cmh"><button type="button" class="tk un" data-un="'+esc(m.author.username)+'">@'+esc(m.author.username)+'</button> <span class="hint" style="margin:0">'+esc(postWhen(m.ts))+'</span>'+(can?' <button class="x" type="button" data-cmdel="'+esc(m.id)+'" aria-label="Delete message">✕</button>':'')+'</div><div class="ptxt">'+rich(m.text)+'</div></div>'}).join(""):'<p class="hint">No messages yet. Say something.</p>';
+ el.innerHTML=L.length?L.map(function(m){var can=m.author.id===me||chat.mine;return '<div class="cmsg"><div class="cmh"><button type="button" class="tk un" data-un="'+esc(m.author.username)+'">@'+esc(m.author.username)+'</button> <span class="hint" style="margin:0">'+esc(postWhen(m.ts))+'</span>'+(can?' <button class="x" type="button" data-cmdel="'+esc(m.id)+'" aria-label="Delete message">✕</button>':'')+'</div>'+(m.text?'<div class="ptxt">'+rich(m.text)+'</div>':'')+((m.imgs||[]).length?'<div class="pics n'+Math.min(m.imgs.length,4)+'">'+m.imgs.map(function(x){return x.src?'<img alt="Picture in chat" src="'+esc(x.src)+'">':""}).join("")+'</div>':'')+'</div>'}).join(""):'<p class="hint">No messages yet. Say something.</p>';
  if(!keepScroll||nearBottom)el.scrollTop=el.scrollHeight}
-function startChat(cid,mine){chat={cid:cid,mine:!!mine};clearInterval(chatTimer);loadChat();chatTimer=setInterval(function(){if(!chat||!$("chatlist")||document.hidden){if(!$("chatlist")){clearInterval(chatTimer);chat=null}return}loadChat(true)},8000)}
-async function chatSend(){var So=S(),i=$("chatin");if(!So||!i||!chat)return;var t=i.value.trim();if(!t)return;var b=$("chatsend");if(b)b.disabled=true;
- try{await So.sendMsg(chat.cid,t);i.value="";await loadChat()}catch(e){toast("Could not send. You may need to follow this trader first.")}finally{if(b)b.disabled=false;i.focus()}}
+function startChat(cid,mine){if(!chat||chat.cid!==cid){chatPend=[]}chat={cid:cid,mine:!!mine};renderChPrev();clearInterval(chatTimer);loadChat();chatTimer=setInterval(function(){if(!chat||!$("chatlist")||document.hidden){if(!$("chatlist")){clearInterval(chatTimer);chat=null}return}loadChat(true)},8000)}
+async function chatSend(){var So=S(),i=$("chatin");if(!So||!i||!chat)return;var t=i.value.trim();if(!t&&!chatPend.length)return;var b=$("chatsend");if(b)b.disabled=true;
+ try{var imgs=[];for(var k=0;k<chatPend.length;k++){try{imgs.push({src:await So.uploadImage(dataToBlob(chatPend[k]))})}catch(e){toast("A picture could not be saved")}}
+  if(!t&&!imgs.length){return}
+  await So.sendMsg(chat.cid,t,imgs);i.value="";chatPend=[];renderChPrev();await loadChat()}catch(e){toast("Could not send. You may need to follow this trader first.")}finally{if(b)b.disabled=false;i.focus()}}
 function chanNote(pg){return pg.fpost?"Public: everyone can see your posts here. Your followers can chat.":"Public: everyone can see your posts here. Only you can chat."}
 async function openChannel(id){var So=S();if(!So)return;var c=null;try{c=await So.channelInfo(id)}catch(e){}
  if(!c){toast("That channel is not available");return}
@@ -1343,12 +1351,15 @@ async function showTicker(sym){var prevProfile=!$("profilev").hidden,prevPage=cu
  else{var m2='<span class="hint">Market data is not available here.</span>';fill("tkquote",m2);fill("tkchart",m2);fill("tkabout",m2);fill("tknews",m2)}
  var posts=[];try{if(So)posts=So.tickerPosts?await So.tickerPosts(sym):[]}catch(e){}
  var tw=$("tkwall");if(tw&&!$("tickerv").hidden)tw.innerHTML=posts.length?posts.map(function(p){return '<article class="post"><div class="pmeta"><span class="wp-who">'+avatarHTML("xs",p.author.avatar_url,p.author.username)+'<button type="button" class="tk un" data-un="'+esc(p.author.username)+'">@'+esc(p.author.username)+'</button> &middot; '+esc(postWhen(p.ts))+'</span></div><div class="ptxt">'+rich(p.text)+'</div></article>'}).join(""):'<p class="hint">Nobody has posted about $'+esc(sym)+' yet. Post one from your wall.</p>'}
+document.addEventListener("change",function(ev){if(ev.target&&ev.target.id==="chimg"){chatAddFiles(ev.target.files);ev.target.value=""}});
 document.addEventListener("keydown",function(ev){if(ev.target&&ev.target.id==="chatin"&&ev.key==="Enter"){ev.preventDefault();chatSend()}});
 document.addEventListener("click",function(ev){if(wmenu&&!(ev.target.closest&&ev.target.closest(".wmwrap"))){wmenu="";if($("wall"))renderWall()}var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
  if(b.dataset.chan){ev.preventDefault();openChannel(b.dataset.chan);return}
  if(b.dataset.backprof){ev.preventDefault();showUserProfile(b.dataset.backprof);return}
  if(b.dataset.chfollow){ev.preventDefault();var cid2=b.dataset.cid;S().follow(b.dataset.chfollow,true).then(function(){toast("Following");openChannel(cid2)}).catch(function(){toast("Could not follow")});return}
  if(b.id==="chatsend"){chatSend();return}
+ if(b.id==="chatpic"){var ci=$("chimg");if(ci)ci.click();return}
+ if(b.dataset.chrm){chatPend.splice(+b.dataset.chrm,1);renderChPrev();return}
  if(b.dataset.cmdel){S().delMsg(b.dataset.cmdel).then(function(){loadChat(true)}).catch(function(){toast("Could not delete")});return}
  if(b.dataset.tk){ev.preventDefault();showTicker(b.dataset.tk);return}
  if(b.dataset.un){ev.preventDefault();showUserProfile(b.dataset.un);return}
