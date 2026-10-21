@@ -3,134 +3,214 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Stockspot | Verified traders, not screenshots</title>
-<meta name="description" content="Connect your broker, get verified, and let AI build your trader page from real fills.">
+<title>Stockspot | Follow verified traders</title>
+<meta name="description" content="Stop following screenshots. Follow verified traders, and build your own verified page with AI.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <style>
-:root{--bg:#0a0d12;--panel:#111620;--line:#1f2733;--ink:#e8edf4;--mute:#8793a4;--acc:#22c55e;--acc2:#16a34a;--dn:#ef4444}
-:root[data-acc="blue"]{--acc:#3b82f6;--acc2:#2563eb}
-:root[data-acc="amber"]{--acc:#f59e0b;--acc2:#d97706}
-:root[data-acc="purple"]{--acc:#a78bfa;--acc2:#8b5cf6}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-a{color:inherit;text-decoration:none}
-.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
-nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0}
-.logo{font-weight:800;font-size:1.2rem;letter-spacing:-.02em}.logo b{color:var(--acc)}
-.btn{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:9px 16px;font-weight:600;font-size:.95rem;background:transparent;color:var(--ink);cursor:pointer;font-family:inherit}
-.btn.p{background:var(--acc);border-color:var(--acc);color:#04130a}
-.hero{display:grid;grid-template-columns:1.15fr 1fr;gap:40px;align-items:center;padding:48px 0 40px}
-h1{font-size:clamp(2.1rem,5vw,3.4rem);line-height:1.05;letter-spacing:-.03em;margin:0 0 16px}
-h1 em{font-style:normal;color:var(--acc)}
-.lead{color:var(--mute);font-size:1.1rem;max-width:34em;margin:0 0 24px}
-.signup{display:flex;gap:8px;flex-wrap:wrap;max-width:460px}
-.signup input{flex:1 1 220px;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:12px 14px;font:inherit}
-.fine{color:var(--mute);font-size:.82rem;margin-top:10px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
-.vt{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.who{display:flex;gap:12px;align-items:center}
-.av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--acc),#0b3b22);display:grid;place-items:center;font-weight:800;color:#04130a}
-.badge{font-size:.72rem;font-weight:700;color:var(--acc);border:1px solid var(--acc);border-radius:99px;padding:3px 9px;letter-spacing:.04em}
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
-.kpi{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px}
-.kpi small{display:block;color:var(--mute);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
-.kpi b{font-size:1.25rem}
-.up{color:var(--acc)}.dn{color:var(--dn)}
-svg.spark{width:100%;height:70px;display:block}
-.ticker{border-block:1px solid var(--line);background:var(--panel);overflow:hidden;white-space:nowrap}
-.ticker div{display:inline-block;padding:10px 0;animation:tk 40s linear infinite}
-.ticker span{margin:0 22px;font-size:.88rem}
-@keyframes tk{to{transform:translateX(-50%)}}
-@media (prefers-reduced-motion:reduce){.ticker div{animation:none}}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:32px 0}
-.stat{text-align:center}.stat b{font-size:2rem;display:block;letter-spacing:-.02em}.stat span{color:var(--mute);font-size:.85rem}
-h2{font-size:1.6rem;letter-spacing:-.02em;margin:0 0 6px}
-.sub{color:var(--mute);margin:0 0 18px}
-section{padding:28px 0}
-table{width:100%;border-collapse:collapse;font-size:.95rem}
-th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line)}
-th{color:var(--mute);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
-td.r,th.r{text-align:right}
-.lb{position:relative;overflow:hidden}
-.blur{filter:blur(6px);user-select:none;pointer-events:none}
-.gate{position:absolute;left:0;right:0;bottom:0;height:52%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:linear-gradient(transparent,var(--panel) 55%)}
-.feed{display:grid;gap:14px}
-.post{display:flex;gap:12px}
-.post .t{color:var(--mute);font-size:.82rem}
-.fill{display:inline-flex;gap:8px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin-top:8px;font-size:.85rem}
-.locked{opacity:.95;border-style:dashed}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.step .n{width:30px;height:30px;border-radius:50%;background:var(--acc);color:#04130a;font-weight:800;display:grid;place-items:center;margin-bottom:10px}
-.step h3{margin:0 0 6px;font-size:1.05rem}.step p{margin:0;color:var(--mute);font-size:.92rem}
-footer{border-top:1px solid var(--line);margin-top:30px;padding:28px 0 48px;color:var(--mute);font-size:.8rem}
-.tweaks{position:fixed;right:14px;bottom:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;gap:8px;align-items:center;font-size:.78rem;color:var(--mute);z-index:5}
-.tweaks button{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0}
-@media (max-width:800px){.hero{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr}.hide-m{display:none}}
+:root{--acc:#3BE08A}
+:root[data-acc="blue"]{--acc:#4DA3FF}
+:root[data-acc="amber"]{--acc:#F5B841}
+:root[data-acc="purple"]{--acc:#B58CFF}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{margin:0;background:#0B0E11;overflow-x:hidden}
+a{color:#C9D1DC;text-decoration:none}a:hover{color:#FFFFFF}
+.tweaks{position:fixed;right:14px;bottom:14px;background:#12171D;border:1px solid #222B35;border-radius:12px;padding:8px 12px;display:flex;gap:8px;align-items:center;font:12px 'Instrument Sans',sans-serif;color:#8A94A3;z-index:5}
+.tweaks button{width:22px;height:22px;border-radius:50%;border:2px solid #2A3440;cursor:pointer;padding:0}
 </style>
 </head>
 <body>
-<div class="wrap">
- <nav><a class="logo" href="/">Stock<b>spot</b></a><div><a class="btn" href="login.html">Log in</a> <a class="btn p" href="login.html#signup">Sign up</a></div></nav>
- <header class="hero">
-  <div>
-   <h1>Verified fills, <em>not screenshots.</em></h1>
-   <p class="lead">Connect your broker, get verified, and let AI turn your real trades into a guru page, recaps and posts. Followers see proof, not claims.</p>
-   <form class="signup" id="sf"><input type="email" id="em" placeholder="you@email.com" aria-label="Email" required><button class="btn p" type="submit">Get started</button></form>
-   <div class="fine">Free to start. Results are self-reported until verified. Not financial advice.</div>
-  </div>
-  <div class="card" aria-label="Sample verified trader card">
-   <div class="vt"><div class="who"><div class="av">@</div><div><b>@[handle]</b><div class="fine" style="margin:0">Intraday · [Broker]</div></div></div><span class="badge">✓ VERIFIED</span></div>
-   <svg class="spark" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--acc)" stop-opacity=".35"/><stop offset="1" stop-color="var(--acc)" stop-opacity="0"/></linearGradient></defs><path d="M0 55 L25 48 L50 52 L80 36 L110 40 L140 26 L170 32 L200 18 L235 22 L265 10 L300 6 L300 70 L0 70Z" fill="url(#g)"/><path d="M0 55 L25 48 L50 52 L80 36 L110 40 L140 26 L170 32 L200 18 L235 22 L265 10 L300 6" fill="none" stroke="var(--acc)" stroke-width="2.5"/></svg>
-   <div class="kpis mono"><div class="kpi"><small>Win rate</small><b>[XX.X]%</b></div><div class="kpi"><small>Profit factor</small><b>[X.XX]</b></div><div class="kpi"><small>YTD</small><b class="up">+[XX.X]%</b></div></div>
-   <div class="fine" style="margin:0">Based on [N] broker-verified fills since [date].</div>
-  </div>
- </header>
+<div style="font-family: 'Instrument Sans', system-ui, sans-serif; color: #E8EDF3; background: #0B0E11; min-height: 100vh;">
+
+<header style="border-bottom: 1px solid #1C232C;">
+<nav aria-label="Main" style="max-width: 1240px; margin: 0 auto; padding: 18px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;">
+<a href="#top" style="display: flex; align-items: center; gap: 10px; color: #FFFFFF; font-weight: 700; font-size: 20px; letter-spacing: -0.02em;">
+<svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="6" fill="none" stroke="var(--acc)" stroke-width="2"></rect><path d="M6 17 L11 12 L14 15 L20 8" fill="none" stroke="var(--acc)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+Stockspot
+</a>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 28px; font-size: 15px;">
+<a href="#leaderboard">Leaderboard</a>
+<a href="#feed">Trade feed</a>
+<a href="#how">How it works</a>
+<a href="login.html">Log in</a>
+<a href="login.html#signup" style="background: var(--acc); color: #06140C; font-weight: 600; padding: 10px 18px; border-radius: 8px;">Get verified</a>
 </div>
-<div class="ticker" aria-hidden="true"><div class="mono" id="tk"></div></div>
-<div class="wrap">
- <div class="stats">
-  <div class="stat"><b class="mono">[X,XXX]</b><span>Verified traders</span></div>
-  <div class="stat"><b class="mono">[XX.XM]</b><span>Fills verified</span></div>
-  <div class="stat"><b class="mono">[XX]%</b><span>Median win rate</span></div>
-  <div class="stat"><b class="mono">[X,XXX]</b><span>Guru pages published</span></div>
- </div>
- <section>
-  <h2>Leaderboard</h2><p class="sub">Ranked on verified results only.</p>
-  <div class="card lb" style="padding:0">
-   <table class="mono"><thead><tr><th>#</th><th>Trader</th><th class="r">Win rate</th><th class="r hide-m">Trades</th><th class="r">30-day</th></tr></thead><tbody id="lb"></tbody></table>
-   <div class="gate"><div><b>Sign up to see the full leaderboard</b></div><a class="btn p" href="login.html#signup">Create free account</a></div>
-  </div>
- </section>
- <section>
-  <h2>Trade feed</h2><p class="sub">Every post can carry the fill that backs it up.</p>
-  <div class="feed">
-   <div class="card post"><div class="av">@</div><div><b>@[handle]</b> <span class="t">· [time] ago</span><div>Took [TICKER] long on the [setup] and scaled out into strength. Stop was [X]% away.</div><div class="fill mono"><span class="badge">✓ VERIFIED FILL</span>[TICKER] · [QTY] sh · $[ENTRY] → $[EXIT]</div></div></div>
-   <div class="card post"><div class="av">@</div><div><b>@[handle]</b> <span class="t">· [time] ago</span><div>Red day. Chased the first pullback and paid for it. Rule for tomorrow: smaller first trade.</div><div class="fill mono"><span class="badge">✓ VERIFIED FILL</span>[TICKER] · [QTY] sh · <span class="dn">-$[XX.XX]</span></div></div></div>
-   <div class="card post locked"><div class="av">🔒</div><div><b>@[handle]</b> <span class="t">· [time] ago</span><div class="blur">This post includes a verified fill. Sign up to see the entry, exit and size.</div><div class="fill mono"><span class="badge">✓ VERIFIED FILL</span><a href="login.html#signup" style="text-decoration:underline">Sign up to unlock</a></div></div></div>
-  </div>
- </section>
- <section>
-  <h2>How it works</h2><p class="sub">From broker to published page in three steps.</p>
-  <div class="steps">
-   <div class="card step"><div class="n">1</div><h3>Connect your broker</h3><p>Import your thinkorswim account statement today. Direct broker connection is coming soon.</p></div>
-   <div class="card step"><div class="n">2</div><h3>Get verified</h3><p>Verification matches your fills to broker records, so stats are proof, not a screenshot. Coming soon.</p></div>
-   <div class="card step"><div class="n">3</div><h3>AI builds your guru page</h3><p>Recaps, blog posts, newsletter, social posts and Instagram carousels from your real trades.</p></div>
-  </div>
- </section>
- <footer>Stockspot is a content and journaling tool, not a broker, investment adviser or signal service. Trading involves substantial risk of loss. Past performance does not guarantee future results. Results shown are self-reported unless marked verified. Nothing here is financial advice. Sample names and numbers on this page are placeholders.</footer>
+</nav>
+</header>
+
+<div style="border-bottom: 1px solid #1C232C; background: #0E1217; overflow-x: auto;">
+<div style="display: flex; gap: 36px; padding: 10px 24px; font-family: 'JetBrains Mono', monospace; font-size: 13px; white-space: nowrap; max-width: 1240px; margin: 0 auto;">
+<span style="color: #8A94A3;">LIVE</span>
+<span>SPY <span style="color: #3BE08A;">[+0.00%]</span></span>
+<span>QQQ <span style="color: #3BE08A;">[+0.00%]</span></span>
+<span>NVDA <span style="color: #FF7A7A;">[-0.00%]</span></span>
+<span>TSLA <span style="color: #3BE08A;">[+0.00%]</span></span>
+<span>AAPL <span style="color: #FF7A7A;">[-0.00%]</span></span>
+<span style="color: #8A94A3;">Most-traded by verified members today</span>
 </div>
-<div class="tweaks" aria-label="Accent color"><span>Accent</span>
- <button style="background:#22c55e" data-a="" aria-label="Green"></button><button style="background:#3b82f6" data-a="blue" aria-label="Blue"></button><button style="background:#f59e0b" data-a="amber" aria-label="Amber"></button><button style="background:#a78bfa" data-a="purple" aria-label="Purple"></button></div>
+</div>
+
+<section id="top" style="max-width: 1240px; margin: 0 auto; padding: 88px 24px 72px; display: flex; flex-wrap: wrap; gap: 56px; align-items: center;">
+<div style="flex: 1 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 24px;">
+<div style="display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; border: 1px solid #26303B; border-radius: 999px; padding: 6px 14px; font-size: 13px; color: #B7C0CC;">
+<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L20 6 V12 C20 17 16.5 20.5 12 22 C7.5 20.5 4 17 4 12 V6 Z" fill="none" stroke="var(--acc)" stroke-width="2"></path><path d="M8.5 12 L11 14.5 L15.5 10" fill="none" stroke="var(--acc)" stroke-width="2" stroke-linecap="round"></path></svg>
+Broker-verified track records only
+</div>
+<h1 style="margin: 0; font-size: clamp(40px, 6vw, 68px); line-height: 1.02; letter-spacing: -0.035em; font-weight: 700;">Stop following screenshots.<br>Follow <span style="color: var(--acc);">verified</span> traders.</h1>
+<p style="margin: 0; font-size: 19px; line-height: 1.55; color: #B7C0CC; max-width: 540px;">Every P&amp;L on Stockspot is pulled straight from the broker. See real win rates, real drawdowns and every trade — then build your own verified page in minutes.</p>
+<form id="sf" style="display: flex; flex-wrap: wrap; gap: 10px; max-width: 520px;">
+<label for="em" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Email address</label>
+<input id="em" type="email" placeholder="you@email.com" style="flex: 1 1 240px; min-width: 0; height: 52px; padding: 0 16px; border-radius: 10px; border: 1px solid #2A3440; background: #12171D; color: #E8EDF3; font-size: 16px; font-family: inherit;">
+<button type="submit" style="height: 52px; padding: 0 24px; border-radius: 10px; border: none; background: var(--acc); color: #06140C; font-weight: 700; font-size: 16px; font-family: inherit; cursor: pointer;">Start free</button>
+</form>
+<p style="margin: 0; font-size: 13px; color: #8A94A3;">Free to start. Import your thinkorswim statement today; broker verification is coming soon.</p>
+</div>
+
+<div style="flex: 1 1 400px; min-width: 0; max-width: 520px;">
+<div style="background: #12171D; border: 1px solid #222B35; border-radius: 18px; padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+<div style="display: flex; align-items: center; gap: 12px;">
+<div style="width: 44px; height: 44px; border-radius: 50%; background: #1E2A36; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--acc);">TR</div>
+<div>
+<div style="font-weight: 600; font-size: 16px;">@[trader_handle]</div>
+<div style="font-size: 13px; color: #8A94A3;">Intraday momentum · Long &amp; short</div>
+</div>
+</div>
+<span style="font-size: 12px; font-weight: 600; color: var(--acc); border: 1px solid var(--acc); border-radius: 999px; padding: 4px 10px;">VERIFIED</span>
+</div>
+<div>
+<div style="font-size: 13px; color: #8A94A3;">YTD P&amp;L</div>
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 40px; font-weight: 700; color: #3BE08A; letter-spacing: -0.02em;">+[XX.X]%</div>
+</div>
+<svg viewBox="0 0 460 120" width="100%" height="120" role="img" aria-label="Sample equity curve trending upward"><path d="M0 100 L30 96 L60 98 L90 84 L120 88 L150 70 L180 74 L210 58 L240 64 L270 48 L300 52 L330 36 L360 40 L390 26 L420 30 L460 14 L460 120 L0 120 Z" fill="#3BE08A" fill-opacity="0.1"></path><path d="M0 100 L30 96 L60 98 L90 84 L120 88 L150 70 L180 74 L210 58 L240 64 L270 48 L300 52 L330 36 L360 40 L390 26 L420 30 L460 14" fill="none" stroke="#3BE08A" stroke-width="2.5"></path></svg>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;">
+<div style="background: #0E1217; border-radius: 10px; padding: 12px;"><div style="font-size: 12px; color: #8A94A3;">Win rate</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700;">[XX]%</div></div>
+<div style="background: #0E1217; border-radius: 10px; padding: 12px;"><div style="font-size: 12px; color: #8A94A3;">Trades</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700;">[XXX]</div></div>
+<div style="background: #0E1217; border-radius: 10px; padding: 12px;"><div style="font-size: 12px; color: #8A94A3;">Max DD</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: #FF7A7A;">-[X.X]%</div></div>
+</div>
+<div style="font-size: 12px; color: #8A94A3;">Synced from broker · updated [time]</div>
+</div>
+</div>
+</section>
+
+<section style="border-top: 1px solid #1C232C; border-bottom: 1px solid #1C232C; background: #0E1217;">
+<div style="max-width: 1240px; margin: 0 auto; padding: 28px 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; text-align: center;">
+<div><div style="font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700;">[X,XXX]</div><div style="font-size: 14px; color: #8A94A3;">Verified traders</div></div>
+<div><div style="font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700;">[XXXk]</div><div style="font-size: 14px; color: #8A94A3;">Trades verified</div></div>
+<div><div style="font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700;">0</div><div style="font-size: 14px; color: #8A94A3;">Edited screenshots</div></div>
+</div>
+</section>
+
+<section id="leaderboard" style="max-width: 1240px; margin: 0 auto; padding: 88px 24px 40px; display: flex; flex-direction: column; gap: 28px;">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px;">
+<div>
+<h2 style="margin: 0 0 8px; font-size: 38px; letter-spacing: -0.03em;">This month's verified leaders</h2>
+<p style="margin: 0; color: #B7C0CC; font-size: 17px;">Ranked by real returns, with drawdowns shown right next to them.</p>
+</div>
+<div style="display: flex; gap: 8px;">
+<button type="button" style="height: 40px; padding: 0 16px; border-radius: 8px; border: 1px solid var(--acc); background: transparent; color: var(--acc); font-family: inherit; font-weight: 600;">30D</button>
+<button type="button" style="height: 40px; padding: 0 16px; border-radius: 8px; border: 1px solid #2A3440; background: transparent; color: #B7C0CC; font-family: inherit;">YTD</button>
+<button type="button" style="height: 40px; padding: 0 16px; border-radius: 8px; border: 1px solid #2A3440; background: transparent; color: #B7C0CC; font-family: inherit;">All time</button>
+</div>
+</div>
+<div style="overflow-x: auto; border: 1px solid #1C232C; border-radius: 14px;">
+<table style="width: 100%; min-width: 720px; border-collapse: collapse; font-size: 15px;">
+<thead>
+<tr style="text-align: left; color: #8A94A3; font-size: 13px; background: #0E1217;">
+<th style="padding: 14px 20px; font-weight: 500;">#</th>
+<th style="padding: 14px 20px; font-weight: 500;">Trader</th>
+<th style="padding: 14px 20px; font-weight: 500;">Style</th>
+<th style="padding: 14px 20px; font-weight: 500; text-align: right;">Return</th>
+<th style="padding: 14px 20px; font-weight: 500; text-align: right;">Win rate</th>
+<th style="padding: 14px 20px; font-weight: 500; text-align: right;">Max DD</th>
+<th style="padding: 14px 20px;"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Action</span></th>
+</tr>
+</thead>
+<tbody style="font-family: 'JetBrains Mono', monospace;">
+<tr style="border-top: 1px solid #1C232C;"><td style="padding: 16px 20px; color: #8A94A3;">1</td><td style="padding: 16px 20px; font-family: 'Instrument Sans', sans-serif; font-weight: 600;">@[handle_one]</td><td style="padding: 16px 20px; font-family: 'Instrument Sans', sans-serif; color: #B7C0CC;">Momentum</td><td style="padding: 16px 20px; text-align: right; color: #3BE08A;">+[XX.X]%</td><td style="padding: 16px 20px; text-align: right;">[XX]%</td><td style="padding: 16px 20px; text-align: right; color: #FF7A7A;">-[X.X]%</td><td style="padding: 16px 20px; text-align: right;"><a href="login.html#signup" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; color: var(--acc);">Follow</a></td></tr>
+<tr style="border-top: 1px solid #1C232C;"><td style="padding: 16px 20px; color: #8A94A3;">2</td><td style="padding: 16px 20px; font-family: 'Instrument Sans', sans-serif; font-weight: 600;">@[handle_two]</td><td style="padding: 16px 20px; font-family: 'Instrument Sans', sans-serif; color: #B7C0CC;">Short bias</td><td style="padding: 16px 20px; text-align: right; color: #3BE08A;">+[XX.X]%</td><td style="padding: 16px 20px; text-align: right;">[XX]%</td><td style="padding: 16px 20px; text-align: right; color: #FF7A7A;">-[X.X]%</td><td style="padding: 16px 20px; text-align: right;"><a href="login.html#signup" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; color: var(--acc);">Follow</a></td></tr>
+<tr style="border-top: 1px solid #1C232C;"><td style="padding: 16px 20px; color: #8A94A3;">3</td><td style="padding: 16px 20px; font-family: 'Instrument Sans', sans-serif; font-weight: 600;">@[handle_three]</td><td style="padding: 16px 20px; font-family: 'Instrument Sans', sans-serif; color: #B7C0CC;">Swing</td><td style="padding: 16px 20px; text-align: right; color: #3BE08A;">+[XX.X]%</td><td style="padding: 16px 20px; text-align: right;">[XX]%</td><td style="padding: 16px 20px; text-align: right; color: #FF7A7A;">-[X.X]%</td><td style="padding: 16px 20px; text-align: right;"><a href="login.html#signup" style="font-family: 'Instrument Sans', sans-serif; font-weight: 600; color: var(--acc);">Follow</a></td></tr>
+<tr style="border-top: 1px solid #1C232C; filter: blur(4px); opacity: 0.6;" aria-hidden="true"><td style="padding: 16px 20px;">4</td><td style="padding: 16px 20px;">@hidden_trader</td><td style="padding: 16px 20px;">Options</td><td style="padding: 16px 20px; text-align: right;">+00.0%</td><td style="padding: 16px 20px; text-align: right;">00%</td><td style="padding: 16px 20px; text-align: right;">-0.0%</td><td style="padding: 16px 20px;"></td></tr>
+<tr style="border-top: 1px solid #1C232C; filter: blur(4px); opacity: 0.4;" aria-hidden="true"><td style="padding: 16px 20px;">5</td><td style="padding: 16px 20px;">@hidden_trader</td><td style="padding: 16px 20px;">Scalping</td><td style="padding: 16px 20px; text-align: right;">+00.0%</td><td style="padding: 16px 20px; text-align: right;">00%</td><td style="padding: 16px 20px; text-align: right;">-0.0%</td><td style="padding: 16px 20px;"></td></tr>
+</tbody>
+</table>
+</div>
+<a href="login.html#signup" style="align-self: center; font-weight: 600; color: var(--acc); font-size: 16px; padding: 12px;">Sign up free to see the full leaderboard →</a>
+</section>
+
+<section id="feed" style="max-width: 1240px; margin: 0 auto; padding: 48px 24px 88px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center;">
+<div style="flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 16px;">
+<h2 style="margin: 0; font-size: 38px; letter-spacing: -0.03em;">See the trade, not just the brag.</h2>
+<p style="margin: 0; color: #B7C0CC; font-size: 17px; line-height: 1.6;">Every post links to the actual fill — entry, exit, size and the chart. Winners and losers both show up, so you know who is actually good.</p>
+</div>
+<div style="flex: 1 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 14px;">
+<div style="background: #12171D; border: 1px solid #222B35; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+<div style="display: flex; justify-content: space-between; gap: 12px; font-size: 14px;"><span style="font-weight: 600;">@[trader_handle] <span style="color: var(--acc); font-size: 12px; margin-left: 6px;">VERIFIED FILL</span></span><span style="color: #8A94A3;">[time] ago</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: 20px; font-family: 'JetBrains Mono', monospace; font-size: 14px;">
+<span>[TICKER] · LONG</span><span style="color: #8A94A3;">In [$0.00]</span><span style="color: #8A94A3;">Out [$0.00]</span><span style="color: #3BE08A;">+[X.X]%</span>
+</div>
+<p style="margin: 0; color: #C9D1DC; font-size: 15px; line-height: 1.5;">[Trader's note on the setup — why they took it and how they managed the exit.]</p>
+</div>
+<div style="position: relative; border-radius: 14px; overflow: hidden;">
+<div style="background: #12171D; border: 1px solid #222B35; border-radius: 14px; padding: 20px; filter: blur(5px);" aria-hidden="true">
+<div style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">@hidden_trader · VERIFIED FILL</div>
+<div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; margin-bottom: 12px;">XXXX · SHORT · In 00.00 · Out 00.00 · +0.0%</div>
+<div style="height: 60px; background: #1A222B; border-radius: 8px;"></div>
+</div>
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(11,14,17,0.55);">
+<a href="login.html#signup" style="display: inline-flex; align-items: center; gap: 8px; background: var(--acc); color: #06140C; font-weight: 700; padding: 12px 20px; border-radius: 10px;">
+<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="#06140C" stroke-width="2"></rect><path d="M8 11 V7 a4 4 0 0 1 8 0 V11" fill="none" stroke="#06140C" stroke-width="2"></path></svg>
+Unlock the live feed
+</a>
+</div>
+</div>
+</div>
+</section>
+
+<section id="how" style="background: #0E1217; border-top: 1px solid #1C232C; border-bottom: 1px solid #1C232C;">
+<div style="max-width: 1240px; margin: 0 auto; padding: 88px 24px; display: flex; flex-direction: column; gap: 40px;">
+<h2 style="margin: 0; font-size: 38px; letter-spacing: -0.03em; text-align: center;">Your verified page, built for you</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
+<div style="background: #12171D; border: 1px solid #222B35; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+<div style="font-family: 'JetBrains Mono', monospace; color: var(--acc); font-size: 14px;">01</div>
+<h3 style="margin: 0; font-size: 21px;">Connect your broker</h3>
+<p style="margin: 0; color: #B7C0CC; line-height: 1.55;">Import your trade history from thinkorswim and other brokers. Read-only — we never touch your account.</p>
+</div>
+<div style="background: #12171D; border: 1px solid #222B35; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+<div style="font-family: 'JetBrains Mono', monospace; color: var(--acc); font-size: 14px;">02</div>
+<h3 style="margin: 0; font-size: 21px;">Get your verified badge</h3>
+<p style="margin: 0; color: #B7C0CC; line-height: 1.55;">Your P&amp;L, win rate and drawdown are calculated from real fills and locked in. No edits, no cherry-picking.</p>
+</div>
+<div style="background: #12171D; border: 1px solid #222B35; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+<div style="font-family: 'JetBrains Mono', monospace; color: var(--acc); font-size: 14px;">03</div>
+<h3 style="margin: 0; font-size: 21px;">AI builds your guru page</h3>
+<p style="margin: 0; color: #B7C0CC; line-height: 1.55;">Turn your trades, notes and setups into a public profile, blog, newsletter and social posts — automatically.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section style="max-width: 1240px; margin: 0 auto; padding: 96px 24px; display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center;">
+<h2 style="margin: 0; font-size: clamp(32px, 4.5vw, 52px); letter-spacing: -0.035em; max-width: 760px;">Your record is your reputation. Make it verified.</h2>
+<p style="margin: 0; color: #B7C0CC; font-size: 18px;">Free to join. Verify your first trades in under five minutes.</p>
+<a href="login.html#signup" style="background: var(--acc); color: #06140C; font-weight: 700; font-size: 17px; padding: 16px 32px; border-radius: 10px; margin-top: 8px;">Get verified free</a>
+</section>
+
+<footer id="footnote" style="border-top: 1px solid #1C232C;">
+<div style="max-width: 1240px; margin: 0 auto; padding: 36px 24px; display: flex; flex-direction: column; gap: 16px; font-size: 13px; color: #8A94A3;">
+<div style="display: flex; flex-wrap: wrap; gap: 24px;"><a href="#footnote">About</a><a href="#footnote">How verification works</a><a href="#footnote">Privacy</a><a href="#footnote">Terms</a><a href="#footnote">Contact</a></div>
+<p style="margin: 0; line-height: 1.6; max-width: 900px;">Stockspot is not a broker-dealer or investment adviser. Content shared by traders is for informational purposes only and is not investment advice. Past performance does not guarantee future results. Sample names and numbers on this page are placeholders, and broker connection and verification are coming soon.</p>
+</div>
+</footer>
+
+</div>
+
+<div class="tweaks" aria-label="Accent color"><span>Accent</span><button style="background:#3BE08A" data-a="" aria-label="Green"></button><button style="background:#4DA3FF" data-a="blue" aria-label="Blue"></button><button style="background:#F5B841" data-a="amber" aria-label="Amber"></button><button style="background:#B58CFF" data-a="purple" aria-label="Purple"></button></div>
 <script>
 (function(){
- var T=["[TKR] $[XXX.XX] +[X.X]%","[TKR] $[XXX.XX] -[X.X]%","[TKR] $[XX.XX] +[X.X]%","[TKR] $[X,XXX.XX] +[X.X]%","[TKR] $[XX.XX] -[X.X]%","[TKR] $[XXX.XX] +[X.X]%"];
- var h=T.map(function(s,i){return '<span class="'+(s.indexOf("-[")>-1?'dn':'up')+'">'+s+'</span>'}).join("");
- document.getElementById("tk").innerHTML=h+h+h+h;
- var rows="";for(var i=1;i<=7;i++){rows+='<tr'+(i>3?' class="blur"':'')+'><td>'+i+'</td><td>@[handle'+i+'] <span class="up">✓</span></td><td class="r">[XX.X]%</td><td class="r hide-m">[XXX]</td><td class="r up">+[XX.X]%</td></tr>'}
- document.getElementById("lb").innerHTML=rows;
+ var r=document.documentElement;
  document.getElementById("sf").addEventListener("submit",function(e){e.preventDefault();location.href="login.html?email="+encodeURIComponent(document.getElementById("em").value)+"#signup"});
- try{var a=localStorage.getItem("ss-acc");if(a!==null)document.documentElement.setAttribute("data-acc",a)}catch(e){}
- document.querySelector(".tweaks").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;document.documentElement.setAttribute("data-acc",b.dataset.a);try{localStorage.setItem("ss-acc",b.dataset.a)}catch(x){}});
+ try{var a=localStorage.getItem("ss-acc");if(a!==null)r.setAttribute("data-acc",a)}catch(e){}
+ document.querySelector(".tweaks").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;r.setAttribute("data-acc",b.dataset.a);try{localStorage.setItem("ss-acc",b.dataset.a)}catch(x){}});
 })();
 </script>
 </body>
