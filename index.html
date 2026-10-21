@@ -788,7 +788,7 @@ async function showPage(pid){var pg=pages[pid];if(!pg){showStudio();return}
  $("home").hidden=true;$("navhome").classList.remove("on");$("studio").hidden=true;$("entry").hidden=true;$("navstudio").classList.remove("on");
  var el=$("pagev");el.hidden=false;
  var par=pg.parent&&pages[pg.parent],kids=par?[]:kidsOf(pid);
- el.innerHTML=(par?'<button class="crumb" type="button" data-go="'+esc(par.id)+'">&larr; '+esc(par.name)+'</button>':'')+'<div class="phead"><input id="pgname" class="pgname" maxlength="40" aria-label="'+(par?'Channel':'Page')+' name"><button id="pgset" type="button" aria-label="Options">Options &hellip;</button></div>'+
+ el.innerHTML=(par?'<button class="crumb" type="button" data-go="'+esc(par.id)+'">&larr; '+esc(par.name)+'</button>':'')+'<div class="phead"><input id="pgname" class="pgname" maxlength="40" aria-label="'+(par?'Channel':'Page')+' name"><button id="pgedit" type="button" class="primary">Edit</button><button id="pgset" type="button" aria-label="Options">Options &hellip;</button></div>'+
   (par?'':'<h2 class="chhead">Channels</h2><div class="chlist">'+(kids.length?kids.map(function(k){return '<button class="chcard" type="button" data-go="'+esc(k.id)+'"><span># '+esc(k.name)+'</span><span class="chev">&rsaquo;</span></button>'}).join(""):'<p class="hint" style="margin:0">No channels yet. Chat and posts live inside channels, so add one to get started.</p>')+'</div><div class="chips"><input id="chname" maxlength="40" placeholder="New channel name" aria-label="New channel name"><button class="primary" type="button" id="chadd">Add channel</button></div>')+
   '<div id="feed" class="feed"></div>'+
   (par?'<p class="hint" id="commnote"></p>'+
@@ -855,16 +855,16 @@ function openPageSettings(pid){var pg=pages[pid];if(!pg)return;var old=$("pset")
  var kids=pg.parent?[]:kidsOf(pid).length,d=document.createElement("div");d.id="pset";d.className="psetbg";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label","Settings for "+pg.name);
  d.innerHTML='<div class="pset"><h2>'+esc(pg.name)+' <span class="pill">'+(pg.parent?"Channel":"Page")+'</span></h2>'+
   '<label>Name<input id="ps-name" maxlength="40"></label>'+
-  '<label class="chk"><input type="checkbox" id="ps-priv"> Private: only I can post here</label>'+
-  '<label class="chk"><input type="checkbox" id="ps-fpost"> Let followers post here</label>'+
-  '<p class="hint" style="margin:0 0 8px">Private: only you see this channel. Turn Private off to open a public chat room in this channel that anyone can read. Tick \"Let followers post here\" to let people who follow you chat too. Public channels show your posts and pictures to anyone signed in.</p>'+
+  (pg.parent?'<label class="chk"><input type="checkbox" id="ps-priv"> Private: only I can post here</label>'+
+  '<label class="chk"><input type="checkbox" id="ps-fpost"> Let followers post here</label>':'<p class="hint" style="margin:0 0 8px">Privacy is set on each channel inside this category. Open a channel and tap Edit to make it public.</p>')+
+  (pg.parent?'<p class="hint" style="margin:0 0 8px">Private: only you see this channel. Turn Private off to open a public chat room in this channel that anyone can read. Tick \"Let followers post here\" to let people who follow you chat too. Public channels show your posts and pictures to anyone signed in.</p>':'')+
   '<div class="row"><button class="primary" id="ps-close" type="button">Done</button><button id="ps-del" type="button">Delete '+(pg.parent?"channel":"page")+'</button></div></div>';
  document.body.appendChild(d);var prev=document.activeElement;
  var nm=d.querySelector("#ps-name"),pv=d.querySelector("#ps-priv"),fp=d.querySelector("#ps-fpost");
- nm.value=pg.name;pv.checked=pg.priv!==false;fp.checked=!!pg.fpost;fp.disabled=pv.checked;
+ nm.value=pg.name;if(pv){pv.checked=pg.priv!==false;fp.checked=!!pg.fpost;fp.disabled=pv.checked}
  function save(){var p=pages[pid];if(!p)return;var v=nm.value.trim()||p.name;
-  putPage(Object.assign({},p,{name:v,priv:pv.checked,fpost:pv.checked?false:fp.checked})).then(function(){fp.checked=!!pages[pid].fpost;fp.disabled=pv.checked;renderSide();if(curPage===pid){var h=$("pgname");if(h)h.value=v;commNote()}},function(){toast("Could not save")})}
- nm.onchange=save;pv.onchange=save;fp.onchange=save;
+  putPage(Object.assign({},p,{name:v,priv:pv?pv.checked:p.priv,fpost:pv?(pv.checked?false:fp.checked):p.fpost})).then(function(){if(pv){fp.checked=!!pages[pid].fpost;fp.disabled=pv.checked}renderSide();if(curPage===pid){var h=$("pgname");if(h)h.value=v;commNote()}},function(){toast("Could not save")})}
+ nm.onchange=save;if(pv){pv.onchange=save;fp.onchange=save}
  function close(){d.remove();document.removeEventListener("keydown",esc2);try{prev&&prev.focus()}catch(e){}}
  function esc2(e){if(e.key==="Escape")close()}document.addEventListener("keydown",esc2);
  d.addEventListener("click",function(e){if(e.target===d)close()});
@@ -1075,6 +1075,7 @@ $("pagev").addEventListener("click",function(ev){var b=ev.target.closest&&ev.tar
  if(b.dataset.rm!=null&&b.dataset.rm!==""){pend.splice(+b.dataset.rm,1);renderPrev();return}
  if(b.dataset.go&&pages[b.dataset.go]){showPage(b.dataset.go);return}
  if(b.id==="chadd"){createChannel(curPage,$("chname").value);return}
+ if(b.id==="pgedit"){openPageSettings(curPage);return}
  if(b.id==="pgset"){openPageMenu(curPage);return}
  if(b.dataset.del){var pid=curPage,id2=b.dataset.del;confirmTwice(b,"Delete?",async function(){try{await delPost(pid,id2);feedPosts=feedPosts.filter(function(p){return p.id!==id2});if(curPage===pid)renderFeed()}catch(e){toast("Could not delete")}})}});
 $("pagev").addEventListener("change",function(ev){var t=ev.target;
