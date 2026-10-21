@@ -182,6 +182,23 @@
     pin: async function (pid, pin) { await ready; var r = await sb.rpc('ss_pin_post', { pid: pid, pin: !!pin }); if (r.error) throw r.error; },
     mute: async function (id, on) { await ready; var r = on ? await sb.from('ss_mutes').upsert({ user_id: uid, target_id: id }) : await sb.from('ss_mutes').delete().eq('user_id', uid).eq('target_id', id); if (r.error) throw r.error; },
     block: async function (id, on) { await ready; var r = on ? await sb.from('ss_blocks').upsert({ user_id: uid, target_id: id }) : await sb.from('ss_blocks').delete().eq('user_id', uid).eq('target_id', id); if (r.error) throw r.error; },
+    followInfo: async function (id) { await ready;
+      var a = await sb.from('ss_follows').select('follower_id', { count: 'exact', head: true }).eq('followee_id', id);
+      var b = await sb.from('ss_follows').select('followee_id', { count: 'exact', head: true }).eq('follower_id', id);
+      var me = id === uid ? null : await sb.from('ss_follows').select('follower_id').eq('follower_id', uid).eq('followee_id', id).maybeSingle();
+      return { followers: a.count || 0, following: b.count || 0, iFollow: !!(me && me.data) }; },
+    follow: async function (id, on) { await ready;
+      var r = on ? await sb.from('ss_follows').insert({ follower_id: uid, followee_id: id }) : await sb.from('ss_follows').delete().eq('follower_id', uid).eq('followee_id', id);
+      if (r.error && r.error.code !== '23505') throw r.error; },
+    followList: async function (id, kind) { await ready; var col = kind === 'followers' ? 'follower_id' : 'followee_id', by = kind === 'followers' ? 'followee_id' : 'follower_id';
+      var r = await sb.from('ss_follows').select(col).eq(by, id).order('created_at', { ascending: false }).limit(200); if (r.error) throw r.error;
+      var ids = (r.data || []).map(function (x) { return x[col]; }), n = await namesFor(ids); return ids.map(function (i) { return pickName(n, i); }); },
+    feed: async function () { await ready;
+      var f = await sb.from('ss_follows').select('followee_id').eq('follower_id', uid).limit(500); if (f.error) throw f.error;
+      var ids = (f.data || []).map(function (x) { return x.followee_id; }); if (!ids.length) return { following: 0, posts: [] };
+      var r = await sb.from('ss_wall_posts').select('*').in('author_id', ids).is('repost_of', null).order('created_at', { ascending: false }).limit(80); if (r.error) throw r.error;
+      var rows = (r.data || []).filter(function (p) { return p.owner_id === p.author_id; }).slice(0, 30), n = await namesFor(rows.map(function (p) { return p.author_id; }));
+      return { following: ids.length, posts: rows.map(function (p) { return { id: p.id, author: pickName(n, p.author_id), text: p.text, imgs: p.imgs || [], ts: new Date(p.created_at).getTime() }; }) }; },
     hidden: async function () { await ready; var m = await sb.from('ss_mutes').select('target_id'), b = await sb.from('ss_blocks').select('target_id');
       var mi = (m.data || []).map(function (x) { return x.target_id; }), bi = (b.data || []).map(function (x) { return x.target_id; }), n = await namesFor(mi.concat(bi));
       return { mutes: mi.map(function (i) { return pickName(n, i); }), blocks: bi.map(function (i) { return pickName(n, i); }) }; },
