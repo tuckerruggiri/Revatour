@@ -758,10 +758,10 @@ async function addPost(pid,post){
  if(post.imgs&&post.imgs.length)rec.imgs=post.imgs;
  if(store.db)await store.db.doc("pages/"+pid+"/posts/"+id).set(rec);
  else{var o=lsGet()||{pages:{}},pg=o.pages[pid];if(!pg&&pid==="__wall"){pg=o.pages[pid]={posts:[]}}if(!pg)throw new Error("missing");pg.posts=pg.posts||[];pg.posts.push(Object.assign({id:id},rec));lsPut(o)}
- return Object.assign({id:id},rec)}
+ schedMirror(pid);return Object.assign({id:id},rec)}
 async function delPost(pid,id){
  if(store.db)await store.db.doc("pages/"+pid+"/posts/"+id).delete();
- else{var o=lsGet();if(o&&o.pages[pid]){o.pages[pid].posts=(o.pages[pid].posts||[]).filter(function(p){return p.id!==id});lsPut(o)}}}
+ else{var o=lsGet();if(o&&o.pages[pid]){o.pages[pid].posts=(o.pages[pid].posts||[]).filter(function(p){return p.id!==id});lsPut(o)}}schedMirror(pid)}
 async function delPage(pid){
  for(var k in pages){if(pages[k].parent===pid)await delPage(k)}
  if(store.db){var s=await store.db.collection("pages/"+pid+"/posts").get();
@@ -850,14 +850,14 @@ function openPageMenu(pid){var pg=pages[pid];if(!pg)return;closeMenu();var cat=!
   if(m==="del"){confirmTwice(b,"Tap again to delete",async function(){var par=pg2.parent;try{await delPage(pid);close();if(!pages[curPage]){if(par&&pages[par])showPage(par);else showStudio()}else renderSide();toast("Deleted")}catch(x){toast("Could not delete")}})}})}
 function commNote(){var el=$("commnote"),pg=pages[curPage];if(!el||!pg)return;
  if(!pg.parent){el.textContent="";return}
- el.textContent=pg.priv!==false?"Private: only you can see and post here.":"Your posts here stay private to you. A public chat for followers shows below."}
+ el.textContent=pg.priv!==false?"Private: only you can see and post here.":"Public: anyone signed in can see your posts and pictures in this channel, and the chat below."}
 function openPageSettings(pid){var pg=pages[pid];if(!pg)return;var old=$("pset");if(old)old.remove();
  var kids=pg.parent?[]:kidsOf(pid).length,d=document.createElement("div");d.id="pset";d.className="psetbg";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label","Settings for "+pg.name);
  d.innerHTML='<div class="pset"><h2>'+esc(pg.name)+' <span class="pill">'+(pg.parent?"Channel":"Page")+'</span></h2>'+
   '<label>Name<input id="ps-name" maxlength="40"></label>'+
   '<label class="chk"><input type="checkbox" id="ps-priv"> Private: only I can post here</label>'+
   '<label class="chk"><input type="checkbox" id="ps-fpost"> Let followers post here</label>'+
-  '<p class="hint" style="margin:0 0 8px">Private: only you see this channel. Turn Private off to open a public chat room in this channel that anyone can read. Tick \"Let followers post here\" to let people who follow you chat too. Your own posts here always stay private.</p>'+
+  '<p class="hint" style="margin:0 0 8px">Private: only you see this channel. Turn Private off to open a public chat room in this channel that anyone can read. Tick \"Let followers post here\" to let people who follow you chat too. Public channels show your posts and pictures to anyone signed in.</p>'+
   '<div class="row"><button class="primary" id="ps-close" type="button">Done</button><button id="ps-del" type="button">Delete '+(pg.parent?"channel":"page")+'</button></div></div>';
  document.body.appendChild(d);var prev=document.activeElement;
  var nm=d.querySelector("#ps-name"),pv=d.querySelector("#ps-priv"),fp=d.querySelector("#ps-fpost");
@@ -1147,9 +1147,17 @@ async function smartSearch(v){var q=String(v||"").trim();if(!q)return;
 function lookupTicker(v){var t=String(v||"").replace(/^\$/,"").trim().toUpperCase();if(!/^[A-Z]{1,5}(\.[A-Z])?$/.test(t)){toast("Enter a ticker like $TSLA")}else showTicker(t)}
 var chMap={},syncT=0,syncing=null,chat=null,chatTimer=0;
 function schedSync(){clearTimeout(syncT);syncT=setTimeout(function(){syncPub()},600)}
+var mirT={};
+function schedMirror(pid){clearTimeout(mirT[pid]);mirT[pid]=setTimeout(function(){mirrorChannel(pid)},900)}
+async function mirrorChannel(pid){var So=S(),pg=pages[pid];if(!So||!So.mirrorPosts||!pg||!pg.parent||pg.priv!==false)return;
+ try{if(syncing)await syncing;var cid=chMap[pid];if(!cid)return;var L=await loadPosts(pid);
+  var out=L.map(function(p){var src=(p.imgs&&p.imgs.length)?p.imgs:((p.src||p.aid)?[{src:p.src,aid:p.aid}]:[]);
+   var imgs=src.map(function(m){var u=m.src||(m.aid?blobUrl(m.aid):"");return /^https?:\/\//.test(u)?{src:u}:null}).filter(Boolean);return {key:p.id,text:p.text||"",imgs:imgs,ts:p.ts}});
+  await So.mirrorPosts(cid,out)}catch(e){}}
+function mirrorAll(){Object.keys(pages).forEach(function(k){if(pages[k].parent&&pages[k].priv===false)mirrorChannel(k)})}
 function syncPub(){var So=S();if(!So||!So.syncChannels)return Promise.resolve();
  var list=[];Object.keys(pages).forEach(function(k){var p=pages[k];if(p.parent&&pages[p.parent]&&p.priv===false)list.push({page_id:k,name:p.name,parent_name:pages[p.parent].name,fpost:!!p.fpost})});
- syncing=So.syncChannels(list).then(function(m){chMap=m||{};return chMap}).catch(function(){return chMap});return syncing}
+ syncing=So.syncChannels(list).then(function(m){chMap=m||{};setTimeout(mirrorAll,50);return chMap}).catch(function(){return chMap});return syncing}
 function chatHTML(canPost,note){return '<h2 class="chhead">Chat</h2>'+(note?'<p class="hint" style="margin:0 0 8px" id="chnote">'+note+'</p>':'')+'<div id="chatlist" class="chatlist" aria-live="polite"><p class="hint">Loading...</p></div>'+
  (canPost?'<div class="row" style="margin:8px 0 0"><input id="chatin" maxlength="2000" placeholder="Message this channel. Use $TSLA for tickers." aria-label="Message this channel" style="flex:1;min-width:0"><button class="primary" id="chatsend" type="button">Send</button></div>':'')}
 async function loadChat(keepScroll){var So=S();if(!So||!chat||!$("chatlist"))return;var cid=chat.cid,el=$("chatlist");
@@ -1160,15 +1168,17 @@ async function loadChat(keepScroll){var So=S();if(!So||!chat||!$("chatlist"))ret
 function startChat(cid,mine){chat={cid:cid,mine:!!mine};clearInterval(chatTimer);loadChat();chatTimer=setInterval(function(){if(!chat||!$("chatlist")||document.hidden){if(!$("chatlist")){clearInterval(chatTimer);chat=null}return}loadChat(true)},8000)}
 async function chatSend(){var So=S(),i=$("chatin");if(!So||!i||!chat)return;var t=i.value.trim();if(!t)return;var b=$("chatsend");if(b)b.disabled=true;
  try{await So.sendMsg(chat.cid,t);i.value="";await loadChat()}catch(e){toast("Could not send. You may need to follow this trader first.")}finally{if(b)b.disabled=false;i.focus()}}
-function chanNote(pg){return pg.fpost?"Public: your followers can chat here.":"Public: followers can read the chat but not post."}
+function chanNote(pg){return pg.fpost?"Public: everyone can see your posts here. Your followers can chat.":"Public: everyone can see your posts here. Only you can chat."}
 async function openChannel(id){var So=S();if(!So)return;var c=null;try{c=await So.channelInfo(id)}catch(e){}
  if(!c){toast("That channel is not available");return}
  var pc=$("pgchat");if(pc)pc.innerHTML="";
  hideViews();var el=$("profilev");el.hidden=false;
  var canPost=c.mine||(c.fpost&&c.iFollow),note=c.mine?"This is your public channel.":(c.fpost?(c.iFollow?"You can chat here because you follow @"+esc(c.owner.username)+".":"Follow @"+esc(c.owner.username)+" to chat here."):"Read only. Only @"+esc(c.owner.username)+" can post here.");
  el.innerHTML='<button class="crumb" type="button" data-backprof="'+esc(c.owner.username)+'">&larr; @'+esc(c.owner.username)+'</button><h1># '+esc(c.name)+'</h1><p class="sub">'+(c.parent_name?"in "+esc(c.parent_name)+" · ":"")+'by @'+esc(c.owner.username)+'</p>'+
-  (!canPost&&c.fpost&&!c.iFollow?'<div class="row"><button class="primary" type="button" data-chfollow="'+esc(c.owner.id)+'" data-cid="'+esc(c.id)+'">Follow @'+esc(c.owner.username)+'</button></div>':'')+chatHTML(canPost,note);
- window.scrollTo(0,0);startChat(c.id,c.mine)}
+  (!canPost&&c.fpost&&!c.iFollow?'<div class="row"><button class="primary" type="button" data-chfollow="'+esc(c.owner.id)+'" data-cid="'+esc(c.id)+'">Follow @'+esc(c.owner.username)+'</button></div>':'')+'<h2 class="chhead">Posts</h2><div id="chposts" class="feed"><p class="hint">Loading...</p></div>'+chatHTML(canPost,note);
+ window.scrollTo(0,0);startChat(c.id,c.mine);
+ So.channelPosts(c.id).then(function(L){var e=$("chposts");if(!e)return;e.innerHTML=L.length?L.map(function(p){var pics=(p.imgs||[]).map(function(m){return m.src?'<img alt="Posted image" src="'+esc(m.src)+'">':""}).join("");
+   return '<article class="post"><div class="pmeta"><span>'+esc(postWhen(p.ts))+'</span></div>'+(p.text?'<div class="ptxt">'+rich(p.text)+'</div>':'')+(pics?'<div class="pics n'+Math.min(p.imgs.length,8)+'">'+pics+'</div>':'')+'</article>'}).join(""):'<p class="hint">No posts here yet.</p>'}).catch(function(){var e=$("chposts");if(e)e.innerHTML='<p class="hint">Could not load posts.</p>'})}
 async function loadProfChannels(){var So=S(),el=$("pchans");if(!So||!So.channelsOf||!el||!pv.id)return;var id=pv.id,L=[];
  try{L=await So.channelsOf(id)}catch(e){return}
  if(pv.id!==id||!$("pchans"))return;el=$("pchans");if(!L.length){el.innerHTML="";return}

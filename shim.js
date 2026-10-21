@@ -226,6 +226,16 @@
       return rows.map(function (m) { return { id: m.id, author: pickName(n, m.author_id), text: m.text, ts: new Date(m.created_at).getTime() }; }); },
     sendMsg: async function (cid, text) { await ready; var r = await sb.from('ss_channel_msgs').insert({ channel_id: cid, author_id: uid, text: text }); if (r.error) throw r.error; },
     delMsg: async function (id) { await ready; var r = await sb.from('ss_channel_msgs').delete().eq('id', id); if (r.error) throw r.error; },
+    mirrorPosts: async function (cid, list) { await ready;
+      var ex = await sb.from('ss_channel_posts').select('id,post_key').eq('channel_id', cid); if (ex.error) throw ex.error;
+      var have = {}; (ex.data || []).forEach(function (r) { have[r.post_key] = r.id; });
+      var want = {}; list.forEach(function (p) { want[p.key] = 1; });
+      var add = list.filter(function (p) { return !have[p.key]; }).map(function (p) { return { channel_id: cid, post_key: p.key, text: p.text || '', imgs: p.imgs || [], created_at: new Date(p.ts || Date.now()).toISOString() }; });
+      if (add.length) { var i = await sb.from('ss_channel_posts').insert(add); if (i.error) throw i.error; }
+      var gone = (ex.data || []).filter(function (r) { return !want[r.post_key]; }).map(function (r) { return r.id; });
+      if (gone.length) { var d = await sb.from('ss_channel_posts').delete().in('id', gone); if (d.error) throw d.error; } },
+    channelPosts: async function (cid) { await ready; var r = await sb.from('ss_channel_posts').select('*').eq('channel_id', cid).order('created_at', { ascending: false }).limit(100); if (r.error) throw r.error;
+      return (r.data || []).map(function (p) { return { id: p.id, text: p.text, imgs: p.imgs || [], ts: new Date(p.created_at).getTime() }; }); },
     hidden: async function () { await ready; var m = await sb.from('ss_mutes').select('target_id'), b = await sb.from('ss_blocks').select('target_id');
       var mi = (m.data || []).map(function (x) { return x.target_id; }), bi = (b.data || []).map(function (x) { return x.target_id; }), n = await namesFor(mi.concat(bi));
       return { mutes: mi.map(function (i) { return pickName(n, i); }), blocks: bi.map(function (i) { return pickName(n, i); }) }; },
