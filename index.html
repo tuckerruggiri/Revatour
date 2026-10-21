@@ -483,6 +483,11 @@ var OUTRULES=[
  ".ss .big b{font-size:2.4rem}",
  ".ss svg{width:min(320px,100%);height:70px}",
  ".ssnote{color:var(--mute);font-size:.8rem;margin:0 0 14px}",
+ ".tpd{margin:6px 0 16px;max-width:440px}.tpd h4{margin:0 0 6px;font-size:.9rem;color:var(--mute);font-weight:600}",
+ ".tpd table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;font-variant-numeric:tabular-nums}",
+ ".tpd th,.tpd td{padding:7px 12px;text-align:left;font-size:.95rem;border:0}.tpd th{color:var(--mute);font-weight:600;font-size:.8rem;border-bottom:1px solid var(--line)}",
+ ".tpd th:last-child,.tpd td:last-child{text-align:right}.tpd tbody tr+tr td{border-top:1px solid var(--line)}",
+ ".tpd tfoot td{font-weight:700;border-top:1px solid var(--line)}",
  ".gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:12px 0}",
  ".tc{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}",
  ".tc img{display:block;width:100%;height:auto;border-bottom:1px solid var(--line)}",
@@ -508,11 +513,19 @@ var DLCSS=":root{--panel:#f6f9fb;--mute:#5b6b78;--line:#c9d4dc;--gain:#0b6b5a;--
 function sparkline(p,up){if(p.length<2)return "";var W=320,H=70,mn=Math.min.apply(null,p),mx=Math.max.apply(null,p);if(mn===mx){mn-=1;mx+=1}
  var d=p.map(function(v,i){return (i?"L":"M")+(i*W/(p.length-1)).toFixed(1)+" "+(H-4-(H-8)*(v-mn)/(mx-mn)).toFixed(1)}).join(" ");
  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Cumulative P&amp;L by trade"><path d="'+d+'" fill="none" style="stroke:var(--'+(up?"gain":"loss")+')" stroke-width="2.5" stroke-linejoin="round"/></svg>'}
+function tickerPnlHTML(){var days={},order=[];
+ trades.forEach(function(t){var d=t.d||"";if(!days[d]){days[d]={};order.push(d)}days[d][t.t]=(days[d][t.t]||0)+(+t.p||0)});
+ if(!order.length)return "";order.sort();
+ var cell=function(v){return '<td class="'+(v>=0?"gain":"loss")+'">'+money(v)+'</td>'},sym=function(x){return /^[A-Z]{1,5}$/.test(x)?'<button type="button" class="tk" data-tk="'+x+'">$'+x+'</button>':esc(x)},all=0;
+ var blocks=order.map(function(d){var m=days[d],keys=Object.keys(m).sort(),sub=0;keys.forEach(function(k){sub+=m[k]});all+=sub;
+  return '<div class="tpd">'+(order.length>1||d?'<h4>'+esc(d?dayLabel(d):"Undated")+'</h4>':'')+'<table><thead><tr><th>Instrument</th><th>P/L Day</th></tr></thead><tbody>'+keys.map(function(k){return '<tr><td>'+sym(k)+'</td>'+cell(m[k])+'</tr>'}).join("")+'</tbody><tfoot><tr><td>Subtotal</td>'+cell(sub)+'</tr></tfoot></table></div>'});
+ if(order.length>1)blocks.push('<div class="tpd"><table><tbody><tr><td><b>Overall Totals</b></td>'+cell(all)+'</tr></tbody></table></div>');
+ return blocks.join("")}
 function statsHTML(){var s=stats();if(!s.n)return "";
  var per=s.first&&s.last?(s.first===s.last?s.first:s.first+" to "+s.last):"",cls=s.net>=0?"gain":"loss";
  var t=function(v,l,c){return '<div class="t"><b'+(c?' class="'+c+'"':'')+'>'+v+'</b><span>'+l+'</span></div>'};
  return '<div class="ss"><div class="t big"><div><b class="'+cls+'">'+money(s.net)+'</b><span>Net P&amp;L, '+s.n+' closed trades'+(per?', '+esc(per):'')+'</span></div>'+sparkline(s.pts,s.net>=0)+'</div>'+
-  t(Math.round(s.wr*100)+'%','Win rate')+t(s.pf===Infinity?'n/a':s.pf.toFixed(2),'Profit factor')+t(money(s.aw),'Average win','gain')+t(money(-s.al),'Average loss','loss')+t(money(-s.dd),'Max drawdown','loss')+'</div><p class="ssnote">Self-reported and not independently verified.</p>'}
+  t(Math.round(s.wr*100)+'%','Win rate')+t(s.pf===Infinity?'n/a':s.pf.toFixed(2),'Profit factor')+t(money(s.aw),'Average win','gain')+t(money(-s.al),'Average loss','loss')+t(money(-s.dd),'Max drawdown','loss')+'</div>'+tickerPnlHTML()+'<p class="ssnote">Self-reported and not independently verified.</p>'}
 var KEYI="stockspot-studio-img-v1",imgs=[];
 function whenOf(t){return (t.d||"")+(t.tm?" "+(t.ot&&t.ot!==t.tm?t.ot+"-"+t.tm:t.tm):"")}
 function sgn(v){return (v>0?"+":"")+money(v)}
