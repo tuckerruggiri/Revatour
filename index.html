@@ -1107,7 +1107,7 @@ function wallTab(){var who=pv.self?"your":"@"+esc(pv.username)+"'s";
   '<div id="wall" class="feed"><p class="hint">Loading...</p></div>'}
 function renderProfile(){var A=window.stockspotAuth||{},el=$("profilev"),self=pv.self,cd=self?A.created:pv.created,since=cd?new Date(cd).toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"}):"",nm=pv.username||"you";
  if(!self)profTab="wall";
- el.innerHTML='<div class="row" style="margin:0 0 14px"><input id="findu" maxlength="21" placeholder="Find a trader: @username" aria-label="Find a trader by username" style="max-width:260px"><button type="button" id="findgo">Go</button></div><div class="row" style="margin:-6px 0 14px"><input id="findt" maxlength="8" placeholder="Look up a ticker: $TSLA" aria-label="Look up a ticker" autocapitalize="characters" style="max-width:260px"><button type="button" id="findtgo">Go</button></div>'+
+ el.innerHTML='<div class="row" style="margin:0 0 14px"><input id="findu" maxlength="21" placeholder="Search @trader or $TICKER" aria-label="Search for a trader by @username or a ticker by $symbol" autocapitalize="off" style="max-width:300px"><button type="button" id="findgo">Go</button></div>'+
   '<div class="pf-head">'+avatarHTML("",self?myAvUrl():pv.avatar,nm)+'<div class="pf-main"><div class="pf-top"><div><h1>@'+esc(nm)+'</h1></div>'+
   (self?'<button id="pfedit" type="button" class="primary">Edit profile</button>':'<span class="row" style="margin:0"><button id="pffollow" type="button" class="primary" aria-pressed="false">Follow</button><button id="pfwrite" type="button">Write on @'+esc(nm)+"'s wall</button></span>")+'</div>'+
   '<div class="pf-bio">'+((self?prof.bio:pv.bio)?rich(self?prof.bio:pv.bio):'<span class="hint">'+(self?"No bio yet. Add one with Edit profile.":"No bio yet.")+'</span>')+'</div>'+
@@ -1118,7 +1118,14 @@ function renderProfile(){var A=window.stockspotAuth||{},el=$("profilev"),self=pv
   '<h2 class="pf-sec">Wall</h2>')+
   (self&&profTab==="coach"?coachTab():wallTab());
  wpend=[];renderWPrev();loadFollowInfo()}
-function lookupTicker(v){var t=String(v||"").replace(/^\$/,"").trim().toUpperCase();if(!/^[A-Z]{1,5}(\.[A-Z])?$/.test(t)){toast("Enter a ticker like $TSLA");return}showTicker(t)}
+async function smartSearch(v){var q=String(v||"").trim();if(!q)return;
+ if(q.charAt(0)==="$"){lookupTicker(q);return}
+ if(q.charAt(0)==="@"){showUserProfile(q);return}
+ var So=S(),found=null;try{if(So)found=await So.profileByName(q)}catch(e){}
+ if(found){showUserProfile(q);return}
+ if(/^[A-Za-z]{1,5}(\.[A-Za-z])?$/.test(q)){lookupTicker(q);return}
+ toast("No trader or ticker found. Use @name or $TSLA")}
+function lookupTicker(v){var t=String(v||"").replace(/^\$/,"").trim().toUpperCase();if(!/^[A-Z]{1,5}(\.[A-Z])?$/.test(t)){toast("Enter a ticker like $TSLA")}else showTicker(t)}
 var fInfo=null;
 async function loadFollowInfo(){var So=S();if(!So||!pv.id)return;var id=pv.id;
  try{var f=await So.followInfo(id);if(pv.id!==id)return;fInfo=f;var a=$("cfers"),b=$("cfing");if(a)a.textContent=f.followers;if(b)b.textContent=f.following;paintFollowBtn()}catch(e){}}
@@ -1275,8 +1282,7 @@ $("profilev").addEventListener("click",function(ev){var b=ev.target.closest&&ev.
    p.innerHTML='<b>'+ttl+'</b>'+(L.length?'<div class="hm-pages">'+L.map(function(u){return '<button type="button" class="tk-chip" data-un="'+esc(u.username)+'">@'+esc(u.username)+'</button>'}).join("")+'</div>':'<p class="hint" style="margin:6px 0 0">'+em+'</p>')}).catch(function(){p.innerHTML='<p class="hint" style="margin:0">Could not load.</p>'});return}
  if(b.id==="pffollow"){toggleFollow();return}
  if(b.id==="pfwrite"){var wt=$("wtext");if(wt){wt.scrollIntoView({block:"center"});wt.focus()}return}
- if(b.id==="findgo"){showUserProfile($("findu").value);return}
- if(b.id==="findtgo"){lookupTicker($("findt").value);return}
+ if(b.id==="findgo"){smartSearch($("findu").value);return}
  if(b.dataset.wmo){var mo=b.dataset.wmo;wmenu=wmenu===mo?"":mo;renderWall();return}
  if(b.dataset.wm){if(b.dataset.wm==="del"||b.dataset.wm==="block"){if(!b.dataset.armed){b.dataset.armed="1";b.textContent=b.dataset.wm==="del"?"Delete? Tap again":"Block? Tap again";return}}wallMenu(b.dataset.wm,b.dataset.id,b.dataset.nm,b);return}
  if(b.dataset.lk){wallLike(b.dataset.lk);return}
@@ -1286,8 +1292,7 @@ $("profilev").addEventListener("click",function(ev){var b=ev.target.closest&&ev.
  if(b.dataset.cdel){var cid=b.dataset.cdel;confirmTwice(b,"Delete?",async function(){try{await S().delComment(cid);wall=await S().wall(pv.id);renderWall()}catch(e){toast("Could not delete")}});return}
  if(b.dataset.wdel){var id=b.dataset.wdel;confirmTwice(b,"Delete?",async function(){try{await S().delPost(id);wall=wall.filter(function(p){return p.id!==id});renderWall()}catch(e){toast("Could not delete")}})}});
 $("profilev").addEventListener("change",function(ev){if(ev.target.id==="wimg"){wallAdd(ev.target.files);}});
-$("profilev").addEventListener("keydown",function(ev){if(ev.target.id==="findu"&&ev.key==="Enter"){ev.preventDefault();showUserProfile(ev.target.value);return}
- if(ev.target.id==="findt"&&ev.key==="Enter"){ev.preventDefault();lookupTicker(ev.target.value);return}
+$("profilev").addEventListener("keydown",function(ev){if(ev.target.id==="findu"&&ev.key==="Enter"){ev.preventDefault();smartSearch(ev.target.value);return}
  if(ev.target.dataset&&ev.target.dataset.cin&&ev.key==="Enter"){ev.preventDefault();wallComment(ev.target.dataset.cin);return}
  if(ev.target.id==="wtext"&&ev.key==="Enter"&&(ev.ctrlKey||ev.metaKey)){ev.preventDefault();wallPost()}});
 /* Home + AI coach */
