@@ -199,6 +199,13 @@
       var r = await sb.from('ss_wall_posts').select('*').in('author_id', ids).is('repost_of', null).order('created_at', { ascending: false }).limit(80); if (r.error) throw r.error;
       var rows = (r.data || []).filter(function (p) { return p.owner_id === p.author_id; }).slice(0, 30), n = await namesFor(rows.map(function (p) { return p.author_id; }));
       return { following: ids.length, posts: rows.map(function (p) { return { id: p.id, author: pickName(n, p.author_id), text: p.text, imgs: p.imgs || [], ts: new Date(p.created_at).getTime() }; }) }; },
+    market: async function (sym) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
+      var r = await fetch('/api/quote?symbol=' + encodeURIComponent(sym), { headers: { Authorization: 'Bearer ' + tok } });
+      if (!r.ok) throw new Error('quote failed'); return r.json(); },
+    tickerPosts: async function (sym) { await ready;
+      var r = await sb.from('ss_wall_posts').select('*').ilike('text', '%$' + sym + '%').is('repost_of', null).order('created_at', { ascending: false }).limit(60); if (r.error) throw r.error;
+      var re = new RegExp('\\$' + sym + '(?![A-Za-z0-9])'), rows = (r.data || []).filter(function (p) { return re.test(p.text || ''); }).slice(0, 20), n = await namesFor(rows.map(function (p) { return p.author_id; }));
+      return rows.map(function (p) { return { id: p.id, author: pickName(n, p.author_id), text: p.text, imgs: p.imgs || [], ts: new Date(p.created_at).getTime() }; }); },
     hidden: async function () { await ready; var m = await sb.from('ss_mutes').select('target_id'), b = await sb.from('ss_blocks').select('target_id');
       var mi = (m.data || []).map(function (x) { return x.target_id; }), bi = (b.data || []).map(function (x) { return x.target_id; }), n = await namesFor(mi.concat(bi));
       return { mutes: mi.map(function (i) { return pickName(n, i); }), blocks: bi.map(function (i) { return pickName(n, i); }) }; },
