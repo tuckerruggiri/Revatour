@@ -151,10 +151,10 @@
     },
     wall: async function (ownerId) {
       await ready;
-      var r = await sb.from('wall_posts').select('*').eq('owner_id', ownerId).order('created_at', { ascending: false }).limit(100);
+      var r = await sb.from('ss_wall_posts').select('*').eq('owner_id', ownerId).order('created_at', { ascending: false }).limit(100);
       if (r.error) throw r.error;
       var posts = r.data || [], ids = posts.map(function (p) { return p.id; }), com = [];
-      if (ids.length) { var c = await sb.from('wall_comments').select('*').in('post_id', ids).order('created_at', { ascending: true }); com = c.data || []; }
+      if (ids.length) { var c = await sb.from('ss_wall_comments').select('*').in('post_id', ids).order('created_at', { ascending: true }); com = c.data || []; }
       var names = await namesFor(posts.map(function (p) { return p.author_id; }).concat(com.map(function (c) { return c.author_id; })));
       return posts.map(function (p) {
         return { id: p.id, owner_id: p.owner_id, author: pickName(names, p.author_id), text: p.text, imgs: p.imgs || [], ts: new Date(p.created_at).getTime(),
@@ -164,19 +164,19 @@
     addPost: async function (ownerId, text, imgs, ts) {
       await ready; var row = { owner_id: ownerId, author_id: uid, text: text || '', imgs: imgs || [] };
       if (ts) row.created_at = new Date(ts).toISOString();
-      var r = await sb.from('wall_posts').insert(row).select().single(); if (r.error) throw r.error; return r.data;
+      var r = await sb.from('ss_wall_posts').insert(row).select().single(); if (r.error) throw r.error; return r.data;
     },
-    delPost: async function (id) { await ready; var r = await sb.from('wall_posts').delete().eq('id', id); if (r.error) throw r.error; },
-    addComment: async function (postId, text) { await ready; var r = await sb.from('wall_comments').insert({ post_id: postId, author_id: uid, text: text }).select().single(); if (r.error) throw r.error; return r.data; },
-    delComment: async function (id) { await ready; var r = await sb.from('wall_comments').delete().eq('id', id); if (r.error) throw r.error; },
+    delPost: async function (id) { await ready; var r = await sb.from('ss_wall_posts').delete().eq('id', id); if (r.error) throw r.error; },
+    addComment: async function (postId, text) { await ready; var r = await sb.from('ss_wall_comments').insert({ post_id: postId, author_id: uid, text: text }).select().single(); if (r.error) throw r.error; return r.data; },
+    delComment: async function (id) { await ready; var r = await sb.from('ss_wall_comments').delete().eq('id', id); if (r.error) throw r.error; },
     notifs: async function () {
-      await ready; var r = await sb.from('notifications').select('*').order('created_at', { ascending: false }).limit(60); if (r.error) throw r.error;
+      await ready; var r = await sb.from('ss_notifications').select('*').order('created_at', { ascending: false }).limit(60); if (r.error) throw r.error;
       var rows = r.data || [], names = await namesFor(rows.map(function (n) { return n.actor_id; }));
       return rows.map(function (n) { return { id: n.id, type: n.type, post_id: n.post_id, snippet: n.snippet || '', read: n.read, ts: new Date(n.created_at).getTime(), actor: pickName(names, n.actor_id) }; });
     },
-    unread: async function () { await ready; var r = await sb.from('notifications').select('id', { count: 'exact', head: true }).eq('read', false); return r.count || 0; },
-    postOwner: async function (postId) { await ready; var r = await sb.from('wall_posts').select('owner_id').eq('id', postId).maybeSingle(); if (!r.data) return null; var n = await namesFor([r.data.owner_id]); return pickName(n, r.data.owner_id); },
-    markRead: async function (ids) { await ready; var q = sb.from('notifications').update({ read: true }).eq('read', false); if (ids && ids.length) q = q.in('id', ids); var r = await q; return r.error ? r.error.message : ''; }
+    unread: async function () { await ready; var r = await sb.from('ss_notifications').select('id', { count: 'exact', head: true }).eq('read', false); return r.count || 0; },
+    postOwner: async function (postId) { await ready; var r = await sb.from('ss_wall_posts').select('owner_id').eq('id', postId).maybeSingle(); if (!r.data) return null; var n = await namesFor([r.data.owner_id]); return pickName(n, r.data.owner_id); },
+    markRead: async function (ids) { await ready; var q = sb.from('ss_notifications').update({ read: true }).eq('read', false); if (ids && ids.length) q = q.in('id', ids); var r = await q; return r.error ? r.error.message : ''; }
   };
 
   window.blobUrl = function (id) {
