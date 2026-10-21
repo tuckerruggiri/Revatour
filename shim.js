@@ -30,6 +30,21 @@
     w.textContent = name;
     window.stockspotAuth = {
       email: session.user.email,
+      created: session.user.created_at,
+      setUsername: async function (u) {
+        if (!/^[A-Za-z0-9_]{3,20}$/.test(u)) return 'Use 3 to 20 letters, numbers or underscores.';
+        var cur = window.stockspotAuth.username || '';
+        if (u.toLowerCase() !== cur.toLowerCase()) {
+          var av = await sb.rpc('username_available', { name: u });
+          if (av.error) return 'Could not check that name.';
+          if (!av.data) return 'That username is taken.';
+        }
+        var r = await sb.from('profiles').update({ username: u }).eq('id', uid);
+        if (r.error) return r.error.message.indexOf('duplicate') > -1 ? 'That username is taken.' : 'Could not change it.';
+        window.stockspotAuth.username = u;
+        var w = document.getElementById('whoami'); if (w) w.textContent = '@' + u;
+        return '';
+      },
       username: name.charAt(0) === '@' ? name.slice(1) : '',
       logout: async function () { await sb.auth.signOut(); location.replace('login.html'); },
       setPassword: async function (pw) { var r = await sb.auth.updateUser({ password: pw }); return r.error ? r.error.message : ''; }
