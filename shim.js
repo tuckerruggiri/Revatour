@@ -8,7 +8,7 @@
     sb = window.supabase.createClient(cfg.url, cfg.anonKey);
     var s = await sb.auth.getSession();
     session = s.data && s.data.session;
-    if (!session) { location.replace('login.html'); return new Promise(function () {}); }
+    if (!session) { location.replace('landing.html'); return new Promise(function () {}); }
     uid = session.user.id;
     document.documentElement.classList.add('authed');
     window.addEventListener('DOMContentLoaded', showUser);

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stockspot | Verified traders, not screenshots</title>
+<meta name="description" content="Connect your broker, get verified, and let AI build your trader page from real fills.">
+<style>
+:root{--bg:#0a0d12;--panel:#111620;--line:#1f2733;--ink:#e8edf4;--mute:#8793a4;--acc:#22c55e;--acc2:#16a34a;--dn:#ef4444}
+:root[data-acc="blue"]{--acc:#3b82f6;--acc2:#2563eb}
+:root[data-acc="amber"]{--acc:#f59e0b;--acc2:#d97706}
+:root[data-acc="purple"]{--acc:#a78bfa;--acc2:#8b5cf6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+nav{display:flex;align-items:center;justify-content:space-between;padding:16px 0}
+.logo{font-weight:800;font-size:1.2rem;letter-spacing:-.02em}.logo b{color:var(--acc)}
+.btn{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:9px 16px;font-weight:600;font-size:.95rem;background:transparent;color:var(--ink);cursor:pointer;font-family:inherit}
+.btn.p{background:var(--acc);border-color:var(--acc);color:#04130a}
+.hero{display:grid;grid-template-columns:1.15fr 1fr;gap:40px;align-items:center;padding:48px 0 40px}
+h1{font-size:clamp(2.1rem,5vw,3.4rem);line-height:1.05;letter-spacing:-.03em;margin:0 0 16px}
+h1 em{font-style:normal;color:var(--acc)}
+.lead{color:var(--mute);font-size:1.1rem;max-width:34em;margin:0 0 24px}
+.signup{display:flex;gap:8px;flex-wrap:wrap;max-width:460px}
+.signup input{flex:1 1 220px;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:12px 14px;font:inherit}
+.fine{color:var(--mute);font-size:.82rem;margin-top:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
+.vt{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.who{display:flex;gap:12px;align-items:center}
+.av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--acc),#0b3b22);display:grid;place-items:center;font-weight:800;color:#04130a}
+.badge{font-size:.72rem;font-weight:700;color:var(--acc);border:1px solid var(--acc);border-radius:99px;padding:3px 9px;letter-spacing:.04em}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.kpi{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px}
+.kpi small{display:block;color:var(--mute);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+.kpi b{font-size:1.25rem}
+.up{color:var(--acc)}.dn{color:var(--dn)}
+svg.spark{width:100%;height:70px;display:block}
+.ticker{border-block:1px solid var(--line);background:var(--panel);overflow:hidden;white-space:nowrap}
+.ticker div{display:inline-block;padding:10px 0;animation:tk 40s linear infinite}
+.ticker span{margin:0 22px;font-size:.88rem}
+@keyframes tk{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.ticker div{animation:none}}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:32px 0}
+.stat{text-align:center}.stat b{font-size:2rem;display:block;letter-spacing:-.02em}.stat span{color:var(--mute);font-size:.85rem}
+h2{font-size:1.6rem;letter-spacing:-.02em;margin:0 0 6px}
+.sub{color:var(--mute);margin:0 0 18px}
+section{padding:28px 0}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--mute);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+td.r,th.r{text-align:right}
+.lb{position:relative;overflow:hidden}
+.blur{filter:blur(6px);user-select:none;pointer-events:none}
+.gate{position:absolute;left:0;right:0;bottom:0;height:52%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:linear-gradient(transparent,var(--panel) 55%)}
+.feed{display:grid;gap:14px}
+.post{display:flex;gap:12px}
+.post .t{color:var(--mute);font-size:.82rem}
+.fill{display:inline-flex;gap:8px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin-top:8px;font-size:.85rem}
+.locked{opacity:.95;border-style:dashed}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.step .n{width:30px;height:30px;border-radius:50%;background:var(--acc);color:#04130a;font-weight:800;display:grid;place-items:center;margin-bottom:10px}
+.step h3{margin:0 0 6px;font-size:1.05rem}.step p{margin:0;color:var(--mute);font-size:.92rem}
+footer{border-top:1px solid var(--line);margin-top:30px;padding:28px 0 48px;color:var(--mute);font-size:.8rem}
+.tweaks{position:fixed;right:14px;bottom:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;gap:8px;align-items:center;font-size:.78rem;color:var(--mute);z-index:5}
+.tweaks button{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0}
+@media (max-width:800px){.hero{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr}.hide-m{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <nav><a class="logo" href="/">Stock<b>spot</b></a><div><a class="btn" href="login.html">Log in</a> <a class="btn p" href="login.html#signup">Sign up</a></div></nav>
+ <header class="hero">
+  <div>
+   <h1>Verified fills, <em>not screenshots.</em></h1>
+   <p class="lead">Connect your broker, get verified, and let AI turn your real trades into a guru page, recaps and posts. Followers see proof, not claims.</p>
+   <form class="signup" id="sf"><input type="email" id="em" placeholder="you@email.com" aria-label="Email" required><button class="btn p" type="submit">Get started</button></form>
+   <div class="fine">Free to start. Results are self-reported until verified. Not financial advice.</div>
+  </div>
+  <div class="card" aria-label="Sample verified trader card">
+   <div class="vt"><div class="who"><div class="av">@</div><div><b>@[handle]</b><div class="fine" style="margin:0">Intraday · [Broker]</div></div></div><span class="badge">✓ VERIFIED</span></div>
+   <svg class="spark" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--acc)" stop-opacity=".35"/><stop offset="1" stop-color="var(--acc)" stop-opacity="0"/></linearGradient></defs><path d="M0 55 L25 48 L50 52 L80 36 L110 40 L140 26 L170 32 L200 18 L235 22 L265 10 L300 6 L300 70 L0 70Z" fill="url(#g)"/><path d="M0 55 L25 48 L50 52 L80 36 L110 40 L140 26 L170 32 L200 18 L235 22 L265 10 L300 6" fill="none" stroke="var(--acc)" stroke-width="2.5"/></svg>
+   <div class="kpis mono"><div class="kpi"><small>Win rate</small><b>[XX.X]%</b></div><div class="kpi"><small>Profit factor</small><b>[X.XX]</b></div><div class="kpi"><small>YTD</small><b class="up">+[XX.X]%</b></div></div>
+   <div class="fine" style="margin:0">Based on [N] broker-verified fills since [date].</div>
+  </div>
+ </header>
+</div>
+<div class="ticker" aria-hidden="true"><div class="mono" id="tk"></div></div>
+<div class="wrap">
+ <div class="stats">
+  <div class="stat"><b class="mono">[X,XXX]</b><span>Verified traders</span></div>
+  <div class="stat"><b class="mono">[XX.XM]</b><span>Fills verified</span></div>
+  <div class="stat"><b class="mono">[XX]%</b><span>Median win rate</span></div>
+  <div class="stat"><b class="mono">[X,XXX]</b><span>Guru pages published</span></div>
+ </div>
+ <section>
+  <h2>Leaderboard</h2><p class="sub">Ranked on verified results only.</p>
+  <div class="card lb" style="padding:0">
+   <table class="mono"><thead><tr><th>#</th><th>Trader</th><th class="r">Win rate</th><th class="r hide-m">Trades</th><th class="r">30-day</th></tr></thead><tbody id="lb"></tbody></table>
+   <div class="gate"><div><b>Sign up to see the full leaderboard</b></div><a class="btn p" href="login.html#signup">Create free account</a></div>
+  </div>
+ </section>
+ <section>
+  <h2>Trade feed</h2><p class="sub">Every post can carry the fill that backs it up.</p>
+  <div class="feed">
+   <div class="card post"><div class="av">@</div><div><b>@[handle]</b> <span class="t">· [time] ago</span><div>Took [TICKER] long on the [setup] and scaled out into strength. Stop was [X]% away.</div><div class="fill mono"><span class="badge">✓ VERIFIED FILL</span>[TICKER] · [QTY] sh · $[ENTRY] → $[EXIT]</div></div></div>
+   <div class="card post"><div class="av">@</div><div><b>@[handle]</b> <span class="t">· [time] ago</span><div>Red day. Chased the first pullback and paid for it. Rule for tomorrow: smaller first trade.</div><div class="fill mono"><span class="badge">✓ VERIFIED FILL</span>[TICKER] · [QTY] sh · <span class="dn">-$[XX.XX]</span></div></div></div>
+   <div class="card post locked"><div class="av">🔒</div><div><b>@[handle]</b> <span class="t">· [time] ago</span><div class="blur">This post includes a verified fill. Sign up to see the entry, exit and size.</div><div class="fill mono"><span class="badge">✓ VERIFIED FILL</span><a href="login.html#signup" style="text-decoration:underline">Sign up to unlock</a></div></div></div>
+  </div>
+ </section>
+ <section>
+  <h2>How it works</h2><p class="sub">From broker to published page in three steps.</p>
+  <div class="steps">
+   <div class="card step"><div class="n">1</div><h3>Connect your broker</h3><p>Import your thinkorswim account statement today. Direct broker connection is coming soon.</p></div>
+   <div class="card step"><div class="n">2</div><h3>Get verified</h3><p>Verification matches your fills to broker records, so stats are proof, not a screenshot. Coming soon.</p></div>
+   <div class="card step"><div class="n">3</div><h3>AI builds your guru page</h3><p>Recaps, blog posts, newsletter, social posts and Instagram carousels from your real trades.</p></div>
+  </div>
+ </section>
+ <footer>Stockspot is a content and journaling tool, not a broker, investment adviser or signal service. Trading involves substantial risk of loss. Past performance does not guarantee future results. Results shown are self-reported unless marked verified. Nothing here is financial advice. Sample names and numbers on this page are placeholders.</footer>
+</div>
+<div class="tweaks" aria-label="Accent color"><span>Accent</span>
+ <button style="background:#22c55e" data-a="" aria-label="Green"></button><button style="background:#3b82f6" data-a="blue" aria-label="Blue"></button><button style="background:#f59e0b" data-a="amber" aria-label="Amber"></button><button style="background:#a78bfa" data-a="purple" aria-label="Purple"></button></div>
+<script>
+(function(){
+ var T=["[TKR] $[XXX.XX] +[X.X]%","[TKR] $[XXX.XX] -[X.X]%","[TKR] $[XX.XX] +[X.X]%","[TKR] $[X,XXX.XX] +[X.X]%","[TKR] $[XX.XX] -[X.X]%","[TKR] $[XXX.XX] +[X.X]%"];
+ var h=T.map(function(s,i){return '<span class="'+(s.indexOf("-[")>-1?'dn':'up')+'">'+s+'</span>'}).join("");
+ document.getElementById("tk").innerHTML=h+h+h+h;
+ var rows="";for(var i=1;i<=7;i++){rows+='<tr'+(i>3?' class="blur"':'')+'><td>'+i+'</td><td>@[handle'+i+'] <span class="up">✓</span></td><td class="r">[XX.X]%</td><td class="r hide-m">[XXX]</td><td class="r up">+[XX.X]%</td></tr>'}
+ document.getElementById("lb").innerHTML=rows;
+ document.getElementById("sf").addEventListener("submit",function(e){e.preventDefault();location.href="login.html?email="+encodeURIComponent(document.getElementById("em").value)+"#signup"});
+ try{var a=localStorage.getItem("ss-acc");if(a!==null)document.documentElement.setAttribute("data-acc",a)}catch(e){}
+ document.querySelector(".tweaks").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;document.documentElement.setAttribute("data-acc",b.dataset.a);try{localStorage.setItem("ss-acc",b.dataset.a)}catch(x){}});
+})();
+</script>
+</body>
+</html>

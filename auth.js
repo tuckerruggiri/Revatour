@@ -54,6 +54,11 @@
 
   $('tabin').onclick = function () { setMode('in'); };
   $('tabup').onclick = function () { setMode('up'); };
+  try {
+    var qp = new URLSearchParams(location.search);
+    if (qp.get('email')) $('email').value = qp.get('email');
+    if (location.hash === '#signup') setMode('up');
+  } catch (e) {}
   $('showpw').onclick = function () {
     var p = $('pw'); var show = p.type === 'password';
     p.type = show ? 'text' : 'password'; this.textContent = show ? 'Hide' : 'Show';
