@@ -288,6 +288,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <button class="nav" id="navprofile" type="button">Profile</button>
   <button class="nav" id="navstudio" type="button">Studio</button>
   <button class="nav" id="navplan" type="button">Trade Plan</button>
+  <button class="nav" id="navrl" type="button">Risk Ladder</button>
   <button class="nav" id="navinv" type="button">Investments</button>
   <button class="nav" id="navgd" type="button">How-To</button>
   <button class="nav" id="navpub" type="button">Publishes <span id="navpubn" class="badge"></span></button>
@@ -303,6 +304,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <div class="wrap" id="home"><p class="hint">Loading your record...</p></div>
 <div class="wrap" id="settingsv" hidden></div>
 <div class="wrap" id="planv" hidden></div>
+<div class="wrap" id="rlv" hidden></div>
 <div class="wrap" id="invv" hidden></div>
 <div class="wrap" id="gdv" hidden></div>
 <div class="wrap" id="profilev" hidden></div>
@@ -1084,7 +1086,7 @@ function applyDefaults(){try{
  if(settings.name&&!$("name").value.trim())$("name").value=settings.name;
  if(settings.voice)$("voice").value=settings.voice;
  if(settings.grouping&&$("grouping"))$("grouping").value=settings.grouping}catch(e){}}
-["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("invv").hidden=true;$("gdv").hidden=true;$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
+["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("invv").hidden=true;$("rlv").hidden=true;$("navrl").classList.remove("on");$("gdv").hidden=true;$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
 /* ---------- Trade Plan: risk sizing + A+ checklist + plan log ---------- */
 var PLK="stockspot-plans-v1",PLD="stockspot-plan-draft-v1",plans=[],plLoaded=false,pl=null,rk=null,plPend=[],plEditId="";
 function todayStr(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
@@ -1336,7 +1338,7 @@ $("invv").addEventListener("click",async function(ev){var t=ev.target,b=t.closes
  var th=t.closest&&t.closest("[data-ivsort]");if(th){var k=th.dataset.ivsort;IV.sort=IV.sort.k===k?{k:k,d:-IV.sort.d}:{k:k,d:k==="s"?1:-1};renderInv();return}
  var tr=t.closest&&t.closest("tr[data-ivacct]");if(tr){IV.acct=tr.dataset.ivacct;renderInv();return}
  var hr=t.closest&&t.closest("tr[data-ivrow]");if(hr){IV.open=IV.open===hr.dataset.ivrow?"":hr.dataset.ivrow;renderInv()}});
-$("invv").addEventListener("change",function(ev){var m={ivyrs:"yrs",ivmo:"mo",ivr:"r",ivinf:"inf",ivwd:"wd"}[ev.target.id];if(m){var v=parseFloat(ev.target.value);if(isNaN(v)||v<0)v=0;IV.plan[m]=v;ivSave();renderInv();var e=$(ev.target.id);if(e)e.focus();return}
+$("invv").addEventListener("change",function(ev){var m={ivyrs:"yrs",ivmo:"mo",ivr:"r",ivinf:"inf",ivwd:"wd"}[ev.target.id];if(m){var v=parseFloat(ev.target.value);if(isNaN(v)||v<0)v=0;IV.plan[m]=v;ivSave();setTimeout(function(){var ai=document.activeElement&&document.activeElement.id;renderInv();if(ai&&$(ai)&&$(ai).tagName==='INPUT')$(ai).focus()},0);return}
  if(ev.target.id==="ivfile"){ivImport(ev.target.files);ev.target.value=""}});
 $("invv").addEventListener("dragover",function(ev){ev.preventDefault()});
 $("invv").addEventListener("drop",function(ev){ev.preventDefault();if(ev.dataTransfer&&ev.dataTransfer.files.length)ivImport(ev.dataTransfer.files)});
@@ -1511,7 +1513,36 @@ $("gdv").addEventListener("click",async function(ev){var t=ev.target,b=t.closest
  if(d.gsdel!=null){gdSync();GD.ed.steps.splice(+d.gsdel,1);if(!GD.ed.steps.length)GD.ed.steps.push({t:"",b:"",m:[],yt:"",pend:[]});renderGd()}});
 document.addEventListener("paste",function(ev){if($("gdv").hidden||GD.view!=="edit")return;var fs=ev.clipboardData&&ev.clipboardData.files;if(!fs||!fs.length)return;var c=ev.target.closest&&ev.target.closest(".gd-sed");if(!c)return;ev.stopImmediatePropagation();ev.preventDefault();gdSync();gdAddFiles(+c.dataset.si,fs)},true);
 
-function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv","planv","invv","gdv"].forEach(function(i){$(i).hidden=true});$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
+/* ---------- Risk Ladder (compounding risk calculator) ---------- */
+var RL={bal:14767,pct:1,dayR:3,monR:30,comm:0,months:12,hit:100,loaded:false};
+async function rlLoad(){if(RL.loaded)return;try{var d=null;if(store.db){var s=await store.db.doc("meta/ladder").get();if(s.exists)d=clone(s.data())}else d=JSON.parse(localStorage.getItem("ss-ladder")||"null");if(d)Object.assign(RL,d)}catch(e){}RL.loaded=true}
+async function rlSave(){try{var d={bal:RL.bal,pct:RL.pct,dayR:RL.dayR,monR:RL.monR,comm:RL.comm,months:RL.months,hit:RL.hit};if(store.db)await store.db.doc("meta/ladder").set(d);else localStorage.setItem("ss-ladder",JSON.stringify(d))}catch(e){}}
+function rlRun(hit){var rows=[],b=Math.max(0,+RL.bal||0),n=Math.max(1,Math.min(60,Math.round(+RL.months||12)));
+ for(var m=1;m<=n;m++){var one=b*RL.pct/100,gr=RL.monR*hit/100,profit=gr*one,comm=Math.max(0,+RL.comm||0),end=b+profit-comm;rows.push({m:m,start:b,one:one,day:one*RL.dayR,goal:RL.monR*one,profit:profit,comm:comm,end:end,gr:b>0?(end-b)/b*100:0});b=end}return rows}
+function rlChart(series){var W=640,H=230,L=8,Rr=8,T=12,B=24,n=series[0].rows.length,all=[];series.forEach(function(s){s.rows.forEach(function(r){all.push(Math.max(r.end,1))})});var lo=Math.log(Math.max(1,Math.min.apply(null,all.concat([Math.max(1,series[0].rows[0].start)])))),hi=Math.log(Math.max.apply(null,all));if(hi<=lo)hi=lo+1;
+ var X=function(i){return L+i/Math.max(n,1)*(W-L-Rr)},Y=function(v){return T+(1-(Math.log(Math.max(v,1))-lo)/(hi-lo))*(H-T-B)};
+ var out='<svg viewBox="0 0 '+W+' '+H+'" class="iv-line" role="img" aria-label="Account balance by month at different goal hit rates">';
+ series.forEach(function(s){var pts=[{end:s.rows[0].start}].concat(s.rows),d=pts.map(function(r,i){return (i?"L":"M")+X(i).toFixed(1)+" "+Y(r.end).toFixed(1)}).join(" ");out+='<path d="'+d+'" fill="none" stroke="'+s.c+'" stroke-width="'+(s.main?3:2)+'" stroke-linejoin="round" opacity="'+(s.main?1:.75)+'"/>'});
+ var st=n>24?6:n>12?3:1,i;for(i=0;i<=n;i+=st)out+='<text x="'+X(i).toFixed(1)+'" y="'+(H-6)+'" text-anchor="middle" class="iv-ax">'+(i?"M"+i:"now")+'</text>';return out+'</svg>'}
+function renderRl(){var el=$("rlv");if(!el)return;var rows=rlRun(RL.hit),last=rows[rows.length-1],r1=rows[0],real=RL.pct/100*RL.monR*100,
+ inp=function(id,l,v,st,u,hint){return '<label class="iv-in">'+l+'<span><input type="number" id="'+id+'" value="'+v+'" step="'+st+'" min="0">'+(u?'<em>'+u+'</em>':'')+'</span>'+(hint?'<small style="font-weight:400">'+hint+'</small>':'')+'</label>'};
+ var days=RL.dayR>0?Math.ceil(RL.monR/RL.dayR):0;
+ var series=[{c:"#10b981",main:RL.hit===100,rows:rlRun(100),l:"Hit 100% of goal"},{c:"#3b82f6",main:RL.hit===75,rows:rlRun(75),l:"Hit 75%"},{c:"#f59e0b",main:RL.hit===50,rows:rlRun(50),l:"Hit 50%"},{c:"#ef4444",main:RL.hit===25,rows:rlRun(25),l:"Hit 25%"}];
+ var marks=[];[50,100,150,250,500,1000,2000,5000].forEach(function(t){var f=rows.filter(function(r){return r.one>=t})[0];if(f&&f.one>r1.one)marks.push([t,f.m])});
+ el.innerHTML='<div class="hm-top"><div><h1>Risk Ladder</h1><p class="sub">Your size grows only as your account grows. Each month 1R is re-set from the new balance.</p></div></div>'+
+ '<div class="pl-card"><h2>Your numbers</h2><div class="iv-ins">'+inp("rlbal","Starting balance",RL.bal,100,"$")+inp("rlpct","Risk per trade (1R)",RL.pct,.25,"%")+inp("rldayR","Goal per day",RL.dayR,.5,"R")+inp("rlmonR","Goal per month",RL.monR,1,"R")+inp("rlcomm","Commissions per month",RL.comm,10,"$")+inp("rlmo","Months to project",RL.months,1,"months")+'</div>'+
+ '<div class="iv-chips" role="group" aria-label="How much of the goal you hit"><span class="hint" style="margin:6px 8px 0 0">If you hit</span>'+[100,75,50,25].map(function(h){return '<button type="button" class="iv-chip'+(RL.hit===h?" on":"")+'" data-rlhit="'+h+'">'+h+'% of goal</button>'}).join("")+'</div></div>'+
+ '<div class="iv-kpis"><div class="iv-kpi"><span>1R today</span><b>'+money(r1.one)+'</b><small>'+RL.pct+'% of '+money(r1.start)+'</small></div><div class="iv-kpi"><span>Daily goal</span><b class="gain">'+money(r1.day)+'</b><small>'+RL.dayR+'R a day</small></div><div class="iv-kpi"><span>Month 1 goal</span><b class="gain">'+money(r1.goal)+'</b><small>'+RL.monR+'R'+(days?', about '+days+' good days':'')+'</small></div><div class="iv-kpi"><span>After month '+last.m+'</span><b>'+ivC(last.end)+'</b><small>1R would be '+money(last.end*RL.pct/100)+'</small></div></div>'+
+ '<div class="pl-card"><h2>Balance by month</h2>'+rlChart(series)+'<div class="iv-leg" style="flex-direction:row;flex-wrap:wrap;gap:14px;margin-top:8px">'+series.map(function(s){return '<span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:'+s.c+';margin-right:6px"></i>'+s.l+'</span>'}).join("")+'</div><p class="hint" style="margin-top:6px">Log scale, so steady percentage growth looks like a straight line.</p></div>'+
+ (marks.length?'<div class="pl-card"><h2>When your 1R steps up</h2><div class="iv-kpis">'+marks.map(function(m){return '<div class="iv-kpi"><span>1R reaches</span><b>'+money(m[0])+'</b><small>month '+m[1]+'</small></div>'}).join("")+'</div></div>':'')+
+ '<div class="pl-card"><h2>Month by month ('+RL.hit+'% of goal)</h2><div class="iv-tw"><table class="iv-t"><thead><tr><th>Month</th><th class="r">Start</th><th class="r">1R</th><th class="r">Daily goal</th><th class="r">Month goal</th><th class="r">Profit</th><th class="r">Commissions</th><th class="r">End balance</th><th class="r">Growth</th></tr></thead><tbody>'+rows.map(function(r){return '<tr><td>'+r.m+'</td><td class="r">'+money(r.start)+'</td><td class="r"><b>'+money(r.one)+'</b></td><td class="r">'+money(r.day)+'</td><td class="r">'+money(r.goal)+'</td><td class="r gain">'+sgn(r.profit)+'</td><td class="r">'+(r.comm?"-"+money(r.comm):"-")+'</td><td class="r"><b>'+money(r.end)+'</b></td><td class="r '+ivCls(r.gr)+'">'+fmtPct(r.gr)+'</td></tr>'}).join("")+'</tbody></table></div></div>'+
+ '<div class="pl-card"><h2>Reality check</h2><p style="margin:0 0 8px;line-height:1.6">Risking '+RL.pct+'% and making '+RL.monR+'R a month is a <b>'+nf(real,0)+'% gain every month</b> if you hit the goal. Compounded for '+last.m+' months that is a '+nf(last.end/Math.max(r1.start,1),1)+'x account. Almost no one sustains that, and as size grows, fills get worse because you move the stock yourself. Treat the 100% line as the best case, and plan around the 50% line.</p><p class="hint" style="margin:0">Raise your risk only after a full month at or above goal, and cut it back when the account falls 10% below its peak, the same rule the Trade Plan page uses. Not financial advice.</p></div>'}
+async function showRl(){hideViews();$("navrl").classList.add("on");$("rlv").hidden=false;renderRl();window.scrollTo(0,0);await rlLoad();if(!$("rlv").hidden)renderRl()}
+$("navrl").addEventListener("click",showRl);
+$("rlv").addEventListener("change",function(ev){var m={rlbal:"bal",rlpct:"pct",rldayR:"dayR",rlmonR:"monR",rlcomm:"comm",rlmo:"months"}[ev.target.id];if(!m)return;var v=parseFloat(ev.target.value);if(isNaN(v)||v<0)v=0;if(m==="months")v=Math.min(60,Math.max(1,Math.round(v)));RL[m]=v;rlSave();setTimeout(function(){var ai=document.activeElement&&document.activeElement.id;renderRl();if(ai&&$(ai)&&$(ai).tagName==='INPUT')$(ai).focus()},0)});
+$("rlv").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("button");if(b&&b.dataset.rlhit){RL.hit=+b.dataset.rlhit;rlSave();renderRl()}});
+
+function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv","planv","invv","gdv","rlv"].forEach(function(i){$(i).hidden=true});$("navrl").classList.remove("on");$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
  $("navhome").classList.remove("on");$("navstudio").classList.remove("on");$("navset").classList.add("on");
  curDate="";curPage="";renderSettings();$("settingsv").hidden=false;window.scrollTo(0,0)}
 function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["Direct and plain-spoken","Professional and measured","Energetic and motivational","Analytical and data-first"];
@@ -1698,7 +1729,7 @@ function myAvUrl(){return prof.src||(prof.aid?blobUrl(prof.aid):"")}
 function avatarHTML(cls,url,name){var A=window.stockspotAuth||{},u=url!=null?url:myAvUrl(),nm=name||A.username||A.email||"?";
  return '<div class="pf-av'+(cls?" "+cls:"")+'">'+(u?'<img alt="" src="'+esc(u)+'">':esc((nm.charAt(0)||"?").toUpperCase()))+'</div>'}
 function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv"].forEach(function(i){$(i).hidden=true});
- ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
+ ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
 function paintProfNav(){$("navprofile").classList.toggle("on",profTab!=="coach");$("navcoach").classList.toggle("on",profTab==="coach")}
 function recordBlock(){var all=allTrades();if(!all.length)return '<div class="pf-panel hint" style="margin:8px 0">No saved trades yet. Save a day in Studio and your record shows here.</div>';
  var days=dailyPnl(),yr=pickYear(days),m=pnlModel(days,yr),s=withCtx({trades:all},[],stats);
