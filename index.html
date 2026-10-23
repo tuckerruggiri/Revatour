@@ -227,6 +227,14 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .pl-pbox{border:2px dashed var(--line);border-radius:10px;padding:10px;margin-top:8px;text-align:center;color:var(--mute);font-size:.88rem;cursor:text;caret-color:transparent;outline:none}.pl-pbox:focus{border-color:var(--accent);background:var(--bg)}
 .bellw{position:relative}.bell{position:relative;width:42px;height:42px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--panel);border:1px solid var(--line);color:var(--ink);cursor:pointer}.bell svg{width:20px;height:20px}
 .bell .bdot{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:99px;background:#e5484d;color:#fff;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.iv-chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.iv-chip{border-radius:99px;padding:6px 14px}.iv-chip.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.iv-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:8px 0}.iv-kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:2px}.iv-kpi span{color:var(--mute);font-size:.8rem}.iv-kpi b{font-size:1.35rem;letter-spacing:-.01em}.iv-kpi small{font-size:.82rem;color:var(--mute)}
+.iv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0 14px}.iv-dw{display:flex;gap:18px;align-items:center;flex-wrap:wrap}.iv-donut{width:180px;height:180px;flex:none}.iv-dl{fill:var(--mute);font-size:11px}.iv-dv{fill:var(--ink);font-size:17px;font-weight:700}
+.iv-leg{list-style:none;margin:0;padding:0;flex:1;min-width:240px;display:flex;flex-direction:column;gap:7px;font-size:.88rem}.iv-leg li{display:grid;grid-template-columns:12px 1fr auto auto;gap:8px;align-items:center}.iv-leg i{width:10px;height:10px;border-radius:3px}.iv-leg span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:90px}.iv-leg small{color:var(--mute);min-width:52px;text-align:right}
+.iv-line{width:100%;height:auto}.iv-ax{fill:var(--mute);font-size:10px}
+.iv-bars{display:flex;flex-direction:column;gap:9px}.iv-br{display:grid;grid-template-columns:64px 1fr 76px;gap:10px;align-items:center;font-size:.86rem}.iv-bn{font-weight:600;overflow:hidden;text-overflow:ellipsis}.iv-bt{height:10px;background:var(--bg);border-radius:99px;overflow:hidden}.iv-bf{display:block;height:100%;border-radius:99px}.iv-br b{text-align:right}
+.iv-tw{overflow-x:auto}.iv-t{width:100%;border-collapse:collapse;font-size:.88rem}.iv-t th,.iv-t td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}.iv-t .r,.iv-t th.r{text-align:right}.iv-t th{color:var(--mute);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em}.iv-s{cursor:pointer}.iv-click{cursor:pointer}.iv-click:hover{background:var(--bg)}.iv-t td small{display:block;color:var(--mute);max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.iv-det td{background:var(--bg)}.iv-dg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.iv-dg dt{color:var(--mute);font-size:.75rem}.iv-dg dd{margin:0;font-weight:600}.iv-empty ol{padding-left:20px;line-height:1.7}
 .bell .bdot[hidden],.bellpanel[hidden]{display:none}
 .bellpanel{position:absolute;right:0;top:50px;width:min(340px,calc(100vw - 32px));max-height:70vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:50}
 .bellpanel .bph{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.bellpanel .nlist{margin-top:0}
@@ -260,6 +268,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <button class="nav" id="navprofile" type="button">Profile</button>
   <button class="nav" id="navstudio" type="button">Studio</button>
   <button class="nav" id="navplan" type="button">Trade Plan</button>
+  <button class="nav" id="navinv" type="button">Investments</button>
   <button class="nav" id="navpub" type="button">Publishes <span id="navpubn" class="badge"></span></button>
   <button class="nav" id="navcoach" type="button">AI Coach</button>
   <button class="nav" id="navnotif" type="button">Notifications <span id="navnotn" class="badge" hidden></span></button>
@@ -273,6 +282,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <div class="wrap" id="home"><p class="hint">Loading your record...</p></div>
 <div class="wrap" id="settingsv" hidden></div>
 <div class="wrap" id="planv" hidden></div>
+<div class="wrap" id="invv" hidden></div>
 <div class="wrap" id="profilev" hidden></div>
 <div class="wrap" id="pubv" hidden></div>
 <div class="wrap" id="notifv" hidden></div>
@@ -1052,7 +1062,7 @@ function applyDefaults(){try{
  if(settings.name&&!$("name").value.trim())$("name").value=settings.name;
  if(settings.voice)$("voice").value=settings.voice;
  if(settings.grouping&&$("grouping"))$("grouping").value=settings.grouping}catch(e){}}
-["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
+["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("invv").hidden=true;$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
 /* ---------- Trade Plan: risk sizing + A+ checklist + plan log ---------- */
 var PLK="stockspot-plans-v1",PLD="stockspot-plan-draft-v1",plans=[],plLoaded=false,pl=null,rk=null,plPend=[],plEditId="";
 function todayStr(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
@@ -1210,7 +1220,90 @@ $("planv").addEventListener("keydown",function(ev){if(ev.target&&ev.target.id===
   if(b.dataset.plst){var a=b.dataset.plst.split("|"),p=plans.find(function(x){return x.id===a[0]});if(p){p.status=a[1];plPut(p);plLog()}return}
   if(b.dataset.pldel){var id=b.dataset.pldel;if(b.dataset.armed){plans=plans.filter(function(x){return x.id!==id});plDel(id);plLog();return}b.dataset.armed="1";b.textContent="Delete?";setTimeout(function(){if(b.isConnected){delete b.dataset.armed;b.innerHTML="&#10005;"}},2500)}})})();
 
-function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv","planv"].forEach(function(i){$(i).hidden=true});$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
+/* ---------- Investments (Fidelity positions import) ---------- */
+var IV={snaps:[],acct:"all",sort:{k:"v",d:-1},open:"",loaded:false},IVK="ss-invest";
+var IVPAL=["#3b82f6","#10b981","#f59e0b","#8b5cf6","#ef4444","#06b6d4","#ec4899","#84cc16","#f97316","#64748b"];
+function ivNum(x){if(x==null)return null;x=String(x).trim();if(!x||/^(--|n\/a|pending)/i.test(x))return null;var neg=/^\(.*\)$/.test(x)||/^-/.test(x);var v=parseFloat(x.replace(/[^0-9.]/g,""));return isNaN(v)?null:(neg?-v:v)}
+function ivKind(s,n){s=(s||"").toUpperCase();n=(n||"").toUpperCase();
+ if(/\*\*$/.test(s)||/^(SPAXX|FDRXX|FZFXX|FCASH|CORE|USD)/.test(s)||/MONEY MARKET|CASH|PENDING/.test(n))return "Cash";
+ if(/ETF|ISHARES|SPDR|VANGUARD (S&P|TOTAL|GROWTH|VALUE)|INVESCO QQQ/.test(n)||/^(SPY|VOO|VTI|QQQ|IVV|VXUS|SCHD|BND|AGG|VEA|VWO|IWM|DIA)$/.test(s))return "ETF";
+ if(/^[A-Z]{4}X$/.test(s)||/FUND|INDEX|FIDELITY|TARGET|FREEDOM|TRUST/.test(n)&&!/INC|CORP/.test(n))return "Mutual fund";
+ return "Stock"}
+function ivParse(text){var R=parseCSV(text),hi=-1,i;
+ for(i=0;i<R.length;i++){var l=R[i].map(function(c){return c.trim().toLowerCase()});if(l.indexOf("symbol")>-1&&(l.indexOf("quantity")>-1||l.indexOf("current value")>-1)){hi=i;break}}
+ if(hi<0)return null;var H=R[hi].map(function(c){return c.trim().toLowerCase()});
+ function ix(){for(var a=0;a<arguments.length;a++){var k=H.indexOf(arguments[a]);if(k>-1)return k}return -1}
+ var c={an:ix("account number"),a:ix("account name","account"),s:ix("symbol"),n:ix("description","security description"),q:ix("quantity","shares"),p:ix("last price","price"),v:ix("current value","value"),dg:ix("today's gain/loss dollar","todays gain/loss dollar"),dp:ix("today's gain/loss percent","todays gain/loss percent"),tg:ix("total gain/loss dollar"),tp:ix("total gain/loss percent"),cb:ix("cost basis total","cost basis"),ac:ix("average cost basis")};
+ var out=[];for(i=hi+1;i<R.length;i++){var r=R[i];if(r.length<4)continue;var sym=(r[c.s]||"").trim();if(!sym||/^(date|"?the data)/i.test(sym)||sym.length>14)continue;
+  var v=ivNum(r[c.v]);if(v==null&&c.q>-1){var q0=ivNum(r[c.q]),p0=ivNum(r[c.p]);if(q0!=null&&p0!=null)v=q0*p0}if(v==null)continue;
+  var cb=ivNum(r[c.cb]),tg=ivNum(r[c.tg]);if(tg==null&&cb!=null)tg=v-cb;if(cb==null&&tg!=null)cb=v-tg;
+  var an=(r[c.an]||"").trim();out.push({a:(r[c.a]||an||"Account").trim(),an:an?an.slice(-4):"",s:sym.replace(/\*+$/,""),n:(r[c.n]||"").trim(),k:ivKind(sym,r[c.n]),q:ivNum(r[c.q]),p:ivNum(r[c.p]),v:v,dg:ivNum(r[c.dg]),tg:tg,cb:cb,ac:ivNum(r[c.ac])})}
+ return out}
+async function ivLoad(){if(IV.loaded)return;try{var d=null;if(store.db){var s=await store.db.doc("invest/data").get();if(s.exists)d=clone(s.data())}else d=JSON.parse(localStorage.getItem(IVK)||"null");IV.snaps=(d&&d.snaps)||[]}catch(e){IV.snaps=[]}IV.loaded=true}
+async function ivSave(){try{var d={snaps:IV.snaps.slice(-90)};if(store.db)await store.db.doc("invest/data").set(d);else localStorage.setItem(IVK,JSON.stringify(d))}catch(e){toast("Could not save that")}}
+function ivCur(){return IV.snaps.length?IV.snaps[IV.snaps.length-1]:null}
+function ivSum(rows){var o={v:0,cb:0,tg:0,dg:0,hasCb:false};rows.forEach(function(r){o.v+=r.v;if(r.cb!=null){o.cb+=r.cb;o.hasCb=true}if(r.tg!=null)o.tg+=r.tg;if(r.dg!=null)o.dg+=r.dg});o.tp=o.cb>0?o.tg/o.cb*100:null;o.dp=o.v-o.dg>0?o.dg/(o.v-o.dg)*100:null;return o}
+function ivGroup(rows,key){var m={};rows.forEach(function(r){var k=key(r);(m[k]=m[k]||[]).push(r)});return Object.keys(m).map(function(k){var s=ivSum(m[k]);s.k=k;s.rows=m[k];return s}).sort(function(a,b){return b.v-a.v})}
+function ivC(v){return v==null?"-":(Math.abs(v)>=1e6?"$"+(v/1e6).toFixed(2)+"M":Math.abs(v)>=1e4?"$"+nf(v/1e3,1)+"K":money(v))}
+function ivCls(v){return v>0?"gain":v<0?"loss":""}
+function ivDonut(items,tot,label){var R=70,r=46,cx=90,cy=90,a0=-Math.PI/2,p="";if(!tot)return "";
+ items.forEach(function(it,i){var f=it.v/tot,a1=a0+f*2*Math.PI;if(f>=.9999){p+='<circle cx="'+cx+'" cy="'+cy+'" r="'+((R+r)/2)+'" fill="none" stroke="'+it.c+'" stroke-width="'+(R-r)+'"/>'}else{var l=f>.5?1:0;p+='<path d="M'+(cx+R*Math.cos(a0))+" "+(cy+R*Math.sin(a0))+" A"+R+" "+R+" 0 "+l+" 1 "+(cx+R*Math.cos(a1))+" "+(cy+R*Math.sin(a1))+" L"+(cx+r*Math.cos(a1))+" "+(cy+r*Math.sin(a1))+" A"+r+" "+r+" 0 "+l+" 0 "+(cx+r*Math.cos(a0))+" "+(cy+r*Math.sin(a0))+' Z" fill="'+it.c+'"><title>'+esc(it.k)+" "+(f*100).toFixed(1)+"%</title></path>"}a0=a1});
+ return '<svg class="iv-donut" viewBox="0 0 180 180" role="img" aria-label="'+esc(label)+'">'+p+'<text x="90" y="86" text-anchor="middle" class="iv-dl">'+esc(label)+'</text><text x="90" y="104" text-anchor="middle" class="iv-dv">'+ivC(tot)+'</text></svg>'}
+function ivLegend(items,tot){return '<ul class="iv-leg">'+items.map(function(it){return '<li><i style="background:'+it.c+'"></i><span>'+esc(it.k)+'</span><b>'+(it.v/tot*100).toFixed(1)+'%</b><small>'+ivC(it.v)+'</small></li>'}).join("")+'</ul>'}
+function ivTop(groups,n){var a=groups.slice(0,n).map(function(g,i){return {k:g.k,v:g.v,c:IVPAL[i%IVPAL.length]}});var rest=groups.slice(n).reduce(function(s,g){return s+g.v},0);if(rest>0)a.push({k:"Everything else",v:rest,c:"#94a3b8"});return a}
+function ivLine(pts){if(pts.length<2)return '<p class="hint">Import a new Fidelity file on another day and your value over time will draw here.</p>';
+ var W=640,H=200,L=8,Rr=8,T=12,B=22,mn=Math.min.apply(null,pts.map(function(p){return p.v})),mx=Math.max.apply(null,pts.map(function(p){return p.v}));if(mx===mn){mx+=1;mn-=1}
+ var pad=(mx-mn)*.12;mn-=pad;mx+=pad;var X=function(i){return L+i/(pts.length-1)*(W-L-Rr)},Y=function(v){return T+(1-(v-mn)/(mx-mn))*(H-T-B)};
+ var d=pts.map(function(p,i){return (i?"L":"M")+X(i).toFixed(1)+" "+Y(p.v).toFixed(1)}).join(" "),up=pts[pts.length-1].v>=pts[0].v,col=up?"var(--gain)":"var(--loss)";
+ return '<svg viewBox="0 0 '+W+' '+H+'" class="iv-line" role="img" aria-label="Portfolio value over time"><defs><linearGradient id="ivg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+col+'" stop-opacity=".28"/><stop offset="1" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs><path d="'+d+" L"+X(pts.length-1).toFixed(1)+" "+(H-B)+" L"+L+" "+(H-B)+' Z" fill="url(#ivg)"/><path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="2.5" stroke-linejoin="round"/>'+pts.map(function(p,i){return '<circle cx="'+X(i).toFixed(1)+'" cy="'+Y(p.v).toFixed(1)+'" r="3" fill="'+col+'"><title>'+esc(p.d)+" "+money(p.v)+'</title></circle>'}).join("")+'<text x="'+L+'" y="'+(H-6)+'" class="iv-ax">'+esc(pts[0].d)+'</text><text x="'+(W-Rr)+'" y="'+(H-6)+'" text-anchor="end" class="iv-ax">'+esc(pts[pts.length-1].d)+'</text></svg>'}
+function ivBars(items,title){var mx=Math.max.apply(null,items.map(function(i){return Math.abs(i.v)}))||1;
+ return '<div class="iv-bars" role="img" aria-label="'+esc(title)+'">'+items.map(function(i){var w=Math.abs(i.v)/mx*100;return '<div class="iv-br"><span class="iv-bn">'+esc(i.k)+'</span><span class="iv-bt"><span class="iv-bf" style="width:'+w.toFixed(1)+'%;background:var(--'+(i.v>=0?"gain":"loss")+')"></span></span><b class="'+ivCls(i.v)+'">'+(i.v>0?"+":"")+ivC(i.v)+'</b></div>'}).join("")+'</div>'}
+function renderInv(){var el=$("invv");if(!el)return;var cur=ivCur();
+ var head='<div class="hm-top"><div><h1>Investments</h1><p class="sub">'+(cur?"Fidelity positions as of "+esc(cur.d)+". Import a fresh file any time to update.":"Your 401(k), Roth IRA and other accounts, all in one view.")+'</p></div><div><button class="primary" type="button" id="ivimp">'+(cur?"Update from Fidelity":"Import from Fidelity")+'</button><input type="file" id="ivfile" accept=".csv,text/csv" multiple hidden></div></div>';
+ if(!cur){el.innerHTML=head+'<div class="pl-card iv-empty"><h2>Bring your accounts in</h2><ol><li>Sign in at Fidelity and open <b>Accounts &rarr; Positions</b>.</li><li>Pick <b>All accounts</b> (or one at a time), then choose the <b>Download</b> icon (the arrow at the top right of the table).</li><li>Come back and press <b>Import from Fidelity</b>, or drop the file anywhere on this page. You can select several files at once.</li></ol><p class="hint">Your 401(k) from NetBenefits works the same way if it lets you download positions. The file is read in your browser and only the saved holdings are kept in your account. Fidelity does not give individuals a live feed, so you refresh by importing again, and each import adds a point to your value-over-time chart.</p></div>';return}
+ var all=cur.rows,accts=ivGroup(all,function(r){return r.a+(r.an?" ····"+r.an:"")}),sel=IV.acct==="all"?all:all.filter(function(r){return (r.a+(r.an?" ····"+r.an:""))===IV.acct}),T=ivSum(all),S=ivSum(sel);
+ var chips='<div class="iv-chips"><button type="button" class="iv-chip'+(IV.acct==="all"?" on":"")+'" data-ivacct="all">All accounts</button>'+accts.map(function(a){return '<button type="button" class="iv-chip'+(IV.acct===a.k?" on":"")+'" data-ivacct="'+esc(a.k)+'">'+esc(a.k)+'</button>'}).join("")+'</div>';
+ var kp=function(l,v,c,sub){return '<div class="iv-kpi"><span>'+l+'</span><b class="'+(c||"")+'">'+v+'</b>'+(sub?'<small class="'+(c||"")+'">'+sub+'</small>':"")+'</div>'};
+ var invested=S.v-sel.filter(function(r){return r.k==="Cash"}).reduce(function(s,r){return s+r.v},0);
+ var kpis='<div class="iv-kpis">'+kp("Total value",money(S.v))+kp("Today",S.dg||S.dg===0?sgn(S.dg):"-",ivCls(S.dg),S.dp!=null?fmtPct(S.dp):"")+(S.hasCb?kp("Total gain / loss",sgn(S.tg),ivCls(S.tg),S.tp!=null?fmtPct(S.tp):""):"")+(S.hasCb?kp("Cost basis",money(S.cb)):"")+kp("Invested",money(invested),"",S.v?(invested/S.v*100).toFixed(0)+"% of value":"")+kp("Holdings",sel.length+"","",accts.length+(accts.length===1?" account":" accounts"))+'</div>';
+ var pts=IV.snaps.map(function(s){var rr=IV.acct==="all"?s.rows:s.rows.filter(function(r){return (r.a+(r.an?" ····"+r.an:""))===IV.acct});return {d:s.d,v:rr.reduce(function(a,r){return a+r.v},0)}}).filter(function(p){return p.v>0});
+ var byH=ivGroup(sel,function(r){return r.s}),byK=ivGroup(sel,function(r){return r.k}).map(function(g,i){g.c=IVPAL[i%IVPAL.length];return g}),hold=ivTop(byH,8),acItems=ivTop(accts,8);
+ var gl=sel.filter(function(r){return r.tg!=null&&r.k!=="Cash"}).sort(function(a,b){return b.tg-a.tg}),best=gl.slice(0,6).filter(function(r){return r.tg>0}),worst=gl.slice(-6).reverse().filter(function(r){return r.tg<0});
+ var gb=best.concat(worst).map(function(r){return {k:r.s,v:r.tg}});
+ var td=sel.filter(function(r){return r.dg!=null&&r.dg!==0&&r.k!=="Cash"}).sort(function(a,b){return Math.abs(b.dg)-Math.abs(a.dg)}).slice(0,8).map(function(r){return {k:r.s,v:r.dg}});
+ var accTable='<div class="iv-tw"><table class="iv-t"><thead><tr><th>Account</th><th>Value</th><th>Today</th><th>Total gain</th><th>Return</th><th>Share</th></tr></thead><tbody>'+accts.map(function(a){return '<tr data-ivacct="'+esc(a.k)+'" class="iv-click"><td>'+esc(a.k)+'</td><td>'+money(a.v)+'</td><td class="'+ivCls(a.dg)+'">'+(a.dg||a.dg===0?sgn(a.dg):"-")+'</td><td class="'+ivCls(a.tg)+'">'+(a.hasCb?sgn(a.tg):"-")+'</td><td class="'+ivCls(a.tg)+'">'+(a.tp!=null?fmtPct(a.tp):"-")+'</td><td>'+(a.v/T.v*100).toFixed(1)+'%</td></tr>'}).join("")+'</tbody></table></div>';
+ var k=IV.sort.k,dir=IV.sort.d,rows=sel.slice().sort(function(a,b){var x=a[k],y=b[k];if(k==="s"||k==="a"||k==="n"){return String(x).localeCompare(String(y))*dir}if(k==="tp"){x=a.cb>0?a.tg/a.cb:null;y=b.cb>0?b.tg/b.cb:null}return ((x==null?-Infinity:x)-(y==null?-Infinity:y))*dir});
+ var th=function(key,l,r){return '<th class="iv-s'+(r?" r":"")+'" data-ivsort="'+key+'">'+l+(IV.sort.k===key?(IV.sort.d>0?" ▲":" ▼"):"")+'</th>'};
+ var tb=rows.map(function(r,i){var id=r.a+"|"+r.s,o=IV.open===id,pct=S.v?r.v/S.v*100:0,rp=r.cb>0&&r.tg!=null?r.tg/r.cb*100:null;
+  var det=o?'<tr class="iv-det"><td colspan="8"><div class="iv-dg">'+[["Account",r.a+(r.an?" ····"+r.an:"")],["Type",r.k],["Shares",r.q!=null?nf(r.q,4):"-"],["Last price",r.p!=null?money(r.p):"-"],["Average cost",r.ac!=null?money(r.ac):"-"],["Cost basis",r.cb!=null?money(r.cb):"-"],["Market value",money(r.v)],["Total gain",r.tg!=null?sgn(r.tg)+(rp!=null?" ("+fmtPct(rp)+")":""):"-"],["Today",r.dg!=null?sgn(r.dg):"-"],["Share of selection",pct.toFixed(2)+"%"],["Held in",sel.filter(function(x){return x.s===r.s}).length+" account(s)"]].map(function(p){return '<div><dt>'+p[0]+'</dt><dd>'+esc(p[1])+'</dd></div>'}).join("")+'</div></td></tr>':"";
+  return '<tr class="iv-click iv-hr" data-ivrow="'+esc(id)+'"><td><b>'+esc(r.s)+'</b><small>'+esc(r.n)+'</small></td><td class="r">'+(r.q!=null?nf(r.q,3):"-")+'</td><td class="r">'+(r.p!=null?money(r.p):"-")+'</td><td class="r">'+money(r.v)+'</td><td class="r '+ivCls(r.dg)+'">'+(r.dg!=null?sgn(r.dg):"-")+'</td><td class="r '+ivCls(r.tg)+'">'+(r.tg!=null?sgn(r.tg):"-")+'</td><td class="r '+ivCls(rp)+'">'+(rp!=null?fmtPct(rp):"-")+'</td><td class="r">'+pct.toFixed(1)+'%</td></tr>'+det}).join("");
+ el.innerHTML=head+chips+kpis+
+  '<div class="pl-card"><h2>Value over time</h2>'+ivLine(pts)+'</div>'+
+  '<div class="iv-grid"><div class="pl-card"><h2>Where the money sits</h2><div class="iv-dw">'+ivDonut(hold,S.v,"By holding")+ivLegend(hold,S.v)+'</div></div>'+
+  '<div class="pl-card"><h2>Asset mix</h2><div class="iv-dw">'+ivDonut(byK,S.v,"By type")+ivLegend(byK.map(function(g){return {k:g.k,v:g.v,c:g.c}}),S.v)+'</div></div></div>'+
+  (IV.acct==="all"&&accts.length>1?'<div class="pl-card"><h2>By account</h2><div class="iv-dw">'+ivDonut(acItems,T.v,"By account")+ivLegend(acItems,T.v)+'</div></div><div class="pl-card"><h2>Account breakdown</h2><p class="hint" style="margin:-6px 0 10px">Tap an account to filter the whole page.</p>'+accTable+'</div>':"")+
+  (gb.length||td.length?'<div class="iv-grid">'+(gb.length?'<div class="pl-card"><h2>Biggest winners and losers</h2>'+ivBars(gb,"Total gain or loss by holding")+'</div>':"")+(td.length?'<div class="pl-card"><h2>Biggest movers today</h2>'+ivBars(td,"Today's change by holding")+'</div>':"")+'</div>':"")+
+  '<div class="pl-card"><h2>All holdings</h2><p class="hint" style="margin:-6px 0 10px">Tap a column to sort, tap a row for the full detail.</p><div class="iv-tw"><table class="iv-t"><thead><tr>'+th("s","Holding")+th("q","Shares",1)+th("p","Price",1)+th("v","Value",1)+th("dg","Today",1)+th("tg","Total gain",1)+th("tp","Return",1)+'<th class="r">Share</th></tr></thead><tbody>'+tb+'</tbody></table></div></div>'+
+  '<p class="hint">Expense ratios and fund-level fees are not in Fidelity\'s positions file, so they are not shown. Figures are only as fresh as your last import. Not financial advice.</p>'+
+  '<p style="margin:12px 0 28px"><button type="button" id="ivclear">Remove my saved Fidelity data</button></p>'}
+async function ivImport(files){var rows=[],bad=0;files=Array.prototype.slice.call(files||[]);
+ for(var i=0;i<files.length;i++){try{var rs=ivParse(await files[i].text());if(rs&&rs.length)rows=rows.concat(rs);else bad++}catch(e){bad++}}
+ if(!rows.length){toast("I could not find holdings in that file. Use the positions download.");return}
+ var d=todayISO(),snap={d:d,ts:Date.now(),rows:rows};IV.snaps=IV.snaps.filter(function(s){return s.d!==d});IV.snaps.push(snap);IV.snaps.sort(function(a,b){return a.d<b.d?-1:1});IV.acct="all";IV.open="";
+ await ivSave();renderInv();toast("Imported "+rows.length+" holdings"+(bad?" ("+bad+" file skipped)":""))}
+async function showInv(){hideViews();$("navinv").classList.add("on");$("invv").hidden=false;renderInv();window.scrollTo(0,0);await ivLoad();if(!$("invv").hidden)renderInv()}
+$("navinv").addEventListener("click",showInv);
+$("invv").addEventListener("click",async function(ev){var t=ev.target,b=t.closest&&t.closest("button");
+ if(b){if(b.id==="ivimp"){$("ivfile").click();return}if(b.dataset.ivacct){IV.acct=b.dataset.ivacct;IV.open="";renderInv();return}
+  if(b.id==="ivclear"){if(!confirm("Remove all saved Fidelity holdings and history from Revatour?"))return;IV.snaps=[];await ivSave();renderInv();return}return}
+ var th=t.closest&&t.closest("[data-ivsort]");if(th){var k=th.dataset.ivsort;IV.sort=IV.sort.k===k?{k:k,d:-IV.sort.d}:{k:k,d:k==="s"?1:-1};renderInv();return}
+ var tr=t.closest&&t.closest("tr[data-ivacct]");if(tr){IV.acct=tr.dataset.ivacct;renderInv();return}
+ var hr=t.closest&&t.closest("tr[data-ivrow]");if(hr){IV.open=IV.open===hr.dataset.ivrow?"":hr.dataset.ivrow;renderInv()}});
+$("invv").addEventListener("change",function(ev){if(ev.target.id==="ivfile"){ivImport(ev.target.files);ev.target.value=""}});
+$("invv").addEventListener("dragover",function(ev){ev.preventDefault()});
+$("invv").addEventListener("drop",function(ev){ev.preventDefault();if(ev.dataTransfer&&ev.dataTransfer.files.length)ivImport(ev.dataTransfer.files)});
+
+function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv","planv","invv"].forEach(function(i){$(i).hidden=true});$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
  $("navhome").classList.remove("on");$("navstudio").classList.remove("on");$("navset").classList.add("on");
  curDate="";curPage="";renderSettings();$("settingsv").hidden=false;window.scrollTo(0,0)}
 function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["Direct and plain-spoken","Professional and measured","Energetic and motivational","Analytical and data-first"];
@@ -1397,7 +1490,7 @@ function myAvUrl(){return prof.src||(prof.aid?blobUrl(prof.aid):"")}
 function avatarHTML(cls,url,name){var A=window.stockspotAuth||{},u=url!=null?url:myAvUrl(),nm=name||A.username||A.email||"?";
  return '<div class="pf-av'+(cls?" "+cls:"")+'">'+(u?'<img alt="" src="'+esc(u)+'">':esc((nm.charAt(0)||"?").toUpperCase()))+'</div>'}
 function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv"].forEach(function(i){$(i).hidden=true});
- ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
+ ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
 function paintProfNav(){$("navprofile").classList.toggle("on",profTab!=="coach");$("navcoach").classList.toggle("on",profTab==="coach")}
 function recordBlock(){var all=allTrades();if(!all.length)return '<div class="pf-panel hint" style="margin:8px 0">No saved trades yet. Save a day in Studio and your record shows here.</div>';
  var days=dailyPnl(),yr=pickYear(days),m=pnlModel(days,yr),s=withCtx({trades:all},[],stats);
@@ -1799,7 +1892,6 @@ function renderHome(){var el=$("home");if(!el)return;
  h+='<section class="hm-today"><div><span class="hm-lab">Today</span>'+(today?'<b class="hm-big '+(today.pnl>=0?"gain":"loss")+'">'+sgn(today.pnl)+'</b><span class="hint">'+today.n+(today.n===1?" trade":" trades")+' saved</span>':'<b class="hm-big">No trades saved yet</b><span class="hint">Upload your statement in Studio to log the day.</span>')+'</div><button class="primary" id="hstudio" type="button">'+(today?"Open Studio":"Log today's trades")+'</button></section>';
  h+='<section><h2>Following</h2><div id="hmfeed"><span class="hint">Loading...</span></div></section>';
  h+='<section><h2>Trending $tickers</h2><div id="hmtrend" class="hm-pages"><span class="hint">Loading...</span></div></section>';
- h+='<section><div class="hm-top" style="margin:0"><h2 style="margin:0">Notifications</h2><button type="button" id="hmnall">See all</button></div><div id="hmnotif" class="nlist"><span class="hint">Loading...</span></div></section>';
  var rec=days.slice(-5).reverse();
  if(rec.length)h+='<section><h2>Recent days</h2><div class="hm-days">'+rec.map(function(d){var has=!!entries[d.d];
   return '<button type="button" class="hm-day" '+(has?'data-day="'+d.d+'"':'disabled')+'><span>'+esc(dayLabel(d.d))+' <small>'+d.n+(d.n===1?' trade':' trades')+'</small></span><b class="'+(d.pnl>=0?"gain":"loss")+'">'+sgn(d.pnl)+'</b></button>'}).join("")+'</div></section>';
