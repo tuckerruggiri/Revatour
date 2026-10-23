@@ -211,19 +211,29 @@
       var re = new RegExp('\\$' + sym + '(?![A-Za-z0-9])'), rows = (r.data || []).filter(function (p) { return re.test(p.text || ''); }).slice(0, 20), n = await namesFor(rows.map(function (p) { return p.author_id; }));
       return rows.map(function (p) { return { id: p.id, author: pickName(n, p.author_id), text: p.text, imgs: p.imgs || [], ts: new Date(p.created_at).getTime() }; }); },
     syncChannels: async function (list) { await ready;
-      var ex = await sb.from('ss_channels').select('id,page_id,name,parent_name,fpost').eq('owner_id', uid); if (ex.error) throw ex.error;
+      var ex = await sb.from('ss_channels').select('id,page_id,name,parent_name,fpost,access').eq('owner_id', uid); if (ex.error) throw ex.error;
       var have = {}; (ex.data || []).forEach(function (c) { have[c.page_id] = c; });
       var want = {}; list.forEach(function (c) { want[c.page_id] = c; });
-      var rows = list.filter(function (c) { var h = have[c.page_id]; return !h || h.name !== c.name || (h.parent_name || '') !== (c.parent_name || '') || !!h.fpost !== !!c.fpost; })
-        .map(function (c) { return { owner_id: uid, page_id: c.page_id, name: c.name, parent_name: c.parent_name || '', fpost: !!c.fpost }; });
+      var rows = list.filter(function (c) { var h = have[c.page_id]; return !h || h.name !== c.name || (h.parent_name || '') !== (c.parent_name || '') || !!h.fpost !== !!c.fpost || (h.access || 'public') !== (c.access || 'public'); })
+        .map(function (c) { return { owner_id: uid, page_id: c.page_id, name: c.name, parent_name: c.parent_name || '', fpost: !!c.fpost, access: c.access === 'members' ? 'members' : 'public' }; });
       if (rows.length) { var u = await sb.from('ss_channels').upsert(rows, { onConflict: 'owner_id,page_id' }); if (u.error) throw u.error; }
       var gone = (ex.data || []).filter(function (c) { return !want[c.page_id]; }).map(function (c) { return c.id; });
       if (gone.length) { var d = await sb.from('ss_channels').delete().in('id', gone); if (d.error) throw d.error; }
       var all = await sb.from('ss_channels').select('id,page_id').eq('owner_id', uid); var map = {}; (all.data || []).forEach(function (c) { map[c.page_id] = c.id; }); return map; },
-    channelsOf: async function (ownerId) { await ready; var r = await sb.from('ss_channels').select('id,page_id,name,parent_name,fpost').eq('owner_id', ownerId).order('created_at', { ascending: true }); if (r.error) throw r.error; return r.data || []; },
+    channelsOf: async function (ownerId) { await ready; var r = await sb.from('ss_channels').select('id,page_id,name,parent_name,fpost,access').eq('owner_id', ownerId).order('created_at', { ascending: true }); if (r.error) throw r.error; return r.data || []; },
     channelInfo: async function (id) { await ready; var r = await sb.from('ss_channels').select('*').eq('id', id).maybeSingle(); if (r.error || !r.data) return null; var c = r.data, n = await namesFor([c.owner_id]);
       var f = c.owner_id === uid ? null : await sb.from('ss_follows').select('follower_id').eq('follower_id', uid).eq('followee_id', c.owner_id).maybeSingle();
-      return { id: c.id, owner: pickName(n, c.owner_id), name: c.name, parent_name: c.parent_name || '', fpost: !!c.fpost, iFollow: !!(f && f.data), mine: c.owner_id === uid }; },
+      var mm = c.owner_id === uid ? null : await sb.from('ss_members').select('status').eq('owner_id', c.owner_id).eq('member_id', uid).maybeSingle();
+      return { id: c.id, owner: pickName(n, c.owner_id), name: c.name, parent_name: c.parent_name || '', fpost: !!c.fpost, access: c.access || 'public', iFollow: !!(f && f.data), mstatus: mm && mm.data ? mm.data.status : '', mine: c.owner_id === uid }; },
+    memberStatus: async function (ownerId) { await ready; if (ownerId === uid) return ''; var r = await sb.from('ss_members').select('status').eq('owner_id', ownerId).eq('member_id', uid).maybeSingle(); return r.data ? r.data.status : ''; },
+    requestJoin: async function (ownerId) { await ready; var r = await sb.from('ss_members').insert({ owner_id: ownerId, member_id: uid, status: 'pending' }); if (r.error && r.error.code !== '23505') throw r.error; },
+    leaveServer: async function (ownerId) { await ready; var r = await sb.from('ss_members').delete().eq('owner_id', ownerId).eq('member_id', uid); if (r.error) throw r.error; },
+    members: async function () { await ready; var r = await sb.from('ss_members').select('member_id,status,created_at').eq('owner_id', uid).order('created_at', { ascending: false }).limit(300); if (r.error) throw r.error;
+      var rows = r.data || [], n = await namesFor(rows.map(function (m) { return m.member_id; }));
+      return rows.map(function (m) { return { user: pickName(n, m.member_id), status: m.status, ts: new Date(m.created_at).getTime() }; }); },
+    decideMember: async function (memberId, approve) { await ready;
+      var r = approve ? await sb.from('ss_members').update({ status: 'approved' }).eq('owner_id', uid).eq('member_id', memberId) : await sb.from('ss_members').delete().eq('owner_id', uid).eq('member_id', memberId);
+      if (r.error) throw r.error; },
     chatMsgs: async function (cid) { await ready; var r = await sb.from('ss_channel_msgs').select('*').eq('channel_id', cid).order('created_at', { ascending: false }).limit(200); if (r.error) throw r.error;
       var hide = {}; try { var m1 = await sb.from('ss_mutes').select('target_id'), m2 = await sb.from('ss_blocks').select('target_id'); (m1.data || []).concat(m2.data || []).forEach(function (x) { hide[x.target_id] = 1; }); } catch (e) {}
       var rows = (r.data || []).filter(function (m) { return m.author_id === uid || !hide[m.author_id]; }).reverse(), n = await namesFor(rows.map(function (m) { return m.author_id; }));
