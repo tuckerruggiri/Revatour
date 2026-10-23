@@ -202,6 +202,9 @@
     market: async function (sym) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
       var r = await fetch('/api/quote?symbol=' + encodeURIComponent(sym), { headers: { Authorization: 'Bearer ' + tok } });
       if (!r.ok) throw new Error('quote failed'); return r.json(); },
+    quotes: async function (syms) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
+      var r = await fetch('/api/quotes?symbols=' + encodeURIComponent((syms || []).join(',')), { headers: { Authorization: 'Bearer ' + tok } });
+      if (!r.ok) throw new Error('quotes failed'); return r.json(); },
     news: async function (syms) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
       var r = await fetch('/api/news?symbols=' + encodeURIComponent((syms || []).join(',')), { headers: { Authorization: 'Bearer ' + tok } });
       if (!r.ok) throw new Error('news failed'); return r.json(); },

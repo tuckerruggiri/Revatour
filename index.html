@@ -230,6 +230,20 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .iv-ins{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}.iv-in{display:flex;flex-direction:column;gap:4px;font-size:.78rem;color:var(--mute)}.iv-in span{display:flex;align-items:center;gap:6px}.iv-in input{width:100%;min-width:0}.iv-in em{font-style:normal;font-size:.8rem}
 #rlv.wrap{max-width:1180px}
 .nw{gap:3px}.nw-sym{color:var(--accent)}.nw-new{font-style:normal;font-size:.66rem;font-weight:800;color:#fff;background:#ef4444;border-radius:99px;padding:1px 7px}.nw-f{font-style:normal;font-size:.66rem;font-weight:800;color:var(--accent);border:1px solid var(--accent);border-radius:99px;padding:0 7px}a.nw{text-decoration:none}a.nw:hover{border-color:var(--accent)}
+#home.wrap,#newsv.wrap{max-width:1560px}
+.hm-cols{display:grid;grid-template-columns:330px minmax(0,1fr);gap:20px;align-items:start;margin-top:10px}.hm-side{position:sticky;top:16px;background:none;border:none;padding:0;margin:0}
+.hm-main{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:0 18px;align-items:start}.hm-main>.hm-today{grid-column:1/-1}.hm-main>section{margin-bottom:18px}
+@media(max-width:1100px){.hm-cols{grid-template-columns:1fr}.hm-side{position:static}.hm-main{grid-template-columns:1fr}}
+.wl-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}.wl-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}.wl-h h2{margin:0;font-size:1.15rem}.wl-h small{color:var(--mute)}
+.wl-add{display:flex;gap:8px;margin-bottom:12px}.wl-add input{flex:1;min-width:0;text-transform:uppercase}.wl-q{display:flex;flex-wrap:wrap;gap:8px}
+.wl-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}.wl-row{display:flex;align-items:center;border-radius:12px;border:1px solid transparent}.wl-row:hover{background:var(--bg)}.wl-row.on{background:var(--bg);border-color:var(--accent)}
+.wl-main{flex:1;display:grid;grid-template-columns:1fr auto 72px;gap:8px;align-items:center;padding:10px 12px;background:none;border:none;text-align:left;font:inherit;color:var(--ink);cursor:pointer}.wl-main b{font-size:1rem}.wl-px{font-variant-numeric:tabular-nums}.wl-ch{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;font-size:.88rem}
+.wl-x{border:none;background:none;color:var(--mute);padding:8px 10px;cursor:pointer;opacity:.35}.wl-row:hover .wl-x{opacity:1}.wl-x:hover{color:var(--loss)}
+.nw-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:14px}.nw-tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.nw-layout{display:grid;grid-template-columns:330px minmax(0,1fr);gap:20px;align-items:start}.nw-side{position:sticky;top:16px}@media(max-width:1000px){.nw-layout{grid-template-columns:1fr}.nw-side{position:static}}
+.nw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.nw-card{display:flex;flex-direction:column;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;color:var(--ink);text-decoration:none;transition:transform .15s,border-color .15s,box-shadow .15s}a.nw-card:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 10px 24px rgba(0,0,0,.12)}
+.nw-top{display:flex;align-items:center;gap:8px}.nw-top small{margin-left:auto;color:var(--mute)}.nw-card .nw-sym{font-weight:800;color:var(--accent);cursor:pointer}.nw-card h3{margin:0;font-size:1.08rem;line-height:1.4}.nw-card p{margin:0;color:var(--mute);line-height:1.5;font-size:.92rem}.nw-src{color:var(--mute);margin-top:auto}
 .gd-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.gd-top input{min-width:200px}
 .gd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;margin:14px 0 30px}
 .gd-card{display:flex;flex-direction:column;text-align:left;padding:0;overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:16px;cursor:pointer;font:inherit;color:var(--ink);transition:transform .15s,box-shadow .15s}.gd-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.14)}
@@ -290,6 +304,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <button class="nav" id="navprofile" type="button">Profile</button>
   <button class="nav" id="navstudio" type="button">Studio</button>
   <button class="nav" id="navplan" type="button">Trade Plan</button>
+  <button class="nav" id="navnews" type="button">News</button>
   <button class="nav" id="navrl" type="button">Risk Ladder</button>
   <button class="nav" id="navinv" type="button">Investments</button>
   <button class="nav" id="navgd" type="button">How-To</button>
@@ -307,6 +322,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <div class="wrap" id="settingsv" hidden></div>
 <div class="wrap" id="planv" hidden></div>
 <div class="wrap" id="rlv" hidden></div>
+<div class="wrap" id="newsv" hidden></div>
 <div class="wrap" id="invv" hidden></div>
 <div class="wrap" id="gdv" hidden></div>
 <div class="wrap" id="profilev" hidden></div>
@@ -1088,7 +1104,7 @@ function applyDefaults(){try{
  if(settings.name&&!$("name").value.trim())$("name").value=settings.name;
  if(settings.voice)$("voice").value=settings.voice;
  if(settings.grouping&&$("grouping"))$("grouping").value=settings.grouping}catch(e){}}
-["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("invv").hidden=true;$("rlv").hidden=true;$("navrl").classList.remove("on");$("gdv").hidden=true;$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
+["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("invv").hidden=true;$("rlv").hidden=true;$("newsv").hidden=true;$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("gdv").hidden=true;$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
 /* ---------- Trade Plan: risk sizing + A+ checklist + plan log ---------- */
 var PLK="stockspot-plans-v1",PLD="stockspot-plan-draft-v1",plans=[],plLoaded=false,pl=null,rk=null,plPend=[],plEditId="";
 function todayStr(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
@@ -1544,7 +1560,44 @@ $("navrl").addEventListener("click",showRl);
 $("rlv").addEventListener("change",function(ev){var m={rlbal:"bal",rlpct:"pct",rldayR:"dayR",rlmonR:"monR",rlcomm:"comm",rlmo:"months"}[ev.target.id];if(!m)return;var v=parseFloat(ev.target.value);if(isNaN(v)||v<0)v=0;if(m==="months")v=Math.min(60,Math.max(1,Math.round(v)));RL[m]=v;rlSave();setTimeout(function(){var ai=document.activeElement&&document.activeElement.id;renderRl();if(ai&&$(ai)&&$(ai).tagName==='INPUT')$(ai).focus()},0)});
 $("rlv").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("button");if(b&&b.dataset.rlhit){RL.hit=+b.dataset.rlhit;rlSave();renderRl()}});
 
-function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv","planv","invv","gdv","rlv"].forEach(function(i){$(i).hidden=true});$("navrl").classList.remove("on");$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
+/* ---------- Watchlist + News tab ---------- */
+var WL={syms:[],loaded:false,quotes:{},qcfg:true,tab:"all",pick:"",items:[],upd:0,busy:false},WLQ=["SPY","QQQ","AAPL","NVDA","TSLA","MSFT"],nwTimer=null;
+async function wlLoad(){if(WL.loaded)return;try{var d=null;if(store.db){var s=await store.db.doc("meta/watchlist").get();if(s.exists)d=clone(s.data())}else d=JSON.parse(localStorage.getItem("ss-watch")||"null");WL.syms=((d&&d.syms)||[]).filter(function(x){return /^[A-Z]{1,5}(\.[A-Z])?$/.test(x)})}catch(e){WL.syms=[]}WL.loaded=true}
+async function wlSave(){try{if(store.db)await store.db.doc("meta/watchlist").set({syms:WL.syms});else localStorage.setItem("ss-watch",JSON.stringify({syms:WL.syms}))}catch(e){toast("Could not save your watchlist")}}
+async function wlQuote(){var So=S();if(!So||!So.quotes||!WL.syms.length)return;try{var Q=await So.quotes(WL.syms);WL.qcfg=!!Q.configured;WL.quotes=Q.quotes||{}}catch(e){}wlRender()}
+function wlRows(){if(!WL.syms.length)return '<p class="hint" style="margin:6px 0 10px">Nothing here yet. Add a ticker, or tap one to start:</p><div class="wl-q">'+WLQ.map(function(x){return '<button type="button" class="tk-chip" data-wlq="'+x+'">+ $'+x+'</button>'}).join("")+'</div>';
+ return '<ul class="wl-list">'+WL.syms.map(function(x){var q=WL.quotes[x],up=q&&q.dp>=0;
+  return '<li class="wl-row'+(WL.pick===x&&!$("newsv").hidden?" on":"")+'"><button type="button" class="wl-main" data-wlsel="'+x+'"><b>$'+esc(x)+'</b><span class="wl-px">'+(q?money(q.p):'<small>&mdash;</small>')+'</span><span class="wl-ch '+(q?(up?"gain":"loss"):"")+'">'+(q&&q.dp!=null?(up?"+":"")+q.dp.toFixed(2)+"%":"")+'</span></button><button type="button" class="wl-x" data-wlrm="'+x+'" aria-label="Remove '+x+'">✕</button></li>'}).join("")+'</ul>'+(WL.qcfg?'':'<p class="hint" style="margin:8px 0 0">Prices turn on once FINNHUB_KEY is set in Vercel.</p>')}
+function wlHtml(){return '<div class="wl-card"><div class="wl-h"><h2>Watchlist</h2><small>'+WL.syms.length+' stocks</small></div><form class="wl-add" id="wlform" autocomplete="off"><input type="text" id="wlin" maxlength="7" placeholder="Add a ticker, like NVDA" aria-label="Add a ticker to your watchlist"><button class="primary" type="submit">Add</button></form><div id="wlrows">'+wlRows()+'</div></div>'}
+function wlRender(){Array.prototype.forEach.call(document.querySelectorAll(".wl-slot"),function(e){var r=e.querySelector("#wlrows");if(r)r.innerHTML=wlRows();else e.innerHTML=wlHtml()});var c=document.querySelectorAll(".wl-h small");Array.prototype.forEach.call(c,function(e){e.textContent=WL.syms.length+" stocks"})}
+async function wlAddSym(raw){var s=String(raw||"").toUpperCase().replace(/[^A-Z.]/g,"").replace(/^\.+|\.+$/g,"");if(!/^[A-Z]{1,5}(\.[A-Z])?$/.test(s)){toast("That does not look like a ticker");return false}
+ if(WL.syms.indexOf(s)>-1){toast("$"+s+" is already on your watchlist");return false}if(WL.syms.length>=25){toast("Up to 25 stocks on the watchlist");return false}
+ WL.syms.push(s);await wlSave();wlRender();wlQuote();if(!$("newsv").hidden)nwLoad();if(!$("home").hidden)homeNews();return true}
+async function wlRemove(s){WL.syms=WL.syms.filter(function(x){return x!==s});if(WL.pick===s)WL.pick="";delete WL.quotes[s];await wlSave();wlRender();if(!$("newsv").hidden)nwLoad();if(!$("home").hidden)homeNews()}
+/* News tab */
+function nwTickers(){var mine=newsWatch(),L=[];function add(a){a.forEach(function(x){if(L.indexOf(x)<0)L.push(x)})}
+ if(WL.pick)return [WL.pick];if(WL.tab==="watch")return WL.syms.slice(0,15);if(WL.tab==="mine")return mine.slice(0,15);add(WL.syms);add(mine);return L.slice(0,15)}
+function nwCards(items){if(!items.length)return '<div class="pl-card"><p class="hint" style="margin:0">No recent headlines or filings for these stocks. Add more to your watchlist.</p></div>';
+ return '<div class="nw-grid">'+items.map(function(x){var u=/^https?:\/\//.test(x.url||"")?x.url:"",fresh=Date.now()-x.ts<30*60000;
+  return (u?'<a class="nw-card" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">':'<div class="nw-card">')+'<div class="nw-top"><span class="nw-sym" data-tk2="'+esc(x.sym)+'">$'+esc(x.sym)+'</span>'+(fresh?'<i class="nw-new">NEW</i>':'')+(x.kind==="filing"?'<i class="nw-f">FILING</i>':'')+'<small>'+esc(newsAgo(x.ts))+'</small></div><h3>'+esc(x.title)+'</h3>'+(x.summary?'<p>'+esc(x.summary)+'</p>':'')+'<small class="nw-src">'+esc(x.source||"")+' &rarr;</small>'+(u?'</a>':'</div>')}).join("")+'</div>'}
+async function nwLoad(){var el=$("nwfeed");if(!el||WL.busy)return;var So=S();if(!So||!So.news){el.innerHTML='<div class="pl-card"><span class="hint">News is not available here.</span></div>';return}
+ var L=nwTickers();if(!L.length){el.innerHTML='<div class="pl-card"><p class="hint" style="margin:0">Add stocks to your watchlist on the left, or save some trades, and their news shows up here.</p></div>';return}
+ WL.busy=true;try{var N=await So.news(L);WL.items=N.items||[];WL.cfg=!!N.configured;WL.upd=Date.now();if($("nwfeed")){$("nwfeed").innerHTML=(N.configured?"":'<div class="pl-card"><p class="hint" style="margin:0">Showing SEC filings only. Add FINNHUB_KEY in Vercel to turn on headlines.</p></div>')+nwCards(WL.items);var u=$("nwupd");if(u)u.textContent="Updated "+new Date(WL.upd).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+" · "+L.length+" stocks"}}catch(e){if($("nwfeed"))$("nwfeed").innerHTML='<div class="pl-card"><span class="hint">Could not load news. Try again in a minute.</span></div>'}finally{WL.busy=false}}
+function nwTabs(){var t=function(k,l){return '<button type="button" class="iv-chip'+(!WL.pick&&WL.tab===k?" on":"")+'" data-nwtab="'+k+'">'+l+'</button>'};return t("all","Everything")+t("watch","My watchlist")+t("mine","Stocks I trade")+(WL.pick?'<button type="button" class="iv-chip on" data-nwtab="all">$'+esc(WL.pick)+' &times;</button>':'')}
+function renderNews(){var el=$("newsv");el.innerHTML='<div class="nw-head"><div><h1>News</h1><p class="sub" id="nwupd">Loading...</p></div><div class="nw-tabs" id="nwtabs">'+nwTabs()+'<button type="button" id="nwref">Refresh</button></div></div><div class="nw-layout"><aside class="wl-slot nw-side">'+wlHtml()+'</aside><div id="nwfeed" class="nw-main"><div class="pl-card"><span class="hint">Loading...</span></div></div></div>'}
+async function showNews(){hideViews();$("navnews").classList.add("on");$("newsv").hidden=false;renderNews();window.scrollTo(0,0);await wlLoad();if(typeof ivLoad==="function"){try{await ivLoad()}catch(e){}}if($("newsv").hidden)return;wlRender();wlQuote();nwLoad();
+ if(nwTimer)clearInterval(nwTimer);nwTimer=setInterval(function(){if($("newsv").hidden){clearInterval(nwTimer);nwTimer=null;return}if(!document.hidden){nwLoad();wlQuote()}},60000)}
+$("navnews").addEventListener("click",showNews);
+document.addEventListener("submit",function(ev){if(ev.target&&ev.target.id==="wlform"){ev.preventDefault();var i=$("wlin");wlAddSym(i.value).then(function(ok){if(ok){i.value=""}i.focus()})}});
+document.addEventListener("click",function(ev){var t=ev.target,b=t.closest&&t.closest("button"),sy=t.dataset&&t.dataset.tk2;if(sy){ev.preventDefault();ev.stopPropagation();showTicker(sy);return}if(!b)return;var d=b.dataset;
+ if(d.wlq){wlAddSym(d.wlq);return}
+ if(d.wlrm){wlRemove(d.wlrm);return}
+ if(d.wlsel!=null&&$("newsv").hidden){ev.stopPropagation();showTicker(d.wlsel);return}
+ if(d.wlsel!=null&&!$("newsv").hidden){WL.pick=WL.pick===d.wlsel?"":d.wlsel;var tb=$("nwtabs");if(tb)tb.querySelectorAll(".iv-chip").forEach(function(c){c.remove()});renderNews();wlRender();wlQuote();nwLoad();ev.stopPropagation();return}
+ if(d.nwtab){WL.pick="";WL.tab=d.nwtab;renderNews();wlRender();wlQuote();nwLoad();return}
+ if(b.id==="nwref"){nwLoad();wlQuote();return}},true);
+
+function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv","planv","invv","gdv","rlv","newsv"].forEach(function(i){$(i).hidden=true});$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
  $("navhome").classList.remove("on");$("navstudio").classList.remove("on");$("navset").classList.add("on");
  curDate="";curPage="";renderSettings();$("settingsv").hidden=false;window.scrollTo(0,0)}
 function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["Direct and plain-spoken","Professional and measured","Energetic and motivational","Analytical and data-first"];
@@ -1731,7 +1784,7 @@ function myAvUrl(){return prof.src||(prof.aid?blobUrl(prof.aid):"")}
 function avatarHTML(cls,url,name){var A=window.stockspotAuth||{},u=url!=null?url:myAvUrl(),nm=name||A.username||A.email||"?";
  return '<div class="pf-av'+(cls?" "+cls:"")+'">'+(u?'<img alt="" src="'+esc(u)+'">':esc((nm.charAt(0)||"?").toUpperCase()))+'</div>'}
 function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv"].forEach(function(i){$(i).hidden=true});
- ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
+ ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
 function paintProfNav(){$("navprofile").classList.toggle("on",profTab!=="coach");$("navcoach").classList.toggle("on",profTab==="coach")}
 function recordBlock(){var all=allTrades();if(!all.length)return '<div class="pf-panel hint" style="margin:8px 0">No saved trades yet. Save a day in Studio and your record shows here.</div>';
  var days=dailyPnl(),yr=pickYear(days),m=pnlModel(days,yr),s=withCtx({trades:all},[],stats);
@@ -1985,10 +2038,10 @@ function newsList(items,showSym,max){items=(items||[]).slice(0,max||12);if(!item
  return '<div class="nlist">'+items.map(function(x){var u=/^https?:\/\//.test(x.url||"")?x.url:"",fresh=Date.now()-x.ts<30*60000;
   return (u?'<a class="nitem nw" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">':'<div class="nitem nw">')+'<span class="nw-t">'+(showSym?'<b class="nw-sym">$'+esc(x.sym)+'</b> ':'')+esc(x.title)+'</span>'+(x.summary?'<span class="nsnip">'+esc(x.summary)+'</span>':'')+'<small>'+(fresh?'<i class="nw-new">NEW</i> ':'')+(x.kind==="filing"?'<i class="nw-f">FILING</i> ':'')+esc(x.source||"")+' · '+esc(newsAgo(x.ts))+'</small>'+(u?'</a>':'</div>')}).join("")+'</div>'}
 var newsTimer=null;
-function newsWatch(){var L=[],seen={};try{var cur=typeof ivCur==="function"?ivCur():null;if(cur){cur.rows.filter(function(r){return r.k!=="Cash"&&r.k!=="Mutual fund"}).sort(function(a,b){return b.v-a.v}).forEach(function(r){var t=String(r.s).toUpperCase();if(/^[A-Z]{1,5}$/.test(t)&&!seen[t]&&L.length<6){seen[t]=1;L.push(t)}})}}catch(e){}
- try{var T=allTrades();for(var i=T.length-1;i>=0&&L.length<10;i--){var t2=String(T[i].t||"").toUpperCase();if(/^[A-Z]{1,5}$/.test(t2)&&!seen[t2]){seen[t2]=1;L.push(t2)}}}catch(e){}return L}
+function newsWatch(){var L=[],seen={};try{WL.syms.forEach(function(x){if(!seen[x]){seen[x]=1;L.push(x)}})}catch(e){}try{var cur=typeof ivCur==="function"?ivCur():null;if(cur){cur.rows.filter(function(r){return r.k!=="Cash"&&r.k!=="Mutual fund"}).sort(function(a,b){return b.v-a.v}).forEach(function(r){var t=String(r.s).toUpperCase();if(/^[A-Z]{1,5}$/.test(t)&&!seen[t]&&L.length<10){seen[t]=1;L.push(t)}})}}catch(e){}
+ try{var T=allTrades();for(var i=T.length-1;i>=0&&L.length<14;i--){var t2=String(T[i].t||"").toUpperCase();if(/^[A-Z]{1,5}$/.test(t2)&&!seen[t2]){seen[t2]=1;L.push(t2)}}}catch(e){}return L}
 async function homeNews(){var el=$("hmnews");if(!el||$("home").hidden)return;var So=S();if(!So||!So.news){el.innerHTML='<span class="hint">News is not available here.</span>';return}
- if(typeof ivLoad==="function"){try{await ivLoad()}catch(e){}}var L=newsWatch();
+ try{await wlLoad()}catch(e){}if(typeof ivLoad==="function"){try{await ivLoad()}catch(e){}}var L=newsWatch().slice(0,15);
  if(!L.length){el.innerHTML='<span class="hint">Import your Fidelity holdings or save some trades, and news on those stocks shows up here.</span>';return}
  try{var N=await So.news(L);if(!$("hmnews"))return;$("hmnews").innerHTML=(N.configured?"":'<p class="hint" style="margin:0 0 8px">Showing SEC filings only. Add FINNHUB_KEY in Vercel to turn on headlines.</p>')+'<p class="hint" style="margin:0 0 8px">Watching '+L.map(function(x){return "$"+x}).join(", ")+'</p>'+newsList(N.items,true,12)}catch(e){if($("hmnews"))$("hmnews").innerHTML='<span class="hint">Could not load news.</span>'}
  if(newsTimer)clearInterval(newsTimer);newsTimer=setInterval(function(){if(!$("hmnews")||$("home").hidden||document.hidden){if(!$("hmnews")||$("home").hidden){clearInterval(newsTimer);newsTimer=null}return}homeNews()},60000)}
@@ -1996,8 +2049,8 @@ function newsWhen(t){var m=/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})/.exec(t||"");i
 async function tkNews(sym,fallback){var So=S();if(!So||!So.news){return}
  var run=async function(){if($("tickerv").hidden||!$("tknews"))return false;try{var N=await So.news([sym]);if($("tickerv").hidden||!$("tknews"))return false;$("tknews").innerHTML=(N.configured?"":'<p class="hint" style="margin:0 0 8px">Showing SEC filings only. Add FINNHUB_KEY in Vercel to turn on live headlines.</p>')+((N.items&&N.items.length)?newsList(N.items,false,15):'<span class="hint">No recent headlines or filings.</span>')+'<p class="hint" style="margin:8px 0 0">Updates every minute while you are on this page.</p>'}catch(e){}return true};
  await run();if(window.tkNewsT)clearInterval(window.tkNewsT);window.tkNewsT=setInterval(async function(){if(document.hidden)return;var ok=await run();if(!ok){clearInterval(window.tkNewsT)}},60000)}
-async function showTicker(sym){var prevProfile=!$("profilev").hidden,prevPage=curPage,prevPageOpen=!$("pagev").hidden,prevHome=!$("home").hidden;
- tkBack=prevProfile?showProfile:(prevPageOpen&&prevPage?function(){showPage(prevPage)}:(prevHome?showHome:showStudio));
+async function showTicker(sym){var prevProfile=!$("profilev").hidden,prevPage=curPage,prevPageOpen=!$("pagev").hidden,prevHome=!$("home").hidden,prevNews=!$("newsv").hidden;
+ tkBack=prevNews?showNews:prevProfile?showProfile:(prevPageOpen&&prevPage?function(){showPage(prevPage)}:(prevHome?showHome:showStudio));
  hideViews();$("tickerv").hidden=false;
  var all=allTrades().filter(function(t){return String(t.t||"").toUpperCase()===sym}),el=$("tickerv");
  var net=all.reduce(function(a,t){return a+(t.p||0)},0),wins=all.filter(function(t){return t.p>0}).length;
@@ -2144,7 +2197,7 @@ function coachBody(){return coach&&coach.md?'<div class="out ptxt coachbox" id="
 function renderHome(){var el=$("home");if(!el)return;
  var days=dailyPnl(),td=todayISO(),today=null;days.forEach(function(d){if(d.d===td)today=d});
  var who=($("whoami")&&$("whoami").textContent)||"";
- var h='<div class="hm-top"><div><h1>Home</h1><p class="sub">'+(who?esc(who)+". ":"")+esc(dayLabel(td))+'</p></div>'+bellHtml()+'</div>';
+ var h='<div class="hm-top"><div><h1>Home</h1><p class="sub">'+(who?esc(who)+". ":"")+esc(dayLabel(td))+'</p></div>'+bellHtml()+'</div><div class="hm-cols"><aside class="hm-side wl-slot">'+wlHtml()+'</aside><div class="hm-main">';
  h+='<section class="hm-today"><div><span class="hm-lab">Today</span>'+(today?'<b class="hm-big '+(today.pnl>=0?"gain":"loss")+'">'+sgn(today.pnl)+'</b><span class="hint">'+today.n+(today.n===1?" trade":" trades")+' saved</span>':'<b class="hm-big">No trades saved yet</b><span class="hint">Upload your statement in Studio to log the day.</span>')+'</div><button class="primary" id="hstudio" type="button">'+(today?"Open Studio":"Log today's trades")+'</button></section>';
  h+='<section><h2>Following</h2><div id="hmfeed"><span class="hint">Loading...</span></div></section>';
  h+='<section><h2>News on your stocks</h2><div id="hmnews"><span class="hint">Loading...</span></div></section>';
@@ -2154,7 +2207,7 @@ function renderHome(){var el=$("home");if(!el)return;
   return '<button type="button" class="hm-day" '+(has?'data-day="'+d.d+'"':'disabled')+'><span>'+esc(dayLabel(d.d))+' <small>'+d.n+(d.n===1?' trade':' trades')+'</small></span><b class="'+(d.pnl>=0?"gain":"loss")+'">'+sgn(d.pnl)+'</b></button>'}).join("")+'</div></section>';
  var pk=sortedPages();
  if(pk.length)h+='<section><h2>Your pages</h2><div class="hm-pages">'+pk.map(function(p){return '<button type="button" data-pg="'+esc(p.id)+'"># '+esc(p.name)+'</button>'}).join("")+'</div></section>';
- el.innerHTML=h;
+ h+='</div></div>';el.innerHTML=h;wlLoad().then(function(){if(!$("home").hidden){wlRender();wlQuote()}});
  var So=S();
  if(!So){var t=$("hmtrend");if(t)t.innerHTML='<span class="hint">Not available here.</span>';var n=$("hmnotif");if(n)n.innerHTML='<span class="hint">Not available here.</span>';return}
  So.feed().then(function(F){var f=$("hmfeed");if(!f)return;
