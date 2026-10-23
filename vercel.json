@@ -3,6 +3,9 @@
     "api/generate.js": {
       "maxDuration": 60
     },
+    "api/quotes.js": {
+      "maxDuration": 30
+    },
     "api/quote.js": {
       "maxDuration": 60
     },
