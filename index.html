@@ -1051,6 +1051,8 @@ function todayStr(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth
 function nowHM(){var d=new Date();return ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
 function nf(v,d){return isFinite(v)?Number(v).toLocaleString(undefined,{maximumFractionDigits:d==null?2:d}):"-"}
 var PCOMMON=[
+ {k:"mind",t:"Calm and focused",h:"No FOMO, no chasing, clear head"},
+ {k:"rev",t:"No revenge trading",h:"This is not a trade to make back a loss"},
  {k:"mkt",t:"Market agrees",h:"SPY and QQQ trend support this direction"},
  {k:"play",t:"Stock is in play",h:"Fresh catalyst or unusual volume, not a sleepy chart"},
  {k:"lvl",t:"Clean level",h:"Entry sits on clear support, resistance, VWAP or a key moving average"},
@@ -1060,11 +1062,10 @@ var PCOMMON=[
  {k:"size",t:"Size comes from the stop",h:"Shares = 1R divided by the stop distance",auto:1},
  {k:"rr",t:"A target pays at least 1.5R",h:"Target 2 or 3 is worth at least 1.5 times my risk",auto:1},
  {k:"liq",t:"Easy to get out of",h:"Tight spread and enough volume to exit my full size"},
- {k:"day",t:"Inside today's limits",h:"Under my max daily loss and not revenge trading",auto:1},
- {k:"mind",t:"Calm and focused",h:"No FOMO, no chasing, not trying to make it back"}];
+ {k:"day",t:"Inside today's loss limit",h:"Under my max daily loss",auto:1}];
 var PSIDE={
  long:[{k:"lvw",t:"Above VWAP and holding",h:"Buyers are defending it"},{k:"ltr",t:"Higher lows, buyers in control",h:"Trend and tape are with me"},{k:"lext",t:"Not a chase",h:"Entry is not a vertical move away from the level"}],
- short:[{k:"svw",t:"Below VWAP and rejecting",h:"Sellers are capping it"},{k:"str",t:"Lower highs, sellers in control",h:"Failed breakout or weak tape"},{k:"sloc",t:"Shares available, squeeze risk known",h:"I can borrow it and I know where it can rip"}]};
+ short:[{k:"sex",t:"Exhaustion or rejection showing",h:"Blow-off, failed push or topping candle at the level. How far above VWAP it is doesn't matter"},{k:"str",t:"Sellers taking control",h:"Tape and volume show sellers stepping in"},{k:"sloc",t:"Shares available, squeeze risk known",h:"I can borrow it and I know where it can rip"}]};
 function plFresh(){return {side:"long",mode:"range",ticker:"",time:nowHM(),strat:"",hi:"",lo:"",rng:"",entry:"",stop:"",t1:"",t2:"",t3:"",half:false,vol:"",rvol:"",why:"",exit:"",chk:{}}}
 function rkInit(){var r=settings.risk||{};rk={bal:+r.bal||0,pct:r.pct!=null?+r.pct:2,maxR:r.maxR!=null?+r.maxR:5,goalR:r.goalR!=null?+r.goalR:6,dd:r.dd!=null?+r.dd:10,cut:r.cut!=null?+r.cut:50,m1:r.m1!=null?+r.m1:0.7,m2:r.m2!=null?+r.m2:1.5,m3:r.m3!=null?+r.m3:5,red:r.red!=null?+r.red:0.7,peak:+r.peak||0,pnl:r.pd===todayStr()?(+r.pnl||0):0,pd:todayStr()}}
 function rkSave(){settings.risk=Object.assign({},rk);saveSettings()}
