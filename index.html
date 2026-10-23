@@ -228,6 +228,25 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .bellw{position:relative}.bell{position:relative;width:42px;height:42px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--panel);border:1px solid var(--line);color:var(--ink);cursor:pointer}.bell svg{width:20px;height:20px}
 .bell .bdot{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:99px;background:#e5484d;color:#fff;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
 .iv-ins{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}.iv-in{display:flex;flex-direction:column;gap:4px;font-size:.78rem;color:var(--mute)}.iv-in span{display:flex;align-items:center;gap:6px}.iv-in input{width:100%;min-width:0}.iv-in em{font-style:normal;font-size:.8rem}
+.gd-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.gd-top input{min-width:200px}
+.gd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;margin:14px 0 30px}
+.gd-card{display:flex;flex-direction:column;text-align:left;padding:0;overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:16px;cursor:pointer;font:inherit;color:var(--ink);transition:transform .15s,box-shadow .15s}.gd-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.14)}
+.gd-cov{height:118px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.gd-cov.big{height:200px}.gd-cov img{width:100%;height:100%;object-fit:cover}.gd-cov span{width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center}
+.gd-cb{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}.gd-tag{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}.gd-cb h3{margin:0;font-size:1.05rem;line-height:1.3}.gd-cb p{margin:0;color:var(--mute);font-size:.88rem;line-height:1.45;flex:1}
+.gd-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.gd-meta span{font-size:.72rem;color:var(--mute);border:1px solid var(--line);border-radius:99px;padding:2px 9px}
+.gd-prog{height:5px;background:var(--bg);border-radius:99px;overflow:hidden;margin-top:8px}.gd-prog i{display:block;height:100%;background:var(--gain);border-radius:99px}.gd-prog.big{flex:1;margin:0;height:8px}
+.gd-back{margin:0 0 12px;border:none;background:none;padding:4px 0;color:var(--accent);font-weight:600;cursor:pointer}
+.gd-hero{display:flex;gap:18px;align-items:center;border-radius:20px;padding:26px;color:#fff;margin-bottom:14px}.gd-hero h1{margin:4px 0 6px;color:#fff}.gd-hero p{margin:0 0 10px;opacity:.9;max-width:60ch}.gd-hk{font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;opacity:.85;font-weight:700}.gd-hi{width:64px;height:64px;flex:none;border-radius:18px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center}
+.gd-hm{display:flex;gap:8px;flex-wrap:wrap}.gd-hm span{background:rgba(255,255,255,.18);border-radius:99px;padding:3px 11px;font-size:.78rem}
+.gd-bar{display:flex;align-items:center;gap:12px;margin:0 0 18px;font-size:.85rem;color:var(--mute);flex-wrap:wrap}.gd-act{display:flex;gap:6px}
+.gd-bigcov{width:100%;max-height:340px;object-fit:cover;border-radius:14px;margin-bottom:14px}
+.gd-yt{position:relative;padding-top:56.25%;border-radius:14px;overflow:hidden;background:#000;margin:12px 0}.gd-yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.gd-steps{list-style:none;margin:0 0 30px;padding:0;display:flex;flex-direction:column;gap:12px}.gd-step{display:flex;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}.gd-step.on{opacity:.7}.gd-step.on h3{text-decoration:line-through;text-decoration-color:var(--mute)}
+.gd-chk{flex:none;width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:var(--bg);font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}.gd-step.on .gd-chk{background:var(--gain);border-color:var(--gain);color:#fff}
+.gd-sb{flex:1;min-width:0}.gd-sb h3{margin:4px 0 6px;font-size:1.05rem}.gd-sb p{margin:0 0 10px;line-height:1.6}.gd-ms{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0}.gd-mi{max-width:100%;max-height:300px;border-radius:10px;border:1px solid var(--line);cursor:zoom-in}.gd-mv{max-width:100%;max-height:340px;border-radius:10px;background:#000}
+.gd-form{display:flex;flex-direction:column;gap:12px}.gd-form label,.gd-f{display:flex;flex-direction:column;gap:4px;font-size:.82rem;color:var(--mute)}.gd-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.gd-covrow{display:flex;align-items:center;gap:10px}.gd-covth{height:70px;border-radius:8px}
+.gd-sed{display:flex;flex-direction:column;gap:8px}.gd-sh{display:flex;justify-content:space-between;align-items:center}.gd-sh span{display:flex;gap:6px}.gd-savebar{position:sticky;bottom:0;background:var(--bg);padding:12px 0 18px;display:flex;gap:10px;border-top:1px solid var(--line);margin-top:10px}
+@media(max-width:560px){.gd-hero{flex-direction:column;align-items:flex-start;padding:20px}.gd-two{grid-template-columns:1fr}.gd-step{padding:12px;gap:10px}}
 .iv-chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.iv-chip{border-radius:99px;padding:6px 14px}.iv-chip.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .iv-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:8px 0}.iv-kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:2px}.iv-kpi span{color:var(--mute);font-size:.8rem}.iv-kpi b{font-size:1.35rem;letter-spacing:-.01em}.iv-kpi small{font-size:.82rem;color:var(--mute)}
 .iv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0 14px}.iv-dw{display:flex;gap:18px;align-items:center;flex-wrap:wrap}.iv-donut{width:180px;height:180px;flex:none}.iv-dl{fill:var(--mute);font-size:11px}.iv-dv{fill:var(--ink);font-size:17px;font-weight:700}
@@ -270,6 +289,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <button class="nav" id="navstudio" type="button">Studio</button>
   <button class="nav" id="navplan" type="button">Trade Plan</button>
   <button class="nav" id="navinv" type="button">Investments</button>
+  <button class="nav" id="navgd" type="button">How-To</button>
   <button class="nav" id="navpub" type="button">Publishes <span id="navpubn" class="badge"></span></button>
   <button class="nav" id="navcoach" type="button">AI Coach</button>
   <button class="nav" id="navnotif" type="button">Notifications <span id="navnotn" class="badge" hidden></span></button>
@@ -284,6 +304,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <div class="wrap" id="settingsv" hidden></div>
 <div class="wrap" id="planv" hidden></div>
 <div class="wrap" id="invv" hidden></div>
+<div class="wrap" id="gdv" hidden></div>
 <div class="wrap" id="profilev" hidden></div>
 <div class="wrap" id="pubv" hidden></div>
 <div class="wrap" id="notifv" hidden></div>
@@ -1063,7 +1084,7 @@ function applyDefaults(){try{
  if(settings.name&&!$("name").value.trim())$("name").value=settings.name;
  if(settings.voice)$("voice").value=settings.voice;
  if(settings.grouping&&$("grouping"))$("grouping").value=settings.grouping}catch(e){}}
-["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("invv").hidden=true;$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
+["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("invv").hidden=true;$("gdv").hidden=true;$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
 /* ---------- Trade Plan: risk sizing + A+ checklist + plan log ---------- */
 var PLK="stockspot-plans-v1",PLD="stockspot-plan-draft-v1",plans=[],plLoaded=false,pl=null,rk=null,plPend=[],plEditId="";
 function todayStr(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
@@ -1320,7 +1341,174 @@ $("invv").addEventListener("change",function(ev){var m={ivyrs:"yrs",ivmo:"mo",iv
 $("invv").addEventListener("dragover",function(ev){ev.preventDefault()});
 $("invv").addEventListener("drop",function(ev){ev.preventDefault();if(ev.dataTransfer&&ev.dataTransfer.files.length)ivImport(ev.dataTransfer.files)});
 
-function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv","planv","invv"].forEach(function(i){$(i).hidden=true});$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
+/* ---------- How-To guides ---------- */
+var GD={list:[],loaded:false,cat:"all",q:"",view:"list",cur:null,ed:null,busy:false};
+var GCATS=[["Getting started","#3b82f6","M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"],["Buying & selling","#10b981","M3 17l6-6 4 4 8-9M15 6h6v6"],["Indicators","#8b5cf6","M3 3v18h18M7 15l4-5 3 3 5-7"],["Risk & sizing","#f59e0b","M12 3l9 16H3zM12 10v4M12 17h.01"],["Using Revatour","#ec4899","M4 6h16M4 12h16M4 18h10"]];
+var GLV=["Beginner","Intermediate","Advanced"];
+function gCat(n){return GCATS.filter(function(c){return c[0]===n})[0]||GCATS[0]}
+function gIcon(n,sz){var c=gCat(n);return '<svg viewBox="0 0 24 24" width="'+(sz||28)+'" height="'+(sz||28)+'" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+c[2]+'"/></svg>'}
+function ytId(u){u=(u||"").trim();var m=/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/))([\w-]{11})/.exec(u);return m?m[1]:""}
+function ytEmbed(id){return '<div class="gd-yt"><iframe src="https://www.youtube-nocookie.com/embed/'+id+'" title="YouTube video" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>'}
+function S1(t,b){return {t:t,b:b,m:[],yt:""}}
+var GSEED=[
+ {t:"How to open a brokerage account",c:"Getting started",l:"Beginner",s:"Pick a broker, get approved and fund it, in about 15 minutes of paperwork.",steps:[
+  S1("Pick a broker","Fidelity, Charles Schwab (thinkorswim), Interactive Brokers, Webull and Robinhood are common. Look at fees, the platform you will trade on, and whether it supports what you want (options, shorting, extended hours). Day traders usually care most about the platform and order routing."),
+  S1("Choose the account type","An individual taxable account is the simplest. Retirement accounts (Roth IRA, Traditional IRA) have tax benefits but limit withdrawals. A cash account only trades with settled money. A margin account lets you borrow and short, and is needed for most day trading."),
+  S1("Have your details ready","You will need your legal name, address, date of birth, Social Security number, a government ID, and your employer and income range. Brokers are required to collect this by law."),
+  S1("Fill out the application","Answer the questions about experience and risk honestly. They decide which features you are approved for, such as margin and options. You can ask for more later."),
+  S1("Link your bank and fund it","Connect your bank with an ACH transfer. It usually takes 1 to 3 business days. Some brokers give instant buying power on a small amount while you wait."),
+  S1("Do a small first trade","Once funded, place one tiny trade just to learn the screen. Nothing teaches the buy and sell buttons like doing it with a few dollars.")]},
+ {t:"Cash vs margin, and the day trading rule",c:"Getting started",l:"Beginner",s:"What changes when you can borrow, and why some accounts get restricted.",steps:[
+  S1("Cash account","You trade only with money that has settled. Stock sales settle the next business day, so you can be locked out of reusing the money for a day. You cannot short."),
+  S1("Margin account","The broker lends you money against your holdings and lets you short. Interest is charged on borrowed money, and losses are on you even if they exceed what you put in."),
+  S1("The pattern day trader rule","In the US, making four or more day trades in five business days in a margin account usually marks you as a pattern day trader, which requires $25,000 in equity. The rules have been under revision, so confirm the current rule and your own status with your broker."),
+  S1("What to do if you are under the limit","Trade fewer round trips per week, use a cash account, or save up to the minimum. Do not try to get around it by opening accounts at many brokers.")]},
+ {t:"How to buy a stock",c:"Buying & selling",l:"Beginner",s:"From finding the ticker to a confirmed fill.",steps:[
+  S1("Find the ticker","Search the company name in your broker. The ticker is the short code, like AAPL. Check the exchange and company name so you do not buy a similar-looking symbol."),
+  S1("Open the order ticket","Choose Buy, then enter the number of shares, or dollars if your broker offers fractional shares."),
+  S1("Choose an order type","A market order buys right now at whatever price is available. A limit order buys only at your price or better. Limit orders protect you on fast or thin stocks."),
+  S1("Pick the time in force","Day means the order expires at the close. GTC means good until cancelled. Extended hours orders need that box ticked and must be limit orders at most brokers."),
+  S1("Review and submit","Check the ticker, quantity, price and estimated cost. Submit it, then confirm in your orders list that it filled. Set your stop right away if you use one.")]},
+ {t:"How to sell a stock",c:"Buying & selling",l:"Beginner",s:"Selling what you own, and the difference between selling and shorting.",steps:[
+  S1("Open the position","Go to your positions list and choose Sell on the stock. Make sure the action says Sell (or Sell to close), not Sell short."),
+  S1("Choose how much","You can sell all of it or only part. Selling part is how traders take profit at the first target and let the rest run."),
+  S1("Choose the order type","Market sells now. Limit sells only at your price or better. A stop order sells if the price falls to your stop."),
+  S1("Submit and confirm","Check the preview, submit, and confirm the fill. The cash from a sale in a cash account takes a business day to settle."),
+  S1("Remember taxes","Profit on stock held under a year is taxed as short-term gains, usually at your normal rate. Keep your records, and ask a tax professional about your situation.")]},
+ {t:"Order types explained",c:"Buying & selling",l:"Beginner",s:"Market, limit, stop, stop-limit and trailing orders in plain words.",steps:[
+  S1("Market order","Fills immediately at the best available price. Fast, but the price can slip, especially on low-volume stocks or at the open."),
+  S1("Limit order","You name the price. It fills only at that price or better, and may not fill at all."),
+  S1("Stop order","Becomes a market order once the price touches your stop. It is mainly for cutting losses. In a fast drop it can fill below your stop."),
+  S1("Stop-limit order","Becomes a limit order once the stop is touched. You control the worst price, but it may not fill and you could be left holding."),
+  S1("Trailing stop","The stop follows the price up by a set amount or percent and never moves back down. It locks in gains as a trade works."),
+  S1("Bracket / OCO","One-cancels-other. You attach a profit target and a stop to an entry, and when one fills the other is cancelled automatically.")]},
+ {t:"How to set a stop loss and profit target",c:"Buying & selling",l:"Intermediate",s:"Protect a trade the moment you enter it.",steps:[
+  S1("Decide the stop before you buy","Put the stop where your idea is proven wrong, such as below the low of your entry candle for a long. Pick the price first, then size the trade from it."),
+  S1("Pick your targets","Many traders use multiples of risk, like 1.5R and 5R, where 1R is the distance from entry to stop. Revatour's Trade Plan page works these out for you."),
+  S1("Place a bracket order","Choose a bracket or OCO order type so the stop and the target go in together with the entry."),
+  S1("Do not widen the stop","Move a stop up to protect profit if you like. Moving it further away turns a planned loss into an unplanned one.")]},
+ {t:"How to short a stock",c:"Buying & selling",l:"Intermediate",s:"Profit when a price falls, and the risks that come with it.",steps:[
+  S1("Check you can short","You need a margin account approved for shorting, and the shares must be available to borrow. Hard-to-borrow stocks may be unavailable or carry high fees."),
+  S1("Place a Sell short order","Use Sell short, not Sell. You are borrowing shares and selling them, hoping to buy them back cheaper."),
+  S1("Set the stop above your entry","Losses on a short are not capped, because a price can keep rising. A stop above your entry is essential."),
+  S1("Close with Buy to cover","When you are done, buy to cover returns the shares. Your profit is the sale price minus the cover price."),
+  S1("Know the squeeze risk","A heavily shorted stock can spike when shorts rush to cover. Be careful with small floats and news.")]},
+ {t:"How to read VWAP",c:"Indicators",l:"Beginner",s:"The volume weighted average price, and why day traders watch it.",steps:[
+  S1("What it is","VWAP is the average price traded today, weighted by volume. It resets every morning and works on intraday charts."),
+  S1("Add it to your chart","Open your chart's indicators, search VWAP and add it. On thinkorswim it is called VWAP under Studies."),
+  S1("Above VWAP","Buyers have been in control on average today. Many long setups look for price holding above VWAP or reclaiming it."),
+  S1("Below VWAP","Sellers have been in control. Pullbacks to VWAP from below are watched as places a short can be tested."),
+  S1("Far from VWAP","Price can stretch a long way from VWAP. Extreme extensions are where exhaustion and sharp reversals happen, so many traders trade the move back toward it.")]},
+ {t:"Volume and relative volume",c:"Indicators",l:"Beginner",s:"Is anyone actually trading this stock today?",steps:[
+  S1("Volume","The number of shares traded in a period. It is the bars at the bottom of the chart. Big moves on big volume are more trustworthy than big moves on thin volume."),
+  S1("Relative volume","Compare today's volume to the usual volume for this time of day. 2x or more means unusual interest. Most scanners can filter on it."),
+  S1("Watch volume at key moments","A breakout with rising volume suggests real buyers. A breakout that fades on low volume often fails."),
+  S1("Liquidity","Low volume means wider spreads and worse fills. Check that you can get out as easily as you got in.")]},
+ {t:"Moving averages (EMA and SMA)",c:"Indicators",l:"Beginner",s:"The smoothed line most traders keep on their charts.",steps:[
+  S1("What they are","A moving average is the average price over the last N bars. An SMA weighs all bars equally, and an EMA weighs recent bars more, so it reacts faster."),
+  S1("Common settings","On intraday charts people use the 9 and 20 EMA. On daily charts the 50 and 200 SMA are the popular ones."),
+  S1("How to use them","Price above a rising average points to an uptrend, and below a falling one to a downtrend. Pullbacks to the average are watched as entry areas."),
+  S1("The limits","Averages lag. They are better for judging trend than for picking exact tops and bottoms, and they work poorly in choppy sideways markets.")]},
+ {t:"RSI in five minutes",c:"Indicators",l:"Beginner",s:"A momentum gauge from 0 to 100.",steps:[
+  S1("What it measures","RSI compares recent gains to recent losses on a 0 to 100 scale. The usual setting is 14 bars."),
+  S1("Overbought and oversold","Above 70 is called overbought and below 30 oversold. In a strong trend RSI can stay there a long time, so it is not an automatic sell or buy."),
+  S1("Divergence","If price makes a new high but RSI does not, momentum is fading. It is a warning, not a signal on its own."),
+  S1("Pair it with price","Use RSI with levels, volume and your setup, not by itself.")]},
+ {t:"Position sizing from your risk",c:"Risk & sizing",l:"Intermediate",s:"Work out how many shares to buy so a loss stays small.",steps:[
+  S1("Pick your risk per trade","Many traders risk 0.5% to 2% of the account on a single trade. That dollar amount is your 1R."),
+  S1("Measure entry to stop","Subtract the stop from the entry. That is the dollar risk on each share."),
+  S1("Divide","Shares equal your 1R divided by the risk per share. Round down."),
+  S1("Check it","Multiply shares by the risk per share. It should equal your 1R or a little less."),
+  S1("Use the Trade Plan page","Revatour does this for you from your balance and the candle range, and cuts your size after a drawdown.")]},
+ {t:"Bring your trades into Revatour",c:"Using Revatour",l:"Beginner",s:"Get thinkorswim history into your journal.",steps:[
+  S1("Export from thinkorswim","On the Monitor tab open Account Statement, set the date range, and use the export option to save a CSV. Alternatively copy the Trade History rows."),
+  S1("Open Studio","In Revatour choose Studio, then upload the file or paste the rows including the header row."),
+  S1("Pick how to group them","Choose whether trades are grouped, or shown by entry or exit, then save the day to your journal."),
+  S1("Add your screenshots","Paste a chart picture with Ctrl+V so every trade has its picture next to the numbers.")]},
+ {t:"Plan a trade the A+ way",c:"Using Revatour",l:"Beginner",s:"Use the Trade Plan page before you click buy.",steps:[
+  S1("Enter the candle","Pick long or short and enter the high and low of the candle you are trading from. Revatour sets the entry, stop and targets."),
+  S1("Read your size","The page shows how many shares fit your risk, and cuts it to the reduced size after a drawdown."),
+  S1("Work the checklist","Be calm, no revenge trading, and meet each setup item. The grade is A+ only when everything is met."),
+  S1("Add your picture and save","Attach the chart picture, add your reason and save. Edit the plan later and mark it taken or skipped.")]}
+];
+async function gdLoad(){if(GD.loaded)return;try{if(store.db){var s=await store.db.collection("guides").get();GD.list=s.docs.filter(function(d){return d.exists}).map(function(d){return Object.assign({id:d.id},clone(d.data()))})}else GD.list=JSON.parse(localStorage.getItem("ss-guides")||"[]");
+  var seeded=false;try{seeded=localStorage.getItem("ss-guides-seeded")==="1"}catch(e){}
+  if(!GD.list.length&&!seeded){await gdSeed()}}catch(e){GD.list=[]}GD.loaded=true}
+async function gdPut(g){try{if(store.db){var r=Object.assign({},g);delete r.id;await store.db.doc("guides/"+g.id).set(r)}else localStorage.setItem("ss-guides",JSON.stringify(GD.list))}catch(e){toast("Could not save that guide")}}
+async function gdSeed(){var now=Date.now();GD.list=GSEED.map(function(x,i){return {id:newId()+i,title:x.t,cat:x.c,level:x.l,summary:x.s,cover:null,steps:x.steps.map(function(z){return {t:z.t,b:z.b,m:[],yt:""}}),yts:[],ts:now-i,seed:1}});
+ for(var i=0;i<GD.list.length;i++)await gdPut(GD.list[i]);try{localStorage.setItem("ss-guides-seeded","1")}catch(e){}}
+function gdMins(g){var w=(g.steps||[]).reduce(function(a,s){return a+((s.t||"")+" "+(s.b||"")).split(/\s+/).length},0);return Math.max(1,Math.round(w/180)+Math.ceil((g.steps||[]).length/4))}
+function gdCover(g,big){var c=gCat(g.cat),u=g.cover?imgUrl(g.cover):"";return '<div class="gd-cov'+(big?" big":"")+'" style="background:linear-gradient(135deg,'+c[1]+','+c[1]+'aa 60%,#0f172a)">'+(u?'<img alt="" src="'+esc(u)+'">':'<span>'+gIcon(g.cat,big?44:30)+'</span>')+'</div>'}
+function gdDone(id){try{return JSON.parse(localStorage.getItem("ss-gdone-"+id)||"[]")}catch(e){return []}}
+function gdList(){var q=GD.q.trim().toLowerCase(),L=GD.list.filter(function(g){return (GD.cat==="all"||g.cat===GD.cat)&&(!q||(g.title+" "+g.summary+" "+(g.steps||[]).map(function(s){return s.t+" "+s.b}).join(" ")).toLowerCase().indexOf(q)>-1)}).sort(function(a,b){return b.ts-a.ts});
+ var counts={};GD.list.forEach(function(g){counts[g.cat]=(counts[g.cat]||0)+1});
+ var chips='<div class="iv-chips"><button type="button" class="iv-chip'+(GD.cat==="all"?" on":"")+'" data-gcat="all">All <small>'+GD.list.length+'</small></button>'+GCATS.map(function(c){return '<button type="button" class="iv-chip'+(GD.cat===c[0]?" on":"")+'" data-gcat="'+esc(c[0])+'">'+esc(c[0])+' <small>'+(counts[c[0]]||0)+'</small></button>'}).join("")+'</div>';
+ var cards=L.map(function(g){var d=gdDone(g.id).length,n=(g.steps||[]).length;return '<button type="button" class="gd-card" data-gopen="'+esc(g.id)+'">'+gdCover(g)+'<div class="gd-cb"><span class="gd-tag" style="color:'+gCat(g.cat)[1]+'">'+esc(g.cat)+'</span><h3>'+esc(g.title)+'</h3><p>'+esc(g.summary||"")+'</p><div class="gd-meta"><span>'+n+' steps</span><span>'+esc(g.level||"Beginner")+'</span><span>'+gdMins(g)+' min</span>'+((g.yts&&g.yts.length)||(g.steps||[]).some(function(s){return s.yt||(s.m||[]).some(function(m){return m.v})})?'<span>Video</span>':'')+'</div>'+(d?'<div class="gd-prog"><i style="width:'+Math.round(d/Math.max(n,1)*100)+'%"></i></div>':'')+'</div></button>'}).join("");
+ return '<div class="hm-top"><div><h1>How-To</h1><p class="sub">Step-by-step guides for the basics. Add your own with pictures, videos and YouTube links.</p></div><div class="gd-top"><input type="search" id="gdq" placeholder="Search guides" value="'+esc(GD.q)+'" aria-label="Search guides"><button class="primary" type="button" id="gdnew">New guide</button></div></div>'+chips+(L.length?'<div class="gd-grid">'+cards+'</div>':'<div class="pl-card"><p class="hint" style="margin:0">'+(GD.list.length?"No guides match that.":"No guides yet. Press New guide to make your first one.")+'</p></div>')}
+function gdMedia(m){var u=imgUrl(m);if(!u)return "";return m.v?'<video class="gd-mv" controls playsinline preload="metadata" src="'+esc(u)+'"></video>':'<img class="gd-mi" data-lb="1" alt="Guide picture" src="'+esc(u)+'">'}
+function gdRead(g){var done=gdDone(g.id),n=(g.steps||[]).length,c=gCat(g.cat);
+ return '<button type="button" class="gd-back" id="gdback">&larr; All guides</button>'+
+ '<div class="gd-hero" style="background:linear-gradient(135deg,'+c[1]+','+c[1]+'99 55%,#0f172a)"><div class="gd-hi">'+gIcon(g.cat,30)+'</div><div><span class="gd-hk">'+esc(g.cat)+'</span><h1>'+esc(g.title)+'</h1><p>'+esc(g.summary||"")+'</p><div class="gd-hm"><span>'+n+' steps</span><span>'+esc(g.level||"Beginner")+'</span><span>About '+gdMins(g)+' min</span></div></div></div>'+
+ '<div class="gd-bar"><div class="gd-prog big"><i style="width:'+Math.round(done.length/Math.max(n,1)*100)+'%"></i></div><span>'+done.length+' of '+n+' done</span><span class="gd-act"><button type="button" id="gdedit">Edit</button><button type="button" id="gddel">Delete</button></span></div>'+
+ (g.cover&&imgUrl(g.cover)?'<img class="gd-mi gd-bigcov" data-lb="1" alt="" src="'+esc(imgUrl(g.cover))+'">':'')+
+ ((g.yts||[]).map(ytId).filter(Boolean).map(ytEmbed).join(""))+
+ '<ol class="gd-steps">'+(g.steps||[]).map(function(s,i){var on=done.indexOf(i)>-1;return '<li class="gd-step'+(on?" on":"")+'"><button type="button" class="gd-chk" data-gchk="'+i+'" aria-pressed="'+on+'" aria-label="Mark step '+(i+1)+' done">'+(on?'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>':(i+1))+'</button><div class="gd-sb"><h3>'+esc(s.t||"Step "+(i+1))+'</h3>'+(s.b?'<p>'+esc(s.b).replace(/\n/g,"<br>")+'</p>':'')+((s.m&&s.m.length)?'<div class="gd-ms">'+s.m.map(gdMedia).join("")+'</div>':'')+(ytId(s.yt)?ytEmbed(ytId(s.yt)):'')+'</div></li>'}).join("")+'</ol>'}
+function gdEditor(){var e=GD.ed,cov=e.cover?imgUrl(e.cover):e.coverPend||"";
+ return '<button type="button" class="gd-back" id="gdcancel">&larr; Cancel</button><div class="hm-top"><div><h1>'+(e.id?"Edit guide":"New guide")+'</h1><p class="sub">Write it the way you would explain it to a friend.</p></div></div>'+
+ '<div class="pl-card gd-form"><label>Title<input type="text" id="gdt" value="'+esc(e.title)+'" placeholder="How to place a bracket order"></label>'+
+ '<div class="gd-two"><label>Category<select id="gdc">'+GCATS.map(function(c){return '<option'+(c[0]===e.cat?" selected":"")+'>'+esc(c[0])+'</option>'}).join("")+'</select></label><label>Level<select id="gdl">'+GLV.map(function(l){return '<option'+(l===e.level?" selected":"")+'>'+l+'</option>'}).join("")+'</select></label></div>'+
+ '<label>One-line summary<input type="text" id="gds" value="'+esc(e.summary)+'" placeholder="What someone will be able to do after this"></label>'+
+ '<div class="gd-f">Cover picture <span class="hint" style="margin:0">(optional)</span><div class="gd-covrow">'+(cov?'<img class="gd-covth" alt="Cover" src="'+esc(cov)+'"><button type="button" id="gdcovrm">Remove</button>':'<button type="button" id="gdcovadd">Add cover</button>')+'<input type="file" id="gdcovfile" accept="image/*" hidden></div></div>'+
+ '<label>YouTube links <span class="hint" style="margin:0">(one per line, shown at the top)</span><textarea id="gdy" rows="2" placeholder="https://www.youtube.com/watch?v=...">'+esc((e.yts||[]).join("\n"))+'</textarea></label></div>'+
+ '<h2 style="margin:18px 0 6px">Steps</h2><div id="gdsteps">'+e.steps.map(function(s,i){return gdStepEd(s,i,e.steps.length)}).join("")+'</div>'+
+ '<div class="row" style="margin:14px 0 6px"><button type="button" id="gdaddstep">+ Add step</button></div>'+
+ '<div class="gd-savebar"><button class="primary" type="button" id="gdsave">'+(e.id?"Save changes":"Save guide")+'</button><button type="button" id="gdcancel2">Cancel</button></div>'}
+function gdStepEd(s,i,n){var th=(s.m||[]).map(function(m,k){var u=imgUrl(m);return u?'<div class="pthumb">'+(m.v?'<video muted playsinline preload="metadata" src="'+esc(u)+'#t=0.1"></video><span class="vbadge">VIDEO</span>':'<img class="pl-th" alt="Picture" src="'+esc(u)+'">')+'<button type="button" data-gsrm="'+i+':o'+k+'" aria-label="Remove">✕</button></div>':""}).join("")+(s.pend||[]).map(function(x,k){return thumbHTML(x,"New picture",'data-gsrm="'+i+':n'+k+'"')}).join("");
+ return '<div class="pl-card gd-sed" data-si="'+i+'"><div class="gd-sh"><b>Step '+(i+1)+'</b><span><button type="button" data-gsup="'+i+'" aria-label="Move up"'+(i?'':' disabled')+'>↑</button><button type="button" data-gsdn="'+i+'" aria-label="Move down"'+(i<n-1?'':' disabled')+'>↓</button><button type="button" data-gsdel="'+i+'" aria-label="Remove step">Remove</button></span></div>'+
+ '<input type="text" class="gs-t" value="'+esc(s.t||"")+'" placeholder="Step title"><textarea class="gs-b" rows="3" placeholder="What to do, and what to look out for">'+esc(s.b||"")+'</textarea><div class="pl-pics">'+th+'</div>'+
+ '<div class="row" style="margin:6px 0"><button type="button" data-gsadd="'+i+'">Add picture or video</button><input type="file" class="gs-file" data-sf="'+i+'" accept="image/*,video/*" multiple hidden></div><input type="url" class="gs-y" value="'+esc(s.yt||"")+'" placeholder="YouTube link for this step (optional)"></div>'}
+function gdSync(){var e=GD.ed;if(!e||!$("gdt"))return;e.title=$("gdt").value;e.cat=$("gdc").value;e.level=$("gdl").value;e.summary=$("gds").value;e.yts=$("gdy").value.split(/\n/).map(function(x){return x.trim()}).filter(Boolean);
+ Array.prototype.forEach.call(document.querySelectorAll(".gd-sed"),function(c){var s=e.steps[+c.dataset.si];if(!s)return;s.t=c.querySelector(".gs-t").value;s.b=c.querySelector(".gs-b").value;s.yt=c.querySelector(".gs-y").value.trim()})}
+function renderGd(){var el=$("gdv");if(!el)return;el.innerHTML=GD.view==="edit"?gdEditor():GD.view==="read"&&GD.cur?gdRead(GD.cur):gdList()}
+async function showGd(){hideViews();$("navgd").classList.add("on");$("gdv").hidden=false;GD.view="list";GD.cur=null;renderGd();window.scrollTo(0,0);await gdLoad();if(!$("gdv").hidden&&GD.view==="list")renderGd()}
+function gdNew(){GD.ed={id:"",title:"",cat:GD.cat!=="all"?GD.cat:GCATS[0][0],level:"Beginner",summary:"",cover:null,coverPend:"",yts:[],steps:[{t:"",b:"",m:[],yt:"",pend:[]}]};GD.view="edit";renderGd();window.scrollTo(0,0)}
+function gdEditOpen(g){var c=clone(g);c.coverPend="";c.steps=(c.steps||[]).map(function(s){s.pend=[];s.m=s.m||[];return s});if(!c.steps.length)c.steps=[{t:"",b:"",m:[],yt:"",pend:[]}];GD.ed=c;GD.view="edit";renderGd();window.scrollTo(0,0)}
+async function gdAddFiles(i,files){var s=GD.ed.steps[i];files=Array.prototype.slice.call(files||[]);for(var k=0;k<files.length;k++){var f=files[k];s.pend=s.pend||[];if((s.m||[]).length+s.pend.length>=8){toast("Up to 8 pictures or videos per step");break}
+  if(/^video\//.test(f.type)){if(!okVid(f))continue;if(!store.db){toast("Videos need your account storage. Log in to add one.");continue}s.pend.push(mkVid(f))}else if(/^image\//.test(f.type)){try{s.pend.push(await shrink(f,1400))}catch(e){toast("Could not read that image")}}}
+ gdSync();renderGd()}
+async function gdSave(){gdSync();var e=GD.ed;if(!e.title.trim()){toast("Give the guide a title");return}if(GD.busy)return;GD.busy=true;var b=$("gdsave");if(b){b.disabled=true;b.textContent="Saving..."}
+ try{var upl=async function(x){if(store.db&&store.assets){if(isVid(x)){var r=await store.assets.upload(x.f,{type:x.f.type||"video/mp4"});return {aid:r.id,v:1}}var r2=await store.assets.upload(dataToBlob(x),{type:"image/jpeg"});return {aid:r2.id}}return isVid(x)?null:{src:x}};
+  var cover=e.cover||null;if(e.coverPend){try{cover=await upl(e.coverPend)}catch(x){toast("The cover could not be saved")}}
+  var steps=[];for(var i=0;i<e.steps.length;i++){var s=e.steps[i];if(!(s.t||"").trim()&&!(s.b||"").trim()&&!(s.m||[]).length&&!(s.pend||[]).length&&!s.yt)continue;var m=(s.m||[]).slice();
+   for(var k=0;k<(s.pend||[]).length;k++){try{var u=await upl(s.pend[k]);if(u)m.push(u)}catch(x){toast("A file could not be saved")}}steps.push({t:(s.t||"").trim(),b:(s.b||"").trim(),m:m,yt:s.yt||""})}
+  var old=e.id?GD.list.filter(function(x){return x.id===e.id})[0]:null;
+  var g={id:old?old.id:newId(),title:e.title.trim(),cat:e.cat,level:e.level,summary:e.summary.trim(),cover:cover,steps:steps,yts:e.yts||[],ts:old?old.ts:Date.now(),seed:old&&old.seed&&!1?1:0};
+  if(old)GD.list[GD.list.indexOf(old)]=g;else GD.list.push(g);await gdPut(g);GD.cur=g;GD.view="read";GD.ed=null;renderGd();window.scrollTo(0,0);toast("Guide saved")}
+ finally{GD.busy=false}}
+$("navgd").addEventListener("click",showGd);
+$("gdv").addEventListener("input",function(ev){if(ev.target.id==="gdq"){GD.q=ev.target.value;var el=$("gdv"),pos=ev.target.selectionStart;renderGd();var q=$("gdq");if(q){q.focus();q.setSelectionRange(pos,pos)}}});
+$("gdv").addEventListener("change",async function(ev){var t=ev.target;if(t.id==="gdcovfile"){var f=t.files[0];t.value="";if(f&&/^image\//.test(f.type)){gdSync();try{GD.ed.coverPend=await shrink(f,1400);GD.ed.cover=null}catch(e){toast("Could not read that image")}renderGd()}return}
+ if(t.classList&&t.classList.contains("gs-file")){var i=+t.dataset.sf;gdSync();await gdAddFiles(i,t.files);t.value=""}});
+$("gdv").addEventListener("click",async function(ev){var t=ev.target,b=t.closest&&t.closest("button");if(!b)return;var d=b.dataset;
+ if(d.gcat){GD.cat=d.gcat;renderGd();return}
+ if(d.gopen){GD.cur=GD.list.filter(function(x){return x.id===d.gopen})[0];GD.view="read";renderGd();window.scrollTo(0,0);return}
+ if(b.id==="gdnew"){gdNew();return}
+ if(b.id==="gdback"){GD.view="list";GD.cur=null;renderGd();return}
+ if(b.id==="gdedit"){gdEditOpen(GD.cur);return}
+ if(b.id==="gddel"){if(!confirm("Delete this guide?"))return;try{if(store.db)await store.db.doc("guides/"+GD.cur.id).delete()}catch(e){}GD.list=GD.list.filter(function(x){return x.id!==GD.cur.id});if(!store.db)localStorage.setItem("ss-guides",JSON.stringify(GD.list));GD.view="list";GD.cur=null;renderGd();toast("Guide deleted");return}
+ if(d.gchk!=null){var id=GD.cur.id,a=gdDone(id),i=+d.gchk,p=a.indexOf(i);if(p>-1)a.splice(p,1);else a.push(i);try{localStorage.setItem("ss-gdone-"+id,JSON.stringify(a))}catch(e){}renderGd();return}
+ if(b.id==="gdcancel"||b.id==="gdcancel2"){GD.view=GD.cur?"read":"list";GD.ed=null;renderGd();return}
+ if(b.id==="gdsave"){gdSave();return}
+ if(b.id==="gdcovadd"){gdSync();$("gdcovfile").click();return}
+ if(b.id==="gdcovrm"){gdSync();GD.ed.cover=null;GD.ed.coverPend="";renderGd();return}
+ if(b.id==="gdaddstep"){gdSync();GD.ed.steps.push({t:"",b:"",m:[],yt:"",pend:[]});renderGd();var cs=document.querySelectorAll(".gd-sed");if(cs.length)cs[cs.length-1].querySelector(".gs-t").focus();return}
+ if(d.gsadd!=null){var inp=document.querySelector('.gs-file[data-sf="'+d.gsadd+'"]');if(inp)inp.click();return}
+ if(d.gsrm){gdSync();var pr=d.gsrm.split(":"),st=GD.ed.steps[+pr[0]],k=+pr[1].slice(1);if(pr[1][0]==="o")st.m.splice(k,1);else st.pend.splice(k,1);renderGd();return}
+ if(d.gsup!=null||d.gsdn!=null){gdSync();var i2=+(d.gsup!=null?d.gsup:d.gsdn),j=d.gsup!=null?i2-1:i2+1,A=GD.ed.steps;if(j<0||j>=A.length)return;var tmp=A[i2];A[i2]=A[j];A[j]=tmp;renderGd();return}
+ if(d.gsdel!=null){gdSync();GD.ed.steps.splice(+d.gsdel,1);if(!GD.ed.steps.length)GD.ed.steps.push({t:"",b:"",m:[],yt:"",pend:[]});renderGd()}});
+document.addEventListener("paste",function(ev){if($("gdv").hidden||GD.view!=="edit")return;var fs=ev.clipboardData&&ev.clipboardData.files;if(!fs||!fs.length)return;var c=ev.target.closest&&ev.target.closest(".gd-sed");if(!c)return;ev.stopImmediatePropagation();ev.preventDefault();gdSync();gdAddFiles(+c.dataset.si,fs)},true);
+
+function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv","planv","invv","gdv"].forEach(function(i){$(i).hidden=true});$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
  $("navhome").classList.remove("on");$("navstudio").classList.remove("on");$("navset").classList.add("on");
  curDate="";curPage="";renderSettings();$("settingsv").hidden=false;window.scrollTo(0,0)}
 function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["Direct and plain-spoken","Professional and measured","Energetic and motivational","Analytical and data-first"];
@@ -1507,7 +1695,7 @@ function myAvUrl(){return prof.src||(prof.aid?blobUrl(prof.aid):"")}
 function avatarHTML(cls,url,name){var A=window.stockspotAuth||{},u=url!=null?url:myAvUrl(),nm=name||A.username||A.email||"?";
  return '<div class="pf-av'+(cls?" "+cls:"")+'">'+(u?'<img alt="" src="'+esc(u)+'">':esc((nm.charAt(0)||"?").toUpperCase()))+'</div>'}
 function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv"].forEach(function(i){$(i).hidden=true});
- ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
+ ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
 function paintProfNav(){$("navprofile").classList.toggle("on",profTab!=="coach");$("navcoach").classList.toggle("on",profTab==="coach")}
 function recordBlock(){var all=allTrades();if(!all.length)return '<div class="pf-panel hint" style="margin:8px 0">No saved trades yet. Save a day in Studio and your record shows here.</div>';
  var days=dailyPnl(),yr=pickYear(days),m=pnlModel(days,yr),s=withCtx({trades:all},[],stats);
