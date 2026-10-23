@@ -1431,7 +1431,7 @@ var GSEED=[
   S1("Work the checklist","Be calm, no revenge trading, and meet each setup item. The grade is A+ only when everything is met."),
   S1("Add your picture and save","Attach the chart picture, add your reason and save. Edit the plan later and mark it taken or skipped.")]}
 ];
-var GART={"How to read VWAP":["vwap",2],"Volume and relative volume":["volume",1],"Moving averages (EMA and SMA)":["moving-averages",1],"RSI in five minutes":["rsi",1]};
+var GART={"How to read VWAP":["vwap",2],"Volume and relative volume":["volume",1],"Moving averages (EMA and SMA)":["moving-averages",1],"RSI in five minutes":["rsi",1],"How to open a brokerage account":["open-account",1],"Cash vs margin, and the day trading rule":["cash-margin",1],"How to buy a stock":["buy-stock",2],"How to sell a stock":["sell-stock",2],"Order types explained":["order-types",1],"How to set a stop loss and profit target":["stop-target",1],"How to short a stock":["short-stock",1],"Position sizing from your risk":["position-sizing",2],"Bring your trades into Revatour":["import-trades",1],"Plan a trade the A+ way":["plan-a-plus",2]};
 function gdArt(g){var a=g.seed&&GART[g.title];if(!a||g.cover)return false;var u="/guides/"+a[0]+".svg";g.cover={src:u};var st=(g.steps||[])[a[1]];if(st){st.m=st.m||[];if(!st.m.length)st.m.push({src:u})}return true}
 async function gdLoad(){if(GD.loaded)return;try{if(store.db){var s=await store.db.collection("guides").get();GD.list=s.docs.filter(function(d){return d.exists}).map(function(d){return Object.assign({id:d.id},clone(d.data()))})}else GD.list=JSON.parse(localStorage.getItem("ss-guides")||"[]");
   var seeded=false;try{seeded=localStorage.getItem("ss-guides-seeded")==="1"}catch(e){}
