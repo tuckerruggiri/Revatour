@@ -231,7 +231,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .gd-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.gd-top input{min-width:200px}
 .gd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;margin:14px 0 30px}
 .gd-card{display:flex;flex-direction:column;text-align:left;padding:0;overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:16px;cursor:pointer;font:inherit;color:var(--ink);transition:transform .15s,box-shadow .15s}.gd-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.14)}
-.gd-cov{height:118px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.gd-cov.big{height:200px}.gd-cov img{width:100%;height:100%;object-fit:cover}.gd-cov span{width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center}
+.gd-cov{height:118px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.gd-cov.big{height:200px}.gd-cov img{width:100%;height:100%;object-fit:cover;object-position:50% 68%}.gd-cov span{width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center}
 .gd-cb{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}.gd-tag{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}.gd-cb h3{margin:0;font-size:1.05rem;line-height:1.3}.gd-cb p{margin:0;color:var(--mute);font-size:.88rem;line-height:1.45;flex:1}
 .gd-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.gd-meta span{font-size:.72rem;color:var(--mute);border:1px solid var(--line);border-radius:99px;padding:2px 9px}
 .gd-prog{height:5px;background:var(--bg);border-radius:99px;overflow:hidden;margin-top:8px}.gd-prog i{display:block;height:100%;background:var(--gain);border-radius:99px}.gd-prog.big{flex:1;margin:0;height:8px}
@@ -1431,9 +1431,12 @@ var GSEED=[
   S1("Work the checklist","Be calm, no revenge trading, and meet each setup item. The grade is A+ only when everything is met."),
   S1("Add your picture and save","Attach the chart picture, add your reason and save. Edit the plan later and mark it taken or skipped.")]}
 ];
+var GART={"How to read VWAP":["vwap",2],"Volume and relative volume":["volume",1],"Moving averages (EMA and SMA)":["moving-averages",1],"RSI in five minutes":["rsi",1]};
+function gdArt(g){var a=g.seed&&GART[g.title];if(!a||g.cover)return false;var u="/guides/"+a[0]+".svg";g.cover={src:u};var st=(g.steps||[])[a[1]];if(st){st.m=st.m||[];if(!st.m.length)st.m.push({src:u})}return true}
 async function gdLoad(){if(GD.loaded)return;try{if(store.db){var s=await store.db.collection("guides").get();GD.list=s.docs.filter(function(d){return d.exists}).map(function(d){return Object.assign({id:d.id},clone(d.data()))})}else GD.list=JSON.parse(localStorage.getItem("ss-guides")||"[]");
   var seeded=false;try{seeded=localStorage.getItem("ss-guides-seeded")==="1"}catch(e){}
-  if(!GD.list.length&&!seeded){await gdSeed()}}catch(e){GD.list=[]}GD.loaded=true}
+  if(!GD.list.length&&!seeded){await gdSeed()}
+  for(var gi=0;gi<GD.list.length;gi++){if(gdArt(GD.list[gi]))await gdPut(GD.list[gi])}}catch(e){GD.list=[]}GD.loaded=true}
 async function gdPut(g){try{if(store.db){var r=Object.assign({},g);delete r.id;await store.db.doc("guides/"+g.id).set(r)}else localStorage.setItem("ss-guides",JSON.stringify(GD.list))}catch(e){toast("Could not save that guide")}}
 async function gdSeed(){var now=Date.now();GD.list=GSEED.map(function(x,i){return {id:newId()+i,title:x.t,cat:x.c,level:x.l,summary:x.s,cover:null,steps:x.steps.map(function(z){return {t:z.t,b:z.b,m:[],yt:""}}),yts:[],ts:now-i,seed:1}});
  for(var i=0;i<GD.list.length;i++)await gdPut(GD.list[i]);try{localStorage.setItem("ss-guides-seeded","1")}catch(e){}}
