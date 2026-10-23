@@ -2217,17 +2217,11 @@ async function loadCoach(){try{if(store.db){var d=await store.db.doc("meta/coach
 async function saveCoach(){try{if(store.db)await store.db.doc("meta/coach").set(coach);else localStorage.setItem(CKEY,JSON.stringify(coach))}catch(e){toast("Could not save the review")}}
 function coachBody(){return coach&&coach.md?'<div class="out ptxt coachbox" id="cout">'+rich(coach.md)+'</div><p class="coach-meta">Based on '+coach.n+' trades. Generated '+esc(new Date(coach.ts).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}))+'. Not financial advice.</p>':'<div class="out ptxt coachbox" id="cout" hidden></div>'}
 function renderHome(){var el=$("home");if(!el)return;
- var days=dailyPnl(),td=todayISO();
+ var td=todayISO();
  var who=($("whoami")&&$("whoami").textContent)||"";
  var h='<div class="hm-top"><div><h1>Home</h1><p class="sub">'+(who?esc(who)+". ":"")+esc(dayLabel(td))+'</p></div>'+bellHtml()+'</div>';
  h+='<div class="hm-top2"><aside class="hm-side wl-slot">'+wlHtml()+'</aside><section class="hm-newsbox"><div class="wl-h"><h2>News</h2><small id="hmnwmeta">Your watchlist and stocks you trade</small></div><div id="hmnews" class="hm-newsscroll"><span class="hint">Loading...</span></div></section></div>';
- h+='<div class="hm-rest">';
- var rec=days.slice(-5).reverse();
- if(rec.length)h+='<section><h2>Recent days</h2><div class="hm-days">'+rec.map(function(d){var has=!!entries[d.d];
-  return '<button type="button" class="hm-day" '+(has?'data-day="'+d.d+'"':'disabled')+'><span>'+esc(dayLabel(d.d))+' <small>'+d.n+(d.n===1?' trade':' trades')+'</small></span><b class="'+(d.pnl>=0?"gain":"loss")+'">'+sgn(d.pnl)+'</b></button>'}).join("")+'</div></section>';
- var pk=sortedPages();
- if(pk.length)h+='<section><h2>Your pages</h2><div class="hm-pages">'+pk.map(function(p){return '<button type="button" data-pg="'+esc(p.id)+'"># '+esc(p.name)+'</button>'}).join("")+'</div></section>';
- h+='</div>';el.innerHTML=h;wlLoad().then(function(){if(!$("home").hidden){wlRender();wlQuote()}});
+ el.innerHTML=h;wlLoad().then(function(){if(!$("home").hidden){wlRender();wlQuote()}});
  homeNews()}
 function showHome(){curDate="";curPage="";$("studio").hidden=true;$("entry").hidden=true;$("pagev").hidden=true;$("home").hidden=false;$("navstudio").classList.remove("on");$("navhome").classList.add("on");renderHome();renderSide();window.scrollTo(0,0)}
 async function postCoach(){var So=S();if(!coach||!coach.md||coach.posted||!So)return;
