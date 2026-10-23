@@ -3,6 +3,12 @@
 
 const cache = new Map(); // SYMBOL -> { t, q }
 const TTL = 15 * 1000;
+// Finnhub's free quote has no volume, so volume comes from Alpha Vantage (ALPHAVANTAGE_KEY) when it is set.
+// The free Alpha Vantage key is only about 25 requests a day, so each volume is kept for 3 hours and at most
+// 4 new ones are fetched per request. Anything not fetched yet simply shows as a dash.
+const vcache = new Map(); // SYMBOL -> { t, v }
+const VTTL = 3 * 3600 * 1000;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 module.exports = async (req, res) => {
   const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
@@ -34,6 +40,22 @@ module.exports = async (req, res) => {
       out[s] = q;
     } catch (e) { /* skip this ticker */ }
   }));
+  const avKey = process.env.ALPHAVANTAGE_KEY || '';
+  let budget = 4;
+  for (const s of Object.keys(out)) {
+    const hit = vcache.get(s);
+    if (hit && Date.now() - hit.t < VTTL) { out[s] = Object.assign({}, out[s], { v: hit.v }); continue; }
+    if (!avKey || budget <= 0) { if (hit) out[s] = Object.assign({}, out[s], { v: hit.v }); continue; }
+    budget--;
+    try {
+      const r = await fetch('https://www.alphavantage.co/query?' + new URLSearchParams({ function: 'GLOBAL_QUOTE', symbol: s, apikey: avKey }).toString());
+      const j = r.ok ? await r.json() : null;
+      const v = j && j['Global Quote'] ? parseFloat(j['Global Quote']['06. volume']) : NaN;
+      if (isFinite(v)) { vcache.set(s, { t: Date.now(), v }); out[s] = Object.assign({}, out[s], { v }); }
+      else if (j && (j.Note || j.Information)) budget = 0;
+    } catch (e) { /* leave volume blank */ }
+    if (budget > 0) await sleep(1100);
+  }
   res.setHeader('Cache-Control', 'private, max-age=10');
   return res.status(200).json({ configured: true, ts: Date.now(), quotes: out });
 };
