@@ -69,6 +69,7 @@ label.pl-half{display:flex;flex-direction:row;justify-content:flex-start;gap:8px
 .pl-sumt{font-size:.9rem;margin:0 0 12px;color:var(--ink)}.pl-tg{display:grid;gap:6px;margin:10px 0 0;text-align:left}.pl-tg div{display:flex;justify-content:space-between;align-items:baseline;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-variant-numeric:tabular-nums}.pl-tg span{font-size:.78rem;color:var(--mute)}.pl-tg b{margin-left:auto}.pl-tg em{font-style:normal;font-size:.78rem;min-width:70px;text-align:right}
 .pl-kv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;text-align:left}.pl-kv div{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px}.pl-kv dt{font-size:.72rem;color:var(--mute)}.pl-kv dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums}.pl-w{font-size:.82rem;color:var(--loss);text-align:left;margin:10px 0 0}.pl-sum .row{justify-content:center}
 .pl-log{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}.pl-lt{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.pl-lt .x{margin-left:auto}.pl-ln{font-size:.88rem;color:var(--mute);margin:6px 0}.pl-ln b{color:var(--ink);font-variant-numeric:tabular-nums}.pl-why{margin:4px 0 8px;font-size:.9rem}.pl-lb{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.pl-lb .pl-seg{margin:0}.pl-res{display:flex;gap:6px;align-items:center;font-size:.82rem;color:var(--mute)}.pl-res input{width:90px;padding:5px 8px}
+.pl-pics{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 8px}.pl-pics:empty{display:none}.pl-th{height:84px;width:auto;max-width:150px;object-fit:cover;border-radius:8px;border:1px solid var(--line);cursor:zoom-in;display:block}.pl-log .pl-th{height:72px}.pl-act{margin-left:auto;display:flex;gap:10px;align-items:center}.pl-lt .x{margin-left:0}.pl-edn{margin:12px 0 0;font-size:.8rem;font-weight:700;color:var(--accent)}
 .pl-gr{font-weight:800;font-size:.8rem;border-radius:6px;padding:2px 8px;background:var(--accent);color:var(--accent-ink)}.pl-gr.gap{background:var(--gain);color:var(--bg)}.pl-gr.gC{background:var(--loss);color:var(--bg)}.pl-side.long{color:var(--gain);font-weight:700;font-size:.82rem}.pl-side.short{color:var(--loss);font-weight:700;font-size:.82rem}
 .set-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin:14px 0}
 .set-card h2{margin:0 0 4px;font-size:1.1rem}.set-card label{display:block;margin:10px 0;font-size:.9rem}
@@ -607,6 +608,7 @@ document.addEventListener("paste",function(ev){var fs=ev.clipboardData&&ev.clipb
   if(tg.id==="edtext"||inEdit){editAddFiles(fs);return}
   if(tg.id==="chatin"){chatAddFiles(fs);return}
   if(!$("profilev").hidden){if($("wtext"))wallAdd(fs);else if($("chatin"))chatAddFiles(fs);return}
+  if(!$("planv").hidden){plAdd(fs);return}
   if(!$("pagev").hidden){if(pages[curPage]&&pages[curPage].parent)composerAdd(fs);return}if($("studio").hidden)return;addImgs(fs);var pb=$("pastebox");pb.classList.add("on");setTimeout(function(){pb.classList.remove("on")},900)}});
 $("pastebox").addEventListener("click",function(){this.focus()});
 $("pastebox").addEventListener("dragover",function(ev){ev.preventDefault()});
@@ -1046,7 +1048,7 @@ function applyDefaults(){try{
  if(settings.grouping&&$("grouping"))$("grouping").value=settings.grouping}catch(e){}}
 ["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
 /* ---------- Trade Plan: risk sizing + A+ checklist + plan log ---------- */
-var PLK="stockspot-plans-v1",PLD="stockspot-plan-draft-v1",plans=[],plLoaded=false,pl=null,rk=null;
+var PLK="stockspot-plans-v1",PLD="stockspot-plan-draft-v1",plans=[],plLoaded=false,pl=null,rk=null,plPend=[],plEditId="";
 function todayStr(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
 function nowHM(){var d=new Date();return ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
 function nf(v,d){return isFinite(v)?Number(v).toLocaleString(undefined,{maximumFractionDigits:d==null?2:d}):"-"}
@@ -1066,7 +1068,7 @@ var PCOMMON=[
 var PSIDE={
  long:[{k:"lvw",t:"Above VWAP and holding",h:"Buyers are defending it"},{k:"ltr",t:"Higher lows, buyers in control",h:"Trend and tape are with me"},{k:"lext",t:"Not a chase",h:"Entry is not a vertical move away from the level"}],
  short:[{k:"sex",t:"Exhaustion or rejection showing",h:"Blow-off, failed push or topping candle at the level. How far above VWAP it is doesn't matter"},{k:"str",t:"Sellers taking control",h:"Tape and volume show sellers stepping in"},{k:"sloc",t:"Shares available, squeeze risk known",h:"I can borrow it and I know where it can rip"}]};
-function plFresh(){return {side:"long",mode:"range",ticker:"",time:nowHM(),strat:"",hi:"",lo:"",rng:"",entry:"",stop:"",t1:"",t2:"",t3:"",half:false,vol:"",rvol:"",why:"",exit:"",chk:{}}}
+function plFresh(){return {side:"long",mode:"range",ticker:"",time:nowHM(),strat:"",hi:"",lo:"",rng:"",entry:"",stop:"",t1:"",t2:"",t3:"",half:false,vol:"",rvol:"",why:"",exit:"",imgs:[],chk:{}}}
 function rkInit(){var r=settings.risk||{};rk={bal:+r.bal||0,pct:r.pct!=null?+r.pct:2,maxR:r.maxR!=null?+r.maxR:5,goalR:r.goalR!=null?+r.goalR:6,dd:r.dd!=null?+r.dd:10,cut:r.cut!=null?+r.cut:50,m1:r.m1!=null?+r.m1:0.7,m2:r.m2!=null?+r.m2:1.5,m3:r.m3!=null?+r.m3:5,red:r.red!=null?+r.red:0.7,peak:+r.peak||0,pnl:r.pd===todayStr()?(+r.pnl||0):0,pd:todayStr()}}
 function rkSave(){settings.risk=Object.assign({},rk);saveSettings()}
 function plCalc(){var bal=rk.bal,R=bal>0?bal*rk.pct/100:0,cutOn=rk.peak>0&&bal>0&&bal<=rk.peak*(1-rk.dd/100),eff=R*(cutOn?rk.cut/100:1),maxLoss=rk.maxR*eff,rem=Math.max(0,maxLoss+Math.min(0,rk.pnl)),goal=rk.goalR*eff;
@@ -1104,7 +1106,7 @@ function plPaint(){if(!$("plck"))return;var c=plCalc(),st=plState(c);
  $("plsum").innerHTML='<div class="pl-ring" style="--p:'+st.pct+';--c:'+col+'" role="img" aria-label="Grade '+st.grade+', '+st.pct+' percent"><b>'+st.grade+'</b><small>'+st.pct+'%</small></div><p class="pl-sumt">'+esc(msg)+'</p>'+
   '<dl class="pl-kv">'+kv("Shares",c.sh?nf(c.sh,0):"-")+kv("Risk",c.sh?money(c.risk):"-")+kv("Position",c.sh?money(c.pos):"-")+kv("Size",pl.half?(rk.red||0.7)+"R (reduced)":"1R")+kv("Entry",c.valid?nf(c.e,4):"-")+kv("Stop",c.valid?nf(c.s,4):"-")+(pl.mode==="range"?kv("Range",c.valid?nf(c.rng,4):"-")+kv("1R",c.valid&&c.sh?money(c.risk):"-"):"")+'</dl>'+
   '<div class="pl-tg">'+[0,1,2].map(function(k){return '<div><span>Target '+(k+1)+(pl.mode==="range"?" ("+nf([rk.m1,rk.m2,rk.m3][k],2)+"R)":c.rrs[k]?" ("+nf(c.rrs[k],1)+"R)":"")+'</span><b>'+(c.t[k]>0&&c.valid?nf(c.t[k],4):"-")+'</b><em class="gain">'+(c.gain[k]?"+"+money(c.gain[k]):"")+'</em></div>'}).join("")+'</div>'+warn+
-  '<div class="row" style="margin-top:12px"><button class="primary" id="plsave" type="button">Save plan</button><button id="plclear" type="button">Clear</button></div>'}
+  (plEditId?'<p class="pl-edn">Editing a saved plan</p>':'')+'<div class="row" style="margin-top:12px"><button class="primary" id="plsave" type="button">'+(plEditId?"Update plan":"Save plan")+'</button>'+(plEditId?'<button id="plcancel" type="button">Cancel</button>':'<button id="plclear" type="button">Clear</button>')+'</div>'}
 function plField(l,key,type,ph,ex){return '<label class="pl-f">'+l+'<input data-pf="'+key+'" type="'+(type||"text")+'"'+(type==="number"?' step="any" inputmode="decimal"':'')+' placeholder="'+(ph||"")+'" value="'+esc(pl[key]||"")+'"'+(ex||"")+'></label>'}
 function rkField(l,key,step){return '<label class="pl-f">'+l+'<input data-rk="'+key+'" type="number" step="'+(step||"any")+'" inputmode="decimal" value="'+(rk[key]||rk[key]===0?esc(rk[key]):"")+'"></label>'}
 function renderPlan(){var el=$("planv");if(!pl){try{pl=JSON.parse(localStorage.getItem(PLD)||"null")}catch(e){}if(!pl||!pl.chk)pl=plFresh()}if(!rk)rkInit();
@@ -1123,12 +1125,18 @@ function renderPlan(){var el=$("planv");if(!pl){try{pl=JSON.parse(localStorage.g
   '<div class="pl-grid">'+plField("Entry","entry","number","0.00")+plField("Stop","stop","number","0.00")+plField("Target 1","t1","number","0.00")+plField("Target 2","t2","number","0.00")+plField("Target 3","t3","number","0.00")+'</div>')+
   '<label class="pl-half"><input type="checkbox" data-plhalf="1"'+(pl.half?" checked":"")+'> Reduced size (take '+(rk.red||0.7)+'R instead of 1R)</label>'+
   '<div class="pl-grid">'+plField("Volume today","vol","text","e.g. 2.4M")+plField("Relative volume (x)","rvol","number","e.g. 3.2")+'</div>'+
+  '<div class="pl-f" style="margin:0 0 12px">Chart picture<div class="pl-pics" id="plpics"></div><div><button type="button" id="plpic">Add picture</button><input type="file" id="plfile" accept="image/*" multiple hidden> <span class="hint" style="margin:0">or paste one. Up to 4, kept small.</span></div></div>'+
   '<label class="pl-f">Reason for the trade<textarea data-pf="why" rows="3" maxlength="600" placeholder="Catalyst, level, what the chart is doing, why now">'+esc(pl.why)+'</textarea></label>'+
   '<label class="pl-f">Exit plan<textarea data-pf="exit" rows="2" maxlength="400" placeholder="Where I take profit, how I trail, my time stop">'+esc(pl.exit)+'</textarea></label></section>'+
  '<section class="pl-card" aria-label="A+ checklist"><h2>A+ checklist <span id="plcount" class="pill"></span></h2><p class="hint" style="margin:0 0 10px">Tap each one only when it is true. The grayed ones tick themselves from your numbers.</p><div id="plck" class="pl-ck"></div></section></div>'+
  '<aside class="pl-side"><div id="plsum" class="pl-sum" aria-live="polite"></div></aside></div>'+
  '<h2 class="pf-sec">Plan log</h2><div id="plstat"></div><div id="pllog"></div>';
- plPaint();plLog()}
+ plPaint();plPics();plLog()}
+function plPics(){var el=$("plpics");if(!el)return;
+ el.innerHTML=(pl.imgs||[]).map(function(m,i){var u=imgUrl(m);return u?'<div class="pthumb"><img class="pl-th" data-lb="1" alt="Chart picture" src="'+esc(u)+'"><button type="button" data-plrm="o'+i+'" aria-label="Remove picture">✕</button></div>':""}).join("")+plPend.map(function(u,i){return '<div class="pthumb"><img class="pl-th" data-lb="1" alt="New chart picture" src="'+u+'"><button type="button" data-plrm="n'+i+'" aria-label="Remove picture">✕</button></div>'}).join("")}
+async function plAdd(files){files=files?Array.prototype.slice.call(files):[];var n=0;
+ for(var i=0;i<files.length;i++){if(!/^image\//.test(files[i].type))continue;if((pl.imgs||[]).length+plPend.length>=4){toast("Up to 4 pictures per plan");break}try{plPend.push(await shrink(files[i],900));n++}catch(e){toast("Could not read that image")}}
+ if(n)plPics()}
 async function loadPlans(){if(plLoaded)return;try{if(store.db){var s=await store.db.collection("plans").get();plans=s.docs.filter(function(d){return d.exists}).map(function(d){return Object.assign({id:d.id},clone(d.data()))})}else plans=JSON.parse(localStorage.getItem(PLK)||"[]");plLoaded=true}catch(e){plans=[]}}
 async function plPut(p){try{if(store.db){var r=Object.assign({},p);delete r.id;await store.db.doc("plans/"+p.id).set(r)}else localStorage.setItem(PLK,JSON.stringify(plans))}catch(e){toast("Could not save that plan")}}
 async function plDel(id){try{if(store.db)await store.db.doc("plans/"+id).delete();else localStorage.setItem(PLK,JSON.stringify(plans))}catch(e){}}
@@ -1141,15 +1149,28 @@ function plLog(){var el=$("pllog"),se=$("plstat");if(!el)return;
  se.innerHTML=(A||O)?'<div class="pl-tiles">'+cell("A+ trades",A)+cell("Everything else",O)+'</div>':"";
  if(!L.length){el.innerHTML='<p class="hint">No plans yet. Fill in a trade above and press Save plan. Every trade you plan lands here with its grade, so you can see whether A+ setups really pay you more.</p>';return}
  el.innerHTML=L.map(function(p){var st=function(k,l){return '<button type="button" class="'+(p.status===k?"on":"")+'" data-plst="'+esc(p.id)+'|'+k+'" aria-pressed="'+(p.status===k)+'">'+l+'</button>'};
-  return '<article class="pl-log"><div class="pl-lt">'+plGrade(p.grade)+' <button type="button" class="tk" data-tk="'+esc(p.ticker)+'">$'+esc(p.ticker)+'</button> <span class="pl-side '+p.side+'">'+(p.side==="long"?"Long":"Short")+'</span> <span class="hint" style="margin:0">'+esc(p.day||"")+' '+esc(p.time||"")+(p.strat?' · '+esc(p.strat):'')+'</span><button type="button" class="x show" data-pldel="'+esc(p.id)+'" aria-label="Delete plan">&#10005;</button></div>'+
+  return '<article class="pl-log"><div class="pl-lt">'+plGrade(p.grade)+' <button type="button" class="tk" data-tk="'+esc(p.ticker)+'">$'+esc(p.ticker)+'</button> <span class="pl-side '+p.side+'">'+(p.side==="long"?"Long":"Short")+'</span> <span class="hint" style="margin:0">'+esc(p.day||"")+' '+esc(p.time||"")+(p.strat?' · '+esc(p.strat):'')+'</span><span class="pl-act"><button type="button" class="linkbtn" data-pledit="'+esc(p.id)+'" aria-label="Edit plan">Edit</button><button type="button" class="x show" data-pldel="'+esc(p.id)+'" aria-label="Delete plan">&#10005;</button></span></div>'+
    '<div class="pl-ln">Entry <b>'+nf(p.entry,4)+'</b> · Stop <b>'+nf(p.stop,4)+'</b>'+(p.range?' · Range <b>'+nf(p.range,4)+'</b>':'')+(p.t1?' · T1 <b>'+nf(p.t1,4)+'</b>':'')+(p.t2?' · T2 <b>'+nf(p.t2,4)+'</b>':'')+(p.t3?' · T3 <b>'+nf(p.t3,4)+'</b>':'')+(p.shares?' · <b>'+nf(p.shares,0)+'</b> sh':'')+(p.risk?' · Risk <b>'+money(p.risk)+'</b>':'')+(p.half?' · <b>reduced size</b>':'')+(p.rvol?' · RVOL <b>'+nf(p.rvol,1)+'x</b>':'')+(p.vol?' · Vol <b>'+esc(p.vol)+'</b>':'')+'</div>'+
-   (p.why?'<p class="pl-why">'+esc(p.why)+'</p>':'')+
+   (p.why?'<p class="pl-why">'+esc(p.why)+'</p>':'')+((p.imgs&&p.imgs.length)?'<div class="pl-pics">'+p.imgs.map(function(m){var u=imgUrl(m);return u?'<img class="pl-th" data-lb="1" alt="Chart picture" src="'+esc(u)+'">':""}).join("")+'</div>':'')+
    '<div class="pl-lb"><div class="pl-seg sm" role="group" aria-label="Status">'+st("planned","Planned")+st("taken","Taken")+st("skipped","Skipped")+'</div>'+(p.status==="taken"?'<label class="pl-res">Result (R) <input type="number" step="any" inputmode="decimal" data-plr="'+esc(p.id)+'" value="'+(p.r===null||p.r===undefined?"":esc(p.r))+'" placeholder="e.g. 1.5"></label>':'')+'<span class="hint" style="margin:0">'+p.score+' of '+p.total+' checks</span></div></article>'}).join("")}
-function plSave(){var c=plCalc(),st=plState(c),t=(pl.ticker||"").trim();
+async function plSave(){var c=plCalc(),st=plState(c),t=(pl.ticker||"").trim();
  if(!t){toast("Add the ticker first");return}
  if(!c.valid){toast(pl.mode==="range"?"Add the candle high and low (or range) first":"Add your entry and stop first");return}
- var p={id:newId(),ts:Date.now(),day:todayStr(),time:pl.time,ticker:t,side:pl.side,strat:pl.strat,entry:Math.round(c.e*10000)/10000,stop:Math.round(c.s*10000)/10000,range:pl.mode==="range"?Math.round(c.rng*10000)/10000:0,t1:Math.round(c.t[0]*10000)/10000,t2:Math.round(c.t[1]*10000)/10000,t3:Math.round(c.t[2]*10000)/10000,half:!!pl.half,shares:c.sh,risk:Math.round(c.risk*100)/100,rr:Math.round(Math.max.apply(null,c.rrs)*100)/100,vol:pl.vol,rvol:parseFloat(pl.rvol)||0,why:pl.why,exit:pl.exit,chk:Object.assign({},pl.chk),score:st.done,total:st.total,grade:st.grade,status:"planned",r:null};
- plans.push(p);plPut(p);pl=plFresh();try{localStorage.removeItem(PLD)}catch(e){}renderPlan();toast(p.grade==="A+"?"A+ plan saved":"Plan saved as "+p.grade)}
+ var btn=$("plsave");if(btn)btn.disabled=true;
+ try{var imgs=(pl.imgs||[]).slice();
+  for(var k=0;k<plPend.length;k++){
+   if(store.db&&store.assets){try{imgs.push({aid:(await store.assets.upload(dataToBlob(plPend[k]),{type:"image/jpeg"})).id})}catch(e){toast("A picture could not be saved")}}
+   else if(!store.db)imgs.push({src:plPend[k]})}
+  var old=plEditId?plans.find(function(x){return x.id===plEditId}):null;
+  var p={id:old?old.id:newId(),ts:old?old.ts:Date.now(),day:old?old.day:todayStr(),time:pl.time,ticker:t,side:pl.side,strat:pl.strat,entry:Math.round(c.e*10000)/10000,stop:Math.round(c.s*10000)/10000,range:pl.mode==="range"?Math.round(c.rng*10000)/10000:0,t1:Math.round(c.t[0]*10000)/10000,t2:Math.round(c.t[1]*10000)/10000,t3:Math.round(c.t[2]*10000)/10000,half:!!pl.half,shares:c.sh,risk:Math.round(c.risk*100)/100,rr:Math.round(Math.max.apply(null,c.rrs)*100)/100,vol:pl.vol,rvol:parseFloat(pl.rvol)||0,why:pl.why,exit:pl.exit,imgs:imgs,chk:Object.assign({},pl.chk),score:st.done,total:st.total,grade:st.grade,status:old?old.status:"planned",r:old?old.r:null,
+   f:{side:pl.side,mode:pl.mode,hi:pl.hi,lo:pl.lo,rng:pl.rng,entry:pl.entry,stop:pl.stop,t1:pl.t1,t2:pl.t2,t3:pl.t3}};
+  if(old)plans[plans.indexOf(old)]=p;else plans.push(p);
+  await plPut(p);var was=!!old;plEditId="";plPend=[];pl=plFresh();try{localStorage.removeItem(PLD)}catch(e){}renderPlan();toast(was?"Plan updated":p.grade==="A+"?"A+ plan saved":"Plan saved as "+p.grade)
+ }finally{var b2=$("plsave");if(b2)b2.disabled=false}}
+function plEdit(id){var p=plans.find(function(x){return x.id===id});if(!p)return;var f=p.f||{side:p.side,mode:"manual",entry:p.entry,stop:p.stop,t1:p.t1,t2:p.t2,t3:p.t3};
+ pl=Object.assign(plFresh(),f,{ticker:p.ticker,time:p.time,strat:p.strat||"",half:!!p.half,vol:p.vol||"",rvol:p.rvol?String(p.rvol):"",why:p.why||"",exit:p.exit||"",imgs:(p.imgs||[]).slice(),chk:Object.assign({},p.chk)});
+ ["hi","lo","rng","entry","stop","t1","t2","t3"].forEach(function(k){if(pl[k]===0||pl[k]==null)pl[k]=""});
+ plPend=[];plEditId=id;renderPlan();window.scrollTo(0,0);toast("Editing $"+p.ticker)}
 function plDraft(){try{localStorage.setItem(PLD,JSON.stringify(pl))}catch(e){}}
 function showPlan(){hideViews();$("navplan").classList.add("on");$("planv").hidden=false;rkInit();renderPlan();loadPlans().then(function(){if(!$("planv").hidden)renderPlan()});window.scrollTo(0,0)}
 $("navplan").addEventListener("click",showPlan);
@@ -1158,6 +1179,7 @@ $("navplan").addEventListener("click",showPlan);
   else if(t.dataset.rk){var key=t.dataset.rk;rk[key]=parseFloat(t.value);if(!isFinite(rk[key])){var DF={bal:0,peak:0,pnl:0,pct:2,maxR:5,goalR:6,dd:10,cut:50,m1:0.7,m2:1.5,m3:5,red:0.7};rk[key]=DF[key]}if(key==="bal"&&rk.bal>rk.peak)rk.peak=rk.bal;rk.pd=todayStr();plPaint()}
   else if(t.dataset.plr){var p=plans.find(function(x){return x.id===t.dataset.plr});if(p){p.r=t.value===""?null:parseFloat(t.value)}}});
  v.addEventListener("change",function(ev){var t=ev.target;if(t.dataset.rk){var pk=$("planv").querySelector('[data-rk="peak"]');if(pk&&rk.peak)pk.value=rk.peak;rkSave()}
+  else if(t.id==="plfile"){plAdd(t.files);t.value=""}
   else if(t.dataset.plhalf){pl.half=t.checked;plDraft();plPaint()}
   else if(t.dataset.plr){var p=plans.find(function(x){return x.id===t.dataset.plr});if(p){plPut(p);plLog()}}});
  v.addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
@@ -1165,7 +1187,11 @@ $("navplan").addEventListener("click",showPlan);
   if(b.dataset.plside){pl.side=b.dataset.plside;plDraft();renderPlan();return}
   if(b.dataset.plmode){pl.mode=b.dataset.plmode;plDraft();renderPlan();return}
   if(b.id==="plsave"){plSave();return}
-  if(b.id==="plclear"){pl=plFresh();plDraft();renderPlan();return}
+  if(b.id==="plclear"){pl=plFresh();plPend=[];plDraft();renderPlan();return}
+  if(b.id==="plcancel"){plEditId="";pl=plFresh();plPend=[];plDraft();renderPlan();toast("Edit cancelled");return}
+  if(b.id==="plpic"){var fi=$("plfile");if(fi)fi.click();return}
+  if(b.dataset.plrm){var q=b.dataset.plrm,ix=+q.slice(1);if(q.charAt(0)==="o")pl.imgs.splice(ix,1);else plPend.splice(ix,1);plPics();return}
+  if(b.dataset.pledit){plEdit(b.dataset.pledit);return}
   if(b.dataset.plst){var a=b.dataset.plst.split("|"),p=plans.find(function(x){return x.id===a[0]});if(p){p.status=a[1];plPut(p);plLog()}return}
   if(b.dataset.pldel){var id=b.dataset.pldel;if(b.dataset.armed){plans=plans.filter(function(x){return x.id!==id});plDel(id);plLog();return}b.dataset.armed="1";b.textContent="Delete?";setTimeout(function(){if(b.isConnected){delete b.dataset.armed;b.innerHTML="&#10005;"}},2500)}})})();
 
