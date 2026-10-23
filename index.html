@@ -224,6 +224,12 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 
 .hm-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:6px}
 .hm-top .sub{margin:6px 0 0}
+.pl-pbox{border:2px dashed var(--line);border-radius:10px;padding:10px;margin-top:8px;text-align:center;color:var(--mute);font-size:.88rem;cursor:text;caret-color:transparent;outline:none}.pl-pbox:focus{border-color:var(--accent);background:var(--bg)}
+.bellw{position:relative}.bell{position:relative;width:42px;height:42px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--panel);border:1px solid var(--line);color:var(--ink);cursor:pointer}.bell svg{width:20px;height:20px}
+.bell .bdot{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:99px;background:#e5484d;color:#fff;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.bell .bdot[hidden],.bellpanel[hidden]{display:none}
+.bellpanel{position:absolute;right:0;top:50px;width:min(340px,calc(100vw - 32px));max-height:70vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:50}
+.bellpanel .bph{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.bellpanel .nlist{margin-top:0}
 .hm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0}
 .hm-tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .hm-tile b{display:block;font:800 1.45rem/1.1 "Bricolage Grotesque",sans-serif}
@@ -1125,13 +1131,19 @@ function renderPlan(){var el=$("planv");if(!pl){try{pl=JSON.parse(localStorage.g
   '<div class="pl-grid">'+plField("Entry","entry","number","0.00")+plField("Stop","stop","number","0.00")+plField("Target 1","t1","number","0.00")+plField("Target 2","t2","number","0.00")+plField("Target 3","t3","number","0.00")+'</div>')+
   '<label class="pl-half"><input type="checkbox" data-plhalf="1"'+(pl.half?" checked":"")+'> Reduced size (take '+(rk.red||0.7)+'R instead of 1R)</label>'+
   '<div class="pl-grid">'+plField("Volume today","vol","text","e.g. 2.4M")+plField("Relative volume (x)","rvol","number","e.g. 3.2")+'</div>'+
-  '<div class="pl-f" style="margin:0 0 12px">Chart picture<div class="pl-pics" id="plpics"></div><div><button type="button" id="plpic">Add picture</button><input type="file" id="plfile" accept="image/*" multiple hidden> <span class="hint" style="margin:0">or paste one. Up to 4, kept small.</span></div></div>'+
+  '<div class="pl-f" style="margin:0 0 12px">Chart picture<div class="pl-pics" id="plpics"></div><div><button type="button" id="plpic">Add picture</button> <button type="button" id="plpaste">Paste</button><input type="file" id="plfile" accept="image/*" multiple hidden> <span class="hint" style="margin:0">Up to 4, kept small.</span></div><div id="plpbox" class="pl-pbox" contenteditable="true" tabindex="0" spellcheck="false" role="button" aria-label="Paste a picture here">Click here, then press Ctrl+V or right-click and choose Paste</div></div>'+
   '<label class="pl-f">Reason for the trade<textarea data-pf="why" rows="3" maxlength="600" placeholder="Catalyst, level, what the chart is doing, why now">'+esc(pl.why)+'</textarea></label>'+
   '<label class="pl-f">Exit plan<textarea data-pf="exit" rows="2" maxlength="400" placeholder="Where I take profit, how I trail, my time stop">'+esc(pl.exit)+'</textarea></label></section>'+
  '<section class="pl-card" aria-label="A+ checklist"><h2>A+ checklist <span id="plcount" class="pill"></span></h2><p class="hint" style="margin:0 0 10px">Tap each one only when it is true. The grayed ones tick themselves from your numbers.</p><div id="plck" class="pl-ck"></div></section></div>'+
  '<aside class="pl-side"><div id="plsum" class="pl-sum" aria-live="polite"></div></aside></div>'+
  '<h2 class="pf-sec">Plan log</h2><div id="plstat"></div><div id="pllog"></div>';
  plPaint();plPics();plLog()}
+async function plPasteClip(){
+ try{var items=await navigator.clipboard.read(),fs=[];
+  for(var i=0;i<items.length;i++){var t=items[i].types.filter(function(x){return /^image\//.test(x)})[0];if(t){var bl=await items[i].getType(t);fs.push(new File([bl],"paste."+t.split("/")[1],{type:t}))}}
+  if(!fs.length){toast("No picture on the clipboard. Copy a screenshot first.");return}
+  await plAdd(fs)}
+ catch(e){var bx=$("plpbox");if(bx)bx.focus();toast("Your browser blocked that. Click the box below and press Ctrl+V.")}}
 function plPics(){var el=$("plpics");if(!el)return;
  el.innerHTML=(pl.imgs||[]).map(function(m,i){var u=imgUrl(m);return u?'<div class="pthumb"><img class="pl-th" data-lb="1" alt="Chart picture" src="'+esc(u)+'"><button type="button" data-plrm="o'+i+'" aria-label="Remove picture">✕</button></div>':""}).join("")+plPend.map(function(u,i){return '<div class="pthumb"><img class="pl-th" data-lb="1" alt="New chart picture" src="'+u+'"><button type="button" data-plrm="n'+i+'" aria-label="Remove picture">✕</button></div>'}).join("")}
 async function plAdd(files){files=files?Array.prototype.slice.call(files):[];var n=0;
@@ -1174,6 +1186,8 @@ function plEdit(id){var p=plans.find(function(x){return x.id===id});if(!p)return
 function plDraft(){try{localStorage.setItem(PLD,JSON.stringify(pl))}catch(e){}}
 function showPlan(){hideViews();$("navplan").classList.add("on");$("planv").hidden=false;rkInit();renderPlan();loadPlans().then(function(){if(!$("planv").hidden)renderPlan()});window.scrollTo(0,0)}
 $("navplan").addEventListener("click",showPlan);
+$("planv").addEventListener("beforeinput",function(ev){if(ev.target&&ev.target.id==="plpbox"&&ev.inputType!=="insertFromPaste")ev.preventDefault()});
+$("planv").addEventListener("keydown",function(ev){if(ev.target&&ev.target.id==="plpbox"&&!(ev.ctrlKey||ev.metaKey))ev.preventDefault()});
 (function(){var v=$("planv");
  v.addEventListener("input",function(ev){var t=ev.target;if(t.dataset.pf){var k=t.dataset.pf,val=t.value;if(k==="ticker"){var n=val.replace(/[^A-Za-z.\-]/g,"").toUpperCase();if(n!==val){t.value=n;val=n}}pl[k]=val;if(k==="hi"||k==="lo"){var h=parseFloat(pl.hi),l=parseFloat(pl.lo);if(h>0&&l>0&&h>l){pl.rng=String(Math.round((h-l)*10000)/10000);var ri=v.querySelector('[data-pf="rng"]');if(ri)ri.value=pl.rng}}plDraft();plPaint()}
   else if(t.dataset.rk){var key=t.dataset.rk;rk[key]=parseFloat(t.value);if(!isFinite(rk[key])){var DF={bal:0,peak:0,pnl:0,pct:2,maxR:5,goalR:6,dd:10,cut:50,m1:0.7,m2:1.5,m3:5,red:0.7};rk[key]=DF[key]}if(key==="bal"&&rk.bal>rk.peak)rk.peak=rk.bal;rk.pd=todayStr();plPaint()}
@@ -1190,6 +1204,7 @@ $("navplan").addEventListener("click",showPlan);
   if(b.id==="plclear"){pl=plFresh();plPend=[];plDraft();renderPlan();return}
   if(b.id==="plcancel"){plEditId="";pl=plFresh();plPend=[];plDraft();renderPlan();toast("Edit cancelled");return}
   if(b.id==="plpic"){var fi=$("plfile");if(fi)fi.click();return}
+  if(b.id==="plpaste"){plPasteClip();return}
   if(b.dataset.plrm){var q=b.dataset.plrm,ix=+q.slice(1);if(q.charAt(0)==="o")pl.imgs.splice(ix,1);else plPend.splice(ix,1);plPics();return}
   if(b.dataset.pledit){plEdit(b.dataset.pledit);return}
   if(b.dataset.plst){var a=b.dataset.plst.split("|"),p=plans.find(function(x){return x.id===a[0]});if(p){p.status=a[1];plPut(p);plLog()}return}
@@ -1584,7 +1599,14 @@ async function wallRepost(id){var So=S(),p=wall.find(function(x){return x.id===i
 async function wallComment(pid){var So=S(),inp=document.querySelector('[data-cin="'+pid+'"]');if(!So||!inp)return;var t=tickify(inp.value.trim());if(!t)return;
  try{await So.addComment(pid,t);openCm[pid]=1;wall=await So.wall(pv.id);renderWall()}catch(e){toast("Could not comment")}}
 /* Notifications */
-function nextNotifBadge(n){var b=$("navnotn");if(b){b.textContent=n>0?n:"";b.hidden=!(n>0)}}
+var unreadN=0;
+function nextNotifBadge(n){unreadN=n;var b=$("navnotn");if(b){b.textContent=n>0?n:"";b.hidden=!(n>0)}var d=$("belldot");if(d){d.textContent=n>9?"9+":n;d.hidden=!(n>0)}}
+function notifWhat(n){return n.type==="member_request"?"wants to connect with you":n.type==="member_approved"?"approved your request to connect":n.type==="channel_msg"?"posted in your channel":n.type==="follow"?"started following you":n.type==="wall_post"?"wrote on your wall":n.type==="like"?"liked your post":n.type==="repost"?"reposted your post":"commented on a post"}
+function bellHtml(){return '<div class="bellw"><button type="button" class="bell" id="bellbtn" aria-label="Notifications" aria-haspopup="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="bdot" id="belldot"'+(unreadN>0?'':' hidden')+'>'+(unreadN>9?"9+":unreadN)+'</span></button><div class="bellpanel" id="bellpanel" hidden></div></div>'}
+function bellItems(){var L=notifs.slice(0,8);return '<div class="bph"><b>Notifications</b>'+(L.some(function(n){return !n.read})?'<button type="button" id="bellall">Mark all read</button>':'')+'</div>'+(L.length?'<div class="nlist">'+L.map(function(n){return '<button type="button" class="nitem'+(n.read?"":" unread")+'" data-bn="'+esc(n.id)+'"><span><b>@'+esc(n.actor.username)+'</b> '+notifWhat(n)+'</span>'+(n.snippet?'<span class="nsnip">'+esc(n.snippet)+'</span>':'')+'<small>'+esc(postWhen(n.ts))+'</small></button>'}).join("")+'</div><button type="button" id="bellsee" style="margin-top:8px;width:100%">See all</button>':'<p class="hint">Nothing yet. When someone writes on your wall or comments, it shows up here.</p>')}
+async function bellToggle(){var p=$("bellpanel");if(!p)return;if(!p.hidden){p.hidden=true;return}
+ p.hidden=false;p.innerHTML='<p class="hint">Loading...</p>';var So=S();if(!So){p.innerHTML='<p class="hint">Not available here.</p>';return}
+ try{notifs=await So.notifs()}catch(e){notifs=[]}p.innerHTML=bellItems();nextNotifBadge(notifs.filter(function(n){return !n.read}).length)}
 async function pollNotifs(){var So=S();if(!So)return;try{nextNotifBadge(await So.unread())}catch(e){}}
 async function showNotifs(){hideViews();$("navnotif").classList.add("on");$("notifv").hidden=false;$("notifv").innerHTML='<h1>Notifications</h1><p class="hint">Loading...</p>';renderSide();window.scrollTo(0,0);
  var So=S();if(!So){$("notifv").innerHTML='<h1>Notifications</h1><p class="hint">Not available here.</p>';return}
@@ -1676,6 +1698,8 @@ $("navnotif").addEventListener("click",showNotifs);
 $("notifv").addEventListener("click",async function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;var So=S();
  if(b.id==="nmark"){await So.markRead();notifs.forEach(function(n){n.read=true});renderNotifs();nextNotifBadge(0);return}
  if(b.dataset.nid){var n=notifs.find(function(x){return x.id===b.dataset.nid});if(!n)return;
+  await openNotif(n);return}});
+async function openNotif(n){var So=S();
   if(!n.read){So.markRead([n.id]);n.read=true;nextNotifBadge(notifs.filter(function(x){return !x.read}).length)}
   if(n.type==="follow"||n.type==="member_approved"){await showUserProfile(n.actor.username);return}
   if(n.type==="member_request"){await showProfile();return}
@@ -1683,7 +1707,7 @@ $("notifv").addEventListener("click",async function(ev){var b=ev.target.closest&
   var owner=null;try{owner=await So.postOwner(n.post_id)}catch(e){}
   if(n.post_id&&n.type==="comment")openCm[n.post_id]=1;
   if(!owner||owner.id===So.uid()){profTab="wall";await showProfile()}else await showUserProfile(owner.username);
-  var el=document.querySelector('[data-pid="'+n.post_id+'"]');if(el)el.scrollIntoView({block:"center"})}});
+  var el=document.querySelector('[data-pid="'+n.post_id+'"]');if(el)el.scrollIntoView({block:"center"})}
 pollNotifs();setInterval(pollNotifs,60000);
 $("profilev").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
  if(b.id==="pfedit"){editProfile();return}
@@ -1771,7 +1795,7 @@ function coachBody(){return coach&&coach.md?'<div class="out ptxt coachbox" id="
 function renderHome(){var el=$("home");if(!el)return;
  var days=dailyPnl(),td=todayISO(),today=null;days.forEach(function(d){if(d.d===td)today=d});
  var who=($("whoami")&&$("whoami").textContent)||"";
- var h='<div class="hm-top"><div><h1>Home</h1><p class="sub">'+(who?esc(who)+". ":"")+esc(dayLabel(td))+'</p></div></div>';
+ var h='<div class="hm-top"><div><h1>Home</h1><p class="sub">'+(who?esc(who)+". ":"")+esc(dayLabel(td))+'</p></div>'+bellHtml()+'</div>';
  h+='<section class="hm-today"><div><span class="hm-lab">Today</span>'+(today?'<b class="hm-big '+(today.pnl>=0?"gain":"loss")+'">'+sgn(today.pnl)+'</b><span class="hint">'+today.n+(today.n===1?" trade":" trades")+' saved</span>':'<b class="hm-big">No trades saved yet</b><span class="hint">Upload your statement in Studio to log the day.</span>')+'</div><button class="primary" id="hstudio" type="button">'+(today?"Open Studio":"Log today's trades")+'</button></section>';
  h+='<section><h2>Following</h2><div id="hmfeed"><span class="hint">Loading...</span></div></section>';
  h+='<section><h2>Trending $tickers</h2><div id="hmtrend" class="hm-pages"><span class="hint">Loading...</span></div></section>';
@@ -1810,7 +1834,12 @@ async function runCoach(){
   if(text&&coachCtl.signal.aborted){coach={md:text,ts:Date.now(),n:d.n};await saveCoach()}
  }finally{var b=$("chgo");if(b)b.disabled=false;var sb=$("chstop");if(sb)sb.hidden=true}}
 $("navhome").addEventListener("click",showHome);
-$("home").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
+$("home").addEventListener("click",async function(ev){var b=ev.target.closest&&ev.target.closest("button");
+ var bp=$("bellpanel");if(bp&&!bp.hidden&&!(ev.target.closest&&ev.target.closest(".bellw")))bp.hidden=true;if(!b)return;
+ if(b.id==="bellbtn"){bellToggle();return}
+ if(b.id==="bellall"){var S0=S();await S0.markRead();notifs.forEach(function(n){n.read=true});nextNotifBadge(0);$("bellpanel").innerHTML=bellItems();return}
+ if(b.id==="bellsee"){showNotifs();return}
+ if(b.dataset.bn){var nn=notifs.find(function(x){return x.id===b.dataset.bn});if(nn){$("bellpanel").hidden=true;await openNotif(nn)}return}
  if(b.id==="hstudio"){showStudio();return}
  if(b.id==="hmfind"){showProfile();setTimeout(function(){var f=$("findu");if(f)f.focus()},50);return}
  if(b.id==="hmnall"||b.dataset.hmn){showNotifs();return}
