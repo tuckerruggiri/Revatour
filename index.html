@@ -1606,7 +1606,12 @@ $("rlv").addEventListener("click",function(ev){var b=ev.target.closest&&ev.targe
 var WL={sort:{k:"dp",d:1},syms:[],loaded:false,quotes:{},qcfg:true,tab:"all",pick:"",items:[],upd:0,busy:false},WLQ=["SPY","QQQ","AAPL","NVDA","TSLA","MSFT"],nwTimer=null;
 async function wlLoad(){if(WL.loaded)return;try{var d=null;if(store.db){var s=await store.db.doc("meta/watchlist").get();if(s.exists)d=clone(s.data())}else d=JSON.parse(localStorage.getItem("ss-watch")||"null");WL.syms=((d&&d.syms)||[]).filter(function(x){return /^[A-Z]{1,5}(\.[A-Z])?$/.test(x)})}catch(e){WL.syms=[]}WL.loaded=true}
 async function wlSave(){try{if(store.db)await store.db.doc("meta/watchlist").set({syms:WL.syms});else localStorage.setItem("ss-watch",JSON.stringify({syms:WL.syms}))}catch(e){toast("Could not save your watchlist")}}
-async function wlQuote(){var So=S();if(!So||!So.quotes||!WL.syms.length)return;try{var Q=await So.quotes(WL.syms);WL.qcfg=!!Q.configured;WL.quotes=Q.quotes||{}}catch(e){}wlRender()}
+async function wlQuote(){var So=S();if(!So||!WL.syms.length)return;var got={},syms=WL.syms.slice();
+ if(WL.sch===false&&Date.now()-(WL.schAt||0)>300000)WL.sch=undefined;
+ if(So.schwab&&WL.sch!==false){try{var r=await So.schwab("quotes",{symbols:syms.join(",")});if(r&&r.quotes&&Object.keys(r.quotes).length){got=r.quotes;WL.src="schwab";WL.qcfg=true}else{WL.sch=false;WL.schAt=Date.now()}}catch(e){WL.sch=false;WL.schAt=Date.now()}}
+ var miss=syms.filter(function(x){return !got[x]});
+ if(miss.length&&So.quotes){try{var Q=await So.quotes(miss);WL.qcfg=WL.qcfg||!!Q.configured;Object.keys(Q.quotes||{}).forEach(function(k){got[k]=Q.quotes[k]});if(!Object.keys(got).length||miss.length===syms.length)WL.src="free"}catch(e){}}
+ WL.quotes=got;wlRender()}
 function volFmt(v){if(v==null||!isFinite(v))return "\u2014";if(v>=1e9)return (v/1e9).toFixed(2)+"B";if(v>=1e6)return (v/1e6).toFixed(1)+"M";if(v>=1e3)return Math.round(v/1e3)+"K";return String(Math.round(v))}
 function wlSorted(){var k=WL.sort.k,d=WL.sort.d,A=WL.syms.slice();if(k==="s")A.sort();else A.sort(function(a,b){var qa=WL.quotes[a],qb=WL.quotes[b],x=qa?(k==="p"?qa.p:k==="dp"?qa.dp:qa.v):null,y=qb?(k==="p"?qb.p:k==="dp"?qb.dp:qb.v):null;return ((x==null?-Infinity:x)-(y==null?-Infinity:y))});if(d<0)A.reverse();return A}
 function wlRows(){if(!WL.syms.length)return '<p class="hint" style="margin:6px 0 10px">Nothing here yet. Add a ticker above, or tap one to start:</p><div class="wl-q">'+WLQ.map(function(x){return '<button type="button" class="tk-chip" data-wlq="'+x+'">+ $'+x+'</button>'}).join("")+'</div>';

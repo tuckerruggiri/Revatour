@@ -1,5 +1,5 @@
 // api/schwab/[action].js — connect a Schwab account (Trader API) and pull executed trades.
-// Routes: /api/schwab/start  /callback  /save  /status  /trades  /disconnect
+// Routes: /api/schwab/start  /callback  /save  /status  /trades  /quotes  /disconnect
 // Vercel env vars: SCHWAB_APP_KEY, SCHWAB_APP_SECRET, SUPABASE_URL, SUPABASE_ANON_KEY
 // Optional: SCHWAB_REDIRECT_URI (must match the callback URL registered with Schwab; default below)
 // The refresh token is encrypted with a key derived from SCHWAB_APP_SECRET and stored in the user's own row (ss_broker, RLS).
@@ -9,6 +9,8 @@ const REDIR = () => process.env.SCHWAB_REDIRECT_URI || 'https://revatour.com/api
 const AUTH = 'https://api.schwabapi.com/v1/oauth/authorize';
 const TOKEN = 'https://api.schwabapi.com/v1/oauth/token';
 const TRADER = 'https://api.schwabapi.com/trader/v1';
+const MARKET = 'https://api.schwabapi.com/marketdata/v1';
+const atCache = new Map(); // user id -> { token, exp }  (Schwab access tokens last 30 minutes)
 const REFRESH_DAYS = 7;
 
 const k = (label) => crypto.createHash('sha256').update(label + ':' + (process.env.SCHWAB_APP_SECRET || '')).digest();
@@ -171,6 +173,31 @@ module.exports = async (req, res) => {
         fills = fills.concat(toFills(tx, fromMs, toMs));
       }
       return res.status(200).json({ configured: true, accounts: (accts || []).length, fills });
+    }
+    if (action === 'quotes') { // live prices + volume for a watchlist (needs the Market Data product on the Schwab app)
+      if (!c || daysLeft <= 0) return res.status(200).json({ configured: true, reconnect: true });
+      const syms = Array.from(new Set(String(req.query.symbols || '').toUpperCase().split(',').map((x) => x.trim()).filter((x) => /^[A-Z]{1,5}([./][A-Z])?$/.test(x)))).slice(0, 50);
+      if (!syms.length) return res.status(400).json({ error: 'no valid symbols' });
+      let at = atCache.get(u.id);
+      if (!at || at.exp < Date.now() + 60000) {
+        try { const tk = await tokenCall({ grant_type: 'refresh_token', refresh_token: c.rt }); at = { token: tk.access_token, exp: Date.now() + (Number(tk.expires_in) || 1800) * 1000 }; atCache.set(u.id, at); }
+        catch (e) { if (e.status === 400 || e.status === 401) return res.status(200).json({ configured: true, reconnect: true }); throw e; }
+      }
+      const r = await fetch(MARKET + '/quotes?' + new URLSearchParams({ symbols: syms.join(','), fields: 'quote' }).toString(), { headers: { Authorization: 'Bearer ' + at.token, Accept: 'application/json' } });
+      if (r.status === 401) atCache.delete(u.id);
+      if (!r.ok) return res.status(200).json({ configured: true, noMarket: true, status: r.status });
+      const j = await r.json();
+      const out = {};
+      syms.forEach((s) => {
+        const q = j && j[s] && j[s].quote; if (!q) return;
+        const last = Number(q.lastPrice), mark = Number(q.mark), close = Number(q.closePrice);
+        const p = isFinite(last) && last > 0 ? last : mark; if (!isFinite(p) || p <= 0) return;
+        const m = isFinite(mark) && mark > 0 ? mark : p;
+        const dp = isFinite(close) && close > 0 ? (m - close) / close * 100 : Number(q.netPercentChange);
+        out[s] = { p, m, d: isFinite(close) && close > 0 ? m - close : Number(q.netChange), dp: isFinite(dp) ? dp : null, pc: isFinite(close) ? close : null, v: isFinite(Number(q.totalVolume)) ? Number(q.totalVolume) : null, t: Number(q.quoteTime) || null };
+      });
+      res.setHeader('Cache-Control', 'private, max-age=5');
+      return res.status(200).json({ configured: true, source: 'schwab', ts: Date.now(), quotes: out });
     }
     return res.status(404).json({ error: 'unknown' });
   } catch (e) {
