@@ -205,6 +205,12 @@
     quotes: async function (syms) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
       var r = await fetch('/api/quotes?symbols=' + encodeURIComponent((syms || []).join(',')), { headers: { Authorization: 'Bearer ' + tok } });
       if (!r.ok) throw new Error('quotes failed'); return r.json(); },
+    discord: async function (action, q) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
+      var r = await fetch('/api/discord?' + new URLSearchParams(Object.assign({ action: action }, q || {})).toString(), { headers: { Authorization: 'Bearer ' + tok } });
+      var j = await r.json().catch(function () { return {}; }); if (!r.ok && !j.error) j.error = 'failed'; return j; },
+    discordFile: async function (url) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
+      var r = await fetch('/api/discord?' + new URLSearchParams({ action: 'file', url: url }).toString(), { headers: { Authorization: 'Bearer ' + tok } });
+      if (!r.ok) throw new Error('file failed'); return r.blob(); },
     news: async function (syms) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
       var r = await fetch('/api/news?symbols=' + encodeURIComponent((syms || []).join(',')), { headers: { Authorization: 'Bearer ' + tok } });
       if (!r.ok) throw new Error('news failed'); return r.json(); },

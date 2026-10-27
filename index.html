@@ -250,6 +250,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .al-b{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 11px;font:inherit;font-size:12px;cursor:pointer}.al-b.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}.al-b.pub{border-color:var(--accent);color:var(--accent)}.al-b.pub:disabled{opacity:.6}.al-b.del:hover{color:var(--loss)}
 .al-strip{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 18px;margin-top:10px}.al-strip .al-bh{margin-bottom:8px}.al-chips{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}.al-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}.al-row .al-card{margin:0}
 @media(max-width:900px){.al-grid{grid-template-columns:1fr}.al-bf,.al-af{flex-wrap:wrap}}
+.dc-cat{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}.dc-ch{display:flex;gap:8px;align-items:center;margin-bottom:6px;font-size:14px}.dc-row{display:grid;grid-template-columns:minmax(120px,1fr) minmax(150px,1fr) minmax(0,1fr);gap:10px;align-items:center;padding:5px 0;border-top:1px solid var(--line)}.dc-n{display:flex;gap:8px;align-items:center;font-size:14px}.dc-row select{min-width:0;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:13px}.dc-s{font-size:12px;color:var(--mute)}@media(max-width:700px){.dc-row{grid-template-columns:1fr}}
 .nw-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:14px}.nw-tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .nw-layout{display:grid;grid-template-columns:minmax(440px,520px) minmax(0,1fr);gap:20px;align-items:start}.nw-side{position:sticky;top:16px}@media(max-width:1000px){.nw-layout{grid-template-columns:1fr}.nw-side{position:static}}
 .nw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
@@ -951,7 +952,7 @@ function renderFeed(){var el=$("feed");if(!el)return;if(pages[curPage]&&pages[cu
    return '<article class="post editing" data-eid="'+esc(p.id)+'"><div class="pmeta"><span>Editing post from '+esc(postWhen(p.ts))+'</span></div><textarea id="edtext" maxlength="4000" aria-label="Edit your post" rows="4"></textarea><div style="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0">'+th+'</div>'+
     '<div class="row" style="margin:0"><button class="primary" type="button" data-edsave="1">Save</button><button type="button" data-edadd="1">Add picture</button><input id="edimg" type="file" accept="image/*,video/*" multiple hidden><button type="button" data-edcancel="1">Cancel</button></div></article>'}
   var L=postImgs(p),pics=L.map(function(m){var u=imgUrl(m);return u?(m.v?'<video controls playsinline preload="metadata" src="'+esc(u)+'"></video>':'<img alt="Posted screenshot" src="'+esc(u)+'">'):""}).join("");
-  return '<article class="post"><div class="pmeta"><span>'+esc(postWhen(p.ts))+(p.edited?' · edited':'')+'</span><span><button class="linkbtn" type="button" data-edit="'+esc(p.id)+'" aria-label="Edit post">Edit</button> <button class="x" type="button" data-del="'+esc(p.id)+'" aria-label="Delete post">✕</button></span></div>'+
+  return '<article class="post"><div class="pmeta"><span>'+esc(postWhen(p.ts))+(p.edited?' · edited':'')+(p.from==="discord"?' · from Discord':'')+'</span><span><button class="linkbtn" type="button" data-edit="'+esc(p.id)+'" aria-label="Edit post">Edit</button> <button class="x" type="button" data-del="'+esc(p.id)+'" aria-label="Delete post">✕</button></span></div>'+
    (p.text?'<div class="ptxt">'+rich(p.text)+'</div>':'')+(pics?'<div class="pics n'+Math.min(L.length,8)+'">'+pics+'</div>':'')+'</article>'}).join("");
  if(editing){var t=$("edtext");if(t&&!t.dataset.init){t.value=editing.text;t.dataset.init="1";t.focus()}}}
 async function updatePost(pid,id,rec){
@@ -1692,6 +1693,78 @@ document.addEventListener("submit",async function(ev){var f=ev.target;if(f.id===
   AL.list.unshift({id:"a"+Date.now().toString(36)+Math.floor(Math.random()*1e3),ts:Date.now(),sym:p.sym,side:p.side,trig:p.trig,tw:p.tw,t1:p.t1,stop:p.stop,rr:p.rr,raw:p.raw,status:"watching",posted:0});await alSave();renderAlerts();if($("altxt"))$("altxt").focus();if(!$("home").hidden)renderHome()}
  if(f.id==="albform"){ev.preventDefault();var s=$("albsym").value.toUpperCase().replace(/[^A-Z.]/g,"");if(!s)return;var d=todayISO(),b=AL.board[d]||(AL.board[d]={items:[]});if(!b.items.some(function(i){return i.sym===s}))b.items.push({sym:s,note:$("albnote").value.trim()});else b.items.forEach(function(i){if(i.sym===s)i.note=$("albnote").value.trim()});await alSave();renderAlerts();$("albsym").focus();if(!$("home").hidden)renderHome()}},true);
 document.addEventListener("input",function(ev){if(ev.target.id==="altxt"||ev.target.id==="alsym"){var p=alParse($("altxt").value,$("alsym").value),el=$("alprev");if(!el)return;el.textContent=$("altxt").value.trim()?(p.sym?"$"+p.sym+" · "+alFmt(p):"Add a ticker (or start with $TICKER)"):""}});
+/* ===== Discord import ===== */
+var DC={cfg:{map:{}},chs:null,cats:[],sel:{},dest:{},run:false,stop:false};
+async function dcCfgLoad(){try{var d=null;if(store.db){var s=await store.db.doc("meta/discord").get();if(s.exists)d=clone(s.data())}else d=JSON.parse(localStorage.getItem("ss-discord")||"null");DC.cfg=(d&&d.map)?d:{map:{}}}catch(e){DC.cfg={map:{}}}}
+async function dcCfgSave(){try{if(store.db)await store.db.doc("meta/discord").set(DC.cfg);else localStorage.setItem("ss-discord",JSON.stringify(DC.cfg))}catch(e){}}
+function dcNice(n){return String(n||"").replace(/[-_]+/g," ").trim().slice(0,40)||"Discord"}
+function dcPageList(){return Object.keys(pages).map(function(k){return pages[k]}).sort(function(a,b){return (a.order-b.order)||(a.created-b.created)})}
+function dcLabel(p){var par=p.parent&&pages[p.parent];return par?par.name+" › "+p.name:p.name}
+function dcDefDest(c){var m=DC.cfg.map[c.id];if(m&&m.pid&&pages[m.pid])return "p:"+m.pid;var n=dcNice(c.name).toLowerCase(),hit=dcPageList().filter(function(p){return p.name.toLowerCase()===n})[0];return hit?"p:"+hit.id:"n:"}
+function dcOpts(sel){var L=dcPageList(),h='<optgroup label="Put into an existing page">'+L.map(function(p){return '<option value="p:'+esc(p.id)+'"'+(sel==="p:"+p.id?" selected":"")+'>'+esc(dcLabel(p))+'</option>'}).join("")+'</optgroup>';
+ h+='<optgroup label="Make a new one">'+'<option value="n:"'+(sel==="n:"?" selected":"")+'>New page</option>'+L.filter(function(p){return !p.parent}).map(function(p){return '<option value="n:'+esc(p.id)+'"'+(sel==="n:"+p.id?" selected":"")+'>New channel in '+esc(p.name)+'</option>'}).join("")+'</optgroup>';return h}
+function dcStat(c){var m=DC.cfg.map[c.id];if(!m||!m.cursor)return "";return (m.done?"Up to date":"Partly imported")+" · "+(m.posts||0)+" posts"}
+function dcSetSt(id,t){var e=$("dcs-"+id);if(e)e.textContent=t}
+function dcRender(){var box=$("dcbox");if(!box)return;var cats=DC.cats.slice(),by={};
+ DC.chs.forEach(function(c){(by[c.parent||""]=by[c.parent||""]||[]).push(c)});
+ if(by[""])cats.push({id:"",name:"No category"});
+ var h='<p class="hint" style="margin:0 0 10px">Tick the channels to bring in. Only <b>your own</b> messages and pictures are imported, with their original dates. Anything already imported is skipped next time.</p>';
+ cats.forEach(function(k){var L=by[k.id]||[];if(!L.length)return;
+  h+='<div class="dc-cat"><label class="dc-ch"><input type="checkbox" data-dccat="'+esc(k.id)+'"> <b>'+esc(k.name)+'</b></label>';
+  L.forEach(function(c){if(DC.dest[c.id]==null)DC.dest[c.id]=dcDefDest(c);
+   h+='<div class="dc-row"><label class="dc-n"><input type="checkbox" data-dcsel="'+esc(c.id)+'"'+(DC.sel[c.id]?" checked":"")+'> # '+esc(c.name)+'</label><select data-dcdest="'+esc(c.id)+'" aria-label="Where #'+esc(c.name)+' goes">'+dcOpts(DC.dest[c.id])+'</select><span class="dc-s" id="dcs-'+esc(c.id)+'">'+esc(dcStat(c))+'</span></div>'});
+  h+='</div>'});
+ h+='<div class="row" style="margin-top:12px"><button class="primary" id="dcgo" type="button">Import selected</button><button id="dcstop" type="button" hidden>Stop</button><span class="hint" id="dcmsg" style="margin:0" role="status"></span></div>';
+ box.innerHTML=h}
+async function dcInit(){var box=$("dcbox");if(!box)return;var So=S();
+ if(!So||!So.discord){box.innerHTML='<p class="hint" style="margin:0">Not available here.</p>';return}
+ box.innerHTML='<p class="hint" style="margin:0">Checking...</p>';var st;try{st=await So.discord("status")}catch(e){st={}}
+ if(!$("dcbox"))return;
+ if(st.configured===false){box.innerHTML='<p class="hint" style="margin:0">Not set up yet. Add these in Vercel (Settings, Environment Variables), then redeploy: <b>'+esc((st.missing||[]).join(", "))+'</b></p>';return}
+ if(st.allowed===false){box.innerHTML='<p class="hint" style="margin:0">'+esc(st.error||"Not available for this account.")+'</p>';return}
+ if(st.error){box.innerHTML='<p class="hint" style="margin:0">Could not reach Discord import. Try again in a minute.</p>';return}
+ await dcCfgLoad();var r;try{r=await So.discord("channels")}catch(e){r={}}
+ if(!$("dcbox"))return;
+ if(!r||!r.channels){box.innerHTML='<p class="hint" style="margin:0">Could not read your server. Check that the bot was added to it and the server ID is right.</p>';return}
+ DC.chs=r.channels;DC.cats=r.categories||[];dcRender()}
+function dcGroups(items){var gs=[],g=null;items.forEach(function(m){
+  if(!g||m.ts-g.last>10*60000||g.imgs.length+m.imgs.length>8){g={id:m.id,ts:m.ts,last:m.ts,texts:[],imgs:[],other:[]};gs.push(g)}
+  g.last=m.ts;if(m.text)g.texts.push(m.text);m.imgs.forEach(function(i){g.imgs.push(i)});m.other.forEach(function(o){g.other.push(o)})});return gs}
+async function dcImg(im){var So=S();try{var bl=await So.discordFile(im.url),f=new File([bl],"d",{type:bl.type||"image/webp"}),u=await shrink(f,1400);
+  if(store.db&&store.assets){var r=await store.assets.upload(dataToBlob(u),{type:"image/jpeg"});return {aid:r.id}}return {src:u}}catch(e){return null}}
+async function dcPut(pid,id,rec){if(store.db)await store.db.doc("pages/"+pid+"/posts/"+id).set(rec);
+ else{var o=lsGet()||{pages:{}},pg=o.pages[pid];if(!pg)throw new Error("missing");pg.posts=(pg.posts||[]).filter(function(p){return p.id!==id});pg.posts.push(Object.assign({id:id},rec));lsPut(o)}}
+async function dcPost(pid,g){var imgs=[],miss=0;
+ for(var i=0;i<g.imgs.length;i++){var x=await dcImg(g.imgs[i]);if(x)imgs.push(x);else miss++}
+ var t=g.texts.join("\n");if(g.other.length)t+=(t?"\n":"")+"[Not imported: "+g.other.join(", ")+"]";if(miss)t+=(t?"\n":"")+"[Could not import "+miss+" picture"+(miss>1?"s":"")+"]";
+ t=t.slice(0,4000);if(!t&&!imgs.length)return false;
+ var rec={ts:g.ts,text:t,from:"discord"};if(imgs.length)rec.imgs=imgs;await dcPut(pid,"dc"+g.id,rec);return true}
+async function dcRunOne(c){var So=S(),m=DC.cfg.map[c.id]||(DC.cfg.map[c.id]={}),dv=DC.dest[c.id]||"n:";
+ if(!m.pid||!pages[m.pid]){
+  if(dv.indexOf("p:")===0&&pages[dv.slice(2)])m.pid=dv.slice(2);
+  else{var id=newId();await putPage({id:id,name:dcNice(c.name),hint:"Imported from Discord",order:Object.keys(pages).length,created:Date.now(),parent:dv.slice(2),priv:true});m.pid=id;DC.dest[c.id]="p:"+id}
+  m.name=c.name;await dcCfgSave();renderSide()}
+ else if(dv.indexOf("p:")===0&&pages[dv.slice(2)]&&dv.slice(2)!==m.pid){m.pid=dv.slice(2);m.cursor="";m.done=false;m.posts=0;m.scanned=0}
+ var after=m.cursor||"0",posts=m.posts||0,scanned=m.scanned||0;
+ while(!DC.stop){
+  dcSetSt(c.id,"Reading... "+scanned+" messages checked, "+posts+" posts saved");
+  var r;try{r=await So.discord("messages",{channel:c.id,after:after})}catch(e){r={error:"Network problem"}}
+  if(!r||r.ok===false||r.error){dcSetSt(c.id,(r&&r.error)||"Could not read this channel");return false}
+  var gs=dcGroups(r.items||[]);
+  for(var i=0;i<gs.length;i++){try{if(await dcPost(m.pid,gs[i]))posts++}catch(e){dcSetSt(c.id,"Could not save a post. Stopped.");return false}dcSetSt(c.id,"Saving... "+posts+" posts")}
+  scanned+=r.scanned||0;after=r.next||after;m.cursor=after;m.posts=posts;m.scanned=scanned;m.done=!!r.done;m.at=Date.now();await dcCfgSave();
+  if(r.done)break}
+ dcSetSt(c.id,dcStat(c)+(DC.stop&&!m.done?" (stopped)":""));if(typeof schedMirror==="function")schedMirror(m.pid);return true}
+async function dcGo(){if(DC.run)return;var L=(DC.chs||[]).filter(function(c){return DC.sel[c.id]});if(!L.length){var mg=$("dcmsg");if(mg)mg.textContent="Tick at least one channel first.";return}
+ DC.run=true;DC.stop=false;var go=$("dcgo"),sp=$("dcstop"),mg=$("dcmsg");if(go)go.disabled=true;if(sp)sp.hidden=false;if(mg)mg.textContent="";
+ for(var i=0;i<L.length&&!DC.stop;i++){await dcRunOne(L[i])}
+ DC.run=false;go=$("dcgo");sp=$("dcstop");mg=$("dcmsg");if(go)go.disabled=false;if(sp)sp.hidden=true;if(mg)mg.textContent=DC.stop?"Stopped. Press Import again to continue where it left off.":"Done. Your pages are in the left menu.";renderSide()}
+document.addEventListener("click",function(ev){var t=ev.target;if(!t||!t.closest||!t.closest("#dcbox"))return;
+ if(t.id==="dcgo")dcGo();else if(t.id==="dcstop"){DC.stop=true;t.hidden=true;var mg=$("dcmsg");if(mg)mg.textContent="Stopping after this batch..."}});
+document.addEventListener("change",function(ev){var t=ev.target;if(!t||!t.dataset)return;
+ if(t.dataset.dcsel!=null)DC.sel[t.dataset.dcsel]=t.checked;
+ else if(t.dataset.dcdest!=null)DC.dest[t.dataset.dcdest]=t.value;
+ else if(t.dataset.dccat!=null){var id=t.dataset.dccat;(DC.chs||[]).forEach(function(c){if((c.parent||"")===id)DC.sel[c.id]=t.checked});var box=$("dcbox");if(box)box.querySelectorAll("[data-dcsel]").forEach(function(b){var c=(DC.chs||[]).filter(function(x){return x.id===b.dataset.dcsel})[0];if(c&&(c.parent||"")===id)b.checked=t.checked})}});
 function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv","planv","invv","gdv","rlv","newsv","alv"].forEach(function(i){$(i).hidden=true});$("navals").classList.remove("on");$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
  $("navhome").classList.remove("on");$("navstudio").classList.remove("on");$("navset").classList.add("on");
  curDate="";curPage="";renderSettings();$("settingsv").hidden=false;window.scrollTo(0,0)}
@@ -1713,8 +1786,9 @@ function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["
  '<p class="hint" style="margin:0 0 8px" id="sbtxt">Connect your Schwab account to pull today\'s executed trades straight into Studio. Read-only: Revatour never places orders.</p>'+
  '<div class="row"><button class="primary" id="sbconnect" type="button" hidden>Connect Schwab</button><button id="sbdisc" type="button" hidden>Disconnect</button><button id="gostudio" type="button">Go to Studio</button></div>'+
  '<details style="margin-top:10px"><summary>Or import a thinkorswim statement file</summary><ol class="hint" style="margin:8px 0 0;padding-left:20px"><li>In thinkorswim, open the <b>Monitor</b> tab, then <b>Account Statement</b>.</li><li>Set the date range (use one day for a daily recap).</li><li>Open the menu at the top right of that panel and choose <b>Export to File</b>, save the CSV.</li><li>Upload it in Studio, Step 1.</li></ol></details></div>'+
+ '<div class="set-card"><h2>Discord import</h2><div id="dcbox"><p class="hint" style="margin:0">Loading...</p></div></div>'+
  '<div class="set-card"><h2>Your data</h2><p class="hint" style="margin:0">Download everything you have saved here (days, trades, generated text, settings) as one file.</p><div class="row"><button id="setexp" type="button">Download my data (.json)</button></div></div>';
- $("setname").value=settings.name||"";$("setvoice").value=settings.voice||vs[0];$("setgrp").value=settings.grouping||"grouped";paintTheme();fillHidden();paintInstall();paintSchwab()}
+ $("setname").value=settings.name||"";$("setvoice").value=settings.voice||vs[0];$("setgrp").value=settings.grouping||"grouped";paintTheme();fillHidden();paintInstall();paintSchwab();dcInit()}
 var sbState=null;
 async function sbStatus(){var So=S();if(!So||!So.schwab)return null;try{sbState=await So.schwab("status")}catch(e){sbState=null}return sbState}
 async function paintSchwab(){var pill=$("sbpill");if(!pill)return;var st=await sbStatus(),t=$("sbtxt"),c=$("sbconnect"),d=$("sbdisc");if(!$("sbpill"))return;
