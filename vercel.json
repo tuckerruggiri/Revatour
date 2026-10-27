@@ -11,6 +11,9 @@
     },
     "api/schwab/[action].js": {
       "maxDuration": 30
+    },
+    "api/discord.js": {
+      "maxDuration": 30
     }
   },
   "headers": [
