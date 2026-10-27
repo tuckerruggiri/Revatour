@@ -903,7 +903,7 @@ $("entry").addEventListener("click",async function(ev){
  else if(a==="del"){confirmTwice(b,"Click again to delete",async function(){var n=clone(ent);n.outputs.splice(i,1);n.updated=Date.now();try{await putEntry(n);renderEntry(curDate)}catch(e){toast("Could not delete")}})}});
 /* Pages (notes, setups, strategies, PNL) */
 var pages={},curPage="",addChanFor="",openCats=(function(){try{return JSON.parse(localStorage.getItem("ss-open")||"{}")}catch(e){return {}}})(),pend=[],feedPosts=[],PKEY="stockspot-pages-v1";
-var SEED=[["Notes","Write a thought, a lesson, or a reminder"],["A+ Setups","Paste a screenshot of the setup and what made it A+"],["Fail Setups","Paste the setup that failed and what you would change"],["Strategies","Describe a strategy, a rule, or a checklist"],["PNL","Paste a screenshot of your P&L for the day"]];
+var SEED=[["Notes","Write a thought, a lesson, or a reminder"],["A+ Setups","Paste a screenshot of the setup and what made it A+"],["Fail Setups","Paste the setup that failed and what you would change"],["PNL","Paste a screenshot of your P&L for the day"]];
 function newId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function lsGet(){try{return JSON.parse(localStorage.getItem(PKEY)||"null")}catch(e){return null}}
 function lsPut(o){localStorage.setItem(PKEY,JSON.stringify(o))}
@@ -1796,7 +1796,7 @@ document.addEventListener("change",function(ev){var t=ev.target;if(!t||!t.datase
 var SC={range:"all",sort:"net",d:1,show:"untagged",more:100,sel:""};
 var SCCOL=["#2563eb","#16a34a","#d97706","#9333ea","#dc2626","#0891b2","#be185d","#65a30d"];
 function scKey(t){return [t.t,t.s,t.d,t.tm||"",t.ot||"",t.q,(+t.p).toFixed(4)].join("|")}
-function scStratPage(){var ks=Object.keys(pages).filter(function(k){return !pages[k].parent&&/^strateg/i.test(pages[k].name)});return ks.length?pages[ks[0]]:null}
+function scStratPage(){var ks=Object.keys(pages).filter(function(k){return !pages[k].parent&&/master\s*class/i.test(pages[k].name)});return ks.length?pages[ks[0]]:null}
 function scMasterPages(){return Object.keys(pages).map(function(k){return pages[k]}).filter(function(p){return /master\s*class/i.test(p.name)})}
 function scMaster(){var o={},out=[];scMasterPages().forEach(function(p){kidsOf(p.id).forEach(function(k){if(!o[k.name.toLowerCase()]){o[k.name.toLowerCase()]=1;out.push(k.name)}})});return out}
 function scNames(extra){var o={},sp=scStratPage(),ms=scMaster();ms.forEach(function(n){o[n]=1});if(sp&&!ms.length)kidsOf(sp.id).forEach(function(k){o[k.name]=1});
@@ -1835,7 +1835,7 @@ function scHtml(){var all=scSaved(),list=all.filter(scInRange),tagged=list.filte
    (un?'<tr class="sc-un"><td>Untagged</td><td class="r">'+un.n+'</td><td class="r">'+Math.round(un.wr*100)+'%</td><td class="r">'+money(un.net)+'</td><td class="r">'+money(un.avg)+'</td><td class="r">'+money(un.aw)+'</td><td class="r">'+money(-un.al)+'</td><td class="r">'+(un.pf===Infinity?"n/a":un.pf.toFixed(2))+'</td><td class="r">'+money(-un.dd)+'</td></tr>':'')+'</tbody></table></div><p class="hint" style="margin:8px 0 0">Click a row to highlight its line below. Avg per trade is your expectancy in dollars: the number to compare.</p></div>';
   var ord=agg.filter(function(x){return x.name});
   h+='<div class="pl-card"><h2>Equity curve by strategy</h2>'+scChart(ord)+'<div class="sc-leg">'+ord.map(function(r,i){return '<span><i style="background:'+SCCOL[i%SCCOL.length]+'"></i>'+esc(r.name)+'</span>'}).join("")+'</div></div>'}
- h+='<div class="pl-card"><h2>Tag your trades</h2><div class="sc-bar"><input id="scnew" placeholder="Add a strategy name" maxlength="40" autocomplete="off"><button type="button" id="scadd">Add strategy</button><span class="hint" style="margin:0">Strategies you add become channels on your Strategies page.</span></div>'+
+ h+='<div class="pl-card"><h2>Tag your trades</h2><div class="sc-bar"><input id="scnew" placeholder="Add a strategy name" maxlength="40" autocomplete="off"><button type="button" id="scadd">Add strategy</button><span class="hint" style="margin:0">Strategies you add become folders in your Masterclass page.</span></div>'+
   '<div class="nw-tabs" style="margin:10px 0">'+[["untagged","Untagged"],["all","All trades"]].map(function(r){return '<button type="button" class="iv-chip'+(SC.show===r[0]?" on":"")+'" data-scshow="'+r[0]+'">'+r[1]+'</button>'}).join("")+'</div>';
  var shown=list.filter(function(t){return SC.show==="all"||!t.u}).slice().sort(function(a,b){return ((b.d||"")+" "+(b.ot||b.tm||""))<((a.d||"")+" "+(a.ot||a.tm||""))?-1:1});
  if(!names.length)h+='<p class="hint">Add your first strategy above, then pick it from the lists.</p>';
@@ -1848,7 +1848,7 @@ $("navsc").addEventListener("click",showScore);
 async function scSetTags(keyMap){var changed={};Object.keys(entries).forEach(function(d){var ent=entries[d],hit=false;(ent.trades||[]).forEach(function(t){if(typeof t.p!=="number")return;var k=scKey(t);if(Object.prototype.hasOwnProperty.call(keyMap,k)&&(t.u||"")!==keyMap[k]){t.u=keyMap[k];hit=true}});if(hit)changed[d]=1});
  var ds=Object.keys(changed);for(var i=0;i<ds.length;i++){var e=clone(entries[ds[i]]);e.updated=Date.now();try{await putEntry(e)}catch(x){toast("Could not save a tag");return false}}return true}
 async function scAddStrat(name){name=String(name||"").trim().slice(0,40);if(!name)return;var sp=scStratPage();
- if(!sp){var id=newId();await putPage({id:id,name:"Strategies",hint:"Describe a strategy, a rule, or a checklist",order:Object.keys(pages).length,created:Date.now()});sp=pages[id]}
+ if(!sp){var id=newId();await putPage({id:id,name:"Masterclass",hint:"One folder per strategy",order:Object.keys(pages).length,created:Date.now()});sp=pages[id]}
  if(kidsOf(sp.id).some(function(k){return k.name.toLowerCase()===name.toLowerCase()})){toast("You already have that one");return}
  await putPage({id:newId(),name:name,hint:"",order:kidsOf(sp.id).length,created:Date.now(),parent:sp.id,priv:true});renderSide();renderScore()}
 document.addEventListener("click",async function(ev){var t=ev.target;if(!t||!t.closest||!t.closest("#scv"))return;var b=t.closest("button,th,tr");if(!b)return;var d=b.dataset;
@@ -1914,7 +1914,7 @@ function srtRender(){var ov=$("srtov");if(!ov||ov.hidden)return;SRT.flow=[];var 
    h+='<div class="pl-card srt-g'+(ns?' srt-ns':'')+'"><div class="srt-gh">'+(ns?'<b>Not sure</b>':'<input class="srt-gn" data-srtname="'+g.gid+'" value="'+esc(g.name)+'" maxlength="40" aria-label="Group name">')+'<span class="hint" style="margin:0">'+L.length+' post'+(L.length===1?'':'s')+'</span>'+(ns?'':'<select data-srtmerge="'+g.gid+'" aria-label="Merge into"><option value="">Merge into...</option>'+SRT.groups.filter(function(o){return o.gid!==g.gid&&gs.some(function(y){return y.g.gid===o.gid})}).map(function(o){return '<option value="'+o.gid+'">'+esc(o.name)+'</option>'}).join("")+'</select>')+'</div>'+(g.desc&&!ns?'<p class="hint" style="margin:0 0 8px">'+esc(g.desc)+'</p>':'')+'<div class="srt-grid">'+
     L.slice(0,lim).map(function(it){var u=it.urls[0];SRT.flow.push(it.id);return '<div class="srt-thw"><button type="button" class="srt-th'+(SRT.sel[it.id]?' on':'')+'" data-srtview="'+esc(it.id)+'" title="Click to enlarge">'+(u?'<img loading="lazy" alt="Setup" src="'+esc(u)+'">':'<span>'+esc((it.text||"").slice(0,80))+'</span>')+'</button><button type="button" class="srt-ck'+(SRT.sel[it.id]?' on':'')+'" data-srtpick="'+esc(it.id)+'" aria-label="Select this post" aria-pressed="'+(SRT.sel[it.id]?"true":"false")+'">'+(SRT.sel[it.id]?"\u2713":"")+'</button></div>'}).join("")+'</div>'+(L.length>lim?'<button type="button" class="linkbtn" data-srtmore="'+g.gid+'">Show all '+L.length+'</button>':'')+'</div>'});
   var apply=gs.filter(function(x){return !/^not sure$/i.test(x.g.name)});
-  h+='<div class="pl-card"><div class="row"><button class="primary" type="button" id="srtapply"'+(apply.length&&!SRT.run?'':' disabled')+'>Apply: copy into '+apply.length+' strategy channel'+(apply.length===1?'':'s')+'</button><span class="hint" id="srtamsg" style="margin:0" role="status"></span></div><p class="hint" style="margin:8px 0 0">Each group becomes a channel under your Strategies page (or fills one with the same name). The names then appear in the strategy dropdown for your trades. "Not sure" posts are left out.</p></div>'}
+  h+='<div class="pl-card"><div class="row"><button class="primary" type="button" id="srtapply"'+(apply.length&&!SRT.run?'':' disabled')+'>Apply: copy into '+apply.length+' strategy channel'+(apply.length===1?'':'s')+'</button><span class="hint" id="srtamsg" style="margin:0" role="status"></span></div><p class="hint" style="margin:8px 0 0">Each group becomes a channel under your Masterclass page (or fills the folder with the same name). The names then appear in the strategy dropdown for your trades. "Not sure" posts are left out.</p></div>'}
  ov.innerHTML=h+'</div>'+srtViewHtml()}
 function srtViewHtml(){if(!SRT.view)return "";var it=SRT.items.filter(function(x){return x.id===SRT.view})[0];if(!it)return "";var i=SRT.flow.indexOf(it.id),g=srtGroupOf(it.id),u=it.urls[SRT.vimg||0]||it.urls[0];
  return '<div class="srt-lb" id="srtlb"><button type="button" class="srt-lbx" data-srtlbclose="1" aria-label="Close picture">\u2715</button>'+(i>0?'<button type="button" class="srt-nav l" data-srtnav="-1" aria-label="Previous">\u2039</button>':'')+(i>=0&&i<SRT.flow.length-1?'<button type="button" class="srt-nav r" data-srtnav="1" aria-label="Next">\u203a</button>':'')+
@@ -1931,14 +1931,14 @@ async function srtRun(limit){if(SRT.run)return;var So=S();if(!So||!So.sortSetups
   did+=batch.length;srtSave();SRT.msg="";srtRender()}
  SRT.run=false;srtRender()}
 async function srtApply(){var btn=$("srtapply"),m=$("srtamsg");if(btn)btn.disabled=true;
- try{var sp=scStratPage();if(!sp){var id=newId();await putPage({id:id,name:"Strategies",hint:"Describe a strategy, a rule, or a checklist",order:Object.keys(pages).length,created:Date.now()});sp=pages[id]}
+ try{var sp=scStratPage();if(!sp){var id=newId();await putPage({id:id,name:"Masterclass",hint:"One folder per strategy",order:Object.keys(pages).length,created:Date.now()});sp=pages[id]}
   var total=0,groups=0;
   for(var gi=0;gi<SRT.groups.length;gi++){var g=SRT.groups[gi];if(/^not sure$/i.test(g.name))continue;var L=SRT.items.filter(function(it){return SRT.asg[it.id]===g.gid});if(!L.length)continue;
    var ch=null;scMasterPages().forEach(function(mp){if(!ch)ch=kidsOf(mp.id).filter(function(k){return k.name.toLowerCase()===g.name.toLowerCase()})[0]||null});if(!ch)ch=kidsOf(sp.id).filter(function(k){return k.name.toLowerCase()===g.name.toLowerCase()})[0];
    if(!ch){var cid=newId();await putPage({id:cid,name:g.name,hint:g.desc||"Sorted from A+ Setups",order:kidsOf(sp.id).length,created:Date.now(),parent:sp.id,priv:true});ch=pages[cid]}
    for(var i=0;i<L.length;i++){var it=L[i],rec={ts:it.ts,text:it.text||""};if(it.imgs&&it.imgs.length)rec.imgs=it.imgs;await dcPut(ch.id,"sr_"+it.id,rec);total++;if(m)m.textContent="Copying... "+total}
    groups++;if(typeof schedMirror==="function")schedMirror(ch.id)}
-  renderSide();if(m)m.textContent="Done. Copied "+total+" posts into "+groups+" strategy channel"+(groups===1?"":"s")+". They are on your Strategies page.";toast("Copied "+total+" posts into strategies")
+  renderSide();if(m)m.textContent="Done. Copied "+total+" posts into "+groups+" strategy channel"+(groups===1?"":"s")+". They are in your Masterclass folders.";toast("Copied "+total+" posts into strategies")
  }catch(e){if(m)m.textContent="Could not finish. Try again."}
  if($("srtapply"))$("srtapply").disabled=false}
 document.addEventListener("click",function(ev){var t=ev.target;if(!t||!t.closest)return;var b=t.closest("button");if(!b)return;
