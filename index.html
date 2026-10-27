@@ -255,6 +255,10 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .dc-cat{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}.dc-ch{display:flex;gap:8px;align-items:center;margin-bottom:6px;font-size:14px}.dc-row{display:grid;grid-template-columns:minmax(120px,1fr) minmax(150px,1fr) minmax(0,1fr);gap:10px;align-items:center;padding:5px 0;border-top:1px solid var(--line)}.dc-n{display:flex;gap:8px;align-items:center;font-size:14px}.dc-row select{min-width:0;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:13px}.dc-s{font-size:12px;color:var(--mute)}.dc-a{grid-column:1/-1}.dc-a:empty{display:none}.dc-warn{font-size:13px;color:var(--loss);margin:2px 0 6px}.dc-ach{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}.dc-ach button{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer}@media(max-width:700px){.dc-row{grid-template-columns:1fr}}
 .sc-call{border-left:4px solid var(--accent)}.sc-th{cursor:pointer;white-space:nowrap}.sc-th.on{color:var(--accent)}.sc-row{cursor:pointer}.sc-row.on{background:rgba(29,78,216,.08)}.sc-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}.sc-small{color:var(--mute);font-size:11px;margin-left:4px}.sc-un td{color:var(--mute)}.sc-svg{width:100%;height:auto;display:block}.sc-leg{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:13px}.sc-leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
 .sc-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sc-bar input{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}.sc-bulk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 10px;font-size:14px}.sc-sel,.sc-bulk select{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:13px;min-width:150px}.sc-st{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:12px}.sc-st summary{cursor:pointer;font-weight:600}#scv.wrap{max-width:1560px}
+.srt-ov{position:fixed;inset:0;z-index:60;background:var(--bg);overflow:auto}.srt-in{max-width:1300px;margin:0 auto;padding:24px 20px 64px}.srt-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:12px}.srt-bar{height:8px;background:var(--line);border-radius:99px;margin-top:10px;overflow:hidden}.srt-bar i{display:block;height:100%;background:var(--accent)}
+.srt-tools select,.srt-tools input,.srt-tools button,.srt-gh select,.srt-gh input{width:auto;flex:none}.srt-tools input{min-width:200px}.srt-gn{min-width:220px}
+.srt-tools{position:sticky;top:0;z-index:2;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.srt-tools select,.srt-tools input,.srt-gh select{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:13px}.srt-gh{display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap}.srt-gn{font:inherit;font-weight:700;font-size:17px;padding:4px 8px;border:1px solid transparent;border-radius:8px;background:none;color:var(--ink)}.srt-gn:hover,.srt-gn:focus{border-color:var(--line);background:var(--bg)}
+.srt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}.srt-th{position:relative;border:2px solid var(--line);border-radius:10px;padding:0;background:var(--bg);cursor:pointer;aspect-ratio:4/3;overflow:hidden;color:var(--mute);font-size:12px}.srt-th img{width:100%;height:100%;object-fit:cover;display:block}.srt-th span{display:block;padding:8px;text-align:left}.srt-th.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}.srt-ns{opacity:.85}
 .nw-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:14px}.nw-tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .nw-layout{display:grid;grid-template-columns:minmax(440px,520px) minmax(0,1fr);gap:20px;align-items:start}.nw-side{position:sticky;top:16px}@media(max-width:1000px){.nw-layout{grid-template-columns:1fr}.nw-side{position:static}}
 .nw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
@@ -1002,7 +1006,7 @@ async function showPage(pid){var pg=pages[pid];if(!pg){showStudio();return}
  el.innerHTML=(par?'<button class="crumb" type="button" data-go="'+esc(par.id)+'">&larr; '+esc(par.name)+'</button>':'')+'<div class="phead"><input id="pgname" class="pgname" maxlength="40" aria-label="'+(par?'Channel':'Page')+' name"><button id="pgedit" type="button" class="primary">Edit</button><button id="pgset" type="button" aria-label="Options">Options &hellip;</button></div>'+
   (par?'':'<h2 class="chhead">Channels</h2><div class="chlist">'+(kids.length?kids.map(function(k){return '<button class="chcard" type="button" data-go="'+esc(k.id)+'"><span># '+esc(k.name)+'</span><span class="chev">&rsaquo;</span></button>'}).join(""):'<p class="hint" style="margin:0">No channels yet. Chat and posts live inside channels, so add one to get started.</p>')+'</div><div class="chips"><input id="chname" maxlength="40" placeholder="New channel name" aria-label="New channel name"><button class="primary" type="button" id="chadd">Add channel</button></div>')+
   (par?'<p class="hint" id="commnote" style="margin:0 0 8px"></p><div id="feed" class="dc-stream" aria-live="polite"></div>'+dcComposer({prev:"pprev",pic:"pfile",file:"pimg",ta:"ptext",send:"ppost",max:4000,ph:"Message #"+pg.name}):'<div id="feed" class="feed"></div>');
- $("pgname").value=pg.name;commNote();renderSide();window.scrollTo(0,0);
+ $("pgname").value=pg.name;try{srtBtn(pg)}catch(e){}commNote();renderSide();window.scrollTo(0,0);
  try{feedPosts=await loadPosts(pid)}catch(e){toast("Could not load this page")}
  if(curPage!==pid)return;
  if(!par&&feedPosts.length){var fe=$("feed");fe.insertAdjacentHTML("beforebegin",'<h2 class="chhead">Earlier posts</h2><p class="hint" style="margin:0 0 8px">Posts made here before channels existed. New posts go inside a channel.</p>')}
@@ -1862,6 +1866,83 @@ document.addEventListener("change",function(ev){var t=ev.target;if(!t||!t.datase
 document.addEventListener("click",async function(ev){var b=ev.target&&ev.target.closest&&ev.target.closest("#scstbulkgo,#scstsave");if(!b)return;
  if(b.id==="scstbulkgo"){var v=$("scstbulk").value;trades.forEach(function(t){if(!t.u)t.u=v});persist();scStudio()}
  else{b.disabled=true;try{var d=await saveEntry();toast("Saved to "+d+". Tags now count in your scorecard.")}catch(e){toast("Could not save")}b.disabled=false}});
+/* ===== Sort A+ setups into strategies ===== */
+var SRT={root:"",items:[],groups:[],asg:{},run:false,stop:false,sel:{},more:{},msg:"",nid:1};
+var SRTK="ss-sort-v1";
+function srtRoot(pg){while(pg&&pg.parent&&pages[pg.parent])pg=pages[pg.parent];return pg}
+function srtIsAplus(pg){var r=srtRoot(pg);return !!r&&/^a\s*(\+|plus)/i.test(r.name)}
+function srtBtn(pg){var old=$("srtopen");if(old)old.remove();if(!srtIsAplus(pg))return;var e=$("pgedit");if(e)e.insertAdjacentHTML("beforebegin",'<button type="button" id="srtopen">Sort into strategies</button>')}
+function srtSave(){try{localStorage.setItem(SRTK,JSON.stringify({root:SRT.root,groups:SRT.groups,asg:SRT.asg,nid:SRT.nid}))}catch(e){}}
+function srtLoadSaved(root){try{var o=JSON.parse(localStorage.getItem(SRTK)||"null");if(o&&o.root===root){SRT.groups=o.groups||[];SRT.asg=o.asg||{};SRT.nid=o.nid||1;return true}}catch(e){}SRT.groups=[];SRT.asg={};SRT.nid=1;return false}
+function srtImgs(p){return postImgs(p).filter(function(m){return m&&m.aid}).map(function(m){return blobUrl(m.aid)}).filter(Boolean)}
+async function srtCollect(root){var ids=[root].concat(kidsOf(root).map(function(k){return k.id})),out=[],seen={};
+ for(var i=0;i<ids.length;i++){var L=[];try{L=await loadPosts(ids[i])}catch(e){}
+  L.forEach(function(p){if(seen[p.id])return;seen[p.id]=1;var im=srtImgs(p);if(!im.length&&!(p.text||"").trim())return;out.push({id:p.id,ts:p.ts,text:p.text||"",imgs:postImgs(p),urls:im,from:ids[i]})})}
+ return out.sort(function(a,b){return a.ts-b.ts})}
+function srtGid(name){var n=String(name||"Not sure").trim().slice(0,40)||"Not sure",k=n.toLowerCase(),g=SRT.groups.filter(function(x){return x.name.toLowerCase()===k})[0];
+ if(!g){g={gid:"g"+(SRT.nid++),name:n,desc:""};SRT.groups.push(g)}return g.gid}
+function srtGroupOf(id){var gid=SRT.asg[id];return SRT.groups.filter(function(g){return g.gid===gid})[0]}
+async function srtOpen(pg){var root=srtRoot(pg);if(!root)return;SRT.root=root.id;SRT.run=false;SRT.stop=false;SRT.sel={};SRT.more={};SRT.msg="Reading your A+ posts...";
+ var ov=$("srtov");if(!ov){ov=document.createElement("div");ov.id="srtov";ov.className="srt-ov";document.body.appendChild(ov)}ov.hidden=false;document.body.style.overflow="hidden";ov.innerHTML='<div class="srt-in"><p class="hint">Reading your A+ posts...</p></div>';
+ srtLoadSaved(root.id);SRT.items=await srtCollect(root.id);
+ var have={};SRT.items.forEach(function(it){have[it.id]=1});Object.keys(SRT.asg).forEach(function(k){if(!have[k])delete SRT.asg[k]});SRT.msg="";srtRender()}
+function srtClose(){var ov=$("srtov");if(ov)ov.hidden=true;document.body.style.overflow="";SRT.stop=true}
+function srtPending(){return SRT.items.filter(function(it){return !SRT.asg[it.id]})}
+function srtRender(){var ov=$("srtov");if(!ov||ov.hidden)return;var pend=srtPending(),done=SRT.items.length-pend.length,imgsLeft=pend.reduce(function(n,it){return n+Math.min(3,it.urls.length)},0);
+ var h='<div class="srt-in"><div class="srt-head"><div><h1>Sort into strategies</h1><p class="sub">Nothing is changed until you press Apply. Apply makes copies, so your A+ posts stay where they are.</p></div><button type="button" id="srtclose">Close</button></div>';
+ if(!SRT.items.length){return void(ov.innerHTML=h+'<div class="pl-card"><p style="margin:0">No posts with text or pictures found on this page yet.</p></div></div>')}
+ if(pend.length||SRT.run){
+  h+='<div class="pl-card"><b>'+done+' of '+SRT.items.length+' posts sorted</b><div class="srt-bar"><i style="width:'+Math.round(done/SRT.items.length*100)+'%"></i></div>';
+  if(SRT.run)h+='<p class="hint" style="margin:8px 0">'+esc(SRT.msg||"Working...")+'</p><button type="button" id="srtstop">Stop</button>';
+  else{h+='<p class="hint" style="margin:8px 0">'+(SRT.msg?esc(SRT.msg)+" ":"")+pend.length+' left, about '+imgsLeft+' screenshots. The AI reads each screenshot, which uses your Anthropic credits (my rough guess: around 1 cent per screenshot, so about $'+Math.max(0.1,imgsLeft*0.01).toFixed(2)+' for the rest).</p><div class="row">'+(done?'':'<button type="button" id="srtgo20">Try 20 first</button>')+'<button class="primary" type="button" id="srtgoall">'+(done?'Continue sorting':'Sort all '+pend.length)+'</button></div>'}
+  h+='</div>'}
+ if(done){
+  var gs=SRT.groups.map(function(g){return {g:g,L:SRT.items.filter(function(it){return SRT.asg[it.id]===g.gid})}}).filter(function(x){return x.L.length});
+  gs.sort(function(a,b){var an=/^not sure$/i.test(a.g.name),bn=/^not sure$/i.test(b.g.name);return an!==bn?(an?1:-1):b.L.length-a.L.length});
+  var nsel=Object.keys(SRT.sel).length,opts=SRT.groups.filter(function(g){return gs.some(function(x){return x.g.gid===g.gid})||true}).map(function(g){return '<option value="'+g.gid+'">'+esc(g.name)+'</option>'}).join("");
+  h+='<div class="pl-card srt-tools"><span>'+(nsel?'<b>'+nsel+' selected</b>. ':'Click pictures to select them. ')+'Move to</span><select id="srtto">'+opts+'</select><button type="button" id="srtmove"'+(nsel?'':' disabled')+'>Move</button><span class="hint" style="margin:0">or</span><input id="srtnewname" placeholder="New group name" maxlength="40" autocomplete="off"><button type="button" id="srtmovenew"'+(nsel?'':' disabled')+'>Move to new group</button></div>';
+  gs.forEach(function(x){var g=x.g,L=x.L,ns=/^not sure$/i.test(g.name),lim=SRT.more[g.gid]?L.length:18;
+   h+='<div class="pl-card srt-g'+(ns?' srt-ns':'')+'"><div class="srt-gh">'+(ns?'<b>Not sure</b>':'<input class="srt-gn" data-srtname="'+g.gid+'" value="'+esc(g.name)+'" maxlength="40" aria-label="Group name">')+'<span class="hint" style="margin:0">'+L.length+' post'+(L.length===1?'':'s')+'</span>'+(ns?'':'<select data-srtmerge="'+g.gid+'" aria-label="Merge into"><option value="">Merge into...</option>'+SRT.groups.filter(function(o){return o.gid!==g.gid&&gs.some(function(y){return y.g.gid===o.gid})}).map(function(o){return '<option value="'+o.gid+'">'+esc(o.name)+'</option>'}).join("")+'</select>')+'</div>'+(g.desc&&!ns?'<p class="hint" style="margin:0 0 8px">'+esc(g.desc)+'</p>':'')+'<div class="srt-grid">'+
+    L.slice(0,lim).map(function(it){var u=it.urls[0];return '<button type="button" class="srt-th'+(SRT.sel[it.id]?' on':'')+'" data-srtpick="'+esc(it.id)+'" title="'+esc((it.text||"").slice(0,120))+'">'+(u?'<img loading="lazy" alt="Setup" src="'+esc(u)+'">':'<span>'+esc((it.text||"").slice(0,80))+'</span>')+'</button>'}).join("")+'</div>'+(L.length>lim?'<button type="button" class="linkbtn" data-srtmore="'+g.gid+'">Show all '+L.length+'</button>':'')+'</div>'});
+  var apply=gs.filter(function(x){return !/^not sure$/i.test(x.g.name)});
+  h+='<div class="pl-card"><div class="row"><button class="primary" type="button" id="srtapply"'+(apply.length&&!SRT.run?'':' disabled')+'>Apply: copy into '+apply.length+' strategy channel'+(apply.length===1?'':'s')+'</button><span class="hint" id="srtamsg" style="margin:0" role="status"></span></div><p class="hint" style="margin:8px 0 0">Each group becomes a channel under your Strategies page (or fills one with the same name). The names then appear in the strategy dropdown for your trades. "Not sure" posts are left out.</p></div>'}
+ ov.innerHTML=h+'</div>'}
+async function srtRun(limit){if(SRT.run)return;var So=S();if(!So||!So.sortSetups){SRT.msg="Not available here.";srtRender();return}
+ SRT.run=true;SRT.stop=false;var did=0,hints=scNames([]);srtRender();
+ while(!SRT.stop){var pend=srtPending();if(limit&&did>=limit)pend=[];if(!pend.length)break;var batch=pend.slice(0,Math.min(8,limit?limit-did:8));
+  SRT.msg="Reading "+(did+1)+" to "+(did+batch.length)+"...";srtRender();var r=null;
+  for(var tries=0;tries<2&&!r;tries++){try{r=await So.sortSetups({posts:batch.map(function(it){return {id:it.id,text:(it.text||"").slice(0,500),imgs:it.urls.slice(0,3)}}),groups:SRT.groups.map(function(g){return {name:g.name,desc:g.desc}}),hints:hints})}catch(e){if(tries===0)await new Promise(function(z){setTimeout(z,2500)});else{SRT.msg="Paused: "+(e.message||"the AI request failed")+". Press Continue to retry.";SRT.run=false;srtSave();srtRender();return}}}
+  (r.groups||[]).forEach(function(g){var gid=srtGid(g.name),gg=SRT.groups.filter(function(x){return x.gid===gid})[0];if(gg&&!gg.desc)gg.desc=g.desc||""});
+  var got={};(r.posts||[]).forEach(function(p){SRT.asg[p.id]=srtGid(p.group);got[p.id]=1});
+  batch.forEach(function(it){if(!got[it.id])SRT.asg[it.id]=srtGid("Not sure")});
+  did+=batch.length;srtSave();SRT.msg="";srtRender()}
+ SRT.run=false;srtRender()}
+async function srtApply(){var btn=$("srtapply"),m=$("srtamsg");if(btn)btn.disabled=true;
+ try{var sp=scStratPage();if(!sp){var id=newId();await putPage({id:id,name:"Strategies",hint:"Describe a strategy, a rule, or a checklist",order:Object.keys(pages).length,created:Date.now()});sp=pages[id]}
+  var total=0,groups=0;
+  for(var gi=0;gi<SRT.groups.length;gi++){var g=SRT.groups[gi];if(/^not sure$/i.test(g.name))continue;var L=SRT.items.filter(function(it){return SRT.asg[it.id]===g.gid});if(!L.length)continue;
+   var ch=kidsOf(sp.id).filter(function(k){return k.name.toLowerCase()===g.name.toLowerCase()})[0];
+   if(!ch){var cid=newId();await putPage({id:cid,name:g.name,hint:g.desc||"Sorted from A+ Setups",order:kidsOf(sp.id).length,created:Date.now(),parent:sp.id,priv:true});ch=pages[cid]}
+   for(var i=0;i<L.length;i++){var it=L[i],rec={ts:it.ts,text:it.text||""};if(it.imgs&&it.imgs.length)rec.imgs=it.imgs;await dcPut(ch.id,"sr_"+it.id,rec);total++;if(m)m.textContent="Copying... "+total}
+   groups++;if(typeof schedMirror==="function")schedMirror(ch.id)}
+  renderSide();if(m)m.textContent="Done. Copied "+total+" posts into "+groups+" strategy channel"+(groups===1?"":"s")+". They are on your Strategies page.";toast("Copied "+total+" posts into strategies")
+ }catch(e){if(m)m.textContent="Could not finish. Try again."}
+ if($("srtapply"))$("srtapply").disabled=false}
+document.addEventListener("click",function(ev){var t=ev.target;if(!t||!t.closest)return;var b=t.closest("button");if(!b)return;
+ if(b.id==="srtopen"){var pg=pages[curPage];if(pg)srtOpen(pg);return}
+ if(!b.closest("#srtov"))return;var d=b.dataset;
+ if(b.id==="srtclose")srtClose();
+ else if(b.id==="srtgo20")srtRun(20);
+ else if(b.id==="srtgoall")srtRun(0);
+ else if(b.id==="srtstop"){SRT.stop=true;b.disabled=true}
+ else if(b.id==="srtapply")srtApply();
+ else if(d.srtpick!=null){if(SRT.sel[d.srtpick])delete SRT.sel[d.srtpick];else SRT.sel[d.srtpick]=1;var y=document.querySelector("#srtov").scrollTop;srtRender();document.querySelector("#srtov").scrollTop=y}
+ else if(d.srtmore!=null){SRT.more[d.srtmore]=1;var y2=document.querySelector("#srtov").scrollTop;srtRender();document.querySelector("#srtov").scrollTop=y2}
+ else if(b.id==="srtmove"||b.id==="srtmovenew"){var gid=b.id==="srtmove"?$("srtto").value:srtGid(($("srtnewname").value||"").trim());if(b.id==="srtmovenew"&&!($("srtnewname").value||"").trim())return;
+  Object.keys(SRT.sel).forEach(function(k){SRT.asg[k]=gid});SRT.sel={};srtSave();var y3=document.querySelector("#srtov").scrollTop;srtRender();document.querySelector("#srtov").scrollTop=y3}});
+document.addEventListener("change",function(ev){var t=ev.target;if(!t||!t.dataset||!t.closest||!t.closest("#srtov"))return;
+ if(t.dataset.srtname!=null){var g=SRT.groups.filter(function(x){return x.gid===t.dataset.srtname})[0],nm=t.value.trim().slice(0,40);if(g&&nm){var dup=SRT.groups.filter(function(x){return x.gid!==g.gid&&x.name.toLowerCase()===nm.toLowerCase()})[0];if(dup){Object.keys(SRT.asg).forEach(function(k){if(SRT.asg[k]===g.gid)SRT.asg[k]=dup.gid});SRT.groups=SRT.groups.filter(function(x){return x.gid!==g.gid})}else g.name=nm;srtSave();srtRender()}}
+ else if(t.dataset.srtmerge!=null&&t.value){var from=t.dataset.srtmerge,to=t.value;Object.keys(SRT.asg).forEach(function(k){if(SRT.asg[k]===from)SRT.asg[k]=to});SRT.groups=SRT.groups.filter(function(x){return x.gid!==from});srtSave();srtRender()}});
 function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv","planv","invv","gdv","rlv","newsv","alv","scv"].forEach(function(i){$(i).hidden=true});$("navsc").classList.remove("on");$("navals").classList.remove("on");$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
  $("navhome").classList.remove("on");$("navstudio").classList.remove("on");$("navset").classList.add("on");
  curDate="";curPage="";renderSettings();$("settingsv").hidden=false;window.scrollTo(0,0)}

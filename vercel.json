@@ -14,6 +14,9 @@
     },
     "api/discord.js": {
       "maxDuration": 30
+    },
+    "api/sort.js": {
+      "maxDuration": 60
     }
   },
   "headers": [
