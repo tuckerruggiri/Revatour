@@ -211,6 +211,9 @@
     discordFile: async function (url) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
       var r = await fetch('/api/discord?' + new URLSearchParams({ action: 'file', url: url }).toString(), { headers: { Authorization: 'Bearer ' + tok } });
       if (!r.ok) throw new Error('file failed'); return r.blob(); },
+    lab: async function (payload) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
+      var r = await fetch('/api/lab', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify(payload) });
+      var j = await r.json().catch(function () { return {}; }); if (!r.ok) { var e = new Error(j.error || 'failed'); e.code = r.status; throw e; } return j; },
     sortSetups: async function (payload) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
       var r = await fetch('/api/sort', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify(payload) });
       var j = await r.json().catch(function () { return {}; }); if (!r.ok) { var e = new Error(j.error || 'failed'); e.code = r.status; throw e; } return j; },
