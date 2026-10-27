@@ -262,7 +262,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .srt-thw{position:relative}.srt-ck{position:absolute;top:6px;left:6px;width:24px;height:24px;border-radius:7px;border:2px solid #fff;background:rgba(0,0,0,.45);color:#fff;font-size:15px;line-height:1;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center}.srt-ck.on{background:var(--accent);border-color:var(--accent)}.srt-th{width:100%;cursor:zoom-in}
 
 .lab-hd{margin:0 0 4px}.lab-sub{color:var(--muted);margin:0 0 12px;font-size:14px}.lab-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 10px}.lab-bar select,.lab-bar input{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;width:auto;flex:none}
-.lab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}.lab-th{position:relative;border:2px solid transparent;border-radius:10px;overflow:hidden;background:var(--bg);padding:0;cursor:pointer;aspect-ratio:16/10;display:block}.lab-th img{width:100%;height:100%;object-fit:cover;display:block}.lab-th.on{border-color:var(--accent)}.lab-th i{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);color:#fff;font-size:11px;font-style:normal;padding:2px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lab-th b{position:absolute;top:4px;right:4px;background:var(--accent);color:#fff;border-radius:8px;font-size:11px;padding:1px 6px}
+.lab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}.lab-th{position:relative;border:2px solid transparent;border-radius:10px;overflow:hidden;background:var(--bg);padding:0;cursor:pointer;aspect-ratio:16/10;display:block}.lab-th img{width:100%;height:100%;object-fit:cover;display:block}.lab-th.on{border-color:var(--accent)}.lab-th i{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);color:#fff;font-size:11px;font-style:normal;padding:2px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lab-zm{position:absolute;top:4px;left:4px;background:rgba(0,0,0,.65);color:#fff;border-radius:8px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:15px}.lab-th b{position:absolute;top:4px;right:4px;background:var(--accent);color:#fff;border-radius:8px;font-size:11px;padding:1px 6px}
 .lab-two{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;align-items:start}@media(max-width:900px){.lab-two{grid-template-columns:1fr}}.lab-big{display:flex;flex-direction:column;gap:8px}.lab-big img{width:100%;height:auto;border-radius:10px;cursor:zoom-in;background:#000;display:block}
 .lab-name{font-size:1.8rem;font-weight:700;letter-spacing:.02em;margin:0}.lab-tag{display:inline-block;font-size:12px;border-radius:8px;padding:2px 8px;background:var(--bg);border:1px solid var(--line);margin-left:8px;vertical-align:middle}.lab-read{display:grid;grid-template-columns:110px 1fr;gap:6px 12px;font-size:14px;margin:10px 0}.lab-read dt{color:var(--muted)}.lab-read dd{margin:0}
 .lab-sim{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}.lab-sc{border:1px solid var(--line);border-radius:10px;padding:6px;background:var(--bg);font-size:12px}.lab-sc img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:6px;cursor:zoom-in;display:block}.lab-sc input{width:auto;flex:none}.lab-sc label{display:flex;gap:6px;align-items:center;margin-top:5px;font-size:13px;cursor:pointer}.lab-sc p{margin:3px 0 0;color:var(--muted)}
@@ -1984,7 +1984,7 @@ async function labCollect(){var ids=Object.keys(pages).sort(function(a,b){return
   L.forEach(function(p){var im=srtImgs(p);if(!im.length)return;var it={id:ids[i]+"~"+p.id,pid:ids[i],postId:p.id,ts:p.ts||0,text:p.text||"",imgs:postImgs(p),urls:im,page:labPageName(ids[i])},k=labKey(it);if(seen[k])return;seen[k]=1;out.push(it)})}
  return out.sort(function(a,b){return b.ts-a.ts})}
 function labItem(id){return (LAB.items||[]).filter(function(x){return x.id===id})[0]}
-function labThumb(it,extra){return '<button type="button" class="lab-th'+(LAB.sel===it.id?' on':'')+'" data-labpick="'+esc(it.id)+'" title="'+esc(it.page)+'"><img loading="lazy" alt="" src="'+esc(it.urls[0])+'"><i>'+esc(it.page)+' · '+esc(postWhen(it.ts))+'</i>'+(extra||'')+'</button>'}
+function labThumb(it,extra){return '<button type="button" class="lab-th'+(LAB.sel===it.id?' on':'')+'" data-labpick="'+esc(it.id)+'" title="'+esc(it.page)+'"><img loading="lazy" alt="" src="'+esc(it.urls[0])+'"><i>'+esc(it.page)+' · '+esc(it.ts>1e11?postWhen(it.ts):"no date")+'</i><span class="lab-zm" role="button" tabindex="0" data-labbigid="'+esc(it.id)+'" title="Enlarge" aria-label="Enlarge picture">\u2922</span>'+(extra||'')+'</button>'}
 function labHtml(){
  if(!LAB.items)return '<h1 class="lab-hd">Setup Lab</h1><p class="lab-sub">Loading your screenshots...</p>';
  var h='<h1 class="lab-hd">Setup Lab</h1><p class="lab-sub">Pick any screenshot of a trade. The AI reads the volume, VWAP, 9 EMA and other time frames, names the strategy, finds your similar trades, and files them together in a new Masterclass folder.</p>';
@@ -2012,7 +2012,8 @@ function labHtml(){
  if(LAB.big)h+='<div class="srt-lb" id="labov"><button type="button" class="srt-lbx" data-labclose="1" aria-label="Close picture">✕</button><div class="srt-lbm"><img alt="Screenshot" src="'+esc(LAB.big)+'"></div></div>';
  return h}
 function labRender(){var el=$("labv");if(!el||el.hidden)return;var sy=window.scrollY;el.innerHTML=labHtml();window.scrollTo(0,sy)}
-async function showLab(){hideViews();$("navlab").classList.add("on");$("labv").hidden=false;window.scrollTo(0,0);if(!LAB.items){labRender();try{LAB.items=await labCollect()}catch(e){LAB.items=[]}}labRender()}
+async function labFixDates(){try{var mp=scMasterPages();for(var i=0;i<mp.length;i++){var ks=kidsOf(mp[i].id);for(var j=0;j<ks.length;j++){var L=await loadPosts(ks[j].id);for(var q=0;q<L.length;q++){var p=L[q];if(!(p.ts>1e11)){var rec={ts:Date.now()-q,text:p.text||""};if(p.imgs&&p.imgs.length)rec.imgs=p.imgs;await dcPut(ks[j].id,p.id,rec);p.ts=rec.ts}}}}}catch(e){}}
+async function showLab(){hideViews();$("navlab").classList.add("on");$("labv").hidden=false;window.scrollTo(0,0);if(!LAB.items){labRender();try{await labFixDates();LAB.items=await labCollect()}catch(e){LAB.items=[]}}labRender()}
 async function labPick(id){var it=labItem(id);if(!it)return;LAB.sel=id;LAB.res=null;LAB.sim=null;LAB.pick={};LAB.nm="";LAB.msg="";await labAnalyze()}
 async function labAnalyze(){var it=labItem(LAB.sel),So=S();if(!it)return;if(!So||!So.lab){LAB.msg="Not available here.";labRender();return}
  LAB.busy="analyze";LAB.msg="";labRender();var sel=LAB.sel;
@@ -2036,16 +2037,16 @@ async function labGroup(){var it=labItem(LAB.sel),r=LAB.res,inp=$("labname");if(
   var ch=kidsOf(mp.id).filter(function(k){return k.name.toLowerCase()===name.toLowerCase()})[0],fresh=false;
   if(!ch){var cid=newId();await putPage({id:cid,name:name,hint:r.desc||"Made in Setup Lab",order:kidsOf(mp.id).length,created:Date.now(),parent:mp.id,priv:true});ch=pages[cid];fresh=true}
   var list=[it].concat((LAB.sim||[]).filter(function(x){return LAB.pick[x.id]}).map(function(x){return labItem(x.id)}).filter(Boolean)),n=0;
-  if(fresh){var d=r.read||{},t=name+" — "+(r.desc||"")+"\n\nDirection: "+(d.direction||"")+"\nVWAP: "+(d.vwap||"")+"\n9 EMA: "+(d.ema9||"")+"\nVolume: "+(d.volume||"")+"\nPattern: "+(d.pattern||"");await dcPut(ch.id,"lb_about",{ts:1,text:t})}
-  for(var i=0;i<list.length;i++){var c=list[i],rec={ts:c.ts,text:c.text||""};if(c.imgs&&c.imgs.length)rec.imgs=c.imgs;await dcPut(ch.id,"lb_"+labSlug(c.postId),rec);n++;LAB.msg="Filing... "+n}
+  if(fresh){var d=r.read||{},t=name+" — "+(r.desc||"")+"\n\nDirection: "+(d.direction||"")+"\nVWAP: "+(d.vwap||"")+"\n9 EMA: "+(d.ema9||"")+"\nVolume: "+(d.volume||"")+"\nPattern: "+(d.pattern||"");await dcPut(ch.id,"lb_about",{ts:Date.now(),text:t})}
+  for(var i=0;i<list.length;i++){var c=list[i],rec={ts:c.ts>1e11?c.ts:Date.now(),text:c.text||""};if(c.imgs&&c.imgs.length)rec.imgs=c.imgs;await dcPut(ch.id,"lb_"+labSlug(c.postId),rec);n++;LAB.msg="Filing... "+n}
   if(typeof schedMirror==="function")schedMirror(ch.id);renderSide();LAB.msg="Done. "+n+" trade"+(n===1?"":"s")+" are in Masterclass → "+name+".";LAB.fid=ch.id
  }catch(e){LAB.msg="Could not file them: "+((e&&e.message)||"error")}
  LAB.busy="";labRender()}
 $("navlab").addEventListener("click",showLab);
 $("labv").addEventListener("click",function(e){var t=e.target,b;
+ if(b=t.closest("[data-labbigid]")){var c=labItem(b.getAttribute("data-labbigid"));LAB.big=c?c.urls[0]:"";labRender();return}
  if(b=t.closest("[data-labpick]")){labPick(b.getAttribute("data-labpick"));return}
  if(b=t.closest("[data-labbig]")){var it=labItem(LAB.sel);LAB.big=it&&it.urls[+b.getAttribute("data-labbig")]||"";labRender();return}
- if(b=t.closest("[data-labbigid]")){var c=labItem(b.getAttribute("data-labbigid"));LAB.big=c?c.urls[0]:"";labRender();return}
  if(t.closest("[data-labclose]")||t.id==="labov"){LAB.big="";labRender();return}
  if(t.id==="labmore"){LAB.show+=48;labRender();return}
  if(t.id==="labfind"){labFind();return}if(t.id==="labredo"){labAnalyze();return}if(t.id==="labstop"){LAB.stop=true;return}if(t.id==="labgo"){labGroup();return}
