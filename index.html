@@ -250,7 +250,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .al-b{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 11px;font:inherit;font-size:12px;cursor:pointer}.al-b.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}.al-b.pub{border-color:var(--accent);color:var(--accent)}.al-b.pub:disabled{opacity:.6}.al-b.del:hover{color:var(--loss)}
 .al-strip{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 18px;margin-top:10px}.al-strip .al-bh{margin-bottom:8px}.al-chips{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}.al-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}.al-row .al-card{margin:0}
 @media(max-width:900px){.al-grid{grid-template-columns:1fr}.al-bf,.al-af{flex-wrap:wrap}}
-.dc-cat{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}.dc-ch{display:flex;gap:8px;align-items:center;margin-bottom:6px;font-size:14px}.dc-row{display:grid;grid-template-columns:minmax(120px,1fr) minmax(150px,1fr) minmax(0,1fr);gap:10px;align-items:center;padding:5px 0;border-top:1px solid var(--line)}.dc-n{display:flex;gap:8px;align-items:center;font-size:14px}.dc-row select{min-width:0;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:13px}.dc-s{font-size:12px;color:var(--mute)}@media(max-width:700px){.dc-row{grid-template-columns:1fr}}
+.dc-cat{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}.dc-ch{display:flex;gap:8px;align-items:center;margin-bottom:6px;font-size:14px}.dc-row{display:grid;grid-template-columns:minmax(120px,1fr) minmax(150px,1fr) minmax(0,1fr);gap:10px;align-items:center;padding:5px 0;border-top:1px solid var(--line)}.dc-n{display:flex;gap:8px;align-items:center;font-size:14px}.dc-row select{min-width:0;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:13px}.dc-s{font-size:12px;color:var(--mute)}.dc-a{grid-column:1/-1}.dc-a:empty{display:none}.dc-warn{font-size:13px;color:var(--loss);margin:2px 0 6px}.dc-ach{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}.dc-ach button{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer}@media(max-width:700px){.dc-row{grid-template-columns:1fr}}
 .nw-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:14px}.nw-tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .nw-layout{display:grid;grid-template-columns:minmax(440px,520px) minmax(0,1fr);gap:20px;align-items:start}.nw-side{position:sticky;top:16px}@media(max-width:1000px){.nw-layout{grid-template-columns:1fr}.nw-side{position:static}}
 .nw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
@@ -1703,7 +1703,10 @@ function dcLabel(p){var par=p.parent&&pages[p.parent];return par?par.name+" › 
 function dcDefDest(c){var m=DC.cfg.map[c.id];if(m&&m.pid&&pages[m.pid])return "p:"+m.pid;var n=dcNice(c.name).toLowerCase(),hit=dcPageList().filter(function(p){return p.name.toLowerCase()===n})[0];return hit?"p:"+hit.id:"n:"}
 function dcOpts(sel){var L=dcPageList(),h='<optgroup label="Put into an existing page">'+L.map(function(p){return '<option value="p:'+esc(p.id)+'"'+(sel==="p:"+p.id?" selected":"")+'>'+esc(dcLabel(p))+'</option>'}).join("")+'</optgroup>';
  h+='<optgroup label="Make a new one">'+'<option value="n:"'+(sel==="n:"?" selected":"")+'>New page</option>'+L.filter(function(p){return !p.parent}).map(function(p){return '<option value="n:'+esc(p.id)+'"'+(sel==="n:"+p.id?" selected":"")+'>New channel in '+esc(p.name)+'</option>'}).join("")+'</optgroup>';return h}
-function dcStat(c){var m=DC.cfg.map[c.id];if(!m||!m.cursor)return "";return (m.done?"Up to date":"Partly imported")+" · "+(m.posts||0)+" posts"}
+function dcStat(c){var m=DC.cfg.map[c.id];if(!m||!m.cursor)return "";return (m.done?"Finished":"Partly imported")+" · "+(m.scanned||0)+" messages checked · "+(m.posts||0)+" posts saved"}
+function dcAuth(c){var m=DC.cfg.map[c.id],e=$("dca-"+c.id);if(!e)return;var h="";if(m&&m.cursor){h+='<button type="button" class="linkbtn" data-dcreset="'+esc(c.id)+'">Start over from the first message</button>';
+ if(!(m.posts>0)&&(m.scanned||0)>0&&m.authors&&m.authors.length){h='<div class="dc-warn">None of those messages came from your Discord ID. Here is who posted in this channel. Include the ones that are you (or a bot or webhook that posts for you):</div><div class="dc-ach">'+m.authors.map(function(a){return '<button type="button" data-dcinc="'+esc(a.id)+'" data-dcch="'+esc(c.id)+'">Include '+esc(a.name)+(a.bot?" (bot)":"")+" · "+a.n+'</button>'}).join("")+'</div>'+h}}
+ e.innerHTML=h}
 function dcSetSt(id,t){var e=$("dcs-"+id);if(e)e.textContent=t}
 function dcRender(){var box=$("dcbox");if(!box)return;var cats=DC.cats.slice(),by={};
  DC.chs.forEach(function(c){(by[c.parent||""]=by[c.parent||""]||[]).push(c)});
@@ -1712,10 +1715,10 @@ function dcRender(){var box=$("dcbox");if(!box)return;var cats=DC.cats.slice(),b
  cats.forEach(function(k){var L=by[k.id]||[];if(!L.length)return;
   h+='<div class="dc-cat"><label class="dc-ch"><input type="checkbox" data-dccat="'+esc(k.id)+'"> <b>'+esc(k.name)+'</b></label>';
   L.forEach(function(c){if(DC.dest[c.id]==null)DC.dest[c.id]=dcDefDest(c);
-   h+='<div class="dc-row"><label class="dc-n"><input type="checkbox" data-dcsel="'+esc(c.id)+'"'+(DC.sel[c.id]?" checked":"")+'> # '+esc(c.name)+'</label><select data-dcdest="'+esc(c.id)+'" aria-label="Where #'+esc(c.name)+' goes">'+dcOpts(DC.dest[c.id])+'</select><span class="dc-s" id="dcs-'+esc(c.id)+'">'+esc(dcStat(c))+'</span></div>'});
+   h+='<div class="dc-row"><label class="dc-n"><input type="checkbox" data-dcsel="'+esc(c.id)+'"'+(DC.sel[c.id]?" checked":"")+'> # '+esc(c.name)+'</label><select data-dcdest="'+esc(c.id)+'" aria-label="Where #'+esc(c.name)+' goes">'+dcOpts(DC.dest[c.id])+'</select><span class="dc-s" id="dcs-'+esc(c.id)+'">'+esc(dcStat(c))+'</span><div class="dc-a" id="dca-'+esc(c.id)+'"></div></div>'});
   h+='</div>'});
  h+='<div class="row" style="margin-top:12px"><button class="primary" id="dcgo" type="button">Import selected</button><button id="dcstop" type="button" hidden>Stop</button><span class="hint" id="dcmsg" style="margin:0" role="status"></span></div>';
- box.innerHTML=h}
+ box.innerHTML=h;DC.chs.forEach(dcAuth)}
 async function dcInit(){var box=$("dcbox");if(!box)return;var So=S();
  if(!So||!So.discord){box.innerHTML='<p class="hint" style="margin:0">Not available here.</p>';return}
  box.innerHTML='<p class="hint" style="margin:0">Checking...</p>';var st;try{st=await So.discord("status")}catch(e){st={}}
@@ -1739,6 +1742,7 @@ async function dcPost(pid,g){var imgs=[],miss=0;
  var t=g.texts.join("\n");if(g.other.length)t+=(t?"\n":"")+"[Not imported: "+g.other.join(", ")+"]";if(miss)t+=(t?"\n":"")+"[Could not import "+miss+" picture"+(miss>1?"s":"")+"]";
  t=t.slice(0,4000);if(!t&&!imgs.length)return false;
  var rec={ts:g.ts,text:t,from:"discord"};if(imgs.length)rec.imgs=imgs;await dcPut(pid,"dc"+g.id,rec);return true}
+function dcMerge(a,b){var o={};(a||[]).concat(b||[]).forEach(function(x){var k=o[x.id];if(k)k.n+=x.n;else o[x.id]=Object.assign({},x)});return Object.keys(o).map(function(k){return o[k]}).sort(function(x,y){return y.n-x.n}).slice(0,8)}
 async function dcRunOne(c){var So=S(),m=DC.cfg.map[c.id]||(DC.cfg.map[c.id]={}),dv=DC.dest[c.id]||"n:";
  if(!m.pid||!pages[m.pid]){
   if(dv.indexOf("p:")===0&&pages[dv.slice(2)])m.pid=dv.slice(2);
@@ -1748,18 +1752,21 @@ async function dcRunOne(c){var So=S(),m=DC.cfg.map[c.id]||(DC.cfg.map[c.id]={}),
  var after=m.cursor||"0",posts=m.posts||0,scanned=m.scanned||0;
  while(!DC.stop){
   dcSetSt(c.id,"Reading... "+scanned+" messages checked, "+posts+" posts saved");
-  var r;try{r=await So.discord("messages",{channel:c.id,after:after})}catch(e){r={error:"Network problem"}}
+  var r;try{r=await So.discord("messages",{channel:c.id,after:after,also:(DC.cfg.extra||[]).join(",")})}catch(e){r={error:"Network problem"}}
   if(!r||r.ok===false||r.error){dcSetSt(c.id,(r&&r.error)||"Could not read this channel");return false}
   var gs=dcGroups(r.items||[]);
   for(var i=0;i<gs.length;i++){try{if(await dcPost(m.pid,gs[i]))posts++}catch(e){dcSetSt(c.id,"Could not save a post. Stopped.");return false}dcSetSt(c.id,"Saving... "+posts+" posts")}
-  scanned+=r.scanned||0;after=r.next||after;m.cursor=after;m.posts=posts;m.scanned=scanned;m.done=!!r.done;m.at=Date.now();await dcCfgSave();
+  scanned+=r.scanned||0;after=r.next||after;m.authors=dcMerge(m.authors,r.authors);m.cursor=after;m.posts=posts;m.scanned=scanned;m.done=!!r.done;m.at=Date.now();await dcCfgSave();
   if(r.done)break}
- dcSetSt(c.id,dcStat(c)+(DC.stop&&!m.done?" (stopped)":""));if(typeof schedMirror==="function")schedMirror(m.pid);return true}
+ dcSetSt(c.id,dcStat(c)+(DC.stop&&!m.done?" (stopped)":""));dcAuth(c);if(typeof schedMirror==="function")schedMirror(m.pid);return true}
 async function dcGo(){if(DC.run)return;var L=(DC.chs||[]).filter(function(c){return DC.sel[c.id]});if(!L.length){var mg=$("dcmsg");if(mg)mg.textContent="Tick at least one channel first.";return}
  DC.run=true;DC.stop=false;var go=$("dcgo"),sp=$("dcstop"),mg=$("dcmsg");if(go)go.disabled=true;if(sp)sp.hidden=false;if(mg)mg.textContent="";
  for(var i=0;i<L.length&&!DC.stop;i++){await dcRunOne(L[i])}
  DC.run=false;go=$("dcgo");sp=$("dcstop");mg=$("dcmsg");if(go)go.disabled=false;if(sp)sp.hidden=true;if(mg)mg.textContent=DC.stop?"Stopped. Press Import again to continue where it left off.":"Done. Your pages are in the left menu.";renderSide()}
 document.addEventListener("click",function(ev){var t=ev.target;if(!t||!t.closest||!t.closest("#dcbox"))return;
+ var rs=t.closest("[data-dcreset]"),ic=t.closest("[data-dcinc]");
+ if(rs){var mm=DC.cfg.map[rs.dataset.dcreset];if(mm){mm.cursor="";mm.done=false;mm.posts=0;mm.scanned=0;mm.authors=[];dcCfgSave();var cc=(DC.chs||[]).filter(function(x){return x.id===rs.dataset.dcreset})[0];if(cc){dcSetSt(cc.id,"");dcAuth(cc);DC.sel[cc.id]=true;var cb=document.querySelector('[data-dcsel="'+cc.id+'"]');if(cb)cb.checked=true}}return}
+ if(ic){var id=ic.dataset.dcinc;DC.cfg.extra=(DC.cfg.extra||[]);if(DC.cfg.extra.indexOf(id)<0)DC.cfg.extra.push(id);var m2=DC.cfg.map[ic.dataset.dcch];if(m2){m2.cursor="";m2.done=false;m2.posts=0;m2.scanned=0;m2.authors=[]}dcCfgSave();DC.sel[ic.dataset.dcch]=true;dcGo();return}
  if(t.id==="dcgo")dcGo();else if(t.id==="dcstop"){DC.stop=true;t.hidden=true;var mg=$("dcmsg");if(mg)mg.textContent="Stopping after this batch..."}});
 document.addEventListener("change",function(ev){var t=ev.target;if(!t||!t.dataset)return;
  if(t.dataset.dcsel!=null)DC.sel[t.dataset.dcsel]=t.checked;
