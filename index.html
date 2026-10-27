@@ -253,6 +253,8 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .al-strip{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 18px;margin-top:10px}.al-strip .al-bh{margin-bottom:8px}.al-chips{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}.al-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}.al-row .al-card{margin:0}
 @media(max-width:900px){.al-grid{grid-template-columns:1fr}.al-bf,.al-af{flex-wrap:wrap}}
 .dc-cat{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}.dc-ch{display:flex;gap:8px;align-items:center;margin-bottom:6px;font-size:14px}.dc-row{display:grid;grid-template-columns:minmax(120px,1fr) minmax(150px,1fr) minmax(0,1fr);gap:10px;align-items:center;padding:5px 0;border-top:1px solid var(--line)}.dc-n{display:flex;gap:8px;align-items:center;font-size:14px}.dc-row select{min-width:0;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:13px}.dc-s{font-size:12px;color:var(--mute)}.dc-a{grid-column:1/-1}.dc-a:empty{display:none}.dc-warn{font-size:13px;color:var(--loss);margin:2px 0 6px}.dc-ach{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}.dc-ach button{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer}@media(max-width:700px){.dc-row{grid-template-columns:1fr}}
+.sc-call{border-left:4px solid var(--accent)}.sc-th{cursor:pointer;white-space:nowrap}.sc-th.on{color:var(--accent)}.sc-row{cursor:pointer}.sc-row.on{background:rgba(29,78,216,.08)}.sc-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}.sc-small{color:var(--mute);font-size:11px;margin-left:4px}.sc-un td{color:var(--mute)}.sc-svg{width:100%;height:auto;display:block}.sc-leg{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:13px}.sc-leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.sc-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sc-bar input{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}.sc-bulk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 10px;font-size:14px}.sc-sel,.sc-bulk select{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:13px;min-width:150px}.sc-st{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:12px}.sc-st summary{cursor:pointer;font-weight:600}#scv.wrap{max-width:1560px}
 .nw-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:14px}.nw-tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .nw-layout{display:grid;grid-template-columns:minmax(440px,520px) minmax(0,1fr);gap:20px;align-items:start}.nw-side{position:sticky;top:16px}@media(max-width:1000px){.nw-layout{grid-template-columns:1fr}.nw-side{position:static}}
 .nw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
@@ -336,6 +338,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <button class="nav" id="navprofile" type="button">Profile</button>
   <button class="nav" id="navstudio" type="button">Studio</button>
   <button class="nav" id="navplan" type="button">Trade Plan</button>
+  <button class="nav" id="navsc" type="button">Scorecard</button>
   <button class="nav" id="navals" type="button">Alerts</button>
   <button class="nav" id="navnews" type="button">News</button>
   <button class="nav" id="navrl" type="button">Risk Ladder</button>
@@ -357,6 +360,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <div class="wrap" id="rlv" hidden></div>
 <div class="wrap" id="newsv" hidden></div>
 <div class="wrap" id="alv" hidden></div>
+<div class="wrap" id="scv" hidden></div>
 <div class="wrap" id="invv" hidden></div>
 <div class="wrap" id="gdv" hidden></div>
 <div class="wrap" id="profilev" hidden></div>
@@ -384,6 +388,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
     <div class="row"><button id="demo" type="button">Use sample trades</button><button id="clear" type="button">Clear trades</button></div>
     <div class="status" id="tstatus">No trades loaded.</div>
     <div class="stats" id="stats" hidden></div>
+    <div id="sttag"></div>
   </section>
 
   <section>
@@ -538,8 +543,9 @@ function stats(){
  return {pts:pts,n:n,net:net,wr:n?w/n:0,aw:w?gw/w:0,al:l?gl/l:0,pf:gl?gw/gl:(gw?Infinity:0),dd:dd,by:by,st:st,best:sorted.slice(0,3),worst:sorted.slice(-3).reverse(),first:list.length?list[0].d:"",last:list.length?list[list.length-1].d:""}}
 function showStats(){
  var s=stats(),el=$("stats");
- if(!s.n){el.hidden=true;$("tstatus").textContent="No trades loaded.";return}
+ if(!s.n){el.hidden=true;try{scStudio()}catch(e){}$("tstatus").textContent="No trades loaded.";return}
  $("tstatus").textContent=s.n+" trades loaded.";el.hidden=false;
+ try{scStudio()}catch(e){}
  el.innerHTML='<div class="stat"><b class="'+(s.net>=0?"gain":"loss")+'">'+money(s.net)+'</b><span>Net P&amp;L</span></div><div class="stat"><b>'+Math.round(s.wr*100)+'%</b><span>Win rate</span></div><div class="stat"><b>'+(s.pf===Infinity?"n/a":s.pf.toFixed(2))+'</b><span>Profit factor</span></div><div class="stat"><b class="loss">'+money(-s.dd)+'</b><span>Max drawdown</span></div>'}
 var lastText="";
 $("grouping").addEventListener("change",function(){if(!lastText)return;var r=importCSV(lastText,this.value);if(r.err||!r.n)return;setTrades(r.trades,r.n+" trades");note(r)});
@@ -1138,7 +1144,7 @@ function applyDefaults(){try{
  if(settings.name&&!$("name").value.trim())$("name").value=settings.name;
  if(settings.voice)$("voice").value=settings.voice;
  if(settings.grouping&&$("grouping"))$("grouping").value=settings.grouping}catch(e){}}
-["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("invv").hidden=true;$("rlv").hidden=true;$("newsv").hidden=true;$("alv").hidden=true;$("navals").classList.remove("on");$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("gdv").hidden=true;$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
+["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("invv").hidden=true;$("rlv").hidden=true;$("newsv").hidden=true;$("alv").hidden=true;$("scv").hidden=true;$("navsc").classList.remove("on");$("navals").classList.remove("on");$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("gdv").hidden=true;$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
 /* ---------- Trade Plan: risk sizing + A+ checklist + plan log ---------- */
 var PLK="stockspot-plans-v1",PLD="stockspot-plan-draft-v1",plans=[],plLoaded=false,pl=null,rk=null,plPend=[],plEditId="";
 function todayStr(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
@@ -1774,7 +1780,84 @@ document.addEventListener("change",function(ev){var t=ev.target;if(!t||!t.datase
  if(t.dataset.dcsel!=null)DC.sel[t.dataset.dcsel]=t.checked;
  else if(t.dataset.dcdest!=null)DC.dest[t.dataset.dcdest]=t.value;
  else if(t.dataset.dccat!=null){var id=t.dataset.dccat;(DC.chs||[]).forEach(function(c){if((c.parent||"")===id)DC.sel[c.id]=t.checked});var box=$("dcbox");if(box)box.querySelectorAll("[data-dcsel]").forEach(function(b){var c=(DC.chs||[]).filter(function(x){return x.id===b.dataset.dcsel})[0];if(c&&(c.parent||"")===id)b.checked=t.checked})}});
-function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv","planv","invv","gdv","rlv","newsv","alv"].forEach(function(i){$(i).hidden=true});$("navals").classList.remove("on");$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
+/* ===== Strategy scorecard ===== */
+var SC={range:"all",sort:"net",d:1,show:"untagged",more:100,sel:""};
+var SCCOL=["#2563eb","#16a34a","#d97706","#9333ea","#dc2626","#0891b2","#be185d","#65a30d"];
+function scKey(t){return [t.t,t.s,t.d,t.tm||"",t.ot||"",t.q,(+t.p).toFixed(4)].join("|")}
+function scStratPage(){var ks=Object.keys(pages).filter(function(k){return !pages[k].parent&&/^strateg/i.test(pages[k].name)});return ks.length?pages[ks[0]]:null}
+function scNames(extra){var o={},sp=scStratPage();if(sp)kidsOf(sp.id).forEach(function(k){o[k.name]=1});
+ Object.keys(entries).forEach(function(d){(entries[d].trades||[]).forEach(function(t){if(t.u)o[t.u]=1})});
+ (extra||[]).forEach(function(t){if(t.u)o[t.u]=1});return Object.keys(o).sort(function(a,b){return a.toLowerCase()<b.toLowerCase()?-1:1})}
+function scOpts(cur,names){var h='<option value="">Untagged</option>';names.forEach(function(n){h+='<option value="'+esc(n)+'"'+(n===cur?" selected":"")+'>'+esc(n)+'</option>'});if(cur&&names.indexOf(cur)<0)h+='<option value="'+esc(cur)+'" selected>'+esc(cur)+'</option>';return h}
+function scSaved(){var seen={},out=[];Object.keys(entries).sort().forEach(function(k){(entries[k].trades||[]).forEach(function(t){if(typeof t.p!=="number")return;var key=scKey(t);if(seen[key])return;seen[key]=1;out.push(t)})});return out}
+function scInRange(t){if(SC.range==="all")return true;var d=t.d||"";if(!/^\d{4}-\d{2}-\d{2}$/.test(d))return false;var now=new Date(),lim;
+ if(SC.range==="ytd")return d.slice(0,4)===String(now.getFullYear());lim=new Date(now.getTime()-(SC.range==="30"?30:90)*86400000);return d>=lim.getFullYear()+"-"+("0"+(lim.getMonth()+1)).slice(-2)+"-"+("0"+lim.getDate()).slice(-2)}
+function scAgg(list){var g={};list.forEach(function(t){var k=t.u||"";(g[k]=g[k]||[]).push(t)});
+ return Object.keys(g).map(function(k){var L=g[k].slice().sort(function(a,b){return ((a.d||"")+" "+(a.ot||a.tm||""))<((b.d||"")+" "+(b.ot||b.tm||""))?-1:1}),n=L.length,net=0,gw=0,gl=0,w=0,l=0,eq=0,pk=0,dd=0,pts=[0];
+  L.forEach(function(t){net+=t.p;eq+=t.p;pts.push(eq);if(eq>pk)pk=eq;if(pk-eq>dd)dd=pk-eq;if(t.p>0){w++;gw+=t.p}else if(t.p<0){l++;gl+=-t.p}});
+  return {name:k,n:n,net:net,w:w,l:l,wr:n?w/n:0,avg:n?net/n:0,aw:w?gw/w:0,al:l?gl/l:0,pf:gl?gw/gl:(gw?Infinity:0),dd:dd,pts:pts,pay:(l&&w&&gl)?(gw/w)/(gl/l):0}})}
+function scChart(rows){var W=1100,H=320,L=64,R=16,T=14,B=28,mx=1,mn=0,N=2;
+ rows.forEach(function(r){r.pts.forEach(function(v){if(v>mx)mx=v;if(v<mn)mn=v});if(r.pts.length>N)N=r.pts.length});if(mx===mn)mx=mn+1;
+ var X=function(i){return L+(W-L-R)*i/(N-1)},Y=function(v){return T+(H-T-B)*(1-(v-mn)/(mx-mn))};
+ var h='<svg viewBox="0 0 '+W+' '+H+'" class="sc-svg" role="img" aria-label="Cumulative profit by strategy">';
+ for(var g=0;g<=4;g++){var v=mn+(mx-mn)*g/4,y=Y(v);h+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'" style="stroke:var(--line)" stroke-width="1"/><text x="'+(L-8)+'" y="'+(y+4)+'" text-anchor="end" font-size="12" style="fill:var(--mute)">'+(v<0?"-":"")+"$"+Math.abs(Math.round(v)).toLocaleString()+'</text>'}
+ if(mn<0)h+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(0)+'" y2="'+Y(0)+'" style="stroke:var(--mute)" stroke-width="1.5" stroke-dasharray="4 4"/>';
+ h+='<text x="'+(W-R)+'" y="'+(H-6)+'" text-anchor="end" font-size="12" style="fill:var(--mute)">Trade number</text>';
+ rows.forEach(function(r,i){var c=r.name?SCCOL[i%SCCOL.length]:"#8b97a3",d=r.pts.map(function(v,j){return (j?"L":"M")+X(j).toFixed(1)+" "+Y(v).toFixed(1)}).join(" ");
+  h+='<path d="'+d+'" fill="none" stroke="'+c+'" stroke-width="'+(SC.sel===r.name?4:2.5)+'" stroke-linejoin="round" opacity="'+(SC.sel&&SC.sel!==r.name?.25:1)+'"/>'});
+ return h+'</svg>'}
+function scHtml(){var all=scSaved(),list=all.filter(scInRange),tagged=list.filter(function(t){return t.u}).length,agg=scAgg(list),names=scNames(all);
+ var rows=agg.filter(function(r){return r.name}),un=agg.filter(function(r){return !r.name})[0];
+ var dir=SC.d,key=SC.sort;rows.sort(function(a,b){var x=a[key],y=b[key];if(x===Infinity)x=1e9;if(y===Infinity)y=1e9;return (y-x)*dir});
+ var h='<div class="nw-head"><div><h1>Strategy scorecard</h1><p class="sub">Which setups actually make you money. '+tagged+' of '+list.length+' trades tagged.</p></div><div class="nw-tabs">'+[["all","All time"],["ytd","This year"],["90","Last 90 days"],["30","Last 30 days"]].map(function(r){return '<button type="button" class="iv-chip'+(SC.range===r[0]?" on":"")+'" data-scrange="'+r[0]+'">'+r[1]+'</button>'}).join("")+'</div></div>';
+ if(!all.length){return h+'<div class="pl-card"><p style="margin:0">No saved trades yet. Import trades in Studio, press Save, then come back to tag them by strategy.</p></div>'}
+ var ranked=rows.filter(function(r){return r.n>=20}).sort(function(a,b){return b.avg-a.avg}),early=rows.filter(function(r){return r.n>=5}).sort(function(a,b){return b.avg-a.avg})[0];
+ var call=ranked.length?'<b>'+esc(ranked[0].name)+'</b> is your best strategy so far: '+money(ranked[0].avg)+' per trade over '+ranked[0].n+' trades, '+Math.round(ranked[0].wr*100)+'% winners.':(early?'Early leader: <b>'+esc(early.name)+'</b> at '+money(early.avg)+' per trade over '+early.n+' trades. Too few trades to call it yet. I look for 20 or more per strategy.':'Tag at least 5 trades with a strategy to see a ranking.');
+ h+='<div class="pl-card sc-call"><p style="margin:0;font-size:16px;line-height:1.5">'+call+'</p></div>';
+ if(rows.length){
+  var th=function(k,l,r){return '<th class="'+(r?"r ":"")+'sc-th'+(SC.sort===k?" on":"")+'" data-scsort="'+k+'">'+l+(SC.sort===k?(SC.d>0?" ↓":" ↑"):"")+'</th>'};
+  h+='<div class="pl-card"><h2>By strategy</h2><div class="iv-tw"><table class="iv-t"><thead><tr><th>Strategy</th>'+th("n","Trades",1)+th("wr","Win rate",1)+th("net","Net P&amp;L",1)+th("avg","Avg per trade",1)+th("aw","Avg win",1)+th("al","Avg loss",1)+th("pf","Profit factor",1)+th("dd","Max drawdown",1)+'</tr></thead><tbody>'+
+   rows.map(function(r,i){var ci=agg.filter(function(x){return x.name}).indexOf(r);return '<tr class="sc-row'+(SC.sel===r.name?" on":"")+'" data-scsel="'+esc(r.name)+'"><td><span class="sc-dot" style="background:'+SCCOL[ci%SCCOL.length]+'"></span><b>'+esc(r.name)+'</b>'+(r.n<20?' <small class="sc-small">small sample</small>':'')+'</td><td class="r">'+r.n+'</td><td class="r">'+Math.round(r.wr*100)+'%</td><td class="r '+(r.net>=0?"gain":"loss")+'">'+money(r.net)+'</td><td class="r '+(r.avg>=0?"gain":"loss")+'">'+money(r.avg)+'</td><td class="r gain">'+money(r.aw)+'</td><td class="r loss">'+money(-r.al)+'</td><td class="r">'+(r.pf===Infinity?"n/a":r.pf.toFixed(2))+'</td><td class="r loss">'+money(-r.dd)+'</td></tr>'}).join("")+
+   (un?'<tr class="sc-un"><td>Untagged</td><td class="r">'+un.n+'</td><td class="r">'+Math.round(un.wr*100)+'%</td><td class="r">'+money(un.net)+'</td><td class="r">'+money(un.avg)+'</td><td class="r">'+money(un.aw)+'</td><td class="r">'+money(-un.al)+'</td><td class="r">'+(un.pf===Infinity?"n/a":un.pf.toFixed(2))+'</td><td class="r">'+money(-un.dd)+'</td></tr>':'')+'</tbody></table></div><p class="hint" style="margin:8px 0 0">Click a row to highlight its line below. Avg per trade is your expectancy in dollars: the number to compare.</p></div>';
+  var ord=agg.filter(function(x){return x.name});
+  h+='<div class="pl-card"><h2>Equity curve by strategy</h2>'+scChart(ord)+'<div class="sc-leg">'+ord.map(function(r,i){return '<span><i style="background:'+SCCOL[i%SCCOL.length]+'"></i>'+esc(r.name)+'</span>'}).join("")+'</div></div>'}
+ h+='<div class="pl-card"><h2>Tag your trades</h2><div class="sc-bar"><input id="scnew" placeholder="Add a strategy name" maxlength="40" autocomplete="off"><button type="button" id="scadd">Add strategy</button><span class="hint" style="margin:0">Strategies you add become channels on your Strategies page.</span></div>'+
+  '<div class="nw-tabs" style="margin:10px 0">'+[["untagged","Untagged"],["all","All trades"]].map(function(r){return '<button type="button" class="iv-chip'+(SC.show===r[0]?" on":"")+'" data-scshow="'+r[0]+'">'+r[1]+'</button>'}).join("")+'</div>';
+ var shown=list.filter(function(t){return SC.show==="all"||!t.u}).slice().sort(function(a,b){return ((b.d||"")+" "+(b.ot||b.tm||""))<((a.d||"")+" "+(a.ot||a.tm||""))?-1:1});
+ if(!names.length)h+='<p class="hint">Add your first strategy above, then pick it from the lists.</p>';
+ if(shown.length)h+='<div class="sc-bulk"><span>Set all '+shown.length+' shown to</span><select id="scbulk">'+scOpts("",names)+'</select><button type="button" id="scbulkgo">Apply</button></div>';
+ h+=shown.length?'<div class="iv-tw"><table class="iv-t"><thead><tr><th>Date</th><th>Time</th><th>Ticker</th><th>Side</th><th class="r">P&amp;L</th><th>Strategy</th></tr></thead><tbody>'+shown.slice(0,SC.more).map(function(t){return '<tr><td>'+esc(t.d||"")+'</td><td>'+esc(t.ot||t.tm||"")+'</td><td><b>'+esc(t.t)+'</b></td><td>'+esc(t.s)+'</td><td class="r '+(t.p>=0?"gain":"loss")+'">'+sgn(t.p)+'</td><td><select class="sc-sel" data-sctag="'+esc(scKey(t))+'">'+scOpts(t.u||"",names)+'</select></td></tr>'}).join("")+'</tbody></table></div>'+(shown.length>SC.more?'<div class="row" style="margin-top:10px"><button type="button" id="scmore">Show more ('+(shown.length-SC.more)+' left)</button></div>':''):'<p class="hint" style="margin:6px 0 0">'+(SC.show==="untagged"?"Everything in this range is tagged. Nice.":"No trades in this range.")+'</p>';
+ return h+'</div><p class="ssnote">Self-reported and not independently verified.</p>'}
+function renderScore(){var el=$("scv");el.innerHTML=scHtml()}
+async function showScore(){hideViews();$("navsc").classList.add("on");$("scv").hidden=false;renderScore();window.scrollTo(0,0)}
+$("navsc").addEventListener("click",showScore);
+async function scSetTags(keyMap){var changed={};Object.keys(entries).forEach(function(d){var ent=entries[d],hit=false;(ent.trades||[]).forEach(function(t){if(typeof t.p!=="number")return;var k=scKey(t);if(Object.prototype.hasOwnProperty.call(keyMap,k)&&(t.u||"")!==keyMap[k]){t.u=keyMap[k];hit=true}});if(hit)changed[d]=1});
+ var ds=Object.keys(changed);for(var i=0;i<ds.length;i++){var e=clone(entries[ds[i]]);e.updated=Date.now();try{await putEntry(e)}catch(x){toast("Could not save a tag");return false}}return true}
+async function scAddStrat(name){name=String(name||"").trim().slice(0,40);if(!name)return;var sp=scStratPage();
+ if(!sp){var id=newId();await putPage({id:id,name:"Strategies",hint:"Describe a strategy, a rule, or a checklist",order:Object.keys(pages).length,created:Date.now()});sp=pages[id]}
+ if(kidsOf(sp.id).some(function(k){return k.name.toLowerCase()===name.toLowerCase()})){toast("You already have that one");return}
+ await putPage({id:newId(),name:name,hint:"",order:kidsOf(sp.id).length,created:Date.now(),parent:sp.id,priv:true});renderSide();renderScore()}
+document.addEventListener("click",async function(ev){var t=ev.target;if(!t||!t.closest||!t.closest("#scv"))return;var b=t.closest("button,th,tr");if(!b)return;var d=b.dataset;
+ if(d.scrange){SC.range=d.scrange;SC.more=100;renderScore()}
+ else if(d.scshow){SC.show=d.scshow;SC.more=100;renderScore()}
+ else if(d.scsort){if(SC.sort===d.scsort)SC.d=-SC.d;else{SC.sort=d.scsort;SC.d=1}renderScore()}
+ else if(d.scsel!=null){SC.sel=SC.sel===d.scsel?"":d.scsel;renderScore()}
+ else if(b.id==="scadd"){var i=$("scnew");await scAddStrat(i.value)}
+ else if(b.id==="scmore"){SC.more+=200;renderScore()}
+ else if(b.id==="scbulkgo"){var v=$("scbulk").value,km={};scSaved().filter(scInRange).filter(function(x){return SC.show==="all"||!x.u}).forEach(function(x){km[scKey(x)]=v});b.disabled=true;if(await scSetTags(km))toast("Tagged "+Object.keys(km).length+" trades");renderScore()}});
+document.addEventListener("change",async function(ev){var t=ev.target;if(!t||!t.dataset||t.dataset.sctag==null)return;var km={};km[t.dataset.sctag]=t.value;t.disabled=true;await scSetTags(km);renderScore()});
+document.addEventListener("keydown",function(ev){if(ev.key==="Enter"&&ev.target&&ev.target.id==="scnew"){ev.preventDefault();scAddStrat(ev.target.value)}});
+/* Studio: tag the trades you just loaded */
+function scStudio(){var el=$("sttag");if(!el)return;if(!trades.length){el.innerHTML="";return}
+ var names=scNames(trades),open=el.querySelector("details")&&el.querySelector("details").open;
+ var rows=sortedTrades().slice(0,300).map(function(t){var i=trades.indexOf(t);return '<tr><td>'+esc(t.d||"")+'</td><td>'+esc(t.ot||t.tm||"")+'</td><td><b>'+esc(t.t)+'</b></td><td>'+esc(t.s)+'</td><td class="r '+(t.p>=0?"gain":"loss")+'">'+sgn(t.p)+'</td><td><select class="sc-sel" data-scst="'+i+'">'+scOpts(t.u||"",names)+'</select></td></tr>'}).join("");
+ var left=trades.filter(function(t){return !t.u}).length;
+ el.innerHTML='<details class="sc-st"'+(open?" open":"")+'><summary>Tag strategies ('+(trades.length-left)+' of '+trades.length+' tagged)</summary><div class="sc-bulk"><span>Set all untagged to</span><select id="scstbulk">'+scOpts("",names)+'</select><button type="button" id="scstbulkgo">Apply</button><button type="button" id="scstsave">Save trades to my days</button></div><div class="iv-tw"><table class="iv-t"><thead><tr><th>Date</th><th>Time</th><th>Ticker</th><th>Side</th><th class="r">P&amp;L</th><th>Strategy</th></tr></thead><tbody>'+rows+'</tbody></table></div></details>'}
+document.addEventListener("change",function(ev){var t=ev.target;if(!t||!t.dataset||t.dataset.scst==null)return;var tr=trades[+t.dataset.scst];if(tr){tr.u=t.value;persist();scStudio();showStats()}});
+document.addEventListener("click",async function(ev){var b=ev.target&&ev.target.closest&&ev.target.closest("#scstbulkgo,#scstsave");if(!b)return;
+ if(b.id==="scstbulkgo"){var v=$("scstbulk").value;trades.forEach(function(t){if(!t.u)t.u=v});persist();scStudio()}
+ else{b.disabled=true;try{var d=await saveEntry();toast("Saved to "+d+". Tags now count in your scorecard.")}catch(e){toast("Could not save")}b.disabled=false}});
+function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv","planv","invv","gdv","rlv","newsv","alv","scv"].forEach(function(i){$(i).hidden=true});$("navsc").classList.remove("on");$("navals").classList.remove("on");$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
  $("navhome").classList.remove("on");$("navstudio").classList.remove("on");$("navset").classList.add("on");
  curDate="";curPage="";renderSettings();$("settingsv").hidden=false;window.scrollTo(0,0)}
 function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["Direct and plain-spoken","Professional and measured","Energetic and motivational","Analytical and data-first"];
@@ -1961,8 +2044,8 @@ async function saveProfile(){if(store.db)await store.db.doc("meta/profile").set(
 function myAvUrl(){return prof.src||(prof.aid?blobUrl(prof.aid):"")}
 function avatarHTML(cls,url,name){var A=window.stockspotAuth||{},u=url!=null?url:myAvUrl(),nm=name||A.username||A.email||"?";
  return '<div class="pf-av'+(cls?" "+cls:"")+'">'+(u?'<img alt="" src="'+esc(u)+'">':esc((nm.charAt(0)||"?").toUpperCase()))+'</div>'}
-function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","invv","gdv","rlv","newsv"].forEach(function(i){$(i).hidden=true});
- ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navals"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
+function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","scv","invv","gdv","rlv","newsv"].forEach(function(i){$(i).hidden=true});
+ ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navals","navsc"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
 function paintProfNav(){$("navprofile").classList.toggle("on",profTab!=="coach");$("navcoach").classList.toggle("on",profTab==="coach")}
 function recordBlock(){var all=allTrades();if(!all.length)return '<div class="pf-panel hint" style="margin:8px 0">No saved trades yet. Save a day in Studio and your record shows here.</div>';
  var days=dailyPnl(),yr=pickYear(days),m=pnlModel(days,yr),s=withCtx({trades:all},[],stats);
