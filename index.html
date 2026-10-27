@@ -1869,8 +1869,8 @@ document.addEventListener("click",async function(ev){var b=ev.target&&ev.target.
 /* ===== Sort A+ setups into strategies ===== */
 var SRT={root:"",items:[],groups:[],asg:{},run:false,stop:false,sel:{},more:{},msg:"",nid:1};
 var SRTK="ss-sort-v1";
-function srtRoot(pg){while(pg&&pg.parent&&pages[pg.parent])pg=pages[pg.parent];return pg}
-function srtIsAplus(pg){var r=srtRoot(pg);return !!r&&/^a\s*(\+|plus)/i.test(r.name)}
+function srtRoot(pg){return pg}
+function srtIsAplus(pg){var sp=typeof scStratPage==="function"?scStratPage():null;if(!pg)return false;if(sp&&(pg.id===sp.id||pg.parent===sp.id))return false;return true}
 function srtBtn(pg){var old=$("srtopen");if(old)old.remove();if(!srtIsAplus(pg))return;var e=$("pgedit");if(e)e.insertAdjacentHTML("beforebegin",'<button type="button" id="srtopen">Sort into strategies</button>')}
 function srtSave(){try{localStorage.setItem(SRTK,JSON.stringify({root:SRT.root,groups:SRT.groups,asg:SRT.asg,nid:SRT.nid}))}catch(e){}}
 function srtLoadSaved(root){try{var o=JSON.parse(localStorage.getItem(SRTK)||"null");if(o&&o.root===root){SRT.groups=o.groups||[];SRT.asg=o.asg||{};SRT.nid=o.nid||1;return true}}catch(e){}SRT.groups=[];SRT.asg={};SRT.nid=1;return false}
@@ -1889,8 +1889,8 @@ async function srtOpen(pg){var root=srtRoot(pg);if(!root)return;SRT.root=root.id
 function srtClose(){var ov=$("srtov");if(ov)ov.hidden=true;document.body.style.overflow="";SRT.stop=true}
 function srtPending(){return SRT.items.filter(function(it){return !SRT.asg[it.id]})}
 function srtRender(){var ov=$("srtov");if(!ov||ov.hidden)return;var pend=srtPending(),done=SRT.items.length-pend.length,imgsLeft=pend.reduce(function(n,it){return n+Math.min(3,it.urls.length)},0);
- var h='<div class="srt-in"><div class="srt-head"><div><h1>Sort into strategies</h1><p class="sub">Nothing is changed until you press Apply. Apply makes copies, so your A+ posts stay where they are.</p></div><button type="button" id="srtclose">Close</button></div>';
- if(!SRT.items.length){return void(ov.innerHTML=h+'<div class="pl-card"><p style="margin:0">No posts with text or pictures found on this page yet.</p></div></div>')}
+ var h='<div class="srt-in"><div class="srt-head"><div><h1>Sort into strategies</h1><p class="sub">Sorting posts from <b>'+esc((pages[SRT.root]||{}).name||"this page")+'</b>. Nothing is changed until you press Apply. Apply makes copies, so your A+ posts stay where they are.</p></div><button type="button" id="srtclose">Close</button></div>';
+ if(!SRT.items.length){return void(ov.innerHTML=h+'<div class="pl-card"><p style="margin:0">No posts with text or pictures found on this page yet. Open the page that holds your A+ setups (or its channel) and try again.</p></div></div>')}
  if(pend.length||SRT.run){
   h+='<div class="pl-card"><b>'+done+' of '+SRT.items.length+' posts sorted</b><div class="srt-bar"><i style="width:'+Math.round(done/SRT.items.length*100)+'%"></i></div>';
   if(SRT.run)h+='<p class="hint" style="margin:8px 0">'+esc(SRT.msg||"Working...")+'</p><button type="button" id="srtstop">Stop</button>';
