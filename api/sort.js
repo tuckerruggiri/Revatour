@@ -31,6 +31,7 @@ module.exports = async (req, res) => {
   const posts = Array.isArray(body && body.posts) ? body.posts.slice(0, MAX_POSTS) : [];
   if (!posts.length) return res.status(400).json({ error: 'no posts' });
   const groups = (Array.isArray(body.groups) ? body.groups : []).slice(0, 40).map((g) => ({ name: String(g.name || '').slice(0, 40), desc: String(g.desc || '').slice(0, 200) })).filter((g) => g.name);
+  const fixed = (Array.isArray(body.fixed) ? body.fixed : []).slice(0, 30).map((g) => ({ name: String(g.name || '').slice(0, 40), desc: String(g.desc || '').slice(0, 500) })).filter((g) => g.name);
   const hints = (Array.isArray(body.hints) ? body.hints : []).slice(0, 30).map((h) => String(h).slice(0, 40));
 
   const content = [];
@@ -44,7 +45,7 @@ module.exports = async (req, res) => {
     });
   });
   const sys = `You sort a day trader's saved A+ setup posts into trading strategies. The screenshots are usually thinkorswim charts. Text drawn on the chart or in the caption often names the setup (for example lines like "SETUP = ...", "TRIGGER = ...", or short tags). Use those labels first; the trader's own names are the best group names. Otherwise group by the visible pattern and entry logic (what the trade was, which direction, what triggered it).
-${hints.length ? 'Setup names the trader already uses (use these exact names when a post matches): ' + hints.join(', ') + '.\n' : ''}${groups.length ? 'Groups so far (reuse one when a post clearly matches it, with the exact same name): ' + JSON.stringify(groups) + '\n' : 'No groups exist yet.\n'}Create a new group only when a post does not fit an existing one. Group names are short (1 to 3 words) and describe the strategy. If a post cannot be placed (no readable label, unclear picture), put it in the group "Not sure".
+${fixed.length ? 'THE TRADER\'S STRATEGY LIST. Use ONLY these exact names as groups: ' + JSON.stringify(fixed) + '. The desc is what the trader wrote about each one. Put a post in a strategy only when its chart or caption clearly matches it; do not invent new groups. Anything else goes in "Not sure".\n' : ''}${hints.length && !fixed.length ? 'Setup names the trader already uses (use these exact names when a post matches): ' + hints.join(', ') + '.\n' : ''}${groups.length ? 'Groups so far (reuse one when a post clearly matches it, with the exact same name): ' + JSON.stringify(groups) + '\n' : 'No groups exist yet.\n'}Create a new group only when a post does not fit an existing one. Group names are short (1 to 3 words) and describe the strategy. If a post cannot be placed (no readable label, unclear picture), put it in the group "Not sure".
 Reply with ONLY JSON, no other text: {"groups":[{"name":"...","desc":"one short sentence on what defines it"}],"posts":[{"id":"...","group":"..."}]}. "groups" lists only groups that are new in this batch. Every post id must appear once in "posts".`;
   try {
     const up = await fetch('https://api.anthropic.com/v1/messages', {
