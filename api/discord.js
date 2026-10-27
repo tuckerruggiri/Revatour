@@ -66,7 +66,9 @@ module.exports = async (req, res) => {
       const ch = String(q.channel || '');
       if (!/^\d{5,25}$/.test(ch)) return res.status(400).json({ error: 'bad channel' });
       let after = /^\d{1,25}$/.test(String(q.after || '')) ? String(q.after) : '0';
-      const mine = [];
+      const mine = [], seen = {};
+      const also = new Set(String(q.also || '').split(',').filter((x) => /^\d{5,25}$/.test(x)));
+      also.add(process.env.DISCORD_USER_ID);
       let scanned = 0, done = false;
       const t0 = Date.now();
       for (let page = 0; page < 5 && Date.now() - t0 < 18000; page++) {
@@ -82,7 +84,11 @@ module.exports = async (req, res) => {
         scanned += batch.length;
         after = batch[batch.length - 1].id;
         batch.forEach((m) => {
-          if (!m.author || m.author.id !== process.env.DISCORD_USER_ID) return;
+          if (m.author) {
+            const k = seen[m.author.id] || (seen[m.author.id] = { id: m.author.id, name: m.author.global_name || m.author.username || '?', bot: !!m.author.bot, n: 0 });
+            k.n++;
+          }
+          if (!m.author || !also.has(m.author.id)) return;
           if (m.type !== 0 && m.type !== 19) return;
           const imgs = [], other = [];
           (m.attachments || []).forEach((a) => {
@@ -93,7 +99,7 @@ module.exports = async (req, res) => {
         });
         if (batch.length < 100) { done = true; break; }
       }
-      return res.status(200).json({ ok: true, items: mine, next: after, scanned, done });
+      return res.status(200).json({ ok: true, items: mine, next: after, scanned, done, authors: Object.values(seen).sort((a, b) => b.n - a.n).slice(0, 8) });
     }
 
     if (action === 'file') {
