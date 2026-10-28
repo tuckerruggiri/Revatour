@@ -211,7 +211,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .pset{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:20px;width:100%;max-width:420px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .pset h2{margin:0 0 10px;font-size:1.2rem}.pset label{display:block;margin:10px 0;font-size:.9rem}.pset input[type=text],.pset input:not([type]){display:block;width:100%;margin-top:4px}
 .pset label.chk{display:flex;flex-direction:row;gap:8px;align-items:center;justify-content:flex-start}.pset input[type=checkbox]{width:auto;margin:0}
-.navrow.chan{padding-left:20px}.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+.pgdesc{max-width:80ch;line-height:1.55;color:var(--mute);margin:0 0 14px;white-space:pre-wrap}.navrow.chan{padding-left:20px}.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
 .chip{border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:4px 12px;font:inherit;font-size:.88rem;cursor:pointer;color:var(--ink)}
 .chips input{max-width:190px;padding:5px 10px}.crumb{background:none;border:0;color:var(--mute);cursor:pointer;font:inherit;padding:0;margin:0 0 6px}.crumb:hover{color:var(--ink)}
 .chanrow{display:flex;gap:6px;padding:2px 6px 6px 26px}.chanrow input{flex:1;min-width:0}
@@ -927,7 +927,7 @@ function newId(){return Date.now().toString(36)+Math.random().toString(36).slice
 function lsGet(){try{return JSON.parse(localStorage.getItem(PKEY)||"null")}catch(e){return null}}
 function lsPut(o){localStorage.setItem(PKEY,JSON.stringify(o))}
 async function putPage(p){
- var rec={name:p.name,hint:p.hint||"",order:p.order||0,created:p.created||Date.now(),parent:p.parent||"",priv:p.priv!==false,mem:!!p.mem,fpost:!!p.fpost};
+ var rec={name:p.name,hint:p.hint||"",order:p.order||0,created:p.created||Date.now(),parent:p.parent||"",priv:p.priv!==false,mem:!!p.mem,fpost:!!p.fpost,descOn:!!p.descOn,desc:String(p.desc||"").slice(0,400)};
  if(store.db)await store.db.doc("pages/"+p.id).set(rec);
  else{var o=lsGet()||{pages:{}},ex=o.pages[p.id];o.pages[p.id]=Object.assign({posts:ex?ex.posts||[]:[]},rec);lsPut(o)}
  pages[p.id]=Object.assign({id:p.id},rec);schedSync()}
@@ -940,7 +940,7 @@ async function loadPages(){pages={};
    if(!Object.keys(pages).length){var m=await store.db.doc("meta/state").get();if(!m.exists){await seedPages();await store.db.doc("meta/state").set({seeded:true})}}
   }else{
    var o=lsGet();
-   if(o){Object.keys(o.pages||{}).forEach(function(k){if(k.indexOf("__")===0)return;var p=o.pages[k];pages[k]={id:k,name:p.name,hint:p.hint,order:p.order,created:p.created,parent:p.parent||"",priv:p.priv!==false,mem:!!p.mem,fpost:!!p.fpost}})}
+   if(o){Object.keys(o.pages||{}).forEach(function(k){if(k.indexOf("__")===0)return;var p=o.pages[k];pages[k]={id:k,name:p.name,hint:p.hint,order:p.order,created:p.created,parent:p.parent||"",priv:p.priv!==false,mem:!!p.mem,fpost:!!p.fpost,descOn:!!p.descOn,desc:p.desc||""}})}
    else await seedPages()
   }
  }catch(e){}}
@@ -1025,7 +1025,7 @@ async function showPage(pid){var pg=pages[pid];if(!pg){showStudio();return}
  $("home").hidden=true;$("navhome").classList.remove("on");$("studio").hidden=true;$("entry").hidden=true;$("navstudio").classList.remove("on");
  var el=$("pagev");el.hidden=false;
  var par=pg.parent&&pages[pg.parent],kids=par?[]:kidsOf(pid);
- el.innerHTML=(par?'<button class="crumb" type="button" data-go="'+esc(par.id)+'">&larr; '+esc(par.name)+'</button>':'')+'<div class="phead"><input id="pgname" class="pgname" maxlength="40" aria-label="'+(par?'Channel':'Page')+' name"><button id="pgedit" type="button" class="primary">Edit</button><button id="pgset" type="button" aria-label="Options">Options &hellip;</button></div>'+
+ el.innerHTML=(par?'<button class="crumb" type="button" data-go="'+esc(par.id)+'">&larr; '+esc(par.name)+'</button>':'')+'<div class="phead"><input id="pgname" class="pgname" maxlength="40" aria-label="'+(par?'Channel':'Page')+' name"><button id="pgedit" type="button" class="primary">Edit</button><button id="pgset" type="button" aria-label="Options">Options &hellip;</button></div>'+(par?'':'<p class="pgdesc" id="pgdesc"'+(pg.descOn&&pg.desc?'':' hidden')+'>'+esc(pg.desc||'')+'</p>')+
   (par?'':'<h2 class="chhead">Channels</h2><div class="chlist">'+(kids.length?kids.map(function(k){return '<button class="chcard" type="button" data-go="'+esc(k.id)+'"><span># '+esc(k.name)+'</span><span class="chev">&rsaquo;</span></button>'}).join(""):'<p class="hint" style="margin:0">No channels yet. Chat and posts live inside channels, so add one to get started.</p>')+'</div><div class="chips"><input id="chname" maxlength="40" placeholder="New channel name" aria-label="New channel name"><button class="primary" type="button" id="chadd">Add channel</button></div>')+
   (par?'<p class="hint" id="commnote" style="margin:0 0 8px"></p><div id="feed" class="dc-stream" aria-live="polite"></div>'+dcComposer({prev:"pprev",pic:"pfile",file:"pimg",ta:"ptext",send:"ppost",max:4000,ph:"Message #"+pg.name}):'<div id="feed" class="feed"></div>');
  $("pgname").value=pg.name;try{srtBtn(pg)}catch(e){}commNote();renderSide();window.scrollTo(0,0);
@@ -1088,15 +1088,16 @@ function openPageSettings(pid){var pg=pages[pid];if(!pg)return;var old=$("pset")
  d.innerHTML='<div class="pset"><h2>'+esc(pg.name)+' <span class="pill">'+(pg.parent?"Channel":"Page")+'</span></h2>'+
   '<label>Name<input id="ps-name" maxlength="40"></label>'+
   (pg.parent?'<label>Who can see this channel<select id="ps-vis"><option value="private">Private: only me</option><option value="members">Members only: people I approve</option><option value="public">Public: everyone</option></select></label>'+
-  '<label class="chk"><input type="checkbox" id="ps-fpost"> Let my members chat and post here</label>':'<p class="hint" style="margin:0 0 8px">Privacy is set on each channel inside this category. Open a channel and tap Edit to make it public.</p>')+
+  '<label class="chk"><input type="checkbox" id="ps-fpost"> Let my members chat and post here</label>':'<p class="hint" style="margin:0 0 8px">Privacy is set on each channel inside this category. Open a channel and tap Edit to make it public.</p><label class="chk"><input type="checkbox" id="ps-don"> Show a description under the title</label><label id="ps-dwrap" hidden>Description<textarea id="ps-desc" rows="3" maxlength="400" placeholder="What this category is for"></textarea></label>')+
   (pg.parent?'<p class="hint" style="margin:0 0 8px">Private: only you. Members only: people ask to connect with you on your profile and you approve them, then they see this channel. Public: anyone signed in can read it. Tick the box to let approved members chat too.</p>':'')+
   '<div class="row"><button class="primary" id="ps-close" type="button">Done</button><button id="ps-del" type="button">Delete '+(pg.parent?"channel":"page")+'</button></div></div>';
  document.body.appendChild(d);var prev=document.activeElement;
  var nm=d.querySelector("#ps-name"),pv=d.querySelector("#ps-vis"),fp=d.querySelector("#ps-fpost"),visOf=function(p){return p.priv!==false?"private":(p.mem?"members":"public")};
  nm.value=pg.name;if(pv){pv.value=visOf(pg);fp.checked=!!pg.fpost;fp.disabled=pv.value==="private"}
+ var dn=d.querySelector("#ps-don"),dt=d.querySelector("#ps-desc"),dw=d.querySelector("#ps-dwrap");if(dn){dn.checked=!!pg.descOn;dt.value=pg.desc||"";dw.hidden=!dn.checked}
  function save(){var p=pages[pid];if(!p)return;var v=nm.value.trim()||p.name,wasPriv=p.priv!==false;
-  putPage(Object.assign({},p,{name:v,priv:pv?pv.value==="private":p.priv,mem:pv?pv.value==="members":p.mem,fpost:pv?(pv.value==="private"?false:fp.checked):p.fpost})).then(function(){if(pv){fp.checked=!!pages[pid].fpost;fp.disabled=pv.value==="private"}renderSide();if(curPage===pid){var h=$("pgname");if(h)h.value=v;commNote();if(pv&&(pages[pid].priv!==false)!==wasPriv)showPage(pid)}},function(){toast("Could not save")})}
- nm.onchange=save;if(pv){pv.onchange=save;fp.onchange=save}
+  putPage(Object.assign({},p,{name:v,priv:pv?pv.value==="private":p.priv,mem:pv?pv.value==="members":p.mem,fpost:pv?(pv.value==="private"?false:fp.checked):p.fpost,descOn:dn?dn.checked:p.descOn,desc:dt?dt.value.trim().slice(0,400):p.desc})).then(function(){if(dn){dw.hidden=!dn.checked;var de=$("pgdesc");if(de&&curPage===pid){de.textContent=pages[pid].desc||"";de.hidden=!(pages[pid].descOn&&pages[pid].desc)}}if(pv){fp.checked=!!pages[pid].fpost;fp.disabled=pv.value==="private"}renderSide();if(curPage===pid){var h=$("pgname");if(h)h.value=v;commNote();if(pv&&(pages[pid].priv!==false)!==wasPriv)showPage(pid)}},function(){toast("Could not save")})}
+ nm.onchange=save;if(pv){pv.onchange=save;fp.onchange=save}if(dn){dn.onchange=function(){dw.hidden=!dn.checked;save();if(dn.checked)dt.focus()};dt.onchange=save}
  function close(){d.remove();document.removeEventListener("keydown",esc2);try{prev&&prev.focus()}catch(e){}}
  function esc2(e){if(e.key==="Escape")close()}document.addEventListener("keydown",esc2);
  d.addEventListener("click",function(e){if(e.target===d)close()});
