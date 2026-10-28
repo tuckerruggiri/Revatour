@@ -135,6 +135,7 @@ details.saved summary{cursor:pointer;font-weight:600}
 .grip:hover{background:var(--bg);color:var(--ink)}
 body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .navrow.dragging{opacity:.5;background:var(--bg);border-radius:6px}
+.nav.dragging,.chrow.dragging{opacity:.5;user-select:none}#side>button.nav.drop-before{box-shadow:0 -2px 0 var(--accent)}#side>button.nav.drop-after{box-shadow:0 2px 0 var(--accent)}.chcard{touch-action:pan-y}body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .chrow.dragging{opacity:.5}.chrow.drop-before{box-shadow:0 -2px 0 var(--accent)}.chrow.drop-after{box-shadow:0 2px 0 var(--accent)}.navrow.drop-before{box-shadow:0 -2px 0 var(--accent)}
 .navrow.drop-after{box-shadow:0 2px 0 var(--accent)}
 #pglist .nav.sub{padding-left:6px}
@@ -863,12 +864,12 @@ function renderSide(){
  var pk=sortedPages();
  if(!pk.length){var q=document.createElement("p");q.className="side-empty";q.textContent="No pages yet. Use + to add one.";pl.appendChild(q)}
  pk.forEach(function(p,i){var nk=kidsOf(p.id).length;
-  var row=navRow((nk?(openCats[p.id]?"▾ ":"▸ "):"")+"# "+p.name,"",p.id===curPage&&!$("pagev").hidden,function(){catClick(p.id)},null,"",gripEl(p.id,p.name));
+  var row=navRow((nk?(openCats[p.id]?"▾ ":"▸ "):"")+"# "+p.name,"",p.id===curPage&&!$("pagev").hidden,function(){catClick(p.id)},null,"");row.dataset.pid=p.id;
   holdOpen(row.querySelector(".nav"),p.id);
   var ad=document.createElement("button");ad.type="button";ad.className="x show";ad.textContent="+";ad.title="Add a channel";ad.setAttribute("aria-label","Add a channel under "+p.name);
   ad.onclick=function(ev){ev.stopPropagation();addChanFor=(addChanFor===p.id?"":p.id);renderSide();var i2=$("chanin");if(i2)i2.focus()};row.appendChild(ad);
   pl.appendChild(row);
-  (openCats[p.id]?kidsOf(p.id):[]).forEach(function(c){var cr=navRow(c.name,"",c.id===curPage&&!$("pagev").hidden,function(){showPage(c.id)},null,"",gripEl(c.id,c.name,p.id));cr.dataset.par=p.id;
+  (openCats[p.id]?kidsOf(p.id):[]).forEach(function(c){var cr=navRow(c.name,"",c.id===curPage&&!$("pagev").hidden,function(){showPage(c.id)},null,"");cr.dataset.par=p.id;cr.dataset.pid=c.id;
    holdOpen(cr.querySelector(".nav"),c.id);
    cr.classList.add("chan");pl.appendChild(cr)});
   if(addChanFor===p.id){var ar=document.createElement("div");ar.className="chanrow";
@@ -1028,7 +1029,6 @@ async function showPage(pid){var pg=pages[pid];if(!pg){showStudio();return}
  el.innerHTML=(par?'<button class="crumb" type="button" data-go="'+esc(par.id)+'">&larr; '+esc(par.name)+'</button>':'')+'<div class="phead"><input id="pgname" class="pgname" maxlength="40" aria-label="'+(par?'Channel':'Page')+' name"><button id="pgedit" type="button" class="primary">Edit</button><button id="pgset" type="button" aria-label="Options">Options &hellip;</button></div>'+'<p class="pgdesc" id="pgdesc"'+(pg.descOn&&pg.desc?'':' hidden')+'>'+esc(pg.desc||'')+'</p>'+
   (par?'':'<h2 class="chhead">Channels</h2><div class="chlist">'+(kids.length?kids.map(function(k,ki){return '<div class="chrow" data-id="'+esc(k.id)+'"><button class="chcard" type="button" data-go="'+esc(k.id)+'"><span class="chtx"><span># '+esc(k.name)+'</span>'+(k.descOn&&k.desc?'<small class="chdesc">'+esc(k.desc)+'</small>':'')+'</span><span class="chev">&rsaquo;</span></button></div>'}).join(""):'<p class="hint" style="margin:0">No channels yet. Chat and posts live inside channels, so add one to get started.</p>')+'</div><div class="chips"><input id="chname" maxlength="40" placeholder="New channel name" aria-label="New channel name"><button class="primary" type="button" id="chadd">Add channel</button></div>')+
   (par?'<p class="hint" id="commnote" style="margin:0 0 8px"></p><div id="feed" class="dc-stream" aria-live="polite"></div>'+dcComposer({prev:"pprev",pic:"pfile",file:"pimg",ta:"ptext",send:"ppost",max:4000,ph:"Message #"+pg.name}):'<div id="feed" class="feed"></div>');
- [].forEach.call(el.querySelectorAll(".chrow"),function(r){var cid=r.dataset.id;if(pages[cid])r.insertBefore(gripEl(cid,pages[cid].name,pid,{}),r.firstChild)});
  $("pgname").value=pg.name;try{srtBtn(pg)}catch(e){}commNote();renderSide();window.scrollTo(0,0);
  try{feedPosts=await loadPosts(pid)}catch(e){toast("Could not load this page")}
  if(curPage!==pid)return;
@@ -2197,6 +2197,35 @@ $("zonev").addEventListener("click",async function(e){var t=e.target,b;
  if(t.id==="znadd"){ZN.add=!ZN.add;ZN.sel="";ZN.note="";znRender();if(ZN.add&&!LAB.items){try{await labFixDates();LAB.items=await labCollect()}catch(er){LAB.items=[]}znRender()}return}
  if(t.id==="znsave"){var it=labItem(ZN.sel);if(!it)return;var nt=$("znnote");ZN.ex.push({id:newId(),cat:ZN.cat,note:(nt?nt.value:ZN.note).trim().slice(0,200),urls:it.urls.slice(0,2),ts:Date.now()});await znSave();ZN.sel="";ZN.note="";ZN.filt=ZN.cat;toast("Example saved");znRender()}});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&(ZN.big||ZN.bigSvg)){ZN.big="";ZN.bigSvg="";znRender()}});
+
+function dragSort(host,cfg){var st=null,justDragged=false;
+ function clear(){if(!st)return;st.sibs.forEach(function(r){r.classList.remove("drop-before","drop-after")})}
+ function begin(){if(!st||st.on)return;st.on=true;st.el.classList.add("dragging");document.body.classList.add("grabbing");try{st.el.setPointerCapture(st.id)}catch(_){}}
+ function stop(){if(!st)return;clearTimeout(st.timer);clear();st.el.classList.remove("dragging");document.body.classList.remove("grabbing");st=null}
+ host.addEventListener("pointerdown",function(e){if(e.button>0||st)return;var el=e.target.closest&&e.target.closest(cfg.item);if(!el||!host.contains(el))return;if(e.target.closest(".x,input,textarea,select,a"))return;
+  st={el:el,id:e.pointerId,x:e.clientX,y:e.clientY,on:false,touch:e.pointerType!=="mouse",sibs:cfg.sibs(el).filter(function(r){return r===el||r.getClientRects().length>0}),timer:null};
+  if(st.touch)st.timer=setTimeout(begin,380)});
+ host.addEventListener("pointermove",function(e){if(!st||e.pointerId!==st.id)return;var d=Math.hypot(e.clientX-st.x,e.clientY-st.y);
+  if(!st.on){if(st.touch){if(d>8){clearTimeout(st.timer);st=null}return}if(d<6)return;begin()}
+  e.preventDefault();var others=st.sibs.filter(function(r){return r!==st.el}),m=0;
+  others.forEach(function(r){var b=r.getBoundingClientRect();if(e.clientY>b.top+b.height/2)m++});st.m=m;clear();
+  if(m<others.length)others[m].classList.add("drop-before");else if(others.length)others[others.length-1].classList.add("drop-after")});
+ host.addEventListener("touchmove",function(e){if(st&&st.on)e.preventDefault()},{passive:false});
+ function end(e){if(!st||e.pointerId!==st.id)return;var was=st.on,el=st.el,m=st.m,sibs=st.sibs,ok=e.type==="pointerup";stop();
+  if(was){justDragged=true;setTimeout(function(){justDragged=false},0);var from=sibs.indexOf(el);if(ok&&m!=null&&m!==from)cfg.drop(el,m,sibs)}}
+ host.addEventListener("pointerup",end);host.addEventListener("pointercancel",end);
+ window.addEventListener("click",function(e){if(justDragged){e.stopImmediatePropagation();e.preventDefault();justDragged=false}},true);
+ host.addEventListener("keydown",function(e){if(!e.altKey||(e.key!=="ArrowUp"&&e.key!=="ArrowDown"))return;var el=e.target.closest&&e.target.closest(cfg.item);if(!el)return;var sibs=cfg.sibs(el).filter(function(r){return r===el||r.getClientRects().length>0}),i=sibs.indexOf(el),j=i+(e.key==="ArrowUp"?-1:1);if(i<0||j<0||j>=sibs.length)return;e.preventDefault();cfg.drop(el,j,sibs);setTimeout(function(){var n=document.getElementById(el.id)||host.querySelector('[data-pid="'+(el.dataset.pid||"")+'"] .nav');if(n&&n.focus)n.focus()},60)})}
+var NAVK="ss-navorder";
+function navBtns(){return [].slice.call($("side").children).filter(function(b){return b.tagName==="BUTTON"&&b.classList.contains("nav")&&/^nav/.test(b.id)})}
+function navSave(){try{localStorage.setItem(NAVK,JSON.stringify(navBtns().map(function(b){return b.id})))}catch(e){}}
+function navApply(){var saved=null;try{saved=JSON.parse(localStorage.getItem(NAVK)||"null")}catch(e){}if(!saved||!saved.length)return;var all=navBtns(),by={};all.forEach(function(b){by[b.id]=b});var anchor=$("side").querySelector(".sechead");
+ var order=saved.filter(function(id){return by[id]}).concat(all.map(function(b){return b.id}).filter(function(id){return saved.indexOf(id)<0}));order.forEach(function(id){$("side").insertBefore(by[id],anchor)})}
+navApply();
+dragSort($("side"),{item:"#side > button.nav",sibs:function(){return navBtns()},drop:function(el,m,sibs){var others=sibs.filter(function(r){return r!==el});if(m<others.length)$("side").insertBefore(el,others[m]);else $("side").insertBefore(el,$("side").querySelector(".sechead"));navSave()}});
+dragSort($("pglist"),{item:".navrow:not(.chan)",sibs:function(){return [].slice.call($("pglist").querySelectorAll(".navrow:not(.chan)"))},drop:function(el,m){var id=el.dataset.pid,arr=listFor(id);if(arr[m])movePageTo(id,arr[m].id)}});
+dragSort($("pglist"),{item:".navrow.chan",sibs:function(el){return [].slice.call($("pglist").querySelectorAll('.navrow.chan[data-par="'+el.dataset.par+'"]'))},drop:function(el,m){var id=el.dataset.pid,arr=listFor(id),par=el.dataset.par;if(arr[m])Promise.resolve(movePageTo(id,arr[m].id)).then(function(){if(curPage===par&&!$("pagev").hidden)showPage(par)})}});
+dragSort($("pagev"),{item:".chrow",sibs:function(){return [].slice.call($("pagev").querySelectorAll(".chrow"))},drop:function(el,m){var id=el.dataset.id,arr=listFor(id);if(arr[m])Promise.resolve(movePageTo(id,arr[m].id)).then(function(){showPage(curPage)})}});
 function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv","planv","invv","gdv","rlv","newsv","alv","scv","labv","zonev"].forEach(function(i){$(i).hidden=true});$("navsc").classList.remove("on");$("navals").classList.remove("on");$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
  $("navhome").classList.remove("on");$("navstudio").classList.remove("on");$("navset").classList.add("on");
  curDate="";curPage="";renderSettings();$("settingsv").hidden=false;window.scrollTo(0,0)}
