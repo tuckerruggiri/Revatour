@@ -135,7 +135,7 @@ details.saved summary{cursor:pointer;font-weight:600}
 .grip:hover{background:var(--bg);color:var(--ink)}
 body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .navrow.dragging{opacity:.5;background:var(--bg);border-radius:6px}
-.navrow.drop-before{box-shadow:0 -2px 0 var(--accent)}
+.chrow.dragging{opacity:.5}.chrow.drop-before{box-shadow:0 -2px 0 var(--accent)}.chrow.drop-after{box-shadow:0 2px 0 var(--accent)}.navrow.drop-before{box-shadow:0 -2px 0 var(--accent)}
 .navrow.drop-after{box-shadow:0 2px 0 var(--accent)}
 #pglist .nav.sub{padding-left:6px}
 .phead{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
@@ -231,7 +231,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 #rlv.wrap{max-width:1180px}
 .nw{gap:3px}.nw-sym{color:var(--accent)}.nw-new{font-style:normal;font-size:.66rem;font-weight:800;color:#fff;background:#ef4444;border-radius:99px;padding:1px 7px}.nw-f{font-style:normal;font-size:.66rem;font-weight:800;color:var(--accent);border:1px solid var(--accent);border-radius:99px;padding:0 7px}a.nw{text-decoration:none}a.nw:hover{border-color:var(--accent)}
 #home.wrap,#newsv.wrap{max-width:1560px}
-#pagev.wrap{max-width:none;width:100%;box-sizing:border-box;padding-left:28px;padding-right:28px}#pagev .dc-stream{min-height:calc(100vh - 330px);max-height:calc(100vh - 250px)}#pagev .dc-imgs img{max-width:min(100%,1100px);max-height:760px}#pagev .dc-imgs.n2 img,#pagev .dc-imgs.n3 img,#pagev .dc-imgs.n4 img{max-width:calc(50% - 2px);max-height:520px}#pagev .dc-imgs video{max-width:min(100%,1100px);max-height:620px}
+#commnote{font-size:.78rem}#pagev.wrap{max-width:none;width:100%;box-sizing:border-box;padding-left:28px;padding-right:28px}#pagev .dc-stream{min-height:calc(100vh - 330px);max-height:calc(100vh - 250px)}#pagev .dc-imgs img{max-width:min(100%,1100px);max-height:760px}#pagev .dc-imgs.n2 img,#pagev .dc-imgs.n3 img,#pagev .dc-imgs.n4 img{max-width:calc(50% - 2px);max-height:520px}#pagev .dc-imgs video{max-width:min(100%,1100px);max-height:620px}
 #pagev .feed{max-width:none}
 .hm-cols{display:grid;grid-template-columns:330px minmax(0,1fr);gap:20px;align-items:start;margin-top:10px}.hm-side{position:sticky;top:16px;background:none;border:none;padding:0;margin:0}
 .hm-main{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:0 18px;align-items:start}.hm-main>.hm-today{grid-column:1/-1}.hm-main>section{margin-bottom:18px}
@@ -1026,8 +1026,9 @@ async function showPage(pid){var pg=pages[pid];if(!pg){showStudio();return}
  var el=$("pagev");el.hidden=false;
  var par=pg.parent&&pages[pg.parent],kids=par?[]:kidsOf(pid);
  el.innerHTML=(par?'<button class="crumb" type="button" data-go="'+esc(par.id)+'">&larr; '+esc(par.name)+'</button>':'')+'<div class="phead"><input id="pgname" class="pgname" maxlength="40" aria-label="'+(par?'Channel':'Page')+' name"><button id="pgedit" type="button" class="primary">Edit</button><button id="pgset" type="button" aria-label="Options">Options &hellip;</button></div>'+'<p class="pgdesc" id="pgdesc"'+(pg.descOn&&pg.desc?'':' hidden')+'>'+esc(pg.desc||'')+'</p>'+
-  (par?'':'<h2 class="chhead">Channels</h2><div class="chlist">'+(kids.length?kids.map(function(k,ki){return '<div class="chrow"><button class="chcard" type="button" data-go="'+esc(k.id)+'"><span class="chtx"><span># '+esc(k.name)+'</span>'+(k.descOn&&k.desc?'<small class="chdesc">'+esc(k.desc)+'</small>':'')+'</span><span class="chev">&rsaquo;</span></button><span class="chmv"><button type="button" data-chmv="-1" data-chid="'+esc(k.id)+'" aria-label="Move '+esc(k.name)+' up"'+(ki===0?' disabled':'')+'>&uarr;</button><button type="button" data-chmv="1" data-chid="'+esc(k.id)+'" aria-label="Move '+esc(k.name)+' down"'+(ki===kids.length-1?' disabled':'')+'>&darr;</button></span></div>'}).join(""):'<p class="hint" style="margin:0">No channels yet. Chat and posts live inside channels, so add one to get started.</p>')+'</div><div class="chips"><input id="chname" maxlength="40" placeholder="New channel name" aria-label="New channel name"><button class="primary" type="button" id="chadd">Add channel</button></div>')+
+  (par?'':'<h2 class="chhead">Channels</h2><div class="chlist">'+(kids.length?kids.map(function(k,ki){return '<div class="chrow" data-id="'+esc(k.id)+'"><button class="chcard" type="button" data-go="'+esc(k.id)+'"><span class="chtx"><span># '+esc(k.name)+'</span>'+(k.descOn&&k.desc?'<small class="chdesc">'+esc(k.desc)+'</small>':'')+'</span><span class="chev">&rsaquo;</span></button></div>'}).join(""):'<p class="hint" style="margin:0">No channels yet. Chat and posts live inside channels, so add one to get started.</p>')+'</div><div class="chips"><input id="chname" maxlength="40" placeholder="New channel name" aria-label="New channel name"><button class="primary" type="button" id="chadd">Add channel</button></div>')+
   (par?'<p class="hint" id="commnote" style="margin:0 0 8px"></p><div id="feed" class="dc-stream" aria-live="polite"></div>'+dcComposer({prev:"pprev",pic:"pfile",file:"pimg",ta:"ptext",send:"ppost",max:4000,ph:"Message #"+pg.name}):'<div id="feed" class="feed"></div>');
+ [].forEach.call(el.querySelectorAll(".chrow"),function(r){var cid=r.dataset.id;if(pages[cid])r.insertBefore(gripEl(cid,pages[cid].name,pid,{}),r.firstChild)});
  $("pgname").value=pg.name;try{srtBtn(pg)}catch(e){}commNote();renderSide();window.scrollTo(0,0);
  try{feedPosts=await loadPosts(pid)}catch(e){toast("Could not load this page")}
  if(curPage!==pid)return;
@@ -1082,7 +1083,7 @@ function openPageMenu(pid){var pg=pages[pid];if(!pg)return;closeMenu();var cat=!
   if(m==="del"){confirmTwice(b,"Tap again to delete",async function(){var par=pg2.parent;try{await delPage(pid);close();if(!pages[curPage]){if(par&&pages[par])showPage(par);else showStudio()}else renderSide();toast("Deleted")}catch(x){toast("Could not delete")}})}})}
 function commNote(){var el=$("commnote"),pg=pages[curPage];if(!el||!pg)return;
  if(!pg.parent){el.textContent="";return}
- el.textContent=pg.priv!==false?"Private: only you can see and post here.":pg.mem?"Members only: people you approve can see this channel"+(pg.fpost?" and chat here.":"."):"Public: anyone signed in can see this channel."+(pg.fpost?" Approved members can chat.":"")}
+ el.textContent="("+(pg.priv!==false?"Private: only you can see and post here.":pg.mem?"Members only: people you approve can see this channel"+(pg.fpost?" and chat here.":"."):"Public: anyone signed in can see this channel."+(pg.fpost?" Approved members can chat.":""))+")"}
 function openPageSettings(pid){var pg=pages[pid];if(!pg)return;var old=$("pset");if(old)old.remove();
  var kids=pg.parent?[]:kidsOf(pid).length,d=document.createElement("div");d.id="pset";d.className="psetbg";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label","Settings for "+pg.name);
  d.innerHTML='<div class="pset"><h2>'+esc(pg.name)+' <span class="pill">'+(pg.parent?"Channel":"Page")+'</span></h2>'+
@@ -1118,13 +1119,13 @@ function listFor(id){var q=pages[id];return q&&q.parent&&pages[q.parent]?kidsOf(
 function movePage(id,dir){var arr=listFor(id),i=arr.findIndex(function(p){return p.id===id}),j=i+dir;if(i<0||j<0||j>=arr.length)return;
  var t=arr[i];arr[i]=arr[j];arr[j]=t;return applyOrder(arr)}
 function movePageTo(from,to){if(!from||from===to)return;var arr=listFor(from),fi=arr.findIndex(function(p){return p.id===from}),ti=arr.findIndex(function(p){return p.id===to});
- if(fi<0||ti<0)return;var m=arr.splice(fi,1)[0];arr.splice(ti,0,m);applyOrder(arr)}
-function gripEl(id,name,par){var g=document.createElement("button");g.type="button";g.className="grip";g.dataset.id=id;
+ if(fi<0||ti<0)return;var m=arr.splice(fi,1)[0];arr.splice(ti,0,m);return applyOrder(arr)}
+function gripEl(id,name,par,cfg){var g=document.createElement("button");g.type="button";g.className="grip";g.dataset.id=id;
  g.setAttribute("aria-label","Drag to reorder "+name+". Arrow keys move it up or down.");
  g.innerHTML='<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
- g.addEventListener("keydown",function(e){if(e.key==="ArrowUp"||e.key==="ArrowDown"){e.preventDefault();movePage(id,e.key==="ArrowUp"?-1:1);var n=$("pglist").querySelector('.grip[data-id="'+id+'"]');if(n)n.focus()}});
+ g.addEventListener("keydown",function(e){if(e.key==="ArrowUp"||e.key==="ArrowDown"){e.preventDefault();if(cfg){Promise.resolve(movePage(id,e.key==="ArrowUp"?-1:1)).then(function(){return showPage(curPage)}).then(function(){var n=$("pagev").querySelector('.grip[data-id="'+id+'"]');if(n)n.focus()});return}movePage(id,e.key==="ArrowUp"?-1:1);var n=$("pglist").querySelector('.grip[data-id="'+id+'"]');if(n)n.focus()}});
  g.addEventListener("pointerdown",function(e){if(e.button>0)return;e.preventDefault();
-  var row=g.closest(".navrow"),rows=[].slice.call($("pglist").querySelectorAll(par?'.navrow.chan[data-par="'+par+'"]':".navrow:not(.chan)")),from=rows.indexOf(row),target=from;
+  var row=g.closest(cfg?".chrow":".navrow"),rows=[].slice.call((cfg?$("pagev"):$("pglist")).querySelectorAll(cfg?".chrow":par?'.navrow.chan[data-par="'+par+'"]':".navrow:not(.chan)")),from=rows.indexOf(row),target=from;
   try{g.setPointerCapture(e.pointerId)}catch(_){}
   row.classList.add("dragging");document.body.classList.add("grabbing");
   function clear(){rows.forEach(function(r){r.classList.remove("drop-before","drop-after")})}
@@ -1133,7 +1134,7 @@ function gripEl(id,name,par){var g=document.createElement("button");g.type="butt
    target=m;clear();if(m<others.length)others[m].classList.add("drop-before");else if(others.length)others[others.length-1].classList.add("drop-after")}
   function end(ev){g.removeEventListener("pointermove",move);g.removeEventListener("pointerup",end);g.removeEventListener("pointercancel",end);
    row.classList.remove("dragging");document.body.classList.remove("grabbing");clear();
-   if(ev.type==="pointerup"&&target!==from){var arr=listFor(id);if(arr[target])movePageTo(id,arr[target].id)}}
+   if(ev.type==="pointerup"&&target!==from){var arr=listFor(id);if(arr[target]){var pr=movePageTo(id,arr[target].id);if(cfg)Promise.resolve(pr).then(function(){showPage(curPage)})}}}
   g.addEventListener("pointermove",move);g.addEventListener("pointerup",end);g.addEventListener("pointercancel",end)});
  return g}
 /* Publishes calendar */
@@ -2357,7 +2358,6 @@ $("pagev").addEventListener("click",function(ev){var b=ev.target.closest&&ev.tar
  if(b.id==="ppost"){doPost();return}
  if(b.id==="pfile"){$("pimg").click();return}
  if(b.dataset.rm!=null&&b.dataset.rm!==""){pend.splice(+b.dataset.rm,1);renderPrev();return}
- if(b.dataset.chmv){var cid=b.dataset.chid;Promise.resolve(movePage(cid,+b.dataset.chmv)).then(function(){if(curPage&&pages[curPage])showPage(curPage)});return}
  if(b.dataset.go&&pages[b.dataset.go]){showPage(b.dataset.go);return}
  if(b.id==="chadd"){createChannel(curPage,$("chname").value);return}
  if(b.id==="pgedit"){openPageSettings(curPage);return}
