@@ -868,7 +868,7 @@ function renderSide(){
   var ad=document.createElement("button");ad.type="button";ad.className="x show";ad.textContent="+";ad.title="Add a channel";ad.setAttribute("aria-label","Add a channel under "+p.name);
   ad.onclick=function(ev){ev.stopPropagation();addChanFor=(addChanFor===p.id?"":p.id);renderSide();var i2=$("chanin");if(i2)i2.focus()};row.appendChild(ad);
   pl.appendChild(row);
-  (openCats[p.id]?kidsOf(p.id):[]).forEach(function(c){var cr=navRow(c.name,"",c.id===curPage&&!$("pagev").hidden,function(){showPage(c.id)},null,"");
+  (openCats[p.id]?kidsOf(p.id):[]).forEach(function(c){var cr=navRow(c.name,"",c.id===curPage&&!$("pagev").hidden,function(){showPage(c.id)},null,"",gripEl(c.id,c.name,p.id));cr.dataset.par=p.id;
    holdOpen(cr.querySelector(".nav"),c.id);
    cr.classList.add("chan");pl.appendChild(cr)});
   if(addChanFor===p.id){var ar=document.createElement("div");ar.className="chanrow";
@@ -1060,7 +1060,7 @@ function icon(k){return '<svg class="mi" viewBox="0 0 24 24" width="22" height="
 function closeMenu(){var m=$("pmenu");if(m)m.remove()}
 function openPageMenu(pid){var pg=pages[pid];if(!pg)return;closeMenu();var cat=!pg.parent,kind=cat?"category":"channel";
  function item(id,ic,label,cls){return '<button type="button" class="mitem'+(cls?' '+cls:'')+'" data-m="'+id+'">'+icon(ic)+'<span>'+label+'</span></button>'}
- var g1=(cat?item("addch","add","Create channel"):"")+item("pin","pin","Pin to top")+item("link","link","Copy link");
+ var g1=(cat?item("addch","add","Create channel"):"")+item("up","pin","Move up")+item("down","pin","Move down")+item("pin","pin","Pin to top")+item("link","link","Copy link");
  var g2=item("edit","edit","Edit "+kind)+item("dup","dup","Duplicate "+kind);
  var g3=item("del","del","Delete "+kind,"danger");
  var d=document.createElement("div");d.id="pmenu";d.className="sheetbg";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");d.setAttribute("aria-label",pg.name+" options");
@@ -1071,6 +1071,7 @@ function openPageMenu(pid){var pg=pages[pid];if(!pg)return;closeMenu();var cat=!
  d.addEventListener("click",async function(e){if(e.target===d){close();return}
   var b=e.target.closest("button[data-m]");if(!b)return;var m=b.dataset.m,pg2=pages[pid];if(!pg2)return;
   if(m==="addch"){close();await showPage(pid);var i=$("chname");if(i)i.focus();return}
+  if(m==="up"||m==="down"){close();movePage(pid,m==="up"?-1:1);return}
   if(m==="edit"){close();openPageSettings(pid);return}
   if(m==="link"){close();var u=location.origin+location.pathname+"#p="+pid;try{await navigator.clipboard.writeText(u);toast("Link copied")}catch(x){toast(u)}return}
   if(m==="pin"){close();var mn=0;Object.keys(pages).forEach(function(q){if((pages[q].parent||"")===(pg2.parent||"")&&pages[q].order<mn)mn=pages[q].order});
@@ -1111,16 +1112,17 @@ async function applyOrder(arr){var changed=[];
  arr.forEach(function(p,i){if(pages[p.id].order!==i){pages[p.id].order=i;changed.push(p.id)}});
  renderSide();
  try{for(var i=0;i<changed.length;i++)await putPage(pages[changed[i]])}catch(e){toast("Could not save the new order")}}
-function movePage(id,dir){var arr=sortedPages(),i=arr.findIndex(function(p){return p.id===id}),j=i+dir;if(i<0||j<0||j>=arr.length)return;
+function listFor(id){var q=pages[id];return q&&q.parent&&pages[q.parent]?kidsOf(q.parent):sortedPages()}
+function movePage(id,dir){var arr=listFor(id),i=arr.findIndex(function(p){return p.id===id}),j=i+dir;if(i<0||j<0||j>=arr.length)return;
  var t=arr[i];arr[i]=arr[j];arr[j]=t;applyOrder(arr)}
-function movePageTo(from,to){if(!from||from===to)return;var arr=sortedPages(),fi=arr.findIndex(function(p){return p.id===from}),ti=arr.findIndex(function(p){return p.id===to});
+function movePageTo(from,to){if(!from||from===to)return;var arr=listFor(from),fi=arr.findIndex(function(p){return p.id===from}),ti=arr.findIndex(function(p){return p.id===to});
  if(fi<0||ti<0)return;var m=arr.splice(fi,1)[0];arr.splice(ti,0,m);applyOrder(arr)}
-function gripEl(id,name){var g=document.createElement("button");g.type="button";g.className="grip";g.dataset.id=id;
+function gripEl(id,name,par){var g=document.createElement("button");g.type="button";g.className="grip";g.dataset.id=id;
  g.setAttribute("aria-label","Drag to reorder "+name+". Arrow keys move it up or down.");
  g.innerHTML='<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
  g.addEventListener("keydown",function(e){if(e.key==="ArrowUp"||e.key==="ArrowDown"){e.preventDefault();movePage(id,e.key==="ArrowUp"?-1:1);var n=$("pglist").querySelector('.grip[data-id="'+id+'"]');if(n)n.focus()}});
  g.addEventListener("pointerdown",function(e){if(e.button>0)return;e.preventDefault();
-  var row=g.closest(".navrow"),rows=[].slice.call($("pglist").querySelectorAll(".navrow:not(.chan)")),from=rows.indexOf(row),target=from;
+  var row=g.closest(".navrow"),rows=[].slice.call($("pglist").querySelectorAll(par?'.navrow.chan[data-par="'+par+'"]':".navrow:not(.chan)")),from=rows.indexOf(row),target=from;
   try{g.setPointerCapture(e.pointerId)}catch(_){}
   row.classList.add("dragging");document.body.classList.add("grabbing");
   function clear(){rows.forEach(function(r){r.classList.remove("drop-before","drop-after")})}
@@ -1129,7 +1131,7 @@ function gripEl(id,name){var g=document.createElement("button");g.type="button";
    target=m;clear();if(m<others.length)others[m].classList.add("drop-before");else if(others.length)others[others.length-1].classList.add("drop-after")}
   function end(ev){g.removeEventListener("pointermove",move);g.removeEventListener("pointerup",end);g.removeEventListener("pointercancel",end);
    row.classList.remove("dragging");document.body.classList.remove("grabbing");clear();
-   if(ev.type==="pointerup"&&target!==from){var arr=sortedPages();if(arr[target])movePageTo(id,arr[target].id)}}
+   if(ev.type==="pointerup"&&target!==from){var arr=listFor(id);if(arr[target])movePageTo(id,arr[target].id)}}
   g.addEventListener("pointermove",move);g.addEventListener("pointerup",end);g.addEventListener("pointercancel",end)});
  return g}
 /* Publishes calendar */
