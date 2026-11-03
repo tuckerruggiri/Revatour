@@ -9,7 +9,13 @@
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function clock(m) { var t = 570 + Math.max(0, Math.floor(m)), h = Math.floor(t / 60), mm = t % 60; return (h > 12 ? h - 12 : h) + ":" + (mm < 10 ? "0" : "") + mm; }
   function f2(x) { return x.toFixed(2); }
-  function nbFor() { return Math.max(24, Math.min(260, Math.round(90 / ST.z))); }
+  function nbFor() { return Math.max(12, Math.min(300, Math.round(90 / ST.z))); }
+  function zoomBy(f, p, px) { // zoom in (f>1) or out (f<1), keeping the time under the cursor fixed
+    var nz = Math.max(0.3, Math.min(8, ST.z * f)); if (nz === ST.z) return;
+    if (p && px != null) { var v = view(p), m = v.mAt(px); ST.z = nz; var nb = nbFor(), pxb = v.pw / nb; setTc((m / p.tf - (px - v.padL) / pxb + nb / 2) * p.tf); }
+    else { ST.z = nz; dirty(); }
+  }
+  function refresh() { ST.active = null; ST.sel = null; ST.msg = ""; renderInfo(); syncUI(); dirty(); }
   function data() { return PD.get(ST.stock); }
   function dirty() { ST.dirty = true; if (!raf) raf = requestAnimationFrame(frame); }
 
@@ -26,6 +32,7 @@
       ".pc-info{margin:12px 0;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:14px 16px}.pc-info h2{margin:0 0 4px;font-size:1.1rem}.pc-pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.78rem;font-weight:700;margin-left:6px;border:1px solid var(--line)}.pc-pill.l{color:var(--gain)}.pc-pill.s{color:var(--loss)}.pc-pill.x{color:var(--mute)}" +
       ".pc-steps{margin:8px 0;padding:0;list-style:none;display:grid;gap:5px}.pc-steps li{display:flex;gap:8px;line-height:1.4}.pc-steps li.t{font-weight:700}.pc-steps li.bad{color:var(--loss)}.pc-lv{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin:10px 0}.pc-lv div{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:7px 10px}.pc-lv small{display:block;color:var(--mute);font-size:.72rem}.pc-lv b{font-variant-numeric:tabular-nums}" +
       ".pc-list{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}.pc-day{width:100%;font-size:.74rem;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);margin-top:6px}.pc-ch{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:4px 10px;font:inherit;font-size:.8rem;cursor:pointer}.pc-ch.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}.pc-ch.l{border-left:3px solid var(--gain)}.pc-ch.s{border-left:3px solid var(--loss)}.pc-ch.x{border-style:dashed;color:var(--mute)}" +
+      ".pc-strip{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--bg);padding:8px 0;margin:0 0 6px;border-bottom:1px solid var(--line)}.pc-rf{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}.pc-zh{margin-left:6px}@media(max-width:899px){.pc-zh{display:none}}" +
       ".pc-nav{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.pc-hint{color:var(--mute);font-size:.84rem;line-height:1.5}";
     document.head.appendChild(s);
   }
@@ -197,11 +204,10 @@
     renderList();
   }
   function html() {
-    var h = '<div class="pc"><h1>Practice charts</h1><p class="pc-p">Made-up gap-up stocks (every day opens 2.5% above the day before) so you can practice spotting your setups. The 1, 2, 5 and 15 minute charts move together. Drag to scroll back through 5 days, then highlight an area to see the strategy that formed there. Practice data only, not real prices.</p>';
+    var h = '<div class="pc"><div class="pc-strip"><button class="pc-b pc-rf" data-pc="clear" title="Hide the setup and clear the highlight (Esc)">↻ Refresh</button><button class="pc-b" data-pc="back" title="Back 1 hour">◀</button><button class="pc-b" data-pc="fwd" title="Forward 1 hour">▶</button><button class="pc-b" data-pc="zout" title="Zoom out (Ctrl and minus)">Zoom −</button><button class="pc-b" data-pc="zin" title="Zoom in (Ctrl and plus)">Zoom +</button><button class="pc-b" data-pc="zreset" title="Reset zoom (Ctrl and 0)">Reset zoom</button><span class="pc-hint pc-zh">Ctrl + scroll wheel, or Ctrl + / Ctrl −, zooms the charts</span></div><h1>Practice charts</h1><p class="pc-p">Made-up gap-up stocks (every day opens 2.5% above the day before) so you can practice spotting your setups. The 1, 2, 5 and 15 minute charts move together. Drag to scroll back through 5 days, then highlight an area to see the strategy that formed there. Practice data only, not real prices.</p>';
     h += '<div class="pc-bar"><div class="pc-grp"><span class="pc-lab">Stock</span>' + PD.STOCKS.map(function (s, i) { return '<button class="pc-b" data-pcstock="' + i + '" title="' + esc(s.name) + '">' + s.sym + '</button>'; }).join("") + '</div>';
     h += '<div class="pc-grp"><span class="pc-lab">Jump to</span>' + [1, 2, 3, 4, 5].map(function (d) { return '<button class="pc-b" data-pcday="' + (d - 1) + '">Day ' + d + '</button>'; }).join("") + '</div>';
     h += '<div class="pc-grp"><span class="pc-lab">Drag does</span><button class="pc-b" data-pcmode="scroll">Scroll</button><button class="pc-b" data-pcmode="select">Highlight</button></div>';
-    h += '<div class="pc-grp"><button class="pc-b" data-pc="back" title="Back 1 hour">◀</button><button class="pc-b" data-pc="fwd" title="Forward 1 hour">▶</button><button class="pc-b" data-pc="zout" title="Zoom out">−</button><button class="pc-b" data-pc="zin" title="Zoom in">+</button></div>';
     h += '<div class="pc-grp"><label class="pc-ck"><input type="checkbox" data-pck="ema" checked> 9 EMA</label><label class="pc-ck"><input type="checkbox" data-pck="vwap" checked> VWAP</label><label class="pc-ck"><input type="checkbox" data-pck="mark"> Mark every setup</label><label class="pc-ck"><input type="checkbox" data-pck="wheel"' + (ST.wheel ? " checked" : "") + '> Mouse wheel scrolls time</label></div></div>';
     h += '<canvas class="pc-scrub" id="pc-scrub"></canvas><div class="pc-grid">' + TFS.map(function (t) { return '<div class="pc-pan"><div class="pc-ph"><b>' + t + ' min</b><span class="pc-ro"></span></div><canvas class="pc-cv sc" data-tf="' + t + '"></canvas></div>'; }).join("") + '</div>';
     h += '<div class="pc-info"></div><div class="pc-lab" style="margin-top:6px">Every setup in this stock (✕ = looks like one but is not)</div><div class="pc-list"></div><p class="pc-hint">Educational practice only. These are scripted charts built to show your rules, not predictions or advice. Dots in the bar above the charts are the setups: green long, red short, hollow = not a setup.</p></div>';
@@ -229,7 +235,7 @@
     cv.addEventListener("pointerup", end); cv.addEventListener("pointercancel", function () { drag = null; ST.sel = null; dirty(); });
     cv.addEventListener("pointerleave", function () { if (!drag) { ST.hover = null; dirty(); } });
     cv.addEventListener("wheel", function (e) {
-      if (e.ctrlKey || e.metaKey) { e.preventDefault(); ST.z = Math.max(0.35, Math.min(3.2, ST.z * (e.deltaY < 0 ? 1.12 : 1 / 1.12))); dirty(); return; }
+      if (e.ctrlKey || e.metaKey) { e.preventDefault(); zoomBy(Math.exp(-e.deltaY * 0.0022), p, pos(e).x); return; }
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || ST.wheel) { e.preventDefault(); var v = view(p), dx = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY; setTc(ST.tc + dx / v.pxb * p.tf * 0.6); }
     }, { passive: false });
   }
@@ -257,14 +263,18 @@
         if ((k = b.getAttribute("data-pc")) !== null) {
           var d = data(), i = d.S.indexOf(ST.active);
           if (k === "back") setTc(ST.tc - 60); else if (k === "fwd") setTc(ST.tc + 60);
-          else if (k === "zin") { ST.z = Math.min(3.2, ST.z * 1.3); dirty(); } else if (k === "zout") { ST.z = Math.max(0.35, ST.z / 1.3); dirty(); }
+          else if (k === "zin") zoomBy(1.3); else if (k === "zout") zoomBy(1 / 1.3); else if (k === "zreset") { ST.z = 1; dirty(); }
           else if (k === "prev" && i > 0) activate(d.S[i - 1], true); else if (k === "next" && i < d.S.length - 1) activate(d.S[i + 1], true);
-          else if (k === "clear") { ST.active = null; renderInfo(); syncUI(); dirty(); }
+          else if (k === "clear") refresh();
         }
       });
       root.addEventListener("change", function (e) { var k = e.target.getAttribute("data-pck"); if (k) { ST[k] = e.target.checked; dirty(); } });
       window.addEventListener("resize", function () { dirty(); });
-      document.addEventListener("keydown", function (e) { if (root.hidden || /INPUT|TEXTAREA|SELECT/.test((e.target || {}).tagName || "")) return; if (e.key === "ArrowLeft") { setTc(ST.tc - 20); e.preventDefault(); } else if (e.key === "ArrowRight") { setTc(ST.tc + 20); e.preventDefault(); } });
+      document.addEventListener("keydown", function (e) {
+        if (root.hidden || /INPUT|TEXTAREA|SELECT/.test((e.target || {}).tagName || "")) return;
+        if (e.ctrlKey || e.metaKey) { var k = e.key; if (k === "+" || k === "=") { e.preventDefault(); zoomBy(1.3); return; } if (k === "-" || k === "_") { e.preventDefault(); zoomBy(1 / 1.3); return; } if (k === "0") { e.preventDefault(); ST.z = 1; dirty(); return; } }
+        if (e.key === "Escape") { refresh(); return; }
+        if (e.key === "ArrowLeft") { setTc(ST.tc - 20); e.preventDefault(); } else if (e.key === "ArrowRight") { setTc(ST.tc + 20); e.preventDefault(); } });
       new MutationObserver(function () { if (!root.hidden) { css = null; dirty(); } }).observe(root, { attributes: true, attributeFilter: ["hidden"] });
       try { new MutationObserver(function () { css = null; dirty(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "class"] }); matchMedia("(prefers-color-scheme:dark)").addEventListener("change", function () { css = null; dirty(); }); } catch (e) { }
       setTc(nbFor()); renderInfo(); syncUI();
