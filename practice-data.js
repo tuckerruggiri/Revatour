@@ -160,8 +160,7 @@
       var ti;
       if (s > 0) { o = lc(); c = o + 0.15 * u; ti = K(s, o, c, o - 0.45 * u, c + 0.05 * u, 0.8); } else ti = trigger(s, 1.0); // long: small hammer with a higher low
       var f = finish(s, ti, out);
-      if (s > 0) return; // longs are labeled by the SL-1-RV 2' (L) rule scan below
-      reg({ name: "SL1 RV", s: s, kind: "setup", steps: [{ i: t, t: "1  First candle to touch the 9 EMA" }, { i: r, t: "2  Opposite-color candle makes a new low" }, { i: ti, t: "3  Lower-high inverted hammer/doji/inside bar = TRIGGER", trig: 1 }, { i: f.ei, t: "4  Next candle breaks the trigger low: ENTRY", entry: 1 }], trig: ti, ent: f.ei, entry: f.entry, stop: f.stop, R: f.R, end: f.end });
+      return; // both directions are labeled by the SL-1-RV 2' rule scans below
     }
     function FP9(s, anchor, out) {
       var fn = anchor === "ema" ? fnEma : fnVw; ensure(s, anchor === "ema" ? 1.0 : 1.3, fn); clear(s, fn, 6); approach(s, fn);
@@ -218,6 +217,7 @@
       for (var i = 5; i < C.length - 3; i++) {
         var m = v2find(C, E, i); if (!m || used[m.t]) continue;
         var T = C[m.t], entry = r2(T.l - 0.01), stop = r2(T.h + 0.02), Rr = Math.abs(entry - stop); if (Rr < 0.04) continue;
+        if (!(entry > V[m.t] && entry - V[m.t] >= 2 * Rr)) continue; // never short below VWAP, and only with 2R+ of room down to VWAP
         var dEnd = (Math.floor(m.e / PER) + 1) * PER - 1, won = false; // only label matches that clearly work as shorts: 1.5R before the stop (no losing examples)
         for (var jj = m.e; jj <= dEnd; jj++) { if (jj > m.e && C[jj].h >= stop) break; if (C[jj].l <= entry - 1.5 * Rr) { won = true; break; } }
         if (!won) continue;
@@ -227,7 +227,7 @@
         steps.push({ i: m.t, t: (m.g === m.t ? "The first green candle is itself a small " + m.shape : "Small " + (T.c > T.o ? "green" : "red") + " " + m.shape) + " below the high = TRIGGER", trig: 1 });
         steps.push({ i: m.e, t: "Next candle breaks the trigger low: ENTRY (stop 2 cents above the trigger high)", entry: 1 });
         steps.forEach(function (x, q) { x.t = (q + 1) + "  " + x.t; });
-        reg({ name: "SL1 RV", s: -1, ver: 2, label: "SL-1-RV 2' (S)", kind: "setup", sub: "Short version 2: the first new low after a run of higher highs, then a green candle, then a small trigger candle (inside bar, inverted hammer or doji, green or red) whose low breaks. Stop is 2 cents above the trigger high.", steps: steps, v2: m, trig: m.t, ent: m.e, entry: entry, stop: stop, R: Rr, end: m.e });
+        reg({ name: "SL1 RV", s: -1, ver: 2, label: "SL-1-RV 2' (S)", kind: "setup", sub: "Short version 2: the first new low after a run of higher highs, then a green candle, then a small trigger candle (inside bar, inverted hammer or doji, green or red) whose low breaks. Stop is 2 cents above the trigger high. Only taken above VWAP with 2R+ of room down to it.", steps: steps, v2: m, trig: m.t, ent: m.e, entry: entry, stop: stop, R: Rr, end: m.e });
         used[m.t] = 1;
       }
       for (var i = 5; i < C.length - 3; i++) {
@@ -316,6 +316,7 @@
         if (S.ver === 2) {
           var m2 = (s > 0 ? v2findL : v2find)(C, E, S.v2.nl); chk(m2 && m2.t === S.v2.t && m2.e === ei, id + " matches the SL1-RV-2' rule");
           chk(S.v2.t > S.v2.nl && S.v2.g > S.v2.nl, id + " trigger is not the new-low candle");
+          if (s < 0) chk(S.entry > V[tg] && S.entry - V[tg] >= 2 * S.R - 0.0001, id + " short has 2R+ room to VWAP and is above VWAP");
         } else if (S.name === "SL1 RV") {
           var r = S.steps[1].i;
           chk(touches(t, function (i) { return E[i]; }), id + " touch candle reaches EMA");
