@@ -113,14 +113,24 @@
       o = lc(); c = o - 0.7 * u; var B = K(1, o, c, c - 0.25 * u, o + 0.1 * u, 1.2); // step 2: breaks the low of step 1
       o = lc(); c = o + 0.45 * u; var T = K(1, o, c, o - 0.05 * u, c + 0.1 * u, 0.8); // step 3: green inside bar, lower high = trigger
       var f = finish(s, T, out);
-      reg({ name: "SL1 RV", s: s, ver: 2, kind: "setup", sub: "Short version 2: extended red candle, new low, then a green inside bar with a lower high", steps: [{ i: A, t: "1  First red candle, extended above the 9 EMA" }, { i: B, t: "2  Next candle breaks that low (new low)" }, { i: T, t: "3  Green inside bar with a lower high = TRIGGER", trig: 1 }, { i: f.ei, t: "4  Next candle breaks the trigger low: ENTRY", entry: 1 }], trig: T, ent: f.ei, entry: f.entry, stop: f.stop, R: f.R, end: f.end });
+      reg({ name: "SL1 RV", s: s, ver: 2, label: "SL1-RV-2' Short", kind: "setup", sub: "Short version 2: extended red candle, new low, then a green inside bar with a lower high", steps: [{ i: A, t: "1  First red candle, extended above the 9 EMA" }, { i: B, t: "2  Next candle breaks that low (new low)" }, { i: T, t: "3  Green inside bar with a lower high = TRIGGER", trig: 1 }, { i: f.ei, t: "4  Next candle breaks the trigger low: ENTRY", entry: 1 }], trig: T, ent: f.ei, entry: f.entry, stop: f.stop, R: f.R, end: f.end });
     }
     function dBroken() {
       var s = 1; ensure(s, 1.0, fnEma); approach(s, fnEma);
-      var o = lc(), c = r2(ema - 0.9 * u), t = K(s, o, c, c - 0.3 * u, o + 0.2 * u, 1.2);
-      o = lc(); c = o + 0.1 * u; var ti = K(s, o, c, o - 0.5 * u, c + 0.12 * u, 0.8);
-      o = lc(); c = o + 0.5 * u; var ei = K(s, o, c, o - 0.1 * u, c + 0.1 * u, 1); drift(s, 3);
-      reg({ name: "FP9-A", s: s, kind: "decoy", steps: [{ i: t, t: "1  Pullback CLOSES below the 9 EMA (it did not hold)", bad: 1 }, { i: ti, t: "2  A small candle forms, but it is below the EMA, so it is not a trigger" }, { i: ei, t: "3  Bounce fails and price keeps falling" }], trig: ti, end: C.length - 1, why: "The pullback closed below the 9 EMA, so the EMA did not hold. This only looks like an FP9-A trigger. No trade." });
+      var o = lc(), c = r2(ema - 0.9 * u), t = K(s, o, c, c - 0.3 * u, o + 0.2 * u, 1.2); // new low, closes through the EMA
+      o = lc(); c = o + 0.1 * u; var ti = K(s, o, c, o - 0.5 * u, c + 0.12 * u, 0.8); // first green candle after the new low
+      o = lc(); c = o + 0.5 * u; var ei = K(s, o, c, o - 0.1 * u, c + 0.9 * u, 1); // small green inverted hammer: long wick above the 9 EMA = trigger
+      drift(s, 3);
+      // Is this exactly your SL1-RV-2' short? Checked against the rule before it is labeled that way.
+      var A = t; while (A > 0 && Math.floor((A - 1) / PER) === Math.floor(A / PER) && C[A - 1].c < C[A - 1].o) A--;
+      var B = A + 1, e = ei + 1, stop = r2(C[ei].h + 0.01), entry = r2(C[ei].l - 0.01);
+      var ok = A < t && C[A - 1] && C[A - 1].c > C[A - 1].o && C[A].c < C[A].o && C[A].l > E[A] && (C[A].o - E[A]) >= 0.008 * C[A].o &&
+        C[B].c < C[B].o && C[B].l < C[A].l && C[ti].c > C[ti].o && C[ei].c > C[ei].o && C[ei].h < C[B].h && C[ei].l >= C[B].l && C[ei].h > E[ei] && C[e].l < C[ei].l && C[e].h < stop;
+      if (ok) {
+        reg({ name: "SL1 RV", s: -1, ver: 2, label: "SL1-RV-2' Short", kind: "setup", sub: "Short version 2: extended red candle, new low, the first green candle, then a small green inverted hammer as the trigger", steps: [{ i: A, t: "1  First red candle, extended above the 9 EMA" }, { i: B, t: "2  Next candle breaks that low (new low)" }, { i: ti, t: "3  First green candle after the new low: start looking for the trigger" }, { i: ei, t: "4  Small green inverted hammer, wick above the 9 EMA = TRIGGER", trig: 1 }, { i: e, t: "5  Next candle breaks the trigger low: ENTRY", entry: 1 }], trig: ei, ent: e, entry: entry, stop: stop, R: Math.abs(entry - stop), end: C.length - 1 });
+      } else {
+        reg({ name: "FP9-A", s: 1, kind: "decoy", steps: [{ i: t, t: "1  Pullback CLOSES below the 9 EMA (it did not hold)", bad: 1 }, { i: ti, t: "2  A small candle forms, but it is below the EMA, so it is not a trigger" }, { i: ei, t: "3  Bounce fails and price keeps falling" }], trig: ti, end: C.length - 1, why: "The pullback closed below the 9 EMA, so the EMA did not hold. This only looks like an FP9-A trigger. No trade." });
+      }
     }
     function dNoBreak() {
       var s = 1; ensure(s, 1.0, fnEma); approach(s, fnEma); var t = touch(s, "ema");
@@ -158,7 +168,7 @@
         if (!(T.c > T.o && T.h < B.h && T.l >= B.l)) continue;
         if (!(Eb.l < T.l && Eb.h < T.h + 0.01)) continue;
         var entry = r2(T.l - 0.01), stop = r2(T.h + 0.01), Rr = Math.abs(entry - stop); if (Rr < 0.04) continue;
-        reg({ name: "SL1 RV", s: -1, ver: 2, kind: "setup", sub: "Short version 2: extended red candle, new low, then a green inside bar with a lower high", steps: [{ i: i, t: "1  First red candle, extended above the 9 EMA" }, { i: i + 1, t: "2  Next candle breaks that low (new low)" }, { i: i + 2, t: "3  Green inside bar with a lower high = TRIGGER", trig: 1 }, { i: i + 3, t: "4  Next candle breaks the trigger low: ENTRY", entry: 1 }], trig: i + 2, ent: i + 3, entry: entry, stop: stop, R: Rr, end: i + 3 });
+        reg({ name: "SL1 RV", s: -1, ver: 2, label: "SL1-RV-2' Short", kind: "setup", sub: "Short version 2: extended red candle, new low, then a green inside bar with a lower high", steps: [{ i: i, t: "1  First red candle, extended above the 9 EMA" }, { i: i + 1, t: "2  Next candle breaks that low (new low)" }, { i: i + 2, t: "3  Green inside bar with a lower high = TRIGGER", trig: 1 }, { i: i + 3, t: "4  Next candle breaks the trigger low: ENTRY", entry: 1 }], trig: i + 2, ent: i + 3, entry: entry, stop: stop, R: Rr, end: i + 3 });
         used[i] = 1;
       }
     })();
@@ -227,7 +237,14 @@
         chk(s * (wi(ei) - wi(tg)) > 0, id + " entry candle breaks trigger");
         chk(s * (ag(ei) - S.stop) > 0, id + " entry candle stays above stop");
         chk(Math.abs(S.entry - wi(tg)) < 0.0101 && Math.abs(S.stop - ag(tg)) < 0.0101, id + " entry/stop sit on trigger candle");
-        if (S.ver === 2) {
+        if (S.ver === 2 && S.steps.length === 5) {
+          var A5 = S.steps[0].i, B5 = S.steps[1].i, G5 = S.steps[2].i;
+          chk(C[A5].c < C[A5].o && C[A5].l > E[A5] && (C[A5].o - E[A5]) >= 0.008 * C[A5].o && C[A5 - 1].c > C[A5 - 1].o, id + " first red candle, above and extended from the EMA, green before it");
+          chk(B5 === A5 + 1 && C[B5].c < C[B5].o && C[B5].l < C[A5].l, id + " next candle breaks the low");
+          var firstGreen = true; for (var q5 = B5 + 1; q5 < G5; q5++) if (C[q5].c > C[q5].o) firstGreen = false; chk(firstGreen && C[G5].c > C[G5].o, id + " first green candle after the new low");
+          chk(C[tg].c > C[tg].o && C[tg].h < C[B5].h && C[tg].l >= C[B5].l && C[tg].h > E[tg] && tg > G5, id + " trigger is a green inverted hammer with its wick above the EMA and a lower high");
+          chk(ei === tg + 1 && C[ei].l < C[tg].l, id + " next candle breaks the trigger low");
+        } else if (S.ver === 2) {
           var A = S.steps[0].i, B = S.steps[1].i;
           chk(C[A].c < C[A].o && C[A].l > E[A], id + " step 1 is a red candle still above the EMA");
           chk(C[A].o - E[A] >= 1.5 * 0.004 * st.start, id + " step 1 is extended above the EMA");
