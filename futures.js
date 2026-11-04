@@ -7,7 +7,8 @@
   var CSS = [
     ".fu-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}",
     ".fu-tabs button{border:1px solid var(--line);border-radius:99px;padding:7px 15px;background:var(--panel);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}",
-    ".fu-tabs button.on{background:var(--accent);border-color:var(--accent);color:#fff}",
+    ".fu-tabs button:hover{background:var(--bg);color:var(--ink);border-color:var(--accent)}",
+    ".fu-tabs button.on,.fu-tabs button.on:hover{background:var(--accent);border-color:var(--accent);color:var(--accent-ink,#fff)}",
     ".fu-card{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:16px 18px;margin:0 0 16px}",
     ".fu-card h3{margin:0 0 6px;font-size:17px}",
     ".fu-warn{border-left:4px solid #d97706;background:rgba(217,119,6,.10);border-radius:8px;padding:10px 14px;margin:10px 0;line-height:1.55}",
