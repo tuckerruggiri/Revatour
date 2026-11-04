@@ -107,10 +107,13 @@
       reg({ name: nm, s: s, kind: "setup", steps: [{ i: t, t: "1  " + first }, { i: ti, t: "2  Small candle at the " + what + " = TRIGGER", trig: 1 }, { i: f.ei, t: "3  Next candle breaks the trigger " + (s > 0 ? "high" : "low") + ": ENTRY", entry: 1 }], trig: ti, ent: f.ei, entry: f.entry, stop: f.stop, R: f.R, end: f.end });
     }
     function drift(s, n) { for (var k = 0; k < n; k++) { var o = lc(), c = o - s * (0.8 + 0.4 * R()) * u; K(s, o, c, c - s * 0.2 * u, o + s * 0.15 * u, 1); } }
-    function dNoHigh() {
-      var s = 1; ensure(s, 1.0, fnEma); approach(s, fnEma); var t = touch(s, "ema");
-      var o = lc(), c = o + 0.5 * u, r = K(s, o, c, o - 0.1 * u, c + 0.1 * u, 0.9); drift(s, 3);
-      reg({ name: "SL1 RV", s: s, kind: "decoy", steps: [{ i: t, t: "1  First candle to touch the 9 EMA" }, { i: r, t: "2  Green candle does NOT make a new high (high is below the touch candle's high)", bad: 1 }], trig: r, end: C.length - 1, why: "Step 2 failed: the opposite-color candle never made a new high, so the sequence is not started. Price then slid through the EMA. No trade." });
+    function SL1S(out) { // SL1 RV short, version 2 (your read): extended red candle, new low, green inside-bar trigger
+      var s = -1; ensure(1, 1.7, fnEma); var o = lc(), c = o + (0.9 + 0.4 * R()) * u; K(1, o, c, o - 0.1 * u, c + 0.2 * u, 1.2); // a green push so the red candle is the FIRST red
+      o = lc(); c = o - 0.9 * u; var A = K(1, o, c, c - 0.2 * u, o + 0.15 * u, 1.3); // step 1: red candle, still above the EMA and extended
+      o = lc(); c = o - 0.7 * u; var B = K(1, o, c, c - 0.25 * u, o + 0.1 * u, 1.2); // step 2: breaks the low of step 1
+      o = lc(); c = o + 0.45 * u; var T = K(1, o, c, o - 0.05 * u, c + 0.1 * u, 0.8); // step 3: green inside bar, lower high = trigger
+      var f = finish(s, T, out);
+      reg({ name: "SL1 RV", s: s, ver: 2, kind: "setup", sub: "Short version 2: extended red candle, new low, then a green inside bar with a lower high", steps: [{ i: A, t: "1  First red candle, extended above the 9 EMA" }, { i: B, t: "2  Next candle breaks that low (new low)" }, { i: T, t: "3  Green inside bar with a lower high = TRIGGER", trig: 1 }, { i: f.ei, t: "4  Next candle breaks the trigger low: ENTRY", entry: 1 }], trig: T, ent: f.ei, entry: f.entry, stop: f.stop, R: f.R, end: f.end });
     }
     function dBroken() {
       var s = 1; ensure(s, 1.0, fnEma); approach(s, fnEma);
@@ -135,7 +138,7 @@
         else if (k === "sl1") SL1(op[1], op[2], op[3]);
         else if (k === "fp9a") FP9(op[1], "ema", op[2]);
         else if (k === "fp9v") FP9(op[1], "vwap", op[2]);
-        else if (k === "noHigh") dNoHigh();
+        else if (k === "sl1s") SL1S(op[1]);
         else if (k === "broken") dBroken();
         else if (k === "noBreak") dNoBreak();
         else throw new Error("bad op " + k);
@@ -159,16 +162,16 @@
     return { sym: cfg.sym, name: cfg.name, C: C, M: M, E: E, V: V, S: S.sort(function (a, b) { return a.trig - b.trig; }), D: D };
   }
 
-  /* Day plans. ops: ["walk",candles,%move] ["fp9a",dir,outcome] ["fp9v",dir,outcome] ["sl1",dir,"A"|"B",outcome] ["noHigh"] ["broken"] ["noBreak"].
+  /* Day plans. ops: ["walk",candles,%move] ["fp9a",dir,outcome] ["fp9v",dir,outcome] ["sl1",dir,"A"|"B",outcome] ["sl1s",outcome] (SL1 RV short v2) ["broken"] ["noBreak"].
      dir 1 = long, -1 = short. outcomes: win5, win15, win07, loss. Each day is padded to 195 candles automatically. */
   function plans(k) {
     var W = ["win15", "win5", "win07", "loss"];
     function o(i) { return W[(i + k) % 4]; }
     return [
-      [["walk", 8, 2.2], ["fp9a", 1, "win15"], ["walk", 14, 1.6], ["fp9v", 1, o(2)], ["walk", 10, 1.4], ["sl1", 1, "A", "win5"], ["walk", 16, 0.3], ["noHigh"], ["walk", 24, -1.8], ["fp9a", -1, "win15"], ["walk", 6, -0.6], ["sl1", -1, "B", "win07"]],
+      [["walk", 8, 2.2], ["fp9a", 1, "win15"], ["walk", 14, 1.6], ["fp9v", 1, o(2)], ["walk", 10, 1.4], ["sl1", 1, "A", "win5"], ["walk", 16, 0.3], ["sl1s", "win15"], ["walk", 24, -1.8], ["fp9a", -1, "win15"], ["walk", 6, -0.6], ["sl1", -1, "B", "win07"]],
       [["walk", 6, 1.4], ["walk", 12, -2.2], ["sl1", 1, "B", o(1)], ["walk", 18, 1.8], ["fp9a", 1, o(0)], ["walk", 14, 1.2], ["broken"], ["walk", 20, -1.4], ["fp9v", 1, "win15"], ["walk", 12, 1.1], ["sl1", 1, "A", o(3)]],
       [["walk", 10, 3.0], ["fp9a", 1, "win5"], ["walk", 12, 0.8], ["noBreak"], ["walk", 20, 1.3], ["sl1", 1, "A", "win15"], ["walk", 18, 0.6], ["fp9v", 1, "win07"], ["walk", 28, -2.4], ["fp9a", -1, o(1)], ["walk", 8, -0.8]],
-      [["walk", 8, 1.8], ["sl1", 1, "A", "win15"], ["walk", 20, 1.5], ["noHigh"], ["walk", 12, -1.2], ["fp9v", 1, o(0)], ["walk", 20, 1.2], ["fp9a", 1, "win5"], ["walk", 22, -2.0], ["sl1", -1, "A", "win15"], ["walk", 8, -0.7], ["noBreak"]],
+      [["walk", 8, 1.8], ["sl1", 1, "A", "win15"], ["walk", 12, 1.5], ["sl1s", o(1)], ["walk", 8, -1.2], ["fp9v", 1, o(0)], ["walk", 12, 1.2], ["fp9a", 1, "win5"], ["walk", 14, -2.0], ["sl1", -1, "A", "win15"], ["walk", 6, -0.7], ["noBreak"]],
       [["walk", 7, 2.0], ["fp9a", 1, "win07"], ["walk", 16, 1.8], ["sl1", 1, "B", "win5"], ["walk", 14, 0.4], ["broken"], ["walk", 24, -2.2], ["fp9a", -1, "win15"], ["walk", 10, -0.9], ["sl1", -1, "A", o(2)], ["walk", 8, 0.5], ["fp9v", 1, "win15"]]
     ];
   }
@@ -209,7 +212,15 @@
         chk(s * (wi(ei) - wi(tg)) > 0, id + " entry candle breaks trigger");
         chk(s * (ag(ei) - S.stop) > 0, id + " entry candle stays above stop");
         chk(Math.abs(S.entry - wi(tg)) < 0.0101 && Math.abs(S.stop - ag(tg)) < 0.0101, id + " entry/stop sit on trigger candle");
-        if (S.name === "SL1 RV") {
+        if (S.ver === 2) {
+          var A = S.steps[0].i, B = S.steps[1].i;
+          chk(C[A].c < C[A].o && C[A].l > E[A], id + " step 1 is a red candle still above the EMA");
+          chk(C[A].o - E[A] >= 1.5 * 0.004 * st.start, id + " step 1 is extended above the EMA");
+          chk(C[A - 1].c > C[A - 1].o, id + " step 1 is the first red candle (green before it)");
+          chk(C[B].l < C[A].l, id + " step 2 breaks the low of step 1");
+          chk(C[tg].c > C[tg].o && C[tg].h < C[B].h && C[tg].l >= C[B].l, id + " trigger is a green inside bar with a lower high");
+          chk(tg === B + 1 && ei === tg + 1, id + " steps follow each other");
+        } else if (S.name === "SL1 RV") {
           var r = S.steps[1].i;
           chk(touches(t, function (i) { return E[i]; }), id + " touch candle reaches EMA");
           for (var q = 1; q <= 5; q++) chk(s * (ag(t - q) - E[t - q]) > 0, id + " touch is first (candle " + q + " earlier clear of EMA)");
