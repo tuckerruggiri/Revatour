@@ -77,7 +77,7 @@
   }
 
   function build(cfg) {
-    var R = rng(cfg.seed), u = cfg.start * 0.004, C = [], M = [], E = [], V = [], S = [], D = [], ema = 0, pv = 0, vv = 0, vw = 0, prev = cfg.start, sid = 0;
+    var R = rng(cfg.seed), u = cfg.start * 0.004, C = [], M = [], E = [], V = [], S = [], D = [], MA = [], csum = 0, ema = 0, pv = 0, vv = 0, vw = 0, prev = cfg.start, sid = 0;
     function lc() { return C[C.length - 1].c; }
     function prof(d) { return 0.5 + 2.6 * Math.exp(-d / 9) + (d > 170 ? 0.45 * (d - 170) / 25 : 0); }
     function bar(o, c, H, L, hH, hL, v) {
@@ -89,7 +89,7 @@
       o = r2(o); c = r2(c); h = r2(Math.max(h, o, c)); l = r2(Math.min(l, o, c));
       var i = C.length, d = i % PER, body = Math.abs(c - o) / u;
       var v = Math.max(1000, Math.round(cfg.vol * prof(d) * (0.75 + 0.5 * R()) * (1 + 0.25 * body) * (vm || 1) / 100) * 100);
-      C.push({ o: o, h: h, l: l, c: c, v: v }); ema = i ? ema + 0.2 * (c - ema) : c; E.push(ema);
+      C.push({ o: o, h: h, l: l, c: c, v: v }); csum += c; if (C.length > 200) csum -= C[C.length - 201].c; MA.push(csum / Math.min(C.length, 200)); ema = i ? ema + 0.2 * (c - ema) : c; E.push(ema);
       var m = r2(o + (c - o) * (0.35 + 0.3 * R())), hf = R() < 0.5, lf = R() < 0.5, v1 = Math.round(v * (0.45 + 0.1 * R()) / 100) * 100, v2 = v - v1;
       M.push(bar(o, m, h, l, hf, lf, v1), bar(m, c, h, l, !hf, !lf, v2)); V.push(vw);
       return i;
@@ -178,6 +178,31 @@
       var f = finish(s, T, out);
       void A; void B; void T; void f; // labeled by the rule scan below
     }
+    function IB15(out) { // SL-15 (IB): gap-up stock fades into the 200 MA, small 15m inside bar holds it, long above its high, room up to VWAP
+      var s = 1, need = (15 - (C.length % PER) % 15) % 15, ma0 = MA[C.length - 1];
+      if (need === 0 && lc() < ma0 + 6 * u) need = 15;
+      if (need > 0) { var tg = Math.max(lc(), ma0 + 22 * u); walk(need, (tg / lc() - 1) * 100); }
+      var lc0 = lc(), n0 = C.length, L0 = r2(MA[n0 - 1] + 0.4 * u);
+      for (var it = 0; it < 4; it++) { // where will the slowly moving 200 MA be once this block is built? keep the inside bar just above it
+        var sm = csum, nn = n0, cl = [], q2;
+        for (q2 = 1; q2 <= 7; q2++) cl.push(lc0 - (lc0 - (L0 + 0.3 * u)) * q2 / 7); for (q2 = 0; q2 < 8; q2++) cl.push(L0 + 0.55 * u);
+        cl.forEach(function (x) { sm += x; if (nn >= 200) sm -= C[nn - 200].c; nn++; });
+        L0 = r2(sm / Math.min(nn, 200) + 0.1 * u);
+      }
+      var D0 = lc0 - (L0 + 0.3 * u); if (D0 < 4 * u) throw new Error("sl15 fade too small");
+      var o, c, k, step = D0 / 7;
+      for (k = 0; k < 7; k++) { o = lc(); c = k === 6 ? L0 + 0.3 * u : o - step + (R() - 0.5) * 0.3 * u; K(s, o, c, k === 6 ? L0 : c - 0.2 * u * R(), o + 0.15 * u * R(), 1.2); } // the pullback bar: 7 red candles down to the 200 MA
+      var IBL = r2(L0 + 0.2 * u), IBH = r2(IBL + 0.9 * u), mid = IBL + 0.55 * u;
+      for (k = 0; k < 8; k++) { // the inside bar: 8 tiny candles inside the band, holding above the MA
+        o = lc(); c = k === 7 ? IBH - 0.35 * u : mid + (R() - 0.5) * 0.5 * u; c = Math.min(IBH - 0.15 * u, Math.max(IBL + 0.15 * u, c));
+        var lo = k === 5 ? IBL : Math.max(IBL, Math.min(o, c) - 0.05 * u * R()), hi = k === 3 ? IBH : Math.min(IBH, Math.max(o, c) + 0.15 * u * R());
+        K(s, o, c, lo, hi, 0.6);
+      }
+      var entry = r2(IBH + 0.01), stop = r2(IBL - 0.01), Rr = Math.abs(entry - stop); o = lc(); c = r2(entry + 0.5 * Rr);
+      K(s, o, c, Math.max(stop + 0.02, o - 0.1 * u * R()), c + 0.15 * Rr, 1.8);
+      var mult = (vw - entry) / Rr; if (mult < 2.3) throw new Error("sl15 VWAP room " + mult.toFixed(2)); void out;
+      run(s, entry, Rr, mult, 7);
+    }
     function dBroken() {
       var s = 1; ensure(s, 1.0, fnEma); approach(s, fnEma);
       var o = lc(), c = r2(ema - 0.9 * u), t = K(s, o, c, c - 0.3 * u, o + 0.2 * u, 1.2); // new low, closes through the EMA
@@ -203,6 +228,7 @@
         else if (k === "fp9a") FP9(op[1], "ema", op[2]);
         else if (k === "fp9v") FP9(op[1], "vwap", op[2]);
         else if (k === "sl1s") SL1S(op[1]);
+        else if (k === "sl15") IB15(op[1]);
         else if (k === "broken") dBroken();
         else if (k === "noBreak") dNoBreak();
         else throw new Error("bad op " + k);
@@ -245,6 +271,23 @@
         reg({ name: "SL1 RV", s: 1, ver: 2, label: "SL-1-RV 2' (L)", kind: "setup", sub: "Long version 2: the first new high after a run of lower lows into the 9 EMA, then a red candle, then a small trigger candle (inside bar, hammer or doji, green or red) whose high breaks. Stop is 2 cents below the trigger low.", steps: steps, v2: m, trig: m.t, ent: m.e, entry: entry, stop: stop, R: Rr, end: m.e });
         used[m.t] = 1;
       }
+      (function () { // SL-15 (IB): found by rule on the 15 minute bars (a small inside bar holding the 200 MA, 2R+ below VWAP)
+        var B = agg(M, 15), per = MIN / 15;
+        for (var j = 2; j < B.length - 1; j++) {
+          if (Math.floor((j + 1) / per) !== Math.floor((j - 1) / per) || j % per < 2) continue;
+          var A = B[j - 1], I = B[j], m1 = Math.floor((15 * j + 14) / 2), ma = MA[m1], rA = A.h - A.l, rI = I.h - I.l;
+          if (!(I.h < A.h && I.l > A.l && A.c < A.o && rI <= 0.45 * rA)) continue; // small inside bar after a pullback bar
+          if (!(I.l >= ma && I.c > ma && I.l - ma <= 2 * rI)) continue; // sitting on the 200 MA and holding it
+          var entry = r2(I.h + 0.01), stop = r2(I.l - 0.01), Rr = r2(entry - stop); if (Rr < 0.04 || !(V[m1] - entry >= 2 * Rr)) continue;
+          var dEnd = (Math.floor(m1 / PER) + 1) * PER - 1, ei = -1, won = false;
+          for (var jj = m1 + 1; jj <= dEnd && jj <= m1 + 8; jj++) { if (C[jj].l <= stop) break; if (C[jj].h >= entry) { ei = jj; break; } }
+          if (ei < 0) continue;
+          for (jj = ei; jj <= dEnd; jj++) { if (jj > ei && C[jj].l <= stop) break; if (C[jj].h >= entry + 1.5 * Rr) { won = true; break; } }
+          if (!won) continue;
+          var mA = Math.ceil(15 * (j - 1) / 2), steps = [{ i: mA, t: "1  Stock gapped up, then this pullback bar fades down into the 200 MA" }, { i: m1, t: "2  Small inside bar (inside the bar before it) sitting on the 200 MA and holding it = TRIGGER", trig: 1 }, { i: ei, t: "3  Next candle breaks the inside-bar high: ENTRY (stop under the inside-bar low). VWAP is 2R+ above", entry: 1 }];
+          reg({ name: "SL15 IB", s: 1, label: "SL-15 (IB)", kind: "setup", sub: "15 minute chart. A stock that gapped up pulls back into the 200 MA. A small inside bar holds the 200 MA with room up to VWAP. Long above the inside-bar high, stop under its low. Needs 2R+ of room to VWAP.", steps: steps, ib: { j: j, m1: m1 }, trig: m1, ent: ei, entry: entry, stop: stop, R: Rr, end: ei });
+        }
+      })();
       var v2s = S.filter(function (x) { return x.ver === 2; });
       for (var q = S.length - 1; q >= 0; q--) if (S[q].kind === "decoy" && v2s.some(function (x) { return x.steps[0].i <= S[q].end && x.ent >= S[q].steps[0].i; })) S.splice(q, 1);
     })();
@@ -260,7 +303,7 @@
       st.T = T; st.hit = hit; st.stopped = stopped; st.span = [Math.min.apply(null, st.steps.map(function (x) { return x.i; })), Math.min(dayEnd, st.end + 2)]; st.lastI = last;
     });
     S.forEach(function (st) { if (st.kind === "decoy") st.span = [st.steps[0].i, st.end]; });
-    return { sym: cfg.sym, name: cfg.name, C: C, M: M, E: E, V: V, S: S.sort(function (a, b) { return a.trig - b.trig; }), D: D };
+    return { sym: cfg.sym, name: cfg.name, C: C, M: M, E: E, V: V, MA: MA, S: S.sort(function (a, b) { return a.trig - b.trig; }), D: D };
   }
 
   /* Day plans. ops: ["walk",candles,%move] ["fp9a",dir,outcome] ["fp9v",dir,outcome] ["sl1",dir,"A"|"B",outcome] ["sl1s",outcome] (SL1 RV short v2) ["broken"] ["noBreak"].
@@ -270,7 +313,7 @@
     function o(i) { return W[(i + k) % 4]; }
     return [
       [["walk", 8, 2.2], ["fp9a", 1, "win15"], ["walk", 14, 1.6], ["fp9v", 1, o(2)], ["walk", 10, 1.4], ["sl1", 1, "A", "win5"], ["walk", 16, 0.3], ["sl1s", "win15"], ["walk", 24, -1.8], ["fp9a", -1, "win15"], ["walk", 6, -0.6], ["sl1", -1, "B", "win07"]],
-      [["walk", 6, 1.4], ["walk", 12, -2.2], ["sl1", 1, "B", o(1)], ["walk", 18, 1.8], ["fp9a", 1, o(0)], ["walk", 14, 1.2], ["broken"], ["walk", 20, -1.4], ["fp9v", 1, "win15"], ["walk", 12, 1.1], ["sl1", 1, "A", o(3)]],
+      [["walk", 5, 2.6], ["sl15", "win15"], ["sl1", 1, "B", o(1)], ["walk", 18, 1.8], ["fp9a", 1, o(0)], ["walk", 14, 1.2], ["broken"], ["walk", 20, -1.4], ["fp9v", 1, "win15"], ["walk", 12, 1.1], ["sl1", 1, "A", o(3)]],
       [["walk", 10, 3.0], ["fp9a", 1, "win5"], ["walk", 12, 0.8], ["noBreak"], ["walk", 20, 1.3], ["sl1", 1, "A", "win15"], ["walk", 18, 0.6], ["fp9v", 1, "win07"], ["walk", 28, -2.4], ["fp9a", -1, o(1)], ["walk", 8, -0.8]],
       [["walk", 8, 1.8], ["sl1", 1, "A", "win15"], ["walk", 12, 1.5], ["sl1s", o(1)], ["walk", 8, -1.2], ["fp9v", 1, o(0)], ["walk", 12, 1.2], ["fp9a", 1, "win5"], ["walk", 14, -2.0], ["sl1", -1, "A", "win15"], ["walk", 6, -0.7], ["noBreak"]],
       [["walk", 7, 2.0], ["fp9a", 1, "win07"], ["walk", 16, 1.8], ["sl1", 1, "B", "win5"], ["walk", 14, 0.4], ["broken"], ["walk", 24, -2.2], ["fp9a", -1, "win15"], ["walk", 10, -0.9], ["sl1", -1, "A", o(2)], ["walk", 8, 0.5], ["fp9v", 1, "win15"]]
@@ -308,6 +351,12 @@
       chk(C.every(function (c) { return c.c >= 10 && c.l >= 10; }), st.sym + " price above $10");
       d.S.forEach(function (S) {
         if (S.kind !== "setup") return; var s = S.s, t = S.steps[0].i, tg = S.trig, ei = S.ent, id = st.sym + " " + S.name + " #" + S.id;
+        if (S.name === "SL15 IB") {
+          var B = agg(d.M, 15), jx = S.ib.j, A = B[jx - 1], I = B[jx], ma = d.MA[S.ib.m1];
+          chk(I.h < A.h && I.l > A.l && A.c < A.o, id + " is a small inside bar after a red pullback bar");
+          chk(I.l >= ma && I.c > ma, id + " holds the 200 MA"); chk(Math.abs(S.entry - (I.h + 0.01)) < 0.0101 && Math.abs(S.stop - (I.l - 0.01)) < 0.0101, id + " entry/stop sit on the inside bar");
+          chk(C[ei].h >= S.entry && C[ei].l > S.stop, id + " entry candle breaks the inside bar high"); chk(V[S.ib.m1] - S.entry >= 2 * S.R - 0.0001, id + " has 2R+ room to VWAP"); return;
+        }
         function wi(i) { return s > 0 ? C[i].h : C[i].l; } function ag(i) { return s > 0 ? C[i].l : C[i].h; }
         function touches(i, fn) { return s * (ag(i) - fn(i)) <= 0; }
         chk(s * (wi(ei) - wi(tg)) > 0, id + " entry candle breaks trigger");
