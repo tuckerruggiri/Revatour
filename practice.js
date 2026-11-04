@@ -196,6 +196,7 @@
       h += '<button class="pc-ch ' + (s.kind === "decoy" ? "x" : s.s > 0 ? "l" : "s") + (ST.active === s ? " on" : "") + '" data-pcs="' + k + '">' + clock((s.trig % PER) * 2) + ' ' + (s.kind === "decoy" ? "✕ " : (s.s > 0 ? "▲ " : "▼ ")) + esc(s.label || s.name) + '</button>';
     });
     root.querySelector(".pc-list").innerHTML = h;
+    root.querySelector(".pc-lab2").textContent = "Every setup in this stock" + (d.S.some(function (x) { return x.kind === "decoy"; }) ? " (\u2715 = looks like one but is not)" : "");
   }
   function syncUI() {
     root.querySelectorAll("[data-pcstock]").forEach(function (b) { b.classList.toggle("on", +b.getAttribute("data-pcstock") === ST.stock); });
@@ -210,7 +211,7 @@
     h += '<div class="pc-grp"><span class="pc-lab">Drag does</span><button class="pc-b" data-pcmode="scroll">Scroll</button><button class="pc-b" data-pcmode="select">Highlight</button></div>';
     h += '<div class="pc-grp"><label class="pc-ck"><input type="checkbox" data-pck="ema" checked> 9 EMA</label><label class="pc-ck"><input type="checkbox" data-pck="vwap" checked> VWAP</label><label class="pc-ck"><input type="checkbox" data-pck="mark"> Mark every setup</label><label class="pc-ck"><input type="checkbox" data-pck="wheel"' + (ST.wheel ? " checked" : "") + '> Mouse wheel scrolls time</label></div></div>';
     h += '<canvas class="pc-scrub" id="pc-scrub"></canvas><div class="pc-grid">' + TFS.map(function (t) { return '<div class="pc-pan"><div class="pc-ph"><b>' + t + ' min</b><span class="pc-ro"></span></div><canvas class="pc-cv sc" data-tf="' + t + '"></canvas></div>'; }).join("") + '</div>';
-    h += '<div class="pc-info"></div><div class="pc-lab" style="margin-top:6px">Every setup in this stock (✕ = looks like one but is not)</div><div class="pc-list"></div><p class="pc-hint">Educational practice only. These are scripted charts built to show your rules, not predictions or advice. Dots in the bar above the charts are the setups: green long, red short, hollow = not a setup.</p></div>';
+    h += '<div class="pc-info"></div><div class="pc-lab pc-lab2" style="margin-top:6px">Every setup in this stock</div><div class="pc-list"></div><p class="pc-hint">Educational practice only. These are scripted charts built to show your rules, not predictions or advice. Dots in the bar above the charts are the setups: green long, red short, hollow = not a setup.</p></div>';
     return h;
   }
 
