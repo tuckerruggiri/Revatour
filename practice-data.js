@@ -147,6 +147,21 @@
     }
     ops.forEach(day);
     if (C.length !== PER * NDAY) throw new Error("length " + C.length);
+    // Any spot that matches your SL1-RV-2' short rule gets labeled too, so the list tells the truth.
+    (function () {
+      var used = {}; S.forEach(function (x) { if (x.ver === 2) used[x.steps[0].i] = 1; });
+      for (var i = 1; i < C.length - 3; i++) {
+        var A = C[i], B = C[i + 1], T = C[i + 2], Eb = C[i + 3];
+        if (Math.floor(i / PER) !== Math.floor((i + 3) / PER) || used[i]) continue;
+        if (!(A.c < A.o && C[i - 1].c > C[i - 1].o && A.l > E[i] && (A.o - E[i]) >= 0.012 * A.o)) continue;
+        if (!(B.c < B.o && B.l < A.l)) continue;
+        if (!(T.c > T.o && T.h < B.h && T.l >= B.l)) continue;
+        if (!(Eb.l < T.l && Eb.h < T.h + 0.01)) continue;
+        var entry = r2(T.l - 0.01), stop = r2(T.h + 0.01), Rr = Math.abs(entry - stop); if (Rr < 0.04) continue;
+        reg({ name: "SL1 RV", s: -1, ver: 2, kind: "setup", sub: "Short version 2: extended red candle, new low, then a green inside bar with a lower high", steps: [{ i: i, t: "1  First red candle, extended above the 9 EMA" }, { i: i + 1, t: "2  Next candle breaks that low (new low)" }, { i: i + 2, t: "3  Green inside bar with a lower high = TRIGGER", trig: 1 }, { i: i + 3, t: "4  Next candle breaks the trigger low: ENTRY", entry: 1 }], trig: i + 2, ent: i + 3, entry: entry, stop: stop, R: Rr, end: i + 3 });
+        used[i] = 1;
+      }
+    })();
     // Outcomes read from the data after the fact (what price really did after entry).
     S.forEach(function (st) {
       if (st.kind !== "setup") return;
@@ -165,7 +180,7 @@
   /* Day plans. ops: ["walk",candles,%move] ["fp9a",dir,outcome] ["fp9v",dir,outcome] ["sl1",dir,"A"|"B",outcome] ["sl1s",outcome] (SL1 RV short v2) ["broken"] ["noBreak"].
      dir 1 = long, -1 = short. outcomes: win5, win15, win07, loss. Each day is padded to 195 candles automatically. */
   function plans(k) {
-    var W = ["win15", "win5", "win07", "loss"];
+    var W = ["win15", "win5", "win07", "win15"]; // no losing trades: a failed long reads as a short setup (and the reverse)
     function o(i) { return W[(i + k) % 4]; }
     return [
       [["walk", 8, 2.2], ["fp9a", 1, "win15"], ["walk", 14, 1.6], ["fp9v", 1, o(2)], ["walk", 10, 1.4], ["sl1", 1, "A", "win5"], ["walk", 16, 0.3], ["sl1s", "win15"], ["walk", 24, -1.8], ["fp9a", -1, "win15"], ["walk", 6, -0.6], ["sl1", -1, "B", "win07"]],
