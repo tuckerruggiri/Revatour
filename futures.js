@@ -28,6 +28,8 @@
     "#futv .zn-tb td:first-child{white-space:nowrap}",
     "#futv .zn-ck label{display:flex;flex-direction:row;align-items:flex-start;gap:10px;color:var(--ink);font-size:15px}#futv .zn-ck label span{color:var(--ink);flex:1}#futv .zn-ck input{flex:none;width:18px;height:18px;margin:2px 0 0}",
     "#futv .fu-chk a,#futv .zn-p a{color:var(--accent)}",
+    "#futv.wrap{max-width:none;width:100%;box-sizing:border-box;padding-left:28px;padding-right:28px}#futv .zn-p{max-width:none}",
+    "@media(min-width:1100px){#fu-body{column-count:2;column-gap:16px}#fu-body>*,#fu-body>.zn-2>*,#fu-body>.fu-strat>*{break-inside:avoid}#fu-body>.zn-2,#fu-body>.fu-strat{display:contents}}@media(min-width:1900px){#fu-body{column-count:3}}",
     "@media(max-width:700px){#futv,#futv .fu-card,#futv .zn-2>div{min-width:0;max-width:100%}#futv .zn-fig{overflow-x:auto;max-width:100%}#futv .zn-fig svg{min-width:620px}}"
   ].join("");
 
