@@ -32,10 +32,10 @@
     if (!(C[i].l < C[i - 1].l)) return null;
     var j = i - 1, back = 0;
     while (j > 0 && !(C[j].h > C[j - 1].h) && back < 2) { if (C[j].l < C[j - 1].l) return null; j--; back++; }
-    var run = 0, k = j; while (k > 0 && Math.floor((k - 1) / PER) === day && C[k].h > C[k - 1].h && C[k].l >= C[k - 1].l) { run++; k--; }
-    if (run < 3 || !(C[i - 1].l > E[i - 1])) return null;
+    var run = 0, k = j; while (k > 0 && Math.floor((k - 1) / PER) === day && C[k].h > C[k - 1].h) { run++; k--; } // the run only needs higher highs (a wick below the last low does not cancel it)
+    if (run < 3 || !(C[i - 1].h > E[i - 1])) return null; // the candle before the new low may sit right on the 9 EMA
     var top = 0; for (var q = k + 1; q <= i - 1; q++) if (C[q].h > top) top = C[q].h;
-    if (top < E[i - 1] * 1.008) return null;
+    if (top < E[i - 1] * 1.004) return null;
     var g = -1; for (q = i + 1; q <= i + 3; q++) if (C[q].c > C[q].o) { g = q; break; } if (g < 0) return null;
     var skipped = null;
     for (var t = g; t <= g + 3 && t + 1 < C.length && Math.floor((t + 1) / PER) === day; t++) {
