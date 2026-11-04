@@ -23,6 +23,7 @@
  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000000;--panel:#0f0f0f;--ink:#f2f2f2;--mute:#9a9a9a;--line:#2a2a2a;--gain:#3ecfae;--loss:#ff7b72;--accent:#f2f2f2;--accent-ink:#000;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#000000;--panel:#0f0f0f;--ink:#f2f2f2;--mute:#9a9a9a;--line:#2a2a2a;--gain:#3ecfae;--loss:#ff7b72;--accent:#f2f2f2;--accent-ink:#000;color-scheme:dark}
+:root{--muted:var(--mute)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
