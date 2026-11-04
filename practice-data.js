@@ -182,7 +182,7 @@
         steps.push({ i: m.t, t: (m.g === m.t ? "First green candle is small with a lower high" : (T.c > T.o ? "Small green candle (inverted hammer / inside bar) with a lower high" : "Small red candle with a lower high")) + " = TRIGGER", trig: 1 });
         steps.push({ i: m.e, t: "Next candle breaks the trigger low: ENTRY", entry: 1 });
         steps.forEach(function (x, q) { x.t = (q + 1) + "  " + x.t; });
-        reg({ name: "SL1 RV", s: -1, ver: 2, label: "SL1-RV-2' Short", kind: "setup", sub: "Short version 2: the first new low after a run of higher highs, then a green candle, then a small trigger candle (green or red) whose low breaks", steps: steps, v2: m, trig: m.t, ent: m.e, entry: entry, stop: stop, R: Rr, end: m.e });
+        reg({ name: "SL1 RV", s: -1, ver: 2, label: "SL-1-RV 2' (S)", kind: "setup", sub: "Short version 2: the first new low after a run of higher highs, then a green candle, then a small trigger candle (green or red) whose low breaks", steps: steps, v2: m, trig: m.t, ent: m.e, entry: entry, stop: stop, R: Rr, end: m.e });
         used[m.t] = 1;
       }
       var v2s = S.filter(function (x) { return x.ver === 2; });
