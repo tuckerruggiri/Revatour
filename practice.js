@@ -3,7 +3,7 @@
 (function () {
   "use strict";
   var PD = window.PracticeData, TFS = [1, 2, 5, 15], MIN = PD.MIN, PER = PD.PER, TOTAL = MIN * PD.NDAY;
-  var ST = { stock: 0, tc: 0, z: 1, mode: "scroll", ema: true, vwap: true, mark: false, wheel: window.innerWidth >= 900, active: null, hover: null, sel: null, msg: "", dirty: true, mounted: false };
+  var ST = { stock: 0, tc: 0, z: 1, mode: "scroll", ema: true, vwap: true, ma: true, mark: false, wheel: window.innerWidth >= 900, active: null, hover: null, sel: null, msg: "", dirty: true, mounted: false };
   var P = [], root, dataFor, scrub, raf = 0, css = null;
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
@@ -41,12 +41,12 @@
     var cs = getComputedStyle(document.documentElement), g = function (n, d) { return (cs.getPropertyValue(n) || "").trim() || d; };
     css = { gain: g("--gain", "#0b6b5a"), loss: g("--loss", "#b3261e"), ink: g("--ink", "#111"), mute: g("--mute", "#777"), line: g("--line", "#ddd"), panel: g("--panel", "#fff"), bg: g("--bg", "#f3f3f3"), accent: g("--accent", "#111") };
     css.dark = /^#?(0|1)[0-9a-f]{5}$/i.test(css.panel.replace("#", "")) || css.panel === "#0f0f0f";
-    css.ema = css.dark ? "#f5b942" : "#c27c00"; css.vw = css.dark ? "#b79cff" : "#6d3fd1"; css.hl = css.dark ? "#ffffff" : "#000000";
+    css.ema = css.dark ? "#f5b942" : "#c27c00"; css.vw = css.dark ? "#b79cff" : "#6d3fd1"; css.ma = css.dark ? "#5ec8ff" : "#0a6cc4"; css.hl = css.dark ? "#ffffff" : "#000000";
   }
 
   /* ---------- data per timeframe ---------- */
   function loadPanels() {
-    var d = data(); P.forEach(function (p) { p.bars = PD.agg(d.M, p.tf); });
+    var d = data(); P.forEach(function (p) { p.bars = PD.agg(d.M, p.tf); p.bars.forEach(function (b, q) { b.m = d.MA[Math.min(d.MA.length - 1, Math.floor(((q + 1) * p.tf - 1) / 2))]; }); });
   }
   function view(p) {
     var cv = p.cv, W = cv.clientWidth, H = cv.clientHeight, padL = 4, padR = 74, padT = 8, padB = 20, volH = Math.round(H * 0.14), nb = nbFor();
@@ -100,7 +100,7 @@
         if (!on) { g.moveTo(xq, yv); on = true; } else g.lineTo(xq, yv);
       } g.stroke(); g.lineWidth = 1;
     }
-    if (ST.ema) line("e", css.ema, false); if (ST.vwap) line("w", css.vw, true);
+    if (ST.ema) line("e", css.ema, false); if (ST.vwap) line("w", css.vw, true); if (ST.ma) line("m", css.ma, false);
     // time axis
     var minStep = 70 / v.pxb * tf, cand = [5, 10, 15, 30, 60, 120, 195, 390], ts = 390; for (var q = 0; q < cand.length; q++) if (cand[q] >= minStep && cand[q] % tf === 0) { ts = cand[q]; break; }
     g.fillStyle = css.mute; g.textAlign = "center"; g.textBaseline = "alphabetic";
@@ -124,7 +124,7 @@
       var xh = v.xm(Math.floor(h.m / tf) * tf + tf / 2); g.strokeStyle = css.mute; g.globalAlpha = .7; g.setLineDash([2, 3]); g.beginPath(); g.moveTo(Math.round(xh) + .5, top); g.lineTo(Math.round(xh) + .5, bot + v.volH + 6); if (h.p === p) { g.moveTo(v.padL, Math.round(h.y) + .5); g.lineTo(v.W - v.padR, Math.round(h.y) + .5); } g.stroke(); g.setLineDash([]); g.globalAlpha = 1;
       if (h.p === p && h.y >= top && h.y <= bot) { var pv = hi - (h.y - top) / v.ph * (hi - lo); g.fillStyle = css.ink; g.fillRect(v.W - v.padR + 1, h.y - 8, v.padR - 2, 16); g.fillStyle = css.panel; g.textAlign = "left"; g.fillText(f2(pv), v.W - v.padR + 6, h.y); }
       var bi = Math.floor(h.m / tf), bq = bars[bi]; if (bq) ro.textContent = "D" + (Math.floor(bi * tf / MIN) + 1) + " " + clock((bi * tf) % MIN) + "   O " + f2(bq.o) + "  H " + f2(bq.h) + "  L " + f2(bq.l) + "  C " + f2(bq.c) + "  V " + Math.round(bq.v / 1000) + "k"; else ro.textContent = "";
-    } else { var lb = bars[Math.min(bars.length - 1, Math.max(0, Math.floor(ST.tc / tf)))]; ro.textContent = lb ? "C " + f2(lb.c) + "   EMA " + f2(lb.e) + "   VWAP " + f2(lb.w) : ""; }
+    } else { var lb = bars[Math.min(bars.length - 1, Math.max(0, Math.floor(ST.tc / tf)))]; ro.textContent = lb ? "C " + f2(lb.c) + "   EMA " + f2(lb.e) + "   VWAP " + f2(lb.w) + "   200 MA " + f2(lb.m) : ""; }
   }
 
   function overlay(g, p, v, Y, top, bot) {
@@ -209,7 +209,7 @@
     h += '<div class="pc-bar"><div class="pc-grp"><span class="pc-lab">Stock</span>' + PD.STOCKS.map(function (s, i) { return '<button class="pc-b" data-pcstock="' + i + '" title="' + esc(s.name) + '">' + s.sym + '</button>'; }).join("") + '</div>';
     h += '<div class="pc-grp"><span class="pc-lab">Jump to</span>' + [1, 2, 3, 4, 5].map(function (d) { return '<button class="pc-b" data-pcday="' + (d - 1) + '">Day ' + d + '</button>'; }).join("") + '</div>';
     h += '<div class="pc-grp"><span class="pc-lab">Drag does</span><button class="pc-b" data-pcmode="scroll">Scroll</button><button class="pc-b" data-pcmode="select">Highlight</button></div>';
-    h += '<div class="pc-grp"><label class="pc-ck"><input type="checkbox" data-pck="ema" checked> 9 EMA</label><label class="pc-ck"><input type="checkbox" data-pck="vwap" checked> VWAP</label><label class="pc-ck"><input type="checkbox" data-pck="mark"> Mark every setup</label><label class="pc-ck"><input type="checkbox" data-pck="wheel"' + (ST.wheel ? " checked" : "") + '> Mouse wheel scrolls time</label></div></div>';
+    h += '<div class="pc-grp"><label class="pc-ck"><input type="checkbox" data-pck="ema" checked> 9 EMA</label><label class="pc-ck"><input type="checkbox" data-pck="vwap" checked> VWAP</label><label class="pc-ck"><input type="checkbox" data-pck="ma" checked> 200 MA</label><label class="pc-ck"><input type="checkbox" data-pck="mark"> Mark every setup</label><label class="pc-ck"><input type="checkbox" data-pck="wheel"' + (ST.wheel ? " checked" : "") + '> Mouse wheel scrolls time</label></div></div>';
     h += '<canvas class="pc-scrub" id="pc-scrub"></canvas><div class="pc-grid">' + TFS.map(function (t) { return '<div class="pc-pan"><div class="pc-ph"><b>' + t + ' min</b><span class="pc-ro"></span></div><canvas class="pc-cv sc" data-tf="' + t + '"></canvas></div>'; }).join("") + '</div>';
     h += '<div class="pc-info"></div><div class="pc-lab pc-lab2" style="margin-top:6px">Every setup in this stock</div><div class="pc-list"></div><p class="pc-hint">Educational practice only. These are scripted charts built to show your rules, not predictions or advice. Dots in the bar above the charts are the setups: green long, red short, hollow = not a setup.</p></div>';
     return h;
