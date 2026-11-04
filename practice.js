@@ -112,7 +112,7 @@
       if (!ST.mark && s !== A) return; var jb = barIdxAt(p, s.trig); if (jb < j0 || jb > j1) return; var b2 = bars[jb], x = v.x(jb), long = s.s > 0;
       if (s.kind === "decoy") { g.fillStyle = css.mute; g.textAlign = "center"; g.fillText("✕", x, Y(b2.l) + 12); return; }
       g.fillStyle = long ? css.gain : css.loss; g.beginPath(); if (long) { g.moveTo(x, Y(b2.l) + 4); g.lineTo(x - 5, Y(b2.l) + 12); g.lineTo(x + 5, Y(b2.l) + 12); } else { g.moveTo(x, Y(b2.h) - 4); g.lineTo(x - 5, Y(b2.h) - 12); g.lineTo(x + 5, Y(b2.h) - 12); } g.fill();
-      if (ST.mark && v.pxb >= 5) { g.textAlign = "center"; g.fillText(s.name, x, long ? Y(b2.l) + 22 : Y(b2.h) - 22); }
+      if (ST.mark && v.pxb >= 5) { g.textAlign = "center"; g.fillText(s.label || s.name, x, long ? Y(b2.l) + 22 : Y(b2.h) - 22); }
     });
     // active setup overlay
     if (A) overlay(g, p, v, Y, top, bot);
@@ -183,7 +183,7 @@
     if (!A) { el.innerHTML = '<h2>Find the strategy</h2><p class="pc-hint">' + (ST.msg ? esc(ST.msg) + ' ' : '') + 'Scroll back through the 5 days, find where a setup formed, then press <b>Highlight</b> (or hold Shift) and drag across that area on any chart. The strategy appears on all four charts: numbered steps, an arrow on the trigger candle, and your entry, stop and 0.7R / 1.5R / 5R lines. Or tap a setup in the list below.</p>'; return; }
     var day = Math.floor(A.trig / PER) + 1, rules = "";
     A.steps.forEach(function (st) { rules += '<li class="' + (st.trig ? "t " : "") + (st.bad ? "bad" : "") + '"><span>' + esc(st.t) + '</span></li>'; });
-    var h = '<h2>' + (A.kind === "decoy" ? "Not a setup: looks like " + esc(A.name) : esc(A.name)) + '<span class="pc-pill ' + (A.kind === "decoy" ? "x" : A.s > 0 ? "l" : "s") + '">' + (A.kind === "decoy" ? "NO TRADE" : A.s > 0 ? "LONG" : "SHORT") + '</span></h2><div class="pc-hint">' + esc(d.sym) + ' &middot; Day ' + day + ' &middot; trigger candle at ' + clock((A.trig % PER) * 2) + ' on the 2-minute chart</div>' + (A.sub ? '<div class="pc-hint">' + esc(A.sub) + '</div>' : '') + '<ul class="pc-steps">' + rules + '</ul>';
+    var h = '<h2>' + (A.kind === "decoy" ? "Not a setup: looks like " + esc(A.name) : esc(A.label || A.name)) + '<span class="pc-pill ' + (A.kind === "decoy" ? "x" : A.s > 0 ? "l" : "s") + '">' + (A.kind === "decoy" ? "NO TRADE" : A.s > 0 ? "LONG" : "SHORT") + '</span></h2><div class="pc-hint">' + esc(d.sym) + ' &middot; Day ' + day + ' &middot; trigger candle at ' + clock((A.trig % PER) * 2) + ' on the 2-minute chart</div>' + (A.sub ? '<div class="pc-hint">' + esc(A.sub) + '</div>' : '') + '<ul class="pc-steps">' + rules + '</ul>';
     if (A.kind === "decoy") h += '<p style="margin:6px 0"><b>Why it fails:</b> ' + esc(A.why) + '</p>';
     else h += '<div class="pc-lv"><div><small>Entry</small><b>' + f2(A.entry) + '</b></div><div><small>Stop (1R = ' + f2(A.R) + ')</small><b>' + f2(A.stop) + '</b></div><div><small>0.7R</small><b>' + f2(A.T[0]) + '</b></div><div><small>1.5R</small><b>' + f2(A.T[1]) + '</b></div><div><small>5R</small><b>' + f2(A.T[2]) + '</b></div></div><p style="margin:6px 0"><b>What happened:</b> ' + outcomeText(A) + '</p>';
     var i = d.S.indexOf(A);
@@ -193,7 +193,7 @@
   function renderList() {
     var d = data(), h = "", cur = -1; d.S.forEach(function (s, k) {
       var dn = Math.floor(s.trig / PER); if (dn !== cur) { cur = dn; h += '<div class="pc-day">Day ' + (dn + 1) + '</div>'; }
-      h += '<button class="pc-ch ' + (s.kind === "decoy" ? "x" : s.s > 0 ? "l" : "s") + (ST.active === s ? " on" : "") + '" data-pcs="' + k + '">' + clock((s.trig % PER) * 2) + ' ' + (s.kind === "decoy" ? "✕ " : (s.s > 0 ? "▲ " : "▼ ")) + esc(s.name) + '</button>';
+      h += '<button class="pc-ch ' + (s.kind === "decoy" ? "x" : s.s > 0 ? "l" : "s") + (ST.active === s ? " on" : "") + '" data-pcs="' + k + '">' + clock((s.trig % PER) * 2) + ' ' + (s.kind === "decoy" ? "✕ " : (s.s > 0 ? "▲ " : "▼ ")) + esc(s.label || s.name) + '</button>';
     });
     root.querySelector(".pc-list").innerHTML = h;
   }
