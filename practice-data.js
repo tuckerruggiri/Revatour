@@ -46,6 +46,36 @@
     return null;
   }
 
+  /* SL-1-RV 2' long = the mirror: a run of candles that keep breaking each other's lows (it reaches the 9 EMA), then the FIRST NEW HIGH (candle i).
+     After it, the first red candle (g) starts the search, then a trigger candle t (green or red, never the new-high candle) with a higher low
+     and a smaller range than the new-high candle. The long is the next candle breaking the trigger's high. Stop is 2 cents below the trigger low. */
+  function v2shapeL(C, t, bot) {
+    var c = C[t], rg = c.h - c.l; if (rg <= 0 || c.l <= bot) return "";
+    var body = Math.abs(c.c - c.o), up = c.h - Math.max(c.o, c.c), dn = Math.min(c.o, c.c) - c.l;
+    if (t > 0 && c.h <= C[t - 1].h && c.l >= C[t - 1].l) return "inside bar";
+    if (body <= 0.15 * rg) return "doji";
+    if (body <= 0.4 * rg && dn >= 0.5 * rg && up <= 0.2 * rg) return "hammer";
+    return "";
+  }
+  function v2findL(C, E, i) {
+    if (i < 5 || i + 3 >= C.length) return null; var day = Math.floor(i / PER); if (Math.floor((i + 3) / PER) !== day) return null;
+    if (!(C[i].h > C[i - 1].h)) return null;
+    var j = i - 1, back = 0;
+    while (j > 0 && !(C[j].l < C[j - 1].l) && back < 2) { if (C[j].h > C[j - 1].h) return null; j--; back++; }
+    var run = 0, k = j; while (k > 0 && Math.floor((k - 1) / PER) === day && C[k].l < C[k - 1].l && C[k].h <= C[k - 1].h) { run++; k--; }
+    if (run < 1 || !(C[j].c < C[j].o)) return null; // the low is a red candle that makes a lower low
+    var bot = 1e9; for (var q = k + 1; q <= i - 1; q++) if (C[q].l < bot) bot = C[q].l;
+    if (bot > E[i - 1] * 1.004) return null; // the pullback reaches the 9 EMA
+    var g = -1; for (q = i + 1; q <= i + 3; q++) if (C[q].c < C[q].o) { g = q; break; } if (g < 0) return null;
+    var skipped = null;
+    for (var t = g; t <= g + 3 && t + 1 < C.length && Math.floor((t + 1) / PER) === day; t++) {
+      var T = C[t], Eb = C[t + 1], sh = v2shapeL(C, t, bot); if (!sh || (T.h - T.l) >= (C[i].h - C[i].l)) continue;
+      if (Eb.h > T.h && Eb.l > r2(T.l - 0.02)) return { runStart: k + 1, runEnd: j, nl: i, g: g, t: t, e: t + 1, shape: sh, skipped: skipped };
+      if (!skipped) skipped = { i: t, shape: sh };
+    }
+    return null;
+  }
+
   function build(cfg) {
     var R = rng(cfg.seed), u = cfg.start * 0.004, C = [], M = [], E = [], V = [], S = [], D = [], ema = 0, pv = 0, vv = 0, vw = 0, prev = cfg.start, sid = 0;
     function lc() { return C[C.length - 1].c; }
@@ -125,9 +155,13 @@
     function SL1(s, variant, out) {
       ensure(s, 1.0, fnEma); clear(s, fnEma, 6); approach(s, fnEma); var t = touch(s, "ema");
       var o = lc(), wi = wiOf(s, t) + s * 0.5 * u, c = o + s * Math.min(1.5 * u, s * (wi - o) - 0.25 * u), r = K(s, o, c, o - s * 0.15 * u, wi, 1.2);
+      if (s > 0) { o = lc(); c = o - 0.5 * u; K(s, o, c, c - 0.2 * u, o + 0.1 * u, 0.8); } // the red candle after the new high (SL-1-RV 2' long needs it)
       if (variant === "B") { o = lc(); c = o - s * 0.5 * u; K(s, o, c, c - s * 0.2 * u, o + s * 0.1 * u, 0.8); }
-      var ti = trigger(s, 1.0), f = finish(s, ti, out);
-      reg({ name: "SL1 RV", s: s, kind: "setup", steps: [{ i: t, t: "1  First candle to touch the 9 EMA" }, { i: r, t: "2  Opposite-color candle makes a new " + hl(s) }, { i: ti, t: "3  " + (s > 0 ? "Higher-low hammer/doji/inside bar" : "Lower-high inverted hammer/doji/inside bar") + " = TRIGGER", trig: 1 }, { i: f.ei, t: "4  Next candle breaks the trigger " + (s > 0 ? "high" : "low") + ": ENTRY", entry: 1 }], trig: ti, ent: f.ei, entry: f.entry, stop: f.stop, R: f.R, end: f.end });
+      var ti;
+      if (s > 0) { o = lc(); c = o + 0.15 * u; ti = K(s, o, c, o - 0.45 * u, c + 0.05 * u, 0.8); } else ti = trigger(s, 1.0); // long: small hammer with a higher low
+      var f = finish(s, ti, out);
+      if (s > 0) return; // longs are labeled by the SL-1-RV 2' (L) rule scan below
+      reg({ name: "SL1 RV", s: s, kind: "setup", steps: [{ i: t, t: "1  First candle to touch the 9 EMA" }, { i: r, t: "2  Opposite-color candle makes a new low" }, { i: ti, t: "3  Lower-high inverted hammer/doji/inside bar = TRIGGER", trig: 1 }, { i: f.ei, t: "4  Next candle breaks the trigger low: ENTRY", entry: 1 }], trig: ti, ent: f.ei, entry: f.entry, stop: f.stop, R: f.R, end: f.end });
     }
     function FP9(s, anchor, out) {
       var fn = anchor === "ema" ? fnEma : fnVw; ensure(s, anchor === "ema" ? 1.0 : 1.3, fn); clear(s, fn, 6); approach(s, fn);
@@ -157,7 +191,7 @@
       var s = 1; ensure(s, 1.0, fnEma); approach(s, fnEma); var t = touch(s, "ema");
       var o = lc(), wi = wiOf(s, t) + 0.5 * u, c = o + Math.min(1.5 * u, wi - o - 0.25 * u), r = K(s, o, c, o - 0.15 * u, wi, 1.2);
       var ti = trigger(s, 1.0); o = lc(); c = o - 0.4 * u; var nb = K(s, o, c, c - 0.2 * u, o, 0.7); drift(s, 3);
-      reg({ name: "SL1 RV", s: s, kind: "decoy", steps: [{ i: t, t: "1  First candle to touch the 9 EMA" }, { i: r, t: "2  Opposite-color candle makes a new high" }, { i: ti, t: "3  Higher-low hammer = TRIGGER" }, { i: nb, t: "4  Next candle does NOT break the trigger high: no entry", bad: 1 }], trig: ti, end: C.length - 1, why: "Everything formed except the last step. The next candle never broke the trigger high, so you never enter. This is where you stay out." });
+      reg({ name: "SL1 RV", label: "SL-1-RV 2' (L)", s: s, kind: "decoy", steps: [{ i: t, t: "1  First candle to touch the 9 EMA" }, { i: r, t: "2  Opposite-color candle makes a new high" }, { i: ti, t: "3  Higher-low hammer = TRIGGER" }, { i: nb, t: "4  Next candle does NOT break the trigger high: no entry", bad: 1 }], trig: ti, end: C.length - 1, why: "Everything formed except the last step. The next candle never broke the trigger high, so you never enter. This is where you stay out." });
     }
 
     var ops = cfg.plan, d = -1;
@@ -194,6 +228,21 @@
         steps.push({ i: m.e, t: "Next candle breaks the trigger low: ENTRY (stop 2 cents above the trigger high)", entry: 1 });
         steps.forEach(function (x, q) { x.t = (q + 1) + "  " + x.t; });
         reg({ name: "SL1 RV", s: -1, ver: 2, label: "SL-1-RV 2' (S)", kind: "setup", sub: "Short version 2: the first new low after a run of higher highs, then a green candle, then a small trigger candle (inside bar, inverted hammer or doji, green or red) whose low breaks. Stop is 2 cents above the trigger high.", steps: steps, v2: m, trig: m.t, ent: m.e, entry: entry, stop: stop, R: Rr, end: m.e });
+        used[m.t] = 1;
+      }
+      for (var i = 5; i < C.length - 3; i++) {
+        var m = v2findL(C, E, i); if (!m || used[m.t]) continue;
+        var T = C[m.t], entry = r2(T.h + 0.01), stop = r2(T.l - 0.02), Rr = Math.abs(entry - stop); if (Rr < 0.04) continue;
+        var dEnd = (Math.floor(m.e / PER) + 1) * PER - 1, won = false;
+        for (var jj = m.e; jj <= dEnd; jj++) { if (jj > m.e && C[jj].l <= stop) break; if (C[jj].h >= entry + 1.5 * Rr) { won = true; break; } }
+        if (!won) continue;
+        var steps = [{ i: m.runEnd, t: "Candles keep breaking each other's lows, down to the 9 EMA (this is the low)" }, { i: m.nl, t: "First new high after that run" }];
+        if (m.g !== m.t) steps.push({ i: m.g, t: m.skipped && m.skipped.i === m.g ? "First red candle (" + m.skipped.shape + ") looks like a trigger, but the next candle never breaks its high, so keep moving" : "First red candle after the new high: start looking for the trigger" });
+        if (m.skipped && m.skipped.i !== m.g && m.skipped.i !== m.t) steps.push({ i: m.skipped.i, t: "Another " + m.skipped.shape + " that the next candle never breaks: keep moving" });
+        steps.push({ i: m.t, t: (m.g === m.t ? "The first red candle is itself a small " + m.shape : "Small " + (T.c > T.o ? "green" : "red") + " " + m.shape) + " above the low = TRIGGER", trig: 1 });
+        steps.push({ i: m.e, t: "Next candle breaks the trigger high: ENTRY (stop 2 cents below the trigger low)", entry: 1 });
+        steps.forEach(function (x, q) { x.t = (q + 1) + "  " + x.t; });
+        reg({ name: "SL1 RV", s: 1, ver: 2, label: "SL-1-RV 2' (L)", kind: "setup", sub: "Long version 2: the first new high after a run of lower lows into the 9 EMA, then a red candle, then a small trigger candle (inside bar, hammer or doji, green or red) whose high breaks. Stop is 2 cents below the trigger low.", steps: steps, v2: m, trig: m.t, ent: m.e, entry: entry, stop: stop, R: Rr, end: m.e });
         used[m.t] = 1;
       }
       var v2s = S.filter(function (x) { return x.ver === 2; });
@@ -265,7 +314,7 @@
         chk(s * (ag(ei) - S.stop) > 0, id + " entry candle stays above stop");
         chk(Math.abs(S.entry - wi(tg)) < 0.0101 && Math.abs(S.stop - ag(tg)) < (S.ver === 2 ? 0.0201 : 0.0101), id + " entry/stop sit on trigger candle");
         if (S.ver === 2) {
-          var m2 = v2find(C, E, S.v2.nl); chk(m2 && m2.t === S.v2.t && m2.e === ei, id + " matches the SL1-RV-2' rule");
+          var m2 = (s > 0 ? v2findL : v2find)(C, E, S.v2.nl); chk(m2 && m2.t === S.v2.t && m2.e === ei, id + " matches the SL1-RV-2' rule");
           chk(S.v2.t > S.v2.nl && S.v2.g > S.v2.nl, id + " trigger is not the new-low candle");
         } else if (S.name === "SL1 RV") {
           var r = S.steps[1].i;
