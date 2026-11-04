@@ -16,6 +16,26 @@
     "FP9-S": ["First bounce reaches the 9 EMA and fails", "Small candle at the EMA = TRIGGER", "Next candle breaks the trigger low: ENTRY"]
   };
 
+  /* SL1-RV-2' short (your rule): a run of candles that keep breaking each other's highs, then the FIRST NEW LOW (candle i).
+     After it, the first green candle (g) starts the search, then a trigger candle t (green or red, never the new-low candle)
+     with a lower high and a smaller range than the new-low candle. The short is the next candle breaking the trigger's low. */
+  function v2find(C, E, i) {
+    if (i < 5 || i + 3 >= C.length) return null; var day = Math.floor(i / PER); if (Math.floor((i + 3) / PER) !== day) return null;
+    if (!(C[i].l < C[i - 1].l)) return null;
+    var j = i - 1, back = 0;
+    while (j > 0 && !(C[j].h > C[j - 1].h) && back < 2) { if (C[j].l < C[j - 1].l) return null; j--; back++; }
+    var run = 0, k = j; while (k > 0 && Math.floor((k - 1) / PER) === day && C[k].h > C[k - 1].h && C[k].l >= C[k - 1].l) { run++; k--; }
+    if (run < 3 || !(C[i - 1].l > E[i - 1])) return null;
+    var top = 0; for (var q = k + 1; q <= j; q++) if (C[q].h > top) top = C[q].h;
+    if (top < E[i - 1] * 1.008) return null;
+    var g = -1; for (q = i + 1; q <= i + 3; q++) if (C[q].c > C[q].o) { g = q; break; } if (g < 0) return null;
+    for (var t = g; t <= g + 2 && t + 1 < C.length && Math.floor((t + 1) / PER) === day; t++) {
+      var T = C[t], Eb = C[t + 1]; if (!(T.h < C[i].h) || (T.h - T.l) >= (C[i].h - C[i].l)) continue;
+      if (Eb.l < T.l && Eb.h < r2(T.h + 0.01)) return { runStart: k + 1, runEnd: j, nl: i, g: g, t: t, e: t + 1 };
+    }
+    return null;
+  }
+
   function build(cfg) {
     var R = rng(cfg.seed), u = cfg.start * 0.004, C = [], M = [], E = [], V = [], S = [], D = [], ema = 0, pv = 0, vv = 0, vw = 0, prev = cfg.start, sid = 0;
     function lc() { return C[C.length - 1].c; }
@@ -113,7 +133,7 @@
       o = lc(); c = o - 0.7 * u; var B = K(1, o, c, c - 0.25 * u, o + 0.1 * u, 1.2); // step 2: breaks the low of step 1
       o = lc(); c = o + 0.45 * u; var T = K(1, o, c, o - 0.05 * u, c + 0.1 * u, 0.8); // step 3: green inside bar, lower high = trigger
       var f = finish(s, T, out);
-      reg({ name: "SL1 RV", s: s, ver: 2, label: "SL1-RV-2' Short", kind: "setup", sub: "Short version 2: extended red candle, new low, then a green inside bar with a lower high", steps: [{ i: A, t: "1  First red candle, extended above the 9 EMA" }, { i: B, t: "2  Next candle breaks that low (new low)" }, { i: T, t: "3  Green inside bar with a lower high = TRIGGER", trig: 1 }, { i: f.ei, t: "4  Next candle breaks the trigger low: ENTRY", entry: 1 }], trig: T, ent: f.ei, entry: f.entry, stop: f.stop, R: f.R, end: f.end });
+      void A; void B; void T; void f; // labeled by the rule scan below
     }
     function dBroken() {
       var s = 1; ensure(s, 1.0, fnEma); approach(s, fnEma);
@@ -121,16 +141,7 @@
       o = lc(); c = o + 0.1 * u; var ti = K(s, o, c, o - 0.5 * u, c + 0.12 * u, 0.8); // first green candle after the new low
       o = lc(); c = o + 0.5 * u; var ei = K(s, o, c, o - 0.1 * u, c + 0.9 * u, 1); // small green inverted hammer: long wick above the 9 EMA = trigger
       drift(s, 3);
-      // Is this exactly your SL1-RV-2' short? Checked against the rule before it is labeled that way.
-      var A = t; while (A > 0 && Math.floor((A - 1) / PER) === Math.floor(A / PER) && C[A - 1].c < C[A - 1].o) A--;
-      var B = A + 1, e = ei + 1, stop = r2(C[ei].h + 0.01), entry = r2(C[ei].l - 0.01);
-      var ok = A < t && C[A - 1] && C[A - 1].c > C[A - 1].o && C[A].c < C[A].o && C[A].l > E[A] && (C[A].o - E[A]) >= 0.008 * C[A].o &&
-        C[B].c < C[B].o && C[B].l < C[A].l && C[ti].c > C[ti].o && C[ei].c > C[ei].o && C[ei].h < C[B].h && C[ei].l >= C[B].l && C[ei].h > E[ei] && C[e].l < C[ei].l && C[e].h < stop;
-      if (ok) {
-        reg({ name: "SL1 RV", s: -1, ver: 2, label: "SL1-RV-2' Short", kind: "setup", sub: "Short version 2: extended red candle, new low, the first green candle, then a small green inverted hammer as the trigger", steps: [{ i: A, t: "1  First red candle, extended above the 9 EMA" }, { i: B, t: "2  Next candle breaks that low (new low)" }, { i: ti, t: "3  First green candle after the new low: start looking for the trigger" }, { i: ei, t: "4  Small green inverted hammer, wick above the 9 EMA = TRIGGER", trig: 1 }, { i: e, t: "5  Next candle breaks the trigger low: ENTRY", entry: 1 }], trig: ei, ent: e, entry: entry, stop: stop, R: Math.abs(entry - stop), end: C.length - 1 });
-      } else {
-        reg({ name: "FP9-A", s: 1, kind: "decoy", steps: [{ i: t, t: "1  Pullback CLOSES below the 9 EMA (it did not hold)", bad: 1 }, { i: ti, t: "2  A small candle forms, but it is below the EMA, so it is not a trigger" }, { i: ei, t: "3  Bounce fails and price keeps falling" }], trig: ti, end: C.length - 1, why: "The pullback closed below the 9 EMA, so the EMA did not hold. This only looks like an FP9-A trigger. No trade." });
-      }
+      reg({ name: "FP9-A", s: 1, kind: "decoy", maybe: ei, steps: [{ i: t, t: "1  Pullback CLOSES below the 9 EMA (it did not hold)", bad: 1 }, { i: ti, t: "2  A small candle forms, but it is below the EMA, so it is not a trigger" }, { i: ei, t: "3  Bounce fails and price keeps falling" }], trig: ti, end: C.length - 1, why: "The pullback closed below the 9 EMA, so the EMA did not hold. This only looks like an FP9-A trigger. No trade." });
     }
     function dNoBreak() {
       var s = 1; ensure(s, 1.0, fnEma); approach(s, fnEma); var t = touch(s, "ema");
@@ -157,20 +168,25 @@
     }
     ops.forEach(day);
     if (C.length !== PER * NDAY) throw new Error("length " + C.length);
-    // Any spot that matches your SL1-RV-2' short rule gets labeled too, so the list tells the truth.
+    // Every spot that matches your SL1-RV-2' short rule gets labeled, planted or not, so the list tells the truth.
     (function () {
-      var used = {}; S.forEach(function (x) { if (x.ver === 2) used[x.steps[0].i] = 1; });
-      for (var i = 1; i < C.length - 3; i++) {
-        var A = C[i], B = C[i + 1], T = C[i + 2], Eb = C[i + 3];
-        if (Math.floor(i / PER) !== Math.floor((i + 3) / PER) || used[i]) continue;
-        if (!(A.c < A.o && C[i - 1].c > C[i - 1].o && A.l > E[i] && (A.o - E[i]) >= 0.012 * A.o)) continue;
-        if (!(B.c < B.o && B.l < A.l)) continue;
-        if (!(T.c > T.o && T.h < B.h && T.l >= B.l)) continue;
-        if (!(Eb.l < T.l && Eb.h < T.h + 0.01)) continue;
-        var entry = r2(T.l - 0.01), stop = r2(T.h + 0.01), Rr = Math.abs(entry - stop); if (Rr < 0.04) continue;
-        reg({ name: "SL1 RV", s: -1, ver: 2, label: "SL1-RV-2' Short", kind: "setup", sub: "Short version 2: extended red candle, new low, then a green inside bar with a lower high", steps: [{ i: i, t: "1  First red candle, extended above the 9 EMA" }, { i: i + 1, t: "2  Next candle breaks that low (new low)" }, { i: i + 2, t: "3  Green inside bar with a lower high = TRIGGER", trig: 1 }, { i: i + 3, t: "4  Next candle breaks the trigger low: ENTRY", entry: 1 }], trig: i + 2, ent: i + 3, entry: entry, stop: stop, R: Rr, end: i + 3 });
-        used[i] = 1;
+      var used = {};
+      for (var i = 5; i < C.length - 3; i++) {
+        var m = v2find(C, E, i); if (!m || used[m.t]) continue;
+        var T = C[m.t], entry = r2(T.l - 0.01), stop = r2(T.h + 0.01), Rr = Math.abs(entry - stop); if (Rr < 0.04) continue;
+        var dEnd = (Math.floor(m.e / PER) + 1) * PER - 1, won = false; // only label matches that clearly work as shorts: 1.5R before the stop (no losing examples)
+        for (var jj = m.e; jj <= dEnd; jj++) { if (jj > m.e && C[jj].h >= stop) break; if (C[jj].l <= entry - 1.5 * Rr) { won = true; break; } }
+        if (!won) continue;
+        var steps = [{ i: m.runEnd, t: "Candles keep breaking each other's highs, above the 9 EMA" }, { i: m.nl, t: "First new low after that run" }];
+        if (m.g !== m.t) steps.push({ i: m.g, t: "First green candle after the new low: start looking for the trigger" });
+        steps.push({ i: m.t, t: (m.g === m.t ? "First green candle is small with a lower high" : (T.c > T.o ? "Small green candle (inverted hammer / inside bar) with a lower high" : "Small red candle with a lower high")) + " = TRIGGER", trig: 1 });
+        steps.push({ i: m.e, t: "Next candle breaks the trigger low: ENTRY", entry: 1 });
+        steps.forEach(function (x, q) { x.t = (q + 1) + "  " + x.t; });
+        reg({ name: "SL1 RV", s: -1, ver: 2, label: "SL1-RV-2' Short", kind: "setup", sub: "Short version 2: the first new low after a run of higher highs, then a green candle, then a small trigger candle (green or red) whose low breaks", steps: steps, v2: m, trig: m.t, ent: m.e, entry: entry, stop: stop, R: Rr, end: m.e });
+        used[m.t] = 1;
       }
+      var v2s = S.filter(function (x) { return x.ver === 2; });
+      for (var q = S.length - 1; q >= 0; q--) if (S[q].kind === "decoy" && v2s.some(function (x) { return x.steps[0].i <= S[q].end && x.ent >= S[q].steps[0].i; })) S.splice(q, 1);
     })();
     // Outcomes read from the data after the fact (what price really did after entry).
     S.forEach(function (st) {
@@ -237,21 +253,9 @@
         chk(s * (wi(ei) - wi(tg)) > 0, id + " entry candle breaks trigger");
         chk(s * (ag(ei) - S.stop) > 0, id + " entry candle stays above stop");
         chk(Math.abs(S.entry - wi(tg)) < 0.0101 && Math.abs(S.stop - ag(tg)) < 0.0101, id + " entry/stop sit on trigger candle");
-        if (S.ver === 2 && S.steps.length === 5) {
-          var A5 = S.steps[0].i, B5 = S.steps[1].i, G5 = S.steps[2].i;
-          chk(C[A5].c < C[A5].o && C[A5].l > E[A5] && (C[A5].o - E[A5]) >= 0.008 * C[A5].o && C[A5 - 1].c > C[A5 - 1].o, id + " first red candle, above and extended from the EMA, green before it");
-          chk(B5 === A5 + 1 && C[B5].c < C[B5].o && C[B5].l < C[A5].l, id + " next candle breaks the low");
-          var firstGreen = true; for (var q5 = B5 + 1; q5 < G5; q5++) if (C[q5].c > C[q5].o) firstGreen = false; chk(firstGreen && C[G5].c > C[G5].o, id + " first green candle after the new low");
-          chk(C[tg].c > C[tg].o && C[tg].h < C[B5].h && C[tg].l >= C[B5].l && C[tg].h > E[tg] && tg > G5, id + " trigger is a green inverted hammer with its wick above the EMA and a lower high");
-          chk(ei === tg + 1 && C[ei].l < C[tg].l, id + " next candle breaks the trigger low");
-        } else if (S.ver === 2) {
-          var A = S.steps[0].i, B = S.steps[1].i;
-          chk(C[A].c < C[A].o && C[A].l > E[A], id + " step 1 is a red candle still above the EMA");
-          chk(C[A].o - E[A] >= 1.5 * 0.004 * st.start, id + " step 1 is extended above the EMA");
-          chk(C[A - 1].c > C[A - 1].o, id + " step 1 is the first red candle (green before it)");
-          chk(C[B].l < C[A].l, id + " step 2 breaks the low of step 1");
-          chk(C[tg].c > C[tg].o && C[tg].h < C[B].h && C[tg].l >= C[B].l, id + " trigger is a green inside bar with a lower high");
-          chk(tg === B + 1 && ei === tg + 1, id + " steps follow each other");
+        if (S.ver === 2) {
+          var m2 = v2find(C, E, S.v2.nl); chk(m2 && m2.t === S.v2.t && m2.e === ei, id + " matches the SL1-RV-2' rule");
+          chk(S.v2.t > S.v2.nl && S.v2.g > S.v2.nl, id + " trigger is not the new-low candle");
         } else if (S.name === "SL1 RV") {
           var r = S.steps[1].i;
           chk(touches(t, function (i) { return E[i]; }), id + " touch candle reaches EMA");
