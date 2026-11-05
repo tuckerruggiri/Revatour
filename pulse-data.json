@@ -1,124 +1,810 @@
 {
-  "asof": "Nov 4, 2026 (after the close)",
-  "headline": "Democrats took Congress, stocks ripped, and the Fed is still leaning toward another hike.",
-  "regime": "Hiking regime: the Fed raised rates in September and traders put roughly 70-85% odds on another 25bp hike on Dec 9. In this regime good economic news can be bad for stocks, and yields matter more than usual.",
-  "lean": [
-    {"h": "Today", "sub": "day trades", "s": 0, "t": "Choppy after a big gap day", "why": "Wednesday was a relief rally (SPY +1.65%). Thursday has only minor data (layoff counts, productivity), and everyone is waiting on Friday's jobs report. Trade levels, do not chase gaps."},
-    {"h": "Next 2-4 weeks", "sub": "swing trades", "s": 10, "t": "Slight upward lean, hinges on jobs and CPI", "why": "A hike is mostly priced in, so a soft jobs or CPI print that cools hike odds is the bullish surprise. A hot print pushes the 10-year back over 5% and hurts rate-sensitive groups."},
-    {"h": "6-12 months", "sub": "investing", "s": 30, "t": "Constructive with rate risk", "why": "Stocks have risen in the 12 months after every midterm since 1950, and gridlock limits big new laws. The offsets: AI spending is under political scrutiny and the Nasdaq-100 just fell 10% from its early-October high."}
-  ],
-  "rates": [
-    {"l": "Fed funds target", "v": "3.75-4.00%", "n": "Held Oct 28, 10-2 vote; Cook and Hammack wanted a hike"},
-    {"l": "Dec 9 hike odds", "v": "~72-85%", "n": "Kalshi 72%, CME and Reuters about 81-82%, Bloomberg about 85%"},
-    {"l": "10-year yield", "v": "~4.9%", "n": "Fell about 5-6bp on the election, was back above 5% on Fed day"},
-    {"l": "30-yr mortgage", "v": "7.32%", "n": "Freddie Mac survey of Oct 22, down 8bp from 7.40%"},
-    {"l": "Dollar index", "v": "101.3", "n": "Down about 0.6%, a 1-month low"},
-    {"l": "Gold", "v": "$4,040+", "n": "Up about 3% back above $4,000"},
-    {"l": "WTI oil", "v": "~$94", "n": "Slid on the election day move"},
-    {"l": "VIX", "v": "18.5", "n": "Calm-ish, not complacent"}
-  ],
-  "sectors": [
-    {"s": "Clean energy", "etf": "ICLN TAN", "d": [1, 1, 0], "why": "Democratic control keeps federal clean-energy support alive. First Solar +9%, Sunrun +10%, Enphase +8% premarket. Gridlock caps new laws, and spikes like this often give back some of the gain."},
-    {"s": "Health insurers and hospitals", "etf": "IHF XLV", "d": [1, 0, 1], "why": "Democrats favor more health spending. Centene +4.5%, Molina +6%, HCA +3.7% premarket. UnitedHealth fell, so this is a stock-picker's group."},
-    {"s": "Defense", "etf": "ITA", "d": [-1, 0, 0], "why": "Northrop -5%, RTX, Lockheed and L3Harris about -3%. The hoped-for $1.5T budget could come in lower. Defense budgets have usually been bipartisan, so deep cuts are less likely than headlines suggest."},
-    {"s": "AI chips and data centers", "etf": "SMH XLK", "d": [-1, 0, 1], "why": "The most exposed theme: public opposition to nearby data centers rose from 28% to about half of Americans, and hearings are more likely. Nasdaq-100 is in a 10% correction but still holds its 200-day average."},
-    {"s": "Banks", "etf": "XLF KRE", "d": [0, 1, 1], "why": "Hikes widen lending margins, but Democrats mean more scrutiny and credit risk if jobs weaken. JPMorgan, BofA and Goldman all reported strong Q3s."},
-    {"s": "Homebuilders and mortgage", "etf": "ITB XHB", "d": [-1, -1, 0], "why": "Mortgage rates follow the 10-year, which sits near 4.9%, so 30-year loans stay above 7%. A fall in the 10-year is the only fast fix."},
-    {"s": "Gold and miners", "etf": "GLD GDX", "d": [1, 0, 1], "why": "A weaker dollar and lower yields helped, and Capital Economics says the Democratic sweep raised worries about the fiscal outlook. After a 3% day, wait for pullbacks to the $4,000 area."},
-    {"s": "Energy", "etf": "XLE", "d": [-1, 0, 0], "why": "Oil slid and WTI sits near $94. Lower oil helps airlines and shippers and hurts drillers."},
-    {"s": "Small caps", "etf": "IWM", "d": [0, 0, 1], "why": "Small caps finished lower on Fed day because they borrow short. They are the most sensitive to hike odds, for better or worse."},
-    {"s": "Musk and Trump-linked", "etf": "TSLA DJT", "d": [-1, 0, 0], "why": "Tesla -3.6%, SpaceX -3.2%, Trump Media -7% on the election. Trump Media is one of our day-trade picks, so size it small."},
-    {"s": "Utilities and REITs", "etf": "XLU XLRE", "d": [0, 0, 1], "why": "They trade like bonds. A falling 10-year helps them, a spike over 5% hurts them."},
-    {"s": "Private prisons", "etf": "GEO CXW", "d": [-1, -1, 0], "why": "GEO -6.7% and CoreCivic -5.2%. Both had rallied on the immigration crackdown that a new Congress could oversee."}
-  ],
-  "news": [
-    {"id": "fed", "cat": "fed", "head": "Fed holds at 3.75-4.00%, but two officials voted to hike", "when": "Oct 28", "src": "https://finance.yahoo.com/economy/policy/live/fed-meeting-live-updates-interest-rates-held-steady-in-split-vote-warsh-says-politics-played-no-role-ahead-of-midterm-elections-191946928.html", "srcN": "Yahoo Finance live blog",
-     "mean": "It was a 10-2 vote, up from 12-0 in September. The Fed upgraded growth from 'solid' to 'strong' and dropped language about steering inflation back to 2%. Chair Warsh said politics played no role. The signal is that the next move is more likely up than down.",
-     "react": [["JPM BAC", 1, "Higher rates widen lending margins"], ["ITB DHI LEN", -1, "Mortgage rates stay above 7%"], ["XLU XLRE", -1, "Bond proxies lose when yields rise"], ["IWM", -1, "Small caps closed lower on Fed day"], ["UUP", 1, "Higher-for-longer helps the dollar"]],
-     "hist": "In the last three hiking cycles, JPMorgan rose in all three (+22.6%, +57.7%, +16.8%). Bank of America fell 24.8% in 2022-23, so 'banks win when rates rise' is not automatic.", "histN": "24/7 Wall St. bank study", "histU": "https://247wallst.com/investing/2026/11/03/rate-hikes-could-be-coming-history-likes-these-4-bank-stocks/",
-     "today": "Do not bet against the 10-year. If it pushes back over 5%, rate-sensitive groups (homebuilders, REITs, small caps) get hit first.", "later": "Quality banks with the strongest track record in hiking cycles are the cleanest way to invest in higher rates. Watch for the hiking cycle to end, which has often been when growth stocks recover.", "conf": 3},
-    {"id": "mort", "cat": "housing", "head": "30-year mortgage rate: 7.32%, still above 7%", "when": "Oct 22 survey", "src": "https://themortgagereports.com/mortgage-rates-now/mortgage-rates-today-october-23-2026", "srcN": "The Mortgage Reports",
-     "mean": "Mortgage rates track the 10-year Treasury yield, not the Fed funds rate. The 10-year near 4.9% keeps 30-year loans above 7%. Fannie Mae and the MBA had forecast 6.7-6.8% by Q2 2027, but that was before September's hike, so treat it as stale. A newer weekly survey may already be out.",
-     "react": [["ITB DHI LEN TOL", -1, "Higher rates cut buyer demand"], ["RKT UWMC", -1, "Fewer refinances and purchases"], ["Existing-home sellers", -1, "Owners locked into low rates stay put"]],
-     "hist": "Rule of thumb: homebuilder stocks often move before sales numbers do, rallying when the 10-year turns down and sinking when it breaks higher.", "histN": "", "histU": "",
-     "today": "Trade homebuilders off the 10-year chart, not off housing news. 10-year up means builders down.", "later": "A housing recovery needs the 30-year sustained below about 6.5%. Start accumulating builders only after the 10-year clearly rolls over.", "conf": 2},
-    {"id": "mid", "cat": "politics", "head": "Democrats win Congress: stocks surge, gridlock is the base case", "when": "Nov 3-4", "src": "https://www.cbsnews.com/news/stock-market-soar-democrats-take-control-of-congress/", "srcN": "CBS News",
-     "mean": "The Dow rose more than 1,200 points (+2.4%) early, and the S&P 500 and Nasdaq gained 1.7% and 2.1%. Capital Economics and Wells Fargo both say they do not expect sweeping policy changes. Democrats lack a filibuster-proof Senate and the president can veto.",
-     "react": [["SPY QQQ", 1, "Uncertainty is gone, gridlock limits new taxes and spending"], ["TLT", 1, "Fewer unfunded tax cuts means a smaller deficit, so yields eased"], ["Policy-exposed stocks", 0, "Moves are repricing risk, not actual law changes"]],
-     "hist": "Per Edward Jones, the S&P 500 rose an average 15.5% in the six months after the last 14 midterms (since 1970). Another analysis found it higher 12 months after all 19 midterms since 1950, averaging about 15%.", "histN": "CBS News and Investing.com", "histU": "https://www.investing.com/news/stock-market-news/which-sectors-will-benefit-most-and-face-pressure-after-democratic-sweep-93CH-4999088",
-     "today": "After a +1.7% gap day, wait for a pullback to yesterday's range rather than buying the first green candle.", "later": "History favors owning stocks through the next 6-12 months. Averages hide big drawdowns on the way, so scale in.", "conf": 2},
-    {"id": "clean", "cat": "politics", "head": "Clean energy leads the post-election rally", "when": "Nov 4 premarket", "src": "https://www.investing.com/news/stock-market-news/which-sectors-will-benefit-most-and-face-pressure-after-democratic-sweep-93CH-4999088", "srcN": "Investing.com",
-     "mean": "Democratic control could keep federal clean-energy support in place and speed approvals. First Solar +9.4%, Sunrun +10%, Enphase +7.6%, NextEra +2.2%, Vestas about +5%, Orsted about +7%. Tesla was the exception, down 3.6%.",
-     "react": [["FSLR", 1, "+9.4% premarket"], ["RUN ENPH", 1, "Residential solar jumped"], ["NEE", 1, "Utilities with renewables"], ["TSLA", -1, "Hurt by Musk's political setback"]],
-     "hist": "Rule of thumb: policy-driven spikes often retrace part of the move within weeks if no actual law changes, because gridlock caps the upside too.", "histN": "", "histU": "",
-     "today": "Gap-up leaders are prone to fading. Better entries come on first pullback with volume dropping.", "later": "Own the group through dips only if you believe rates will fall; solar is heavily financed and hates 5% yields.", "conf": 2},
-    {"id": "health", "cat": "politics", "head": "Health insurers and hospitals jump", "when": "Nov 4 premarket", "src": "https://www.investing.com/news/stock-market-news/which-sectors-will-benefit-most-and-face-pressure-after-democratic-sweep-93CH-4999088", "srcN": "Investing.com",
-     "mean": "Democrats favor more health spending. Centene +4.5%, Molina +6%, HCA +3.7%, Universal Health Services +2.2%. BNP Paribas doubts the Affordable Care Act can be restored in full but expects budget concessions. UnitedHealth fell while HCA rose, so the group is not moving as one.",
-     "react": [["CNC MOH", 1, "Managed Medicaid and exchanges"], ["HCA UHS", 1, "More insured patients"], ["UNH", -1, "Fell even as peers rose"]],
-     "hist": "Rule of thumb: healthcare policy hopes have lifted these stocks before and faded when legislation stalled, so watch real bills, not headlines.", "histN": "", "histU": "",
-     "today": "Trade the relative strength of hospitals over insurers, and skip names that are falling on their own news.", "later": "Hospitals and Medicaid insurers benefit most from any coverage expansion; wait for earnings to confirm.", "conf": 1},
-    {"id": "def", "cat": "politics", "head": "Defense stocks drop on budget worries", "when": "Nov 4 premarket", "src": "https://www.investing.com/news/stock-market-news/which-sectors-will-benefit-most-and-face-pressure-after-democratic-sweep-93CH-4999088", "srcN": "Investing.com",
-     "mean": "Northrop Grumman fell 5%, and RTX, Lockheed Martin and L3Harris each fell over 3%. Support had partly rested on an expected $1.5T budget request that a Democratic Congress could leave short.",
-     "react": [["NOC", -1, "-5% premarket"], ["RTX LMT LHX", -1, "About -3% each"], ["GEO CXW", -1, "Prison operators -6.7% and -5.2%"]],
-     "hist": "Rule of thumb: defense budgets have historically passed with support from both parties, so cuts are usually smaller than first feared.", "histN": "", "histU": "",
-     "today": "Gap-down names can bounce; trade the reclaim of yesterday's close, not the first dip.", "later": "Long-term buyers can use weakness in prime contractors, but a lower budget request is a real headwind for the next year.", "conf": 1},
-    {"id": "ai", "cat": "stocks", "head": "AI chips wobble on data-center regulation fears", "when": "Nov 4", "src": "https://www.schwab.com/learn/story/stock-market-update-open", "srcN": "Schwab market update",
-     "mean": "Chip stocks first fell on concerns about tighter data center regulation, and the Nasdaq-100 entered a correction (down 10% from its early-October high), closing just above its 200-day moving average. AMD beat estimates but slipped after an early rally. Super Micro rose on strong results.",
-     "react": [["SMH NVDA", -1, "Regulation is the new risk"], ["SMCI", 1, "Strong results"], ["IREN CORZ", -1, "Data-center builders fell 1-3%"]],
-     "hist": "Rule of thumb: the 200-day average is the line many traders watch. Schwab noted the Nasdaq-100 closed just above it after falling 10% from its high.", "histN": "Schwab", "histU": "https://www.schwab.com/learn/story/stock-market-update-open",
-     "today": "Trade the Nasdaq-100 200-day line: hold = bounce plays in leaders, break = stand aside.", "later": "AI spending is still the main growth engine. Opposition to data centers is a risk to build-out speed, not to demand.", "conf": 2},
-    {"id": "gold", "cat": "commodities", "head": "Gold back above $4,000 as the dollar sinks", "when": "Nov 4", "src": "https://www.kucoin.com/news/flash/gold-price-surges-3-above-4-040-as-us-dollar-falls-after-midterm-elections", "srcN": "KuCoin news flash (Reuters-based)",
-     "mean": "Gold rose about 3% to just above $4,040. The dollar index fell about 0.6% to 101.27, a 1-month low, the 10-year fell about 5bp to near 4.9%, silver rose 4.8% to $52.13. A weaker dollar and lower yields both make gold more attractive.",
-     "react": [["GLD GDX", 1, "Direct beneficiary"], ["SLV", 1, "Silver +4.8%"], ["NEM", 1, "Miners follow metal"], ["UUP", -1, "Dollar at a 1-month low"]],
-     "hist": "Gold usually rises when the dollar and real yields fall. The risk is the Fed: a hot jobs or CPI print lifts hike odds, which can reverse all of it.", "histN": "Reuters via KuCoin", "histU": "https://www.kucoin.com/news/flash/gold-price-surges-3-above-4-040-as-us-dollar-falls-after-midterm-elections",
-     "today": "A 3% day invites a pullback. Look for a retest of $4,000 that holds.", "later": "Fiscal worries and a weaker dollar are slow-burn supports; scale in on dips instead of at the highs.", "conf": 2},
-    {"id": "oil", "cat": "commodities", "head": "Oil slides after the election", "when": "Nov 4", "src": "https://www.schwab.com/learn/story/stock-market-update-open", "srcN": "Schwab (WTI level)",
-     "mean": "WTI sat near $93.71 and the Nov 4 FXStreet headline reads 'Oil plunges'. Lower oil lowers input costs and helps inflation, which can ease hike odds at the margin.",
-     "react": [["DAL UAL", 1, "Fuel is a top cost"], ["XLE XOM", -1, "Lower prices cut profits"], ["Inflation-sensitive bonds", 1, "Cheaper oil cools CPI"]],
-     "hist": "Rule of thumb: oil swings of this size feed through to CPI within a month or two, which is why the Nov 10 CPI matters for oil-sensitive sectors.", "histN": "", "histU": "",
-     "today": "Pairs idea: airlines up, energy down while oil is falling. Stop out if oil reverses.", "later": "Do not invest on one down day. Wait for a trend.", "conf": 1},
-    {"id": "jobs", "cat": "economy", "head": "October jobs report Friday: the market's next big test", "when": "Fri Nov 6, 8:30 ET", "src": "https://features.financialjuice.com/2026/11/02/us-nfp-prep-6th-november/", "srcN": "FinancialJuice NFP prep",
-     "mean": "Consensus is +65k jobs (range 35k to 125k), unemployment 4.2%, and wages +2.9% year over year (+0.3% month over month). September was only +29k. ADP showed +86k private jobs for October. In a hiking regime, strong data raises hike odds and yields.",
-     "react": [["Hot print", -1, "Yields up, stocks mixed to lower, dollar up"], ["Cold print", 1, "Yields down, hike odds fall, growth and small caps rally"], ["Banks", 0, "Strong jobs helps credit, weak jobs lowers rates"]],
-     "hist": "Rule of thumb: when the Fed is hiking, the market often reacts to the rate path first and the economy second, so 'good news is bad news' trades can appear.", "histN": "", "histU": "",
-     "today": "Avoid holding big day trades into 8:30 ET Friday. Look for the second 15 minutes after the number for direction.", "later": "A string of weak reports would end the hiking story and start a different one: slowdown risk. That changes which sectors lead.", "conf": 3},
-    {"id": "cpi", "cat": "economy", "head": "Inflation: CPI lands Nov 10, and hike odds hang on it", "when": "Tue Nov 10", "src": "https://247wallst.com/investing/2026/11/03/rate-hikes-could-be-coming-history-likes-these-4-bank-stocks/", "srcN": "24/7 Wall St. (BofA forecasts)",
-     "mean": "BofA projects CPI inflation of 3.3% in 2026 and 3.4% in 2027, well above the Fed's 2% goal. The Fed said inflation 'remains elevated'. A cooler CPI could trim hike odds; a hot one would make December close to a lock.",
-     "react": [["Hot CPI", -1, "Yields up, homebuilders and small caps down, dollar up"], ["Cool CPI", 1, "Yields down, gold and growth up"], ["TIPS GLD", 1, "Inflation hedges if CPI surprises up"]],
-     "hist": "Rule of thumb: CPI days are among the most volatile of the month. Core readings matter more than the headline.", "histN": "", "histU": "",
-     "today": "Reduce size into the print. The reaction often reverses within hours.", "later": "Persistent 3%+ inflation argues for pricing power, real assets and short-duration bonds.", "conf": 2},
-    {"id": "banks", "cat": "banks", "head": "Big banks post strong Q3, but the group has lagged the Fed's hikes", "when": "Oct", "src": "https://247wallst.com/investing/2026/11/03/rate-hikes-could-be-coming-history-likes-these-4-bank-stocks/", "srcN": "24/7 Wall St.",
-     "mean": "JPMorgan Q3 EPS was $5.57 (about 13x forward earnings). Bank of America net interest income rose 8% to $16.45B and a 100bp rise would add about $1.4B. Goldman's EPS of $17.01 beat the $13.65 consensus. Even so, a September report noted the Fed's hike did not lift bank stocks, and banks sold off before Q3 earnings. Democrats may add scrutiny.",
-     "react": [["JPM", 1, "Best record across hiking cycles"], ["BAC", 0, "Largest rate lever but bond-loss risk"], ["GS", 1, "Trading and financing strength"], ["C", 0, "Cheapest, weakest history"], ["KRE regionals", 0, "Credit risk if jobs weaken"]],
-     "hist": "Bank returns in hiking cycles (2004-06 / 2015-18 / 2022-23): JPM +22.6% / +57.7% / +16.8%; BAC +26.9% / +48.9% / -24.8%; GS +63.2% / -8.4% / +8.6%; Citi +12.2% / +0.7% / -15.2%.", "histN": "24/7 Wall St.", "histU": "https://247wallst.com/investing/2026/11/03/rate-hikes-could-be-coming-history-likes-these-4-bank-stocks/",
-     "today": "Banks trade with the yield curve and credit headlines. A hot jobs print is mixed: good for loans, bad if it raises recession fears.", "later": "If you want one bank for a hiking cycle, history favors JPMorgan. The main risk to any bank is rising unemployment.", "conf": 2},
-    {"id": "trump", "cat": "stocks", "head": "Musk and Trump-linked stocks fall on the election", "when": "Nov 4", "src": "https://www.investing.com/news/stock-market-news/which-sectors-will-benefit-most-and-face-pressure-after-democratic-sweep-93CH-4999088", "srcN": "Investing.com",
-     "mean": "SpaceX fell 3.2%, Tesla 3.6%, Trump Media 7%. The article also notes a possible slower scrutiny of a SpaceX-Tesla merger. Trump Media is one of the day-trade picks on our Parabolic Movers page, so this is a live example of news hitting a pick.",
-     "react": [["DJT", -1, "-7% on political setback"], ["TSLA", -1, "-3.6%"], ["SPCX", -1, "-3.2%"]],
-     "hist": "Rule of thumb: stocks tied to a single political outcome are headline-driven and often gap in both directions within days.", "histN": "", "histU": "",
-     "today": "If you trade these, use small size and hard stops; they can gap 10% either way.", "later": "Avoid long-term positions justified only by a political view.", "conf": 1}
-  ],
-  "cats": [["all", "All"], ["fed", "Fed and rates"], ["housing", "Mortgage and housing"], ["banks", "Banks"], ["economy", "Economy"], ["stocks", "Stocks"], ["commodities", "Gold and oil"], ["politics", "Politics and policy"]],
-  "calendar": [
-    {"d": "2026-11-05", "t": "Challenger layoffs, Q3 productivity", "usual": "Minor mover; layoffs rising feeds the 'cold jobs' story ahead of Friday."},
-    {"d": "2026-11-06", "t": "October jobs report (8:30 ET)", "usual": "Consensus +65k, 4.2%, wages +0.3% m/m. Big moves in yields, dollar and banks."},
-    {"d": "2026-11-10", "t": "October CPI", "usual": "The key input to December's hike. Core matters more than the headline."},
-    {"d": "2026-12-09", "t": "FOMC decision", "usual": "Hike odds are about 70-85%. A hold would be a surprise rally for growth and small caps."}
-  ],
-  "scen": {
-    "title": "What if Friday's jobs number is...",
-    "opts": [
-      {"k": "hot", "l": "Hot (100k+)", "out": [["10-year yield", -1, "Likely up, toward or over 5%"], ["Dec hike odds", -1, "Up toward a lock"], ["Stocks", -1, "Mixed to lower; growth and small caps worst"], ["Homebuilders", -1, "Down with yields"], ["Banks", 1, "Margin tailwind, credit looks fine"], ["Gold", -1, "Pressured by yields and dollar"]]},
-      {"k": "mid", "l": "In line (about 65k)", "out": [["10-year yield", 0, "Little change"], ["Dec hike odds", 0, "About the same"], ["Stocks", 1, "Relief; focus moves to CPI Nov 10"], ["Homebuilders", 0, "Flat"], ["Banks", 0, "Flat"], ["Gold", 0, "Holds $4,000 area"]]},
-      {"k": "cold", "l": "Cold (under 30k)", "out": [["10-year yield", 1, "Down"], ["Dec hike odds", 1, "Falls meaningfully"], ["Stocks", 1, "Growth and small caps rally, unless recession fear takes over"], ["Homebuilders", 1, "Bounce with yields"], ["Banks", -1, "Credit worries"], ["Gold", 1, "Extends gains"]]}
-    ]
+ "asof": "Nov 5, 2026 (premarket)",
+ "headline": "Stocks ripped on the midterms, chips and data-center names broke, and December hike odds sit near 80%.",
+ "regime": "Hiking regime: the Fed raised rates in September and CME FedWatch puts roughly 77-82% odds on another 25bp hike on Dec 9. In this regime good economic news can be bad for stocks, and yields matter more than usual.",
+ "lean": [
+  {
+   "h": "Today",
+   "sub": "day trades",
+   "s": -5,
+   "t": "Mixed: Dow futures up, Nasdaq futures down",
+   "why": "Dow futures were up about 0.5% and Nasdaq 100 futures down about 0.5-0.7% on Qualcomm and Asian chip weakness. Three Fed speakers today and jobs data Friday. Trade levels."
   },
-  "playbook": [
-    ["10-year yield rises over 5%", "Homebuilders, REITs, utilities, small caps and unprofitable growth are pressured first. Banks and the dollar hold up better."],
-    ["10-year yield falls toward 4.5%", "Housing, small caps, growth and gold benefit. Mortgage rates ease a few weeks later."],
-    ["Dollar keeps falling", "Gold and miners, emerging markets and big multinationals gain. Importers lose."],
-    ["Oil keeps falling", "Airlines, cruise lines and shippers win. Energy stocks lose. Headline inflation eases."],
-    ["Hike odds drop below 50%", "A growth and small-cap rally is the usual response. Banks lose some margin tailwind."],
-    ["Jobs weaken sharply", "Bonds rally, defensives (healthcare, staples, utilities) lead. Cyclicals and banks get hit by recession worries."]
+  {
+   "h": "Next 2-4 weeks",
+   "sub": "swing trades",
+   "s": 5,
+   "t": "Slight upward lean, hinges on jobs and CPI",
+   "why": "A hike is mostly priced in, so a soft jobs or CPI print that cools hike odds is the bullish surprise. A hot print pushes the 10-year back toward 5% and hurts rate-sensitive groups."
+  },
+  {
+   "h": "6-12 months",
+   "sub": "investing",
+   "s": 30,
+   "t": "Constructive with rate risk",
+   "why": "Stocks have risen from late October to April after all 19 midterms since 1950 (average 14.8%), but hiking-cycle windows gained about half that. AI spending faces political scrutiny, and the semiconductor index is at its lowest close since Apr 28."
+  }
+ ],
+ "rates": [
+  {
+   "l": "Fed funds target",
+   "v": "3.75-4.00%",
+   "n": "Held Oct 28, 10-2 vote; Cook and Hammack wanted a hike"
+  },
+  {
+   "l": "Dec 9 hike odds",
+   "v": "~77-82%",
+   "n": "CME FedWatch 82% (Discovery Alert, Nov 5), 80.7% (Finimize); 76.9% on Nov 4 (TokenPost)"
+  },
+  {
+   "l": "10-year yield",
+   "v": "4.89%",
+   "n": "Nov 4 close 4.89%, down 6.2bp; 4.894% premarket Nov 5. 30-year 5.29%"
+  },
+  {
+   "l": "30-yr mortgage",
+   "v": "7.24%",
+   "n": "Freddie Mac survey of Oct 29, down 8bp from 7.32%. The Nov 5 survey was not found, so this is a week old"
+  },
+  {
+   "l": "Dollar index",
+   "v": "~101.2",
+   "n": "About 101.22-101.31, near one-month lows"
+  },
+  {
+   "l": "Gold",
+   "v": "~$4,135",
+   "n": "Dec futures $4,073 at Nov 4 close (+3.4%); spot $4,134.83 on Nov 5"
+  },
+  {
+   "l": "WTI oil",
+   "v": "~$88",
+   "n": "Settled $88.12 Nov 4 (-8.3%); Dec crude $88.87 premarket"
+  },
+  {
+   "l": "VIX",
+   "v": "16.6",
+   "n": "Closed 16.60 on Nov 4, down 20%; 16.83 premarket"
+  }
+ ],
+ "sectors": [
+  {
+   "s": "Clean energy",
+   "etf": "ICLN TAN",
+   "d": [
+    1,
+    1,
+    0
+   ],
+   "why": "Democratic control keeps federal clean-energy support alive. First Solar rose 4.63% on Nov 4. Gridlock caps new laws, and spikes like this often give back some of the gain."
+  },
+  {
+   "s": "Health insurers and hospitals",
+   "etf": "IHF XLV",
+   "d": [
+    1,
+    0,
+    1
+   ],
+   "why": "The sector rose 3.04% to a record. Centene +13%, HCA and Universal Health +10% on Medicaid and ACA hopes. CVS fell about 13% on its split plan, so this is a stock-picker's group."
+  },
+  {
+   "s": "Defense",
+   "etf": "ITA",
+   "d": [
+    -1,
+    0,
+    0
+   ],
+   "why": "Lockheed -7%, L3Harris -6%; GD, Northrop and RTX also fell. Defense budgets have usually been bipartisan, so deep cuts are less likely than headlines suggest."
+  },
+  {
+   "s": "AI chips and data centers",
+   "etf": "SMH XLK",
+   "d": [
+    -1,
+    0,
+    1
+   ],
+   "why": "Philadelphia Semiconductor Index -3.1% to its lowest close since Apr 28; Vertiv -12.9%, Constellation -6.7%. Qualcomm fell after hours and Kospi -4.8% today. Hyperscalers (Microsoft, Amazon, Apple) rallied."
+  },
+  {
+   "s": "Banks",
+   "etf": "XLF KRE",
+   "d": [
+    0,
+    1,
+    1
+   ],
+   "why": "Financials rose 3.46% to a record, the best day since April 2025. Card issuers (Synchrony, Capital One) fell on a possible rate cap."
+  },
+  {
+   "s": "Homebuilders and mortgage",
+   "etf": "ITB XHB",
+   "d": [
+    -1,
+    -1,
+    0
+   ],
+   "why": "The 10-year is 4.89%, and the Oct 29 Freddie Mac survey was 7.24%, still above 7%. A fall in the 10-year is the only fast fix."
+  },
+  {
+   "s": "Gold and miners",
+   "etf": "GLD GDX",
+   "d": [
+    1,
+    0,
+    1
+   ],
+   "why": "Gold rose 3.4% to $4,073 on Nov 4 and about $4,135 on Nov 5 as the dollar and yields fell. Citi sees $4,500 in 3 months. After a 3% day, wait for pullbacks to the $4,000 area."
+  },
+  {
+   "s": "Energy",
+   "etf": "XLE",
+   "d": [
+    -1,
+    0,
+    0
+   ],
+   "why": "Energy sector -4.77% (second-worst day since April 2025) as WTI fell 8.3% to $88. Lower oil helps airlines and shippers and hurts drillers."
+  },
+  {
+   "s": "Small caps",
+   "etf": "IWM",
+   "d": [
+    0,
+    0,
+    1
+   ],
+   "why": "Russell 2000 rose 1.58% to 2,856.96 on Nov 4. Small caps borrow short, so they are the most sensitive to hike odds, for better or worse."
+  },
+  {
+   "s": "Musk and Trump-linked",
+   "etf": "TSLA DJT",
+   "d": [
+    -1,
+    0,
+    0
+   ],
+   "why": "SpaceX closed Nov 4 at $135.92 (-3.81%), Tesla was -4.9% premarket and Trump Media -11% early. Trump Media is volatile, so size it small."
+  },
+  {
+   "s": "Utilities and REITs",
+   "etf": "XLU XLRE",
+   "d": [
+    -1,
+    0,
+    1
+   ],
+   "why": "Power producers fell hard on data-center worries (Vistra and NRG about -14%), while rate-sensitive REITs trade with the 10-year. A fall in yields helps them, a spike over 5% hurts."
+  },
+  {
+   "s": "Private prisons",
+   "etf": "GEO CXW",
+   "d": [
+    -1,
+    -1,
+    0
+   ],
+   "why": "GEO -6.7% and CoreCivic -5.2%. Both had rallied on the immigration crackdown that a new Congress could oversee."
+  }
+ ],
+ "news": [
+  {
+   "id": "fed",
+   "cat": "fed",
+   "head": "Fed hike odds near 82% for Dec 9; Hammack, Barkin and Logan speak today",
+   "when": "Nov 5",
+   "src": "https://discoveryalert.com/news/gold-price-dollar-yields-fed-hike-november-2026/",
+   "srcN": "Discovery Alert, Nov 5; Finimize, Nov 5",
+   "mean": "CME FedWatch put the odds of a December hike at about 82% (80.7% at Finimize, up from 77.4%). The Fed raised to 3.75-4.00% on Sep 16 and held Oct 28 by 10-2, with Cook and Hammack wanting a hike. Hammack speaks at 8:50 ET, Barkin at 9:10 and Logan at 7:00 pm.",
+   "react": [
+    [
+     "JPM BAC",
+     1,
+     "Higher rates widen lending margins"
+    ],
+    [
+     "ITB DHI LEN",
+     -1,
+     "Mortgage rates stay above 7%"
+    ],
+    [
+     "XLU XLRE",
+     -1,
+     "Bond proxies lose when yields rise"
+    ],
+    [
+     "IWM",
+     -1,
+     "Small caps borrow short"
+    ],
+    [
+     "UUP",
+     1,
+     "Higher-for-longer helps the dollar"
+    ]
+   ],
+   "hist": "Stockdads (Nov 4) found that windows with a Fed hiking cycle (1994, 2018, 2022) gained 9.0%, 8.6% and 7.7% from late October to April, about half the average midterm window.",
+   "histN": "Stockdads, Nov 4",
+   "histU": "https://stockmarketmoods.substack.com/p/new-congress-same-squeeze",
+   "today": "Hawkish Fed talk plus a hot jobs print is the setup that sends the 10-year back toward 5%. Watch 8:50 and 9:10 ET.",
+   "later": "Quality banks tend to hold up when rates rise. A lasting oil drop, which Citi says could turn the Fed toward cuts, is the main thing that would change this.",
+   "conf": 3
+  },
+  {
+   "id": "mid",
+   "cat": "politics",
+   "head": "Democrats win Congress: Dow +3.03% in its best day since April 2025",
+   "when": "Nov 4",
+   "src": "https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-nov-04-2026",
+   "srcN": "TheStreet, Nov 4",
+   "mean": "The Dow rose 1,569 points to 53,356, the S&P 500 gained 1.58% to 7,688.62 and the Nasdaq 1.44% to 25,736.51. Analysts say divided government lowers the odds of sweeping new laws. Trump said he would \"just veto everything\" if Democrats do not work with him.",
+   "react": [
+    [
+     "SPY",
+     1,
+     "Gridlock reduces policy risk"
+    ],
+    [
+     "Health care",
+     1,
+     "Sector hit a record on Medicaid and ACA hopes"
+    ],
+    [
+     "Defense",
+     -1,
+     "Budget worries"
+    ],
+    [
+     "Data-center names",
+     -1,
+     "Regulation fears"
+    ]
+   ],
+   "hist": "Stockdads: the S&P 500 rose from the last close of October to the last close of April after all 19 midterms since 1950, averaging 14.8% (median 15.2%), with an average 7.1% pullback along the way.",
+   "histN": "Stockdads, Nov 4",
+   "histU": "https://stockmarketmoods.substack.com/p/new-congress-same-squeeze",
+   "today": "Big one-day gaps often chop afterward. Trade levels, not the gap.",
+   "later": "The midterm history is favorable, but hiking-cycle windows gained about half as much.",
+   "conf": 3
+  },
+  {
+   "id": "ai",
+   "cat": "stocks",
+   "head": "AI chips and data-center power sell off; Philadelphia Semiconductor Index -3.1%",
+   "when": "Nov 4",
+   "src": "https://pro.thestreet.com/market-commentary/blue-wave-sends-the-dow-to-its-best-day-since-april-2025-as-ai-beneficiaries-sink",
+   "srcN": "TheStreet Pro, Nov 4",
+   "mean": "The chip index fell to its lowest close since Apr 28. Vistra and NRG dropped about 14%, Micron and Sandisk 7-8%, Nvidia about 3%, with Democrats expected to tighten data-center rules. Hyperscalers rallied: Microsoft about +7%, Amazon about +6%, Apple about +5%. Constellation fell 6.7% and Vertiv 12.9% (Alpha Vantage).",
+   "react": [
+    [
+     "SMH NVDA MU",
+     -1,
+     "Regulation and power-cost fears"
+    ],
+    [
+     "VST NRG CEG",
+     -1,
+     "Data-center power demand questioned"
+    ],
+    [
+     "MSFT AMZN",
+     1,
+     "Hyperscalers rallied"
+    ],
+    [
+     "VRT GEV",
+     -1,
+     "Data-center equipment sold off"
+    ]
+   ],
+   "hist": "Rule of thumb: policy-driven drops in a strong-order-book group often retrace part of the move, but a moratorium headline can restart the selling.",
+   "histN": "",
+   "histU": "",
+   "today": "Expect volatility in power and chip names. Do not average down without a level.",
+   "later": "Order books (Vertiv Q3 sales +61%, GE Vernova backlog $197B per Motley Fool) are strong; the open question is regulation.",
+   "conf": 2
+  },
+  {
+   "id": "dc",
+   "cat": "politics",
+   "head": "Data-center stocks plunge after midterms: Modine -24%, Sterling -20%, Comfort Systems -16%",
+   "when": "Nov 4",
+   "src": "https://www.fool.com/investing/2026/11/04/data-center-stocks-just-plunged-after-the-midterms-is-it-time-to-buy-the-dip/",
+   "srcN": "Motley Fool, Nov 4",
+   "mean": "Vertiv fell 12.71% and GE Vernova 10.84% on the same day. In Texas, Gina Hinojosa beat Gov. Abbott after campaigning for a data-center moratorium, and Goldman expects conditional moratoria in TX, GA and MI.",
+   "react": [
+    [
+     "MOD STRL FIX",
+     -1,
+     "Biggest drops"
+    ],
+    [
+     "VRT GEV",
+     -1,
+     "Large drops, strong backlogs"
+    ],
+    [
+     "Utilities",
+     0,
+     "Mixed: power producers fell"
+    ]
+   ],
+   "hist": "Rule of thumb: a policy shock hits the whole group first, then the stronger order books recover first.",
+   "histN": "",
+   "histU": "",
+   "today": "Watch whether VRT and GEV hold the Nov 4 lows.",
+   "later": "The writer suggests staging purchases of GEV and VRT rather than buying at once.",
+   "conf": 2
+  },
+  {
+   "id": "oil",
+   "cat": "commodities",
+   "head": "Oil drops about 8% in a day: WTI settles near $88, Brent $94.62",
+   "when": "Nov 4",
+   "src": "https://investrade.com/market-review-november-04-2026/",
+   "srcN": "Investrade, Nov 4",
+   "mean": "WTI fell 8.3% and Brent 8.7%, its lowest since Sep 4, after a JD Vance post linking GOP losses to the Iran war raised hopes of a peace deal. The energy sector fell 4.77%, its second-worst day since April 2025. Brent was up about 1% on Nov 5 per Reuters.",
+   "react": [
+    [
+     "XLE XOM",
+     -1,
+     "Energy stocks fell more than 15% over a four-day oil slide"
+    ],
+    [
+     "JETS DAL",
+     1,
+     "Lower fuel costs"
+    ],
+    [
+     "TLT",
+     1,
+     "Lower inflation worries"
+    ]
+   ],
+   "hist": "Rule of thumb: oil drops from war-premium highs often reverse on a single headline.",
+   "histN": "",
+   "histU": "",
+   "today": "Oil is headline-driven. Keep stops wide or stand aside.",
+   "later": "Citi argues a lasting Hormuz reopening could turn the Fed toward cuts, which would help growth stocks.",
+   "conf": 2
+  },
+  {
+   "id": "health",
+   "cat": "stocks",
+   "head": "Health care hits a record: Centene +13%, HCA +10%, but CVS -13% on a split plan",
+   "when": "Nov 4",
+   "src": "https://pro.thestreet.com/market-commentary/blue-wave-sends-the-dow-to-its-best-day-since-april-2025-as-ai-beneficiaries-sink",
+   "srcN": "TheStreet Pro, Nov 4",
+   "mean": "The sector rose 3.04% to a record on hopes Congress delays Medicaid cuts and extends ACA subsidies. CVS fell about 13% on a plan to split into two companies by 1H 2028, while raising 2026 adjusted EPS guidance to at least $8.20.",
+   "react": [
+    [
+     "CNC MOH",
+     1,
+     "ACA and Medicaid hopes"
+    ],
+    [
+     "HCA UHS",
+     1,
+     "Utilization and subsidy hopes"
+    ],
+    [
+     "CVS",
+     -1,
+     "Split plan"
+    ]
+   ],
+   "hist": "Rule of thumb: policy hopes can fade if the bills do not move; gridlock can stall them too.",
+   "histN": "",
+   "histU": "",
+   "today": "Stock-pickers market: the group is split by company.",
+   "later": "Watch for actual Medicaid and ACA subsidy votes.",
+   "conf": 2
+  },
+  {
+   "id": "def",
+   "cat": "politics",
+   "head": "Defense stocks fall: Lockheed -7%, L3Harris -6%",
+   "when": "Nov 4",
+   "src": "https://pro.thestreet.com/market-commentary/blue-wave-sends-the-dow-to-its-best-day-since-april-2025-as-ai-beneficiaries-sink",
+   "srcN": "TheStreet Pro, Nov 4",
+   "mean": "Investrade lists General Dynamics, Lockheed, Northrop and RTX as down too. The worry is a smaller defense budget under a Democratic Congress.",
+   "react": [
+    [
+     "LMT NOC GD RTX",
+     -1,
+     "Budget worries"
+    ],
+    [
+     "ITA",
+     -1,
+     "Group down"
+    ]
+   ],
+   "hist": "Rule of thumb: defense budgets have usually been bipartisan, so deep cuts are less likely than headlines suggest.",
+   "histN": "",
+   "histU": "",
+   "today": "Fading a politics-driven gap down is a judgment call.",
+   "later": "Backlogs are long; budgets move slowly.",
+   "conf": 1
+  },
+  {
+   "id": "banks",
+   "cat": "banks",
+   "head": "Financials +3.46% to a record, but card issuers fall on a possible rate cap",
+   "when": "Nov 4",
+   "src": "https://pro.thestreet.com/market-commentary/blue-wave-sends-the-dow-to-its-best-day-since-april-2025-as-ai-beneficiaries-sink",
+   "srcN": "TheStreet Pro, Nov 4",
+   "mean": "It was the sector's best day since April 2025. Synchrony, Capital One and Bread Financial fell on a possible credit-card rate cap, and Trump earlier floated a 10% cap (Investrade).",
+   "react": [
+    [
+     "JPM BAC",
+     1,
+     "Rate and sector strength"
+    ],
+    [
+     "SYF COF BFH",
+     -1,
+     "Rate-cap risk"
+    ]
+   ],
+   "hist": "In the last three hiking cycles, JPMorgan rose in all three (+22.6%, +57.7%, +16.8%), but Bank of America fell 24.8% in 2022-23.",
+   "histN": "24/7 Wall St. bank study",
+   "histU": "https://247wallst.com/investing/2026/11/03/rate-hikes-could-be-coming-history-likes-these-4-bank-stocks/",
+   "today": "Card issuers are headline-sensitive; size small.",
+   "later": "Quality banks are the cleanest hiking-cycle play, but it is not automatic.",
+   "conf": 2
+  },
+  {
+   "id": "gold",
+   "cat": "commodities",
+   "head": "Gold jumps 3.4% to about $4,073, then higher near $4,135-4,144 on Nov 5",
+   "when": "Nov 4-5",
+   "src": "https://xtb.com/en/market-analysis/what-drives-the-market-top-morning-news-november-5-2026",
+   "srcN": "XTB, Nov 5; Investrade, Nov 4",
+   "mean": "Dec gold closed Nov 4 at $4,073 (+3.37%), its biggest gain since August, as yields and the dollar fell. Spot was $4,134.83 on Nov 5 per Discovery Alert. Citi's scenario is $4,500 in 3 months and $5,000 in 6-12 months.",
+   "react": [
+    [
+     "GLD GDX",
+     1,
+     "Lower dollar and yields"
+    ],
+    [
+     "UUP",
+     -1,
+     "Dollar index near 101.2-101.3"
+    ]
+   ],
+   "hist": "Rule of thumb: after a 3% day, gold often retests the breakout level.",
+   "histN": "",
+   "histU": "",
+   "today": "Pullbacks toward the $4,000 area are the levels to watch.",
+   "later": "Citi's targets are one forecast, not a given.",
+   "conf": 2
+  },
+  {
+   "id": "jobs",
+   "cat": "economy",
+   "head": "October jobs report Friday: consensus +65k, 4.2% unemployment, wages +0.3%",
+   "when": "Fri Nov 6, 8:30 ET",
+   "src": "https://economics.td.com/domains/economics.td.com/documents/reports/bottom-line/tables/2026-10-30/upcoming.htm",
+   "srcN": "TD Economics; Reuters poll via Discovery Alert, Nov 5",
+   "mean": "September payrolls were +29k. ADP private payrolls rose 86,000 in October vs 69,000 expected, and ISM services was 54.5 with prices paid at 73.0. Stockdads says a 0.4% or higher wage print would make a December hike \"a done deal.\"",
+   "react": [
+    [
+     "TLT",
+     -1,
+     "Hot data lifts yields"
+    ],
+    [
+     "IWM",
+     -1,
+     "Hot data hurts small caps"
+    ],
+    [
+     "XLF",
+     1,
+     "Margin tailwind"
+    ]
+   ],
+   "hist": "Rule of thumb: in a hiking regime, good economic news can be bad for stocks.",
+   "histN": "",
+   "histU": "",
+   "today": "Reduce size into 8:30 ET Friday.",
+   "later": "A cold print would revive growth stocks unless it raises recession fear.",
+   "conf": 3
+  },
+  {
+   "id": "cpi",
+   "cat": "economy",
+   "head": "Inflation: October CPI lands Tue Nov 10, and December hike odds hang on it",
+   "when": "Tue Nov 10, 8:30 ET",
+   "src": "https://www.bls.gov/schedule/news_release/cpi.htm",
+   "srcN": "BLS schedule; Admiral Markets, Oct 9",
+   "mean": "August CPI was 3.4% y/y (energy +16.3%). No consensus for October had been published yet. Oil fell 8% on Nov 4, but that does not show up until the November data.",
+   "react": [
+    [
+     "TLT",
+     -1,
+     "Hot CPI lifts yields"
+    ],
+    [
+     "XLE",
+     0,
+     "Depends on energy component"
+    ]
+   ],
+   "hist": "Rule of thumb: core CPI matters more than the headline for the Fed.",
+   "histN": "",
+   "histU": "",
+   "today": "Expect volatility on Nov 10.",
+   "later": "Watch core goods and shelter.",
+   "conf": 2
+  },
+  {
+   "id": "earn",
+   "cat": "stocks",
+   "head": "Earnings movers: AppLovin +22.6% after hours, Qualcomm -7.2%, Snap -11.5%",
+   "when": "Nov 4 after hours",
+   "src": "https://www.tradingview.com/news/benzinga:98d63d5b7094b:0-qualcomm-applovin-mercadolibre-snap-and-coherent-why-these-5-stocks-are-on-investors-radars-today/",
+   "srcN": "Benzinga via TradingView, Nov 4",
+   "mean": "AppLovin guided Q4 revenue to $2.365B-$2.395B vs $2.25B expected and added a $3.2B buyback. Qualcomm's handset revenue fell 26%. Snap will stop reporting daily users. Reuters had Qualcomm down 10.1% and Snap down 10.1% premarket, with AppLovin up 16.4%.",
+   "react": [
+    [
+     "APP",
+     1,
+     "Beat and raise"
+    ],
+    [
+     "QCOM",
+     -1,
+     "Handset weakness"
+    ],
+    [
+     "SNAP",
+     -1,
+     "Revenue light"
+    ]
+   ],
+   "hist": "Rule of thumb: after-hours moves often change by the open.",
+   "histN": "",
+   "histU": "",
+   "today": "Check premarket volume before acting.",
+   "later": "Single quarters rarely change a long-term thesis.",
+   "conf": 2
+  },
+  {
+   "id": "asia",
+   "cat": "stocks",
+   "head": "Asian chip selloff: Kospi -4.8%, SK Hynix -9%; Bank of England expected to hike to 4.0%",
+   "when": "Nov 5",
+   "src": "https://www.xtb.com/en/market-analysis/what-drives-the-market-top-morning-news-november-5-2026",
+   "srcN": "XTB, Nov 5; NordFX, Nov 5",
+   "mean": "Samsung fell 6.7% and the Kospi is down about 40% from its June peak. Shanghai rose 3.6% and the Hang Seng 3%. The BoE decision is at 12:00 GMT; a hike from 3.75% to 4.00% would be its first in over three years.",
+   "react": [
+    [
+     "SMH",
+     -1,
+     "Global chip weakness"
+    ],
+    [
+     "GBP",
+     1,
+     "Hike would support the pound"
+    ]
+   ],
+   "hist": "Rule of thumb: chip selloffs in Asia often hit US chips at the open.",
+   "histN": "",
+   "histU": "",
+   "today": "Nasdaq 100 futures were down about 0.5-0.7%.",
+   "later": "A global hiking cycle is a headwind for long-duration growth.",
+   "conf": 2
+  }
+ ],
+ "cats": [
+  [
+   "all",
+   "All"
+  ],
+  [
+   "fed",
+   "Fed and rates"
+  ],
+  [
+   "housing",
+   "Mortgage and housing"
+  ],
+  [
+   "banks",
+   "Banks"
+  ],
+  [
+   "economy",
+   "Economy"
+  ],
+  [
+   "stocks",
+   "Stocks"
+  ],
+  [
+   "commodities",
+   "Gold and oil"
+  ],
+  [
+   "politics",
+   "Politics and policy"
   ]
+ ],
+ "calendar": [
+  {
+   "d": "2026-11-05",
+   "t": "Fed: Hammack 8:50, Barkin 9:10, Logan 7:00 pm; jobless claims and Q3 productivity 8:30 ET",
+   "usual": "Fed tone moves hike odds. Claims near 194-196k keep the labor market looking firm."
+  },
+  {
+   "d": "2026-11-05",
+   "t": "Bank of England decision (12:00 GMT, hike to 4.00% expected)",
+   "usual": "A hike is priced in; a hold would be a surprise for the pound."
+  },
+  {
+   "d": "2026-11-06",
+   "t": "October jobs report (8:30 ET)",
+   "usual": "Consensus +65k, 4.2%, wages +0.3% m/m. Big moves in yields, dollar and banks."
+  },
+  {
+   "d": "2026-11-09",
+   "t": "Constellation and Rocket Lab earnings",
+   "usual": "Tests the data-center power and space themes after the Nov 4 drop."
+  },
+  {
+   "d": "2026-11-10",
+   "t": "October CPI (8:30 ET)",
+   "usual": "The key input to December's hike. Core matters more than the headline."
+  },
+  {
+   "d": "2026-11-12",
+   "t": "Nebius and Applied Materials earnings",
+   "usual": "AI infrastructure read-through."
+  }
+ ],
+ "scen": {
+  "title": "What if Friday's jobs number is...",
+  "opts": [
+   {
+    "k": "hot",
+    "l": "Hot (100k+)",
+    "out": [
+     [
+      "10-year yield",
+      -1,
+      "Likely up, toward or over 5%"
+     ],
+     [
+      "Dec hike odds",
+      -1,
+      "Up toward a lock"
+     ],
+     [
+      "Stocks",
+      -1,
+      "Mixed to lower; growth and small caps worst"
+     ],
+     [
+      "Homebuilders",
+      -1,
+      "Down with yields"
+     ],
+     [
+      "Banks",
+      1,
+      "Margin tailwind, credit looks fine"
+     ],
+     [
+      "Gold",
+      -1,
+      "Pressured by yields and dollar"
+     ]
+    ]
+   },
+   {
+    "k": "mid",
+    "l": "In line (about 65k)",
+    "out": [
+     [
+      "10-year yield",
+      0,
+      "Little change"
+     ],
+     [
+      "Dec hike odds",
+      0,
+      "About the same"
+     ],
+     [
+      "Stocks",
+      1,
+      "Relief; focus moves to CPI Nov 10"
+     ],
+     [
+      "Homebuilders",
+      0,
+      "Flat"
+     ],
+     [
+      "Banks",
+      0,
+      "Flat"
+     ],
+     [
+      "Gold",
+      0,
+      "Holds $4,100 area"
+     ]
+    ]
+   },
+   {
+    "k": "cold",
+    "l": "Cold (under 30k)",
+    "out": [
+     [
+      "10-year yield",
+      1,
+      "Down"
+     ],
+     [
+      "Dec hike odds",
+      1,
+      "Falls meaningfully"
+     ],
+     [
+      "Stocks",
+      1,
+      "Growth and small caps rally, unless recession fear takes over"
+     ],
+     [
+      "Homebuilders",
+      1,
+      "Bounce with yields"
+     ],
+     [
+      "Banks",
+      -1,
+      "Credit worries"
+     ],
+     [
+      "Gold",
+      1,
+      "Extends gains"
+     ]
+    ]
+   }
+  ]
+ },
+ "playbook": [
+  [
+   "10-year yield rises over 5%",
+   "Homebuilders, REITs, utilities, small caps and unprofitable growth are pressured first. Banks and the dollar hold up better."
+  ],
+  [
+   "10-year yield falls toward 4.5%",
+   "Housing, small caps, growth and gold benefit. Mortgage rates ease a few weeks later."
+  ],
+  [
+   "Dollar keeps falling",
+   "Gold and miners, emerging markets and big multinationals gain. Importers lose."
+  ],
+  [
+   "Oil keeps falling",
+   "Airlines, cruise lines and shippers win. Energy stocks lose. Headline inflation eases."
+  ],
+  [
+   "Hike odds drop below 50%",
+   "A growth and small-cap rally is the usual response. Banks lose some margin tailwind."
+  ],
+  [
+   "Jobs weaken sharply",
+   "Bonds rally, defensives (healthcare, staples, utilities) lead. Cyclicals and banks get hit by recession worries."
+  ]
+ ]
 }
