@@ -51,11 +51,11 @@
   function card(p, i) {
     var dots = CRIT.map(function (c) { var v = p.v[c[0]]; return '<span class="mv-dot ' + (v === 1 ? "y" : v === 0 ? "n" : "") + '" title="' + esc(c[1] + (v === -1 ? " (not stated)" : v ? ": yes" : ": no")) + '">' + (v === 1 ? "✓" : v === 0 ? "✕" : "?") + '</span>'; }).join("");
     var range = p.hi ? '<div><div class="mv-bar"><i style="left:calc(' + Math.max(0, Math.min(100, (p.px - p.lo) / (p.hi - p.lo) * 100)).toFixed(1) + '% - 2px)"></i></div><div class="mv-bl"><span>' + (p.lo ? "$" + p.lo : "") + '</span><span>' + esc(p.hiN) + '</span></div></div>' : '';
-    return '<div class="mv-card" data-mv="' + i + '"><div class="mv-r1"><div><div class="mv-t">' + p.t + '</div><div class="mv-n">' + esc(p.n) + '</div></div><div class="mv-px" data-mvpx>$' + p.px.toFixed(2) + '<small>Nov 4 article</small></div></div>' +
+    return '<div class="mv-card" data-mv="' + i + '"><div class="mv-r1"><div><div class="mv-t">' + esc(p.t) + '</div><div class="mv-n">' + esc(p.n) + '</div></div><div class="mv-px" data-mvpx>$' + Number(p.px).toFixed(2) + '<small>' + esc(p.pxN || 'article price') + '</small></div></div>' +
       '<div><span class="mv-tag">' + esc(p.theme) + '</span><span class="mv-tag mv-cat">' + esc(p.cat) + '</span></div>' +
       '<div class="mv-dots">' + dots + '<span class="mv-sc">' + score(p) + '/5</span></div>' + range +
       '<p class="mv-p"><b>Why it could run:</b> ' + esc(p.why) + '</p><p class="mv-p mv-rk"><b>Watch out:</b> ' + esc(p.risk) + '</p>' +
-      '<div class="mv-ft"><a href="' + p.src + '" target="_blank" rel="noopener">' + esc(p.srcN) + ' ↗</a><button class="mv-b" type="button" data-mvnews="' + i + '">Latest headlines</button></div><div data-mvnw></div></div>';
+      '<div class="mv-ft"><a href="' + esc(/^https:\/\//.test(p.src) ? p.src : "#") + '" target="_blank" rel="noopener">' + esc(p.srcN) + ' ↗</a><button class="mv-b" type="button" data-mvnews="' + i + '">Latest headlines</button></div><div data-mvnw></div></div>';
   }
 
   function render(el) {
