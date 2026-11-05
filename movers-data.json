@@ -1,87 +1,418 @@
 {
  "asof": "Nov 4, 2026",
+ "tape": [
+  {
+   "l": "Dow",
+   "v": "53,356",
+   "d": 3.03
+  },
+  {
+   "l": "S&P 500",
+   "v": "7,689",
+   "d": 1.59
+  },
+  {
+   "l": "Nasdaq",
+   "v": "25,737",
+   "d": 1.44
+  },
+  {
+   "l": "Gold",
+   "v": "$4,074",
+   "d": 3.38
+  },
+  {
+   "l": "10-yr yield",
+   "v": "4.89%"
+  }
+ ],
+ "tapeSrc": "https://www.fool.com/coverage/stock-market-today/2026/11/04/stock-market-today-nov-4-dow-surges-3-in-biggest-post-midterm-rally-in-44-years/",
+ "events": [
+  {
+   "d": "2026-11-05",
+   "l": "Fed: Hammack"
+  },
+  {
+   "d": "2026-11-06",
+   "l": "Jobs report"
+  }
+ ],
  "picks": [
   {
+   "kind": "day",
+   "t": "CRCT",
+   "n": "Cricut",
+   "theme": "Earnings gap",
+   "px": 8.56,
+   "pxN": "Nov 4, 2:50 pm ET",
+   "chg": 43.4,
+   "hi": 9.05,
+   "lo": 3.74,
+   "hiN": "52-wk range $3.74 - $9.05",
+   "cat": "Earnings beat (Nov 4)",
+   "setup": "Earnings gap with huge volume",
+   "v": {
+    "news": 1,
+    "gap": 1,
+    "vol": 1,
+    "iv": -1,
+    "liq": 1
+   },
+   "why": "Beat low expectations: revenue $188.6M vs about $164M expected, EPS $0.13 vs $0.05. Volume was 5.3M shares vs a 772K average, and it ran as much as 50% at the high.",
+   "risk": "Easy comparison against a weak year-ago quarter. The platform segment is only growing single digits, so a gap this big can fade fast.",
+   "src": "https://www.fool.com/investing/2026/11/04/why-cricut-stock-soared-50-today/",
+   "srcN": "Motley Fool, Nov 4"
+  },
+  {
+   "kind": "day",
+   "t": "DUOL",
+   "n": "Duolingo",
+   "theme": "Earnings gap",
+   "px": 161.27,
+   "pxN": "Nov 4 close",
+   "chg": 26.0,
+   "hi": 268.97,
+   "lo": 87.89,
+   "hiN": "52-wk range $87.89 - $268.97",
+   "cat": "Earnings beat (Nov 4)",
+   "setup": "Gap up on raised guidance",
+   "v": {
+    "news": 1,
+    "gap": 1,
+    "vol": -1,
+    "iv": -1,
+    "liq": 1
+   },
+   "why": "Daily users +29% to 64.9M (up from +23% last quarter). Revenue +14% to $309M and the full-year forecast was raised. It traded $157.00 to $175.56 on the day.",
+   "risk": "Subscriber growth (+14%) lags user growth, and the AI-disruption worry was eased, not removed.",
+   "src": "https://www.fool.com/investing/2026/11/04/why-duolingo-stock-skyrocketed-today/",
+   "srcN": "Motley Fool, Nov 4"
+  },
+  {
+   "kind": "day",
+   "t": "SMCI",
+   "n": "Super Micro Computer",
+   "theme": "AI servers",
+   "px": 33.26,
+   "pxN": "After hours Nov 3",
+   "chg": 5.96,
+   "cat": "Earnings reaction (Nov 4 open)",
+   "catDate": "2026-11-04",
+   "setup": "Post-earnings gap, wild options",
+   "v": {
+    "news": 1,
+    "gap": 1,
+    "vol": -1,
+    "iv": 1,
+    "liq": 1
+   },
+   "why": "Revenue $19.95B vs $16.39B expected and EPS $1.81 vs $1.23. Full-year outlook raised to $72B-$82B. The stock had fallen 28% in the month before. Options implied volatility was about 167%.",
+   "risk": "Margin guidance is thin (10.4%-10.8%) and a board governance review is still pending.",
+   "src": "https://247wallst.com/investing/2026/11/03/live-can-super-micro-smash-q1-earnings-tonight-after-the-bell/",
+   "srcN": "24/7 Wall St, Nov 3"
+  },
+  {
+   "kind": "day",
+   "t": "MRVL",
+   "n": "Marvell Technology",
+   "theme": "Deal reaction",
+   "px": 171.97,
+   "pxN": "Nov 3 close",
+   "chg": 0.33,
+   "cat": "$115B Lumentum deal",
+   "setup": "Premarket flush that recovered",
+   "v": {
+    "news": 1,
+    "gap": 1,
+    "vol": 1,
+    "iv": -1,
+    "liq": 1
+   },
+   "why": "Agreed to buy Lumentum in an all-stock deal valued at $115B and fell about 13% before the open, then recovered to close up 0.33%. Volume was about 67% above its 3-month average.",
+   "risk": "All-stock deal means dilution, and TD Cowen cut it to Hold. A flush that recovers can still roll over.",
+   "src": "https://finance.yahoo.com/markets/stocks/articles/stock-market-today-nov-3-224509697.html",
+   "srcN": "Yahoo Finance, Nov 3"
+  },
+  {
+   "kind": "day",
+   "t": "DJT",
+   "n": "Trump Media & Technology",
+   "theme": "Event-driven",
+   "pxN": "",
+   "chg": -17.0,
+   "cat": "Earnings this week",
+   "setup": "Post-election drop, earnings ahead",
+   "v": {
+    "news": 1,
+    "gap": 1,
+    "vol": -1,
+    "iv": -1,
+    "liq": -1
+   },
+   "why": "Fell sharply after the midterm results and is on this week's earnings list.",
+   "risk": "The source gives two different drops (about 17% in the text, about 24.5% in its list), so check the live price before trusting any number here.",
+   "src": "https://www.fool.com/coverage/stock-market-today/2026/11/04/stock-market-today-nov-4-dow-surges-3-in-biggest-post-midterm-rally-in-44-years/",
+   "srcN": "Motley Fool, Nov 4"
+  },
+  {
+   "kind": "swing",
    "t": "IREN",
    "n": "Iren",
    "theme": "Neocloud / AI power",
    "px": 21.71,
+   "pxN": "Nov 4 article",
    "hi": 77,
    "lo": 5,
    "hiN": "Nov 2025 high ~$77",
-   "cat": "Earnings Nov 5 (FQ1 2027)",
+   "cat": "Earnings Nov 5",
+   "catDate": "2026-11-05",
+   "setup": "Earnings into a deep pullback",
    "v": {
     "cat": 1,
     "low": 1,
-    "gro": -1,
     "sel": 1,
-    "fun": -1
+    "mom": 0,
+    "thm": 1
    },
-   "why": "Trades near a third of its high. 5.8 GW power pipeline; plans 500 MW online in 2027 to reach 800 MW. Talks for 2027 and 2028 capacity.",
+   "why": "Trades near a third of its high. 5.8 GW power pipeline, with 500 MW planned online in 2027 to reach 800 MW. Talks for 2027 and 2028 capacity.",
    "risk": "The writer owns shares and calls. Earnings can gap it either way.",
    "src": "https://www.fool.com/investing/2026/11/04/a-major-neocloud-stock-rally-may-be-coming-these-3/",
-   "srcN": "Motley Fool, Nov 4",
-   "pxN": "Nov 4 article"
+   "srcN": "Motley Fool, Nov 4"
   },
   {
-   "t": "NBIS",
-   "n": "Nebius",
-   "theme": "Neocloud / AI cloud",
-   "px": 141.52,
-   "cat": "No date set",
-   "v": {
-    "cat": 0,
-    "low": 1,
-    "gro": 1,
-    "sel": 1,
-    "fun": 1
-   },
-   "why": "Q2 revenue +454% vs costs +251%. Contract value quadrupled from last quarter. Customer prepayments fund 50-60% of build-out; $3.5B Citi facility in October.",
-   "risk": "Down about 42% in a month. Still unprofitable.",
-   "src": "https://www.fool.com/investing/2026/11/04/a-major-neocloud-stock-rally-may-be-coming-these-3/",
-   "srcN": "Motley Fool, Nov 4",
-   "pxN": "Nov 4 article"
-  },
-  {
-   "t": "CRWV",
-   "n": "CoreWeave",
-   "theme": "Neocloud / AI cloud",
-   "px": 48.42,
-   "cat": "Debt refinancing",
-   "v": {
-    "cat": 0,
-    "low": -1,
-    "gro": 1,
-    "sel": -1,
-    "fun": 0
-   },
-   "why": "$104.2B backlog (3x last year). Q2 revenue more than doubled to $2.6B; operating margin nearly positive. 1.5 GW live, about 4.2 GW contracted.",
-   "risk": "Current ratio 0.46 and debt coming due. The writer's least favorite of the three.",
-   "src": "https://www.fool.com/investing/2026/11/04/a-major-neocloud-stock-rally-may-be-coming-these-3/",
-   "srcN": "Motley Fool, Nov 4",
-   "pxN": "Nov 4 article"
-  },
-  {
+   "kind": "swing",
    "t": "SPCX",
    "n": "SpaceX",
    "theme": "Space / AI infrastructure",
    "px": 141.31,
+   "pxN": "Nov 3 close",
+   "chg": 3.62,
    "hi": 225.64,
    "lo": 104.83,
    "hiN": "52-wk range $104.83 - $225.64",
-   "cat": "Nov 6 Baron-Musk chat",
+   "cat": "Baron-Musk chat Nov 6",
+   "catDate": "2026-11-06",
+   "setup": "Event run-up",
    "v": {
     "cat": 1,
     "low": 1,
-    "gro": -1,
     "sel": 1,
-    "fun": -1
+    "mom": -1,
+    "thm": 1
    },
-   "why": "Down about 38% from its post-IPO high. Baron, whose biggest holding is SpaceX, interviews Elon Musk on Nov 6. Topics could be Starlink Mobile, AI, orbital computing.",
-   "risk": "Hype events are mixed: Tesla fell after Baron's 2022 event and rose about 6.5% after 2023.",
+   "why": "About 38% below its post-IPO high. Ron Baron, whose largest holding is SpaceX, interviews Elon Musk on Nov 6. Topics could be Starlink Mobile, AI, orbital computing.",
+   "risk": "Event hype is mixed: Tesla fell after Baron's 2022 event and rose about 6.5% after 2023.",
    "src": "https://www.fool.com/investing/2026/11/04/prediction-spacex-stock-will-go-parabolic-after-no/",
-   "srcN": "Motley Fool, Nov 4",
-   "pxN": "Nov 4 article"
+   "srcN": "Motley Fool, Nov 4"
+  },
+  {
+   "kind": "swing",
+   "t": "MU",
+   "n": "Micron",
+   "theme": "AI memory",
+   "px": 803.71,
+   "pxN": "Nov 4, 11:22 am ET",
+   "chg": -6.0,
+   "hi": 1255,
+   "lo": 192.59,
+   "hiN": "52-wk range $192.59 - $1,255",
+   "cat": "No date set",
+   "setup": "Sharp pullback in a leader",
+   "v": {
+    "cat": 0,
+    "low": 1,
+    "sel": 1,
+    "mom": -1,
+    "thm": 1
+   },
+   "why": "Down about 36% from its high and off 6% on the day. Memory supply is tight and gross margin is 80.7%. Analysts expect 107% growth this fiscal year.",
+   "risk": "Memory is cyclical and the stock has swung from $192 to $1,255 in a year. The writer owns shares.",
+   "src": "https://www.fool.com/investing/2026/11/02/november-is-historically-the-best-month-for-the/",
+   "srcN": "Motley Fool, Nov 2 (prices Nov 4)"
+  },
+  {
+   "kind": "swing",
+   "t": "SMMT",
+   "n": "Summit Therapeutics",
+   "theme": "Biotech catalyst",
+   "pxN": "",
+   "cat": "FDA decision Nov 14",
+   "catDate": "2026-11-14",
+   "setup": "Binary FDA date",
+   "v": {
+    "cat": 1,
+    "low": -1,
+    "sel": -1,
+    "mom": -1,
+    "thm": 0
+   },
+   "why": "The FDA accepted the filing for ivonescimab (EGFR-mutated lung cancer, with chemo) and set a Nov 14, 2026 decision date.",
+   "risk": "Binary event: the FDA can approve, delay, ask for more data or call an advisory panel. The source is from April, so check current news and price first.",
+   "src": "https://rallies.ai/news/summit-therapeutics-gains-as-ivonescimab-bla-clock-ticks-toward-nov-14-2026-pdufa",
+   "srcN": "Rallies.ai, Apr 14"
+  },
+  {
+   "kind": "swing",
+   "t": "PLTR",
+   "n": "Palantir",
+   "theme": "AI software",
+   "pxN": "",
+   "chg": -2.3,
+   "cat": "Just reported (Nov 2)",
+   "setup": "Post-earnings drift watch",
+   "v": {
+    "cat": 0,
+    "low": -1,
+    "sel": -1,
+    "mom": 0,
+    "thm": 1
+   },
+   "why": "Q3 revenue $2.31B vs $2.17B expected, EPS $0.44 vs $0.40, and the full-year outlook was raised to about $8.53B. The stock still slipped about 2.3%.",
+   "risk": "Around 261x trailing earnings before the report. A beat that does not lift the stock can mean the good news is already priced in. Source figures conflict in places.",
+   "src": "https://finance.yahoo.com/markets/live/earnings-live-updates-apple-palantir-roku-and-more-212856249.html",
+   "srcN": "Yahoo Finance + 24/7 Wall St, Nov 2"
+  },
+  {
+   "kind": "invest",
+   "t": "NVDA",
+   "n": "Nvidia",
+   "theme": "AI chips",
+   "px": 206.69,
+   "pxN": "Nov 3 close",
+   "chg": 2.29,
+   "hi": 243.37,
+   "lo": 164.27,
+   "hiN": "52-wk range $164.27 - $243.37",
+   "cat": "Long-term AI build-out",
+   "setup": "Core AI holding",
+   "v": {
+    "gro": 1,
+    "moat": 1,
+    "val": 1,
+    "mar": 1,
+    "dur": 1
+   },
+   "why": "Q2 revenue +106% with a 74.7% gross margin and about 70% growth guided for next year. About 13.5x next year's earnings.",
+   "risk": "Has lagged this year. A big chunk of the thesis is 2027 estimates coming true. The writer owns shares.",
+   "src": "https://www.fool.com/investing/2026/11/02/my-top-3-ai-stock-picks-for-november/",
+   "srcN": "Motley Fool, Nov 2"
+  },
+  {
+   "kind": "invest",
+   "t": "AVGO",
+   "n": "Broadcom",
+   "theme": "AI custom chips",
+   "px": 331.37,
+   "pxN": "Nov 4, 10:13 am ET",
+   "chg": -0.23,
+   "hi": 495,
+   "lo": 289.96,
+   "hiN": "52-wk range $289.96 - $495",
+   "cat": "D.A. Davidson upgrade to Buy",
+   "setup": "Custom AI chips",
+   "v": {
+    "gro": 1,
+    "moat": 1,
+    "val": 1,
+    "mar": 1,
+    "dur": 1
+   },
+   "why": "Analyst target raised from $350 to $400. AI revenue is expected to double to $115B in fiscal 2027 and $230B in 2028. Anthropic has $161B of commitments with it.",
+   "risk": "Growth leans on Anthropic and OpenAI, who depend on raising more money. The writer owns shares.",
+   "src": "https://www.fool.com/investing/2026/11/04/one-wall-street-analyst-says-this-stock-is-the-bes/",
+   "srcN": "Motley Fool, Nov 4"
+  },
+  {
+   "kind": "invest",
+   "t": "MU",
+   "n": "Micron",
+   "theme": "AI memory",
+   "px": 803.71,
+   "pxN": "Nov 4, 11:22 am ET",
+   "chg": -6.0,
+   "hi": 1255,
+   "lo": 192.59,
+   "hiN": "52-wk range $192.59 - $1,255",
+   "cat": "Tight memory supply",
+   "setup": "Cyclical on a supercycle",
+   "v": {
+    "gro": 1,
+    "moat": -1,
+    "val": 1,
+    "mar": 1,
+    "dur": 0
+   },
+   "why": "About 5.3x this year's earnings, 80.7% gross margin and 107% expected growth. The CEO reportedly expects supply to stay tight through 2027 and 2028.",
+   "risk": "Memory booms end. Customer supply agreements may soften the next downturn but will not remove it.",
+   "src": "https://www.fool.com/investing/2026/11/02/november-is-historically-the-best-month-for-the/",
+   "srcN": "Motley Fool, Nov 2 (prices Nov 4)"
+  },
+  {
+   "kind": "invest",
+   "t": "GOOGL",
+   "n": "Alphabet",
+   "theme": "AI cloud",
+   "px": 290.3,
+   "pxN": "Nov 4, 11:24 am ET",
+   "chg": 3.7,
+   "hi": 408.61,
+   "lo": 270.7,
+   "hiN": "52-wk range $270.70 - $408.61",
+   "cat": "Cloud growth",
+   "setup": "Cloud + AI platform",
+   "v": {
+    "gro": 1,
+    "moat": 1,
+    "val": -1,
+    "mar": 0,
+    "dur": 1
+   },
+   "why": "Google Cloud grew 103% in Q3. The stock fell more than 10% after earnings, then bounced with the broad market.",
+   "risk": "Heavy AI spending is pushing cash flow negative. The writer owns shares.",
+   "src": "https://www.fool.com/investing/2026/11/02/november-is-historically-the-best-month-for-the/",
+   "srcN": "Motley Fool, Nov 2 (prices Nov 4)"
+  },
+  {
+   "kind": "invest",
+   "t": "NBIS",
+   "n": "Nebius",
+   "theme": "Neocloud / AI cloud",
+   "px": 141.52,
+   "pxN": "Nov 4 article",
+   "cat": "Contract growth",
+   "setup": "High-risk AI cloud",
+   "v": {
+    "gro": 1,
+    "moat": -1,
+    "val": -1,
+    "mar": 0,
+    "dur": 1
+   },
+   "why": "Q2 revenue +454% vs costs +251%. Contract value quadrupled from last quarter. Prepayments fund 50-60% of build-out and a $3.5B Citi facility closed in October.",
+   "risk": "Down about 42% in a month and still unprofitable.",
+   "src": "https://www.fool.com/investing/2026/11/04/a-major-neocloud-stock-rally-may-be-coming-these-3/",
+   "srcN": "Motley Fool, Nov 4"
+  },
+  {
+   "kind": "invest",
+   "t": "CRWV",
+   "n": "CoreWeave",
+   "theme": "Neocloud / AI cloud",
+   "px": 48.42,
+   "pxN": "Nov 4 article",
+   "cat": "Debt refinancing",
+   "setup": "Backlog vs balance sheet",
+   "v": {
+    "gro": 1,
+    "moat": 1,
+    "val": -1,
+    "mar": 0,
+    "dur": 1
+   },
+   "why": "$104.2B backlog (3x last year). Q2 revenue more than doubled to $2.6B and operating margin nearly turned positive. 1.5 GW live, about 4.2 GW contracted.",
+   "risk": "Current ratio 0.46 and debt coming due. The writer's least favorite of three neoclouds.",
+   "src": "https://www.fool.com/investing/2026/11/04/a-major-neocloud-stock-rally-may-be-coming-these-3/",
+   "srcN": "Motley Fool, Nov 4"
   }
  ]
 }

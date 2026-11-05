@@ -1,104 +1,192 @@
-/* Parabolic Movers: a news-driven radar of stocks with the ingredients for a fast run.
-   The list below is curated from dated news articles (source + date on every card). Live prices and headlines load when you are signed in. */
+/* Parabolic Movers: news-sourced candidates for three styles: day trades, swing trades, investments.
+   The picks live in movers-data.json (refreshed daily). Live prices and headlines load when you are signed in. */
 (function () {
   "use strict";
-  var ASOF = "";
-  var CRIT = [
-    ["cat", "Catalyst this week", "A dated event (earnings, a big interview) that can move it"],
-    ["low", "Far below its high", "Down 30%+ from the peak, so a rebound has room"],
-    ["gro", "Sales outrunning costs", "Revenue growing faster than expenses"],
-    ["sel", "Sold off hard lately", "A sharp recent drop: coiled spring or falling knife"],
-    ["fun", "Funded to survive", "Can pay its bills without a bad refinancing"]
+  var DATA = { asof: "", tape: [], events: [], picks: [] }, ST = { kind: "day", sort: "heat", theme: "", loaded: false };
+  var ICON = {
+    day: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>',
+    swing: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 14c3-8 6-8 9 0s6 8 9 0"/><path d="M2 20h20"/></svg>',
+    invest: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V10"/><path d="M12 10c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 14c0-3-2-5-6-5 0 3 2 5 6 5z"/></svg>'
+  };
+  var KINDS = {
+    day: { name: "Day trades", tag: "In and out today", hold: "Minutes to hours", goal: "Small, fast gains", look: "Gap, volume, the first 30 minutes", risk: 5, pos: [0, 4],
+      play: ["Trade the first 30 minutes. That is where the volume is.", "Mark the premarket high and low plus VWAP. Take the break, or the failed break.", "Flat by the close. No overnight surprises."],
+      crit: [["news", "Fresh news today", "A headline that is moving it right now"], ["gap", "Big gap or move", "Already moving 5%+ so there is range to trade"], ["vol", "Volume way up", "Several times its normal share volume"], ["iv", "Big swings priced in", "Options or short interest signal a wild ride"], ["liq", "Easy to trade", "Plenty of shares changing hands"]] },
+    swing: { name: "Swing trades", tag: "Days to weeks", hold: "2 days to 6 weeks", goal: "A real move off a catalyst", look: "A dated catalyst and a pullback to buy", risk: 3, pos: [18, 40],
+      play: ["Wait for the catalyst, then let the move prove itself.", "Buy pullbacks to the 9 EMA or VWAP, not the first spike.", "You hold overnight, so size it for a gap against you."],
+      crit: [["cat", "Catalyst within 2 weeks", "Earnings, a decision or an event with a date"], ["low", "Far below its high", "Down 30%+ so a rebound has room"], ["sel", "Sold off hard", "A sharp drop: coiled spring or falling knife"], ["mom", "Momentum building", "Buyers are already stepping in"], ["thm", "Hot theme", "Part of a story the market is chasing"]] },
+    invest: { name: "Investments", tag: "Own it for years", hold: "1 to 10+ years", goal: "Own great businesses as they compound", look: "Growth, margins, the long-term story", risk: 2, pos: [58, 100],
+      play: ["Own the business, not the ticker: growth, margins, moat.", "Buy in pieces. Prices can swing 30%+ in a year (see the range bars).", "Check the thesis each quarter, not each minute."],
+      crit: [["gro", "Fast growth", "Revenue growing much faster than the economy"], ["moat", "Strong position", "Backlog, scale or tech that rivals struggle to copy"], ["val", "Valuation looks fair", "The article calls it cheap against its growth"], ["mar", "Healthy margins", "Keeps a good share of each dollar of sales"], ["dur", "Years of demand", "A tailwind that lasts beyond this year"]] }
+  };
+  var QUIZ = [
+    ["How much time can you watch charts?", ["All day, I love it", "day"], ["A few minutes a day", "swing"], ["Almost none", "invest"]],
+    ["A position drops 5% on you. You...", ["Cut it right now", "day"], ["Check if the story still holds", "swing"], ["Buy more, it is on sale", "invest"]],
+    ["What sounds most fun?", ["Catching the open", "day"], ["Riding a story for a week", "swing"], ["Owning great companies", "invest"]]
   ];
-  // v: 1 = yes, 0 = no, -1 = the article did not say
-  var PICKS = [];
 
   var CSS = '#movv{max-width:none;width:100%;box-sizing:border-box}#movv *{box-sizing:border-box}' +
-    '#movv .mv-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;margin:0 0 6px}#movv .mv-h h2{margin:0;font-size:26px}#movv .mv-sub{color:var(--mute);font-size:14px}' +
-    '#movv .mv-top{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;margin:14px 0}@media(max-width:900px){#movv .mv-top{grid-template-columns:minmax(0,1fr)}}' +
-    '#movv .mv-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}#movv .mv-box h3{margin:0 0 8px;font-size:15px}' +
-    '#movv .mv-box svg{width:100%;height:auto;display:block}#movv .mv-lg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mute);margin-top:6px}' +
-    '#movv .mv-ck{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}#movv .mv-ck div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px}#movv .mv-ck b{display:block;font-size:20px}' +
+    '#movv .mv-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin:0 0 10px}#movv .mv-h h2{margin:0;font-size:26px}#movv .mv-sub{color:var(--mute);font-size:14px}' +
+    '#movv .mv-tape{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}#movv .mv-chip{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 11px;font-size:13px}' +
+    '#movv .mv-chip b{font-weight:700}#movv .up{color:var(--gain)}#movv .dn{color:var(--loss)}' +
+    '#movv .mv-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0;margin:0 0 14px}#movv .mv-box h3{margin:0 0 10px;font-size:15px}' +
+    '#movv .mv-tl{position:relative;height:140px;margin:6px 8px 0}#movv .mv-tl .ax{position:absolute;left:0;right:0;top:64px;height:3px;background:var(--line);border-radius:2px}' +
+    '#movv .mv-tl .dot{position:absolute;transform:translateX(-50%);font-size:11px;font-weight:700;text-align:center;white-space:nowrap}#movv .mv-tl .dot i{display:block;width:12px;height:12px;border-radius:50%;margin:0 auto 2px;border:2px solid var(--panel)}' +
+    '#movv .mv-tl .tk{position:absolute;top:124px;transform:translateX(-50%);font-size:10px;color:var(--mute);white-space:nowrap}#movv .mv-tl .now{position:absolute;top:20px;width:2px;height:92px;opacity:.5;background:var(--accent)}' +
+    '#movv .k-day{--kc:#e0762b}#movv .k-swing{--kc:#2b7de0}#movv .k-invest{--kc:#1f9d63}' +
+    '#movv .mv-styles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 14px}@media(max-width:820px){#movv .mv-styles{grid-template-columns:minmax(0,1fr)}}' +
+    '#movv .mv-sty{text-align:left;background:var(--panel);color:var(--ink);border:2px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;font:inherit;display:flex;flex-direction:column;gap:8px;min-width:0}' +
+    '#movv .mv-sty:hover{border-color:var(--kc)}#movv .mv-sty.on{border-color:var(--kc);box-shadow:0 0 0 3px color-mix(in srgb,var(--kc) 22%,transparent)}' +
+    '#movv .mv-sty .hd{display:flex;align-items:center;gap:10px}#movv .mv-sty .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--kc);color:#fff}' +
+    '#movv .mv-sty .nm{font-size:18px;font-weight:800}#movv .mv-sty .tg{color:var(--mute);font-size:13px}#movv .mv-sty .n{margin-left:auto;font-weight:800;font-size:22px;color:var(--kc)}' +
+    '#movv .mv-hz{position:relative;height:10px;border-radius:6px;background:var(--line)}#movv .mv-hz i{position:absolute;top:0;height:10px;border-radius:6px;background:var(--kc)}' +
+    '#movv .mv-hzl{display:flex;justify-content:space-between;font-size:10px;color:var(--mute);margin-top:-4px}' +
+    '#movv .mv-fx{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13px}#movv .mv-fx span{color:var(--mute)}' +
+    '#movv .mv-rk{display:flex;gap:3px;align-items:center}#movv .mv-rk u{width:14px;height:8px;border-radius:2px;background:var(--line);text-decoration:none}#movv .mv-rk u.on{background:var(--kc)}' +
+    '#movv .mv-play{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:0 0 12px}#movv .mv-play div{border-left:4px solid var(--kc);padding:6px 10px;font-size:14px;background:var(--panel);border-radius:0 10px 10px 0;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}' +
+    '#movv .mv-ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}#movv .mv-b{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer}' +
+    '#movv .mv-b:hover{border-color:var(--accent)}#movv .mv-b.on{background:var(--accent);color:var(--accent-ink,#fff);border-color:var(--accent)}#movv .mv-sp{flex:1}' +
+    '#movv .mv-leg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:0 0 12px}#movv .mv-leg div{border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:12px;background:var(--panel)}#movv .mv-leg b{display:block;font-size:13px}#movv .mv-leg span{color:var(--mute)}' +
     '#movv .mv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}' +
-    '#movv .mv-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}' +
+    '#movv .mv-card{position:relative;background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--kc);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}' +
+    '#movv .mv-card.top{border-color:var(--kc);box-shadow:0 0 0 2px color-mix(in srgb,var(--kc) 30%,transparent)}#movv .mv-rib{position:absolute;top:-4px;left:14px;background:var(--kc);color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:0 0 8px 8px}' +
     '#movv .mv-r1{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}#movv .mv-t{font-size:22px;font-weight:800;letter-spacing:.5px}#movv .mv-n{color:var(--mute);font-size:13px}' +
-    '#movv .mv-px{text-align:right;font-weight:700;font-size:18px}#movv .mv-px small{display:block;font-weight:500;color:var(--mute);font-size:11px}' +
-    '#movv .up{color:var(--gain)}#movv .dn{color:var(--loss)}' +
-    '#movv .mv-tag{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:2px 9px;font-size:12px;color:var(--mute);margin-right:6px}' +
-    '#movv .mv-cat{background:var(--accent);color:var(--accent-ink,#fff);border-color:var(--accent)}' +
-    '#movv .mv-dots{display:flex;gap:6px;align-items:center}#movv .mv-dot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;border:2px solid var(--line);color:var(--mute)}' +
-    '#movv .mv-dot.y{background:var(--gain);border-color:var(--gain);color:#fff}#movv .mv-dot.n{border-color:var(--loss);color:var(--loss)}' +
-    '#movv .mv-sc{font-weight:800;font-size:13px;margin-left:6px}' +
-    '#movv .mv-bar{position:relative;height:10px;border-radius:6px;background:var(--line)}#movv .mv-bar i{position:absolute;top:-4px;width:4px;height:18px;border-radius:2px;background:var(--accent)}' +
+    '#movv .mv-px{text-align:right;font-weight:700;font-size:18px}#movv .mv-px small{display:block;font-weight:600;color:var(--mute);font-size:11px}#movv .mv-px small.up{color:var(--gain)}#movv .mv-px small.dn{color:var(--loss)}' +
+    '#movv .mv-tag{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:2px 9px;font-size:12px;color:var(--mute);margin:0 6px 4px 0}#movv .mv-cat{background:var(--kc);color:#fff;border-color:var(--kc)}' +
+    '#movv .mv-heat{display:flex;align-items:center;gap:8px}#movv .mv-fl{display:flex;gap:3px}#movv .mv-fl u{width:26px;height:10px;border-radius:3px;background:var(--line);text-decoration:none}#movv .mv-fl u.y{background:var(--kc)}#movv .mv-fl u.q{background:repeating-linear-gradient(45deg,var(--line),var(--line) 3px,transparent 3px,transparent 6px)}' +
+    '#movv .mv-sc{font-weight:800;font-size:13px}#movv .mv-why{font-size:13px;color:var(--mute)}' +
+    '#movv .mv-dots{display:flex;gap:5px;flex-wrap:wrap}#movv .mv-dot{display:inline-flex;align-items:center;gap:4px;font-size:11px;border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--mute)}#movv .mv-dot.y{background:var(--gain);border-color:var(--gain);color:#fff}#movv .mv-dot.n{border-color:var(--loss);color:var(--loss)}' +
+    '#movv .mv-bar{position:relative;height:10px;border-radius:6px;background:var(--line)}#movv .mv-bar i{position:absolute;top:-4px;width:4px;height:18px;border-radius:2px;background:var(--ink)}' +
     '#movv .mv-bl{display:flex;justify-content:space-between;font-size:11px;color:var(--mute);margin-top:4px}' +
-    '#movv .mv-p{margin:0;font-size:14px;line-height:1.45}#movv .mv-p b{font-weight:700}#movv .mv-rk{color:var(--loss)}' +
+    '#movv .mv-p{margin:0;font-size:14px;line-height:1.45}#movv .mv-p b{font-weight:700}#movv .mv-rkp{color:var(--loss)}' +
     '#movv .mv-ft{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:var(--mute)}#movv .mv-ft a{color:inherit}' +
-    '#movv .mv-b{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:5px 10px;font:inherit;font-size:12px;cursor:pointer}#movv .mv-b:hover{border-color:var(--accent)}' +
     '#movv .mv-nw{font-size:13px;border-top:1px dashed var(--line);padding-top:8px;display:flex;flex-direction:column;gap:6px}#movv .mv-nw a{color:var(--ink)}#movv .mv-nw span{color:var(--mute);font-size:11px}' +
+    '#movv .mv-q{display:grid;gap:8px}#movv .mv-q .qq{font-weight:700;font-size:14px}#movv .mv-q .ops{display:flex;flex-wrap:wrap;gap:8px}#movv .mv-res{margin-top:10px;font-weight:700}' +
     '#movv .mv-dis{color:var(--mute);font-size:12px;margin:16px 0 4px}';
 
-  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
-  function score(p) { var n = 0; CRIT.forEach(function (c) { if (p.v[c[0]] === 1) n++; }); return n; }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function score(p) { var n = 0; KINDS[p.kind].crit.forEach(function (c) { if (p.v && p.v[c[0]] === 1) n++; }); return n; }
+  function dayNum(iso) { var m = /^(\d{4})-(\d\d)-(\d\d)$/.exec(iso || ""); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) / 86400000 : NaN; }
+  function today() { var d = new Date(); return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000; }
+  function inDays(iso) { var n = dayNum(iso) - today(); if (isNaN(n)) return ""; return n < 0 ? "passed" : n === 0 ? "today" : n === 1 ? "tomorrow" : "in " + n + " days"; }
+  function fmtDate(iso) { var d = new Date(dayNum(iso) * 86400000); return d.toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "UTC" }); }
+  function picksOf(k) { return DATA.picks.filter(function (p) { return KINDS[p.kind] && p.kind === k; }); }
 
-  function curve() { // what a parabolic move looks like: base, breakout, blow-off, crash
-    return '<svg viewBox="0 0 560 210" role="img" aria-label="Price curve: quiet base, breakout, steep blow-off, sharp drop">' +
-      '<defs><linearGradient id="mvg" x1="0" x2="1"><stop offset="0" stop-color="var(--mute)"/><stop offset=".6" stop-color="var(--gain)"/><stop offset="1" stop-color="var(--loss)"/></linearGradient></defs>' +
-      '<path d="M10 170 L70 166 L120 172 L170 160 L215 150 L260 132 L300 108 L335 78 L365 44 L388 16 L402 12 L418 40 L440 90 L470 140 L520 160" fill="none" stroke="url(#mvg)" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>' +
-      '<g font-size="12" fill="var(--ink)" font-family="system-ui,sans-serif"><text x="14" y="198">1 Quiet base</text><text x="190" y="198">2 Breakout</text><text x="318" y="198">3 Blow-off</text><text x="440" y="198">4 Air pocket</text></g>' +
-      '<g stroke="var(--line)" stroke-dasharray="3 4"><path d="M180 20V182M310 20V182M430 20V182"/></g></svg>';
+  function timeline() {
+    var t0 = today(), span = 16, items = [];
+    DATA.picks.forEach(function (p) { var n = dayNum(p.catDate) - t0; if (n >= -1 && n <= span) items.push({ n: n, t: p.t, k: p.kind, w: p.cat }); });
+    (DATA.events || []).forEach(function (e) { var n = dayNum(e.d) - t0; if (n >= -1 && n <= span) items.push({ n: n, t: e.l, k: "ev", ev: 1 }); });
+    if (!items.length) return "";
+    items.sort(function (a, b) { return a.n - b.n; });
+    var seen = {}, out = '<div class="mv-box"><h3>Catalyst calendar: the next 2 weeks</h3><div class="mv-tl"><div class="ax"></div><div class="now" style="left:' + (1 / (span + 1) * 100) + '%"></div>';
+    items.forEach(function (it) {
+      var left = (it.n + 1) / (span + 1) * 100, slot = seen[it.n] = (seen[it.n] || 0) + 1, col = it.ev ? "var(--mute)" : "var(--kc)";
+      out += '<div class="dot k-' + esc(it.k) + '" style="left:' + left.toFixed(1) + '%;top:' + (it.ev ? 76 + 16 * (it.n % 2 ? 1 : 0) : slot === 1 ? 38 : slot === 2 ? 14 : 0) + 'px;max-width:150px;overflow:hidden;text-overflow:ellipsis" title="' + esc(it.w || it.t) + '"><i style="background:' + col + '"></i>' + esc(it.t) + '</div>';
+    });
+    for (var d = -1; d <= span; d += 3) out += '<div class="tk" style="left:' + ((d + 1) / (span + 1) * 100).toFixed(1) + '%">' + (d === 0 ? "today" : fmtDate(new Date((t0 + d) * 86400000).toISOString().slice(0, 10))) + '</div>';
+    return out + '</div><div class="mv-chip" style="margin-top:8px"><span style="color:var(--kc)" class="k-day">●</span> day <span class="k-swing" style="color:var(--kc)">●</span> swing <span class="k-invest" style="color:var(--kc)">●</span> invest <span style="color:var(--mute)">●</span> market event</div></div>';
   }
 
-  function card(p, i) {
-    var dots = CRIT.map(function (c) { var v = p.v[c[0]]; return '<span class="mv-dot ' + (v === 1 ? "y" : v === 0 ? "n" : "") + '" title="' + esc(c[1] + (v === -1 ? " (not stated)" : v ? ": yes" : ": no")) + '">' + (v === 1 ? "✓" : v === 0 ? "✕" : "?") + '</span>'; }).join("");
-    var range = p.hi ? '<div><div class="mv-bar"><i style="left:calc(' + Math.max(0, Math.min(100, (p.px - p.lo) / (p.hi - p.lo) * 100)).toFixed(1) + '% - 2px)"></i></div><div class="mv-bl"><span>' + (p.lo ? "$" + p.lo : "") + '</span><span>' + esc(p.hiN) + '</span></div></div>' : '';
-    return '<div class="mv-card" data-mv="' + i + '"><div class="mv-r1"><div><div class="mv-t">' + esc(p.t) + '</div><div class="mv-n">' + esc(p.n) + '</div></div><div class="mv-px" data-mvpx>$' + Number(p.px).toFixed(2) + '<small>' + esc(p.pxN || 'article price') + '</small></div></div>' +
-      '<div><span class="mv-tag">' + esc(p.theme) + '</span><span class="mv-tag mv-cat">' + esc(p.cat) + '</span></div>' +
-      '<div class="mv-dots">' + dots + '<span class="mv-sc">' + score(p) + '/5</span></div>' + range +
-      '<p class="mv-p"><b>Why it could run:</b> ' + esc(p.why) + '</p><p class="mv-p mv-rk"><b>Watch out:</b> ' + esc(p.risk) + '</p>' +
+  function styleCard(k) {
+    var K = KINDS[k], rk = ""; for (var i = 1; i <= 5; i++) rk += '<u class="' + (i <= K.risk ? "on" : "") + '"></u>';
+    return '<button type="button" class="mv-sty k-' + k + (ST.kind === k ? " on" : "") + '" data-mvk="' + k + '"><div class="hd"><div class="ic">' + ICON[k] + '</div><div><div class="nm">' + K.name + '</div><div class="tg">' + K.tag + '</div></div><div class="n">' + picksOf(k).length + '</div></div>' +
+      '<div><div class="mv-hz"><i style="left:' + K.pos[0] + '%;width:' + (K.pos[1] - K.pos[0]) + '%"></i></div><div class="mv-hzl"><span>minutes</span><span>days</span><span>years</span></div></div>' +
+      '<div class="mv-fx"><span>Hold</span><div>' + K.hold + '</div><span>Goal</span><div>' + K.goal + '</div><span>Look for</span><div>' + K.look + '</div><span>Risk</span><div class="mv-rk">' + rk + '</div></div></button>';
+  }
+
+  function card(p, i, top) {
+    var K = KINDS[p.kind], hasV = p.v || {}, dots = K.crit.map(function (c) { var v = hasV[c[0]]; return '<span class="mv-dot ' + (v === 1 ? "y" : v === 0 ? "n" : "") + '" title="' + esc(c[2] + (v === -1 || v == null ? " (not stated)" : "")) + '">' + (v === 1 ? "✓" : v === 0 ? "✕" : "?") + ' ' + esc(c[1]) + '</span>'; }).join("");
+    var sc = score(p), fl = ""; K.crit.forEach(function (c, q) { var v = hasV[c[0]]; fl += '<u class="' + (v === 1 ? "y" : v === -1 || v == null ? "q" : "") + '"></u>'; });
+    var range = p.hi && p.lo && p.px ? '<div><div class="mv-bar"><i style="left:calc(' + Math.max(0, Math.min(100, (p.px - p.lo) / (p.hi - p.lo) * 100)).toFixed(1) + '% - 2px)"></i></div><div class="mv-bl"><span>$' + esc(p.lo) + '</span><span>' + esc(p.hiN || "") + '</span></div></div>' : "";
+    var chg = typeof p.chg === "number" ? '<small class="' + (p.chg >= 0 ? "up" : "dn") + '">' + (p.chg >= 0 ? "+" : "") + p.chg.toFixed(2) + '%</small>' : "";
+    var cd = p.catDate ? " · " + inDays(p.catDate) : "";
+    return '<div class="mv-card k-' + esc(p.kind) + (top ? " top" : "") + '" data-i="' + i + '">' + (top ? '<div class="mv-rib">HOTTEST RIGHT NOW</div>' : "") +
+      '<div class="mv-r1"><div><div class="mv-t">' + esc(p.t) + '</div><div class="mv-n">' + esc(p.n) + '</div></div><div class="mv-px" data-mvpx>' + (p.px ? "$" + Number(p.px).toFixed(2) : "price n/a") + chg + '<small>' + esc(p.pxN || "") + '</small></div></div>' +
+      '<div><span class="mv-tag">' + esc(p.theme) + '</span><span class="mv-tag mv-cat">' + esc(p.cat) + esc(cd) + '</span></div>' +
+      '<div class="mv-heat"><div class="mv-fl" title="Heat: how many of the 5 checks the article supports">' + fl + '</div><span class="mv-sc">' + sc + '/5</span><span class="mv-why">' + esc(p.setup || "") + '</span></div>' +
+      '<div class="mv-dots">' + dots + '</div>' + range +
+      '<p class="mv-p"><b>The story:</b> ' + esc(p.why) + '</p><p class="mv-p mv-rkp"><b>Watch out:</b> ' + esc(p.risk) + '</p>' +
       '<div class="mv-ft"><a href="' + esc(/^https:\/\//.test(p.src) ? p.src : "#") + '" target="_blank" rel="noopener">' + esc(p.srcN) + ' ↗</a><button class="mv-b" type="button" data-mvnews="' + i + '">Latest headlines</button></div><div data-mvnw></div></div>';
   }
 
+  function quiz() {
+    return '<div class="mv-box"><h3>Which style fits you? 3 quick questions</h3><div class="mv-q" id="mvq">' + QUIZ.map(function (q, i) {
+      return '<div><div class="qq">' + (i + 1) + '. ' + esc(q[0]) + '</div><div class="ops">' + q.slice(1).map(function (o) { return '<button type="button" class="mv-b" data-mvq="' + i + '" data-mva="' + o[1] + '">' + esc(o[0]) + '</button>'; }).join("") + '</div></div>';
+    }).join("") + '</div><div class="mv-res" id="mvres"></div></div>';
+  }
+
+  var ans = [];
   function render(el) {
-    var legend = CRIT.map(function (c, k) { return '<div><b>' + (k + 1) + '</b>' + esc(c[1]) + '<br><span style="color:var(--mute)">' + esc(c[2]) + '</span></div>'; }).join("");
-    var sorted = PICKS.map(function (p, i) { return [p, i]; }).sort(function (a, b) { return score(b[0]) - score(a[0]); });
-    el.innerHTML = '<style>' + CSS + '</style><div class="mv-h"><h2>Parabolic Movers</h2><span class="mv-sub">News-driven radar · updated ' + ASOF + '</span></div>' +
-      '<div class="mv-top"><div class="mv-box"><h3>What a parabolic move looks like</h3>' + curve() + '<div class="mv-lg"><span>Most of the money is made in step 2 to 3.</span><span>Step 4 is why you plan the exit before the entry.</span></div></div>' +
-      '<div class="mv-box"><h3>The 5-point check on every card</h3><div class="mv-ck">' + legend + '</div><div class="mv-lg"><span>✓ yes</span><span>✕ no</span><span>? the article did not say</span></div></div></div>' +
-      '<div class="mv-grid">' + sorted.map(function (x) { return card(x[0], x[1]); }).join("") + '</div>' +
-      '<p class="mv-dis">Built from the dated news articles linked on each card, not from a price screen. The checks are Revatour\'s read of those articles, not predictions or advice. Parabolic runs fail often and end fast; size small and know your stop first.</p>';
+    var K = KINDS[ST.kind], all = picksOf(ST.kind), themes = {}; all.forEach(function (p) { themes[p.theme] = 1; });
+    var list = all.map(function (p, i) { return { p: p, i: DATA.picks.indexOf(p) }; }).filter(function (x) { return !ST.theme || x.p.theme === ST.theme; });
+    list.sort(function (a, b) {
+      if (ST.sort === "date") { var da = dayNum(a.p.catDate), db = dayNum(b.p.catDate); da = isNaN(da) ? 1e9 : da; db = isNaN(db) ? 1e9 : db; return da - db || score(b.p) - score(a.p); }
+      return score(b.p) - score(a.p);
+    });
+    var tape = (DATA.tape || []).map(function (t) { return '<span class="mv-chip">' + esc(t.l) + ' <b>' + esc(t.v) + '</b>' + (typeof t.d === "number" ? '<span class="' + (t.d >= 0 ? "up" : "dn") + '">' + (t.d >= 0 ? "+" : "") + t.d.toFixed(2) + '%</span>' : "") + '</span>'; }).join("");
+    var leg = K.crit.map(function (c) { return '<div><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '</span></div>'; }).join("");
+    el.innerHTML = '<style>' + CSS + '</style><div class="mv-h"><h2>Parabolic Movers</h2><span class="mv-sub">News-sourced candidates · updated ' + esc(DATA.asof) + '</span></div>' +
+      (tape ? '<div class="mv-tape">' + tape + '</div>' : "") + timeline() +
+      '<div class="mv-styles">' + ["day", "swing", "invest"].map(styleCard).join("") + '</div>' +
+      '<div class="k-' + ST.kind + '"><div class="mv-play">' + K.play.map(function (t) { return '<div>' + esc(t) + '</div>'; }).join("") + '</div>' +
+      (ST.kind === "day" ? '<div class="mv-ctl"><button class="mv-b" type="button" data-mvprac="1">Practice day-trade setups →</button></div>' : "") +
+      '<div class="mv-leg">' + leg + '</div>' +
+      '<div class="mv-ctl"><button class="mv-b ' + (ST.sort === "heat" ? "on" : "") + '" data-mvs="heat" type="button">Hottest first</button><button class="mv-b ' + (ST.sort === "date" ? "on" : "") + '" data-mvs="date" type="button">Soonest catalyst</button><span class="mv-sp"></span>' +
+      '<button class="mv-b ' + (ST.theme ? "" : "on") + '" data-mvt="" type="button">All themes</button>' + Object.keys(themes).map(function (t) { return '<button class="mv-b ' + (ST.theme === t ? "on" : "") + '" data-mvt="' + esc(t) + '" type="button">' + esc(t) + '</button>'; }).join("") + '</div>' +
+      '<div class="mv-grid">' + list.map(function (x, n) { return card(x.p, x.i, n === 0 && ST.sort === "heat" && !ST.theme && score(x.p) >= 4); }).join("") + '</div></div>' +
+      '<div style="height:14px"></div>' + quiz() +
+      '<p class="mv-dis">Every card is built from the dated article linked on it, not from a price screen. Heat counts how many of the 5 checks the article supports (? = it did not say). These are not predictions or advice: day and swing trades can lose money fast, and even investments fall. Know your stop before you enter.</p>';
     live(el);
   }
 
   function api() { return window.stockspotSocial; }
   function live(el) {
     var a = api(); if (!a || !a.quotes) return;
-    a.quotes(PICKS.map(function (p) { return p.t; })).then(function (r) {
+    var syms = []; DATA.picks.forEach(function (p) { if (syms.indexOf(p.t) < 0 && syms.length < 25) syms.push(p.t); });
+    a.quotes(syms).then(function (r) {
       if (!r || !r.quotes) return;
-      PICKS.forEach(function (p, i) {
-        var q = r.quotes[p.t], c = el.querySelector('[data-mv="' + i + '"] [data-mvpx]'); if (!q || !c) return;
-        c.innerHTML = '$' + Number(q.p).toFixed(2) + '<small class="' + (q.dp >= 0 ? "up" : "dn") + '">' + (q.dp >= 0 ? "+" : "") + Number(q.dp).toFixed(2) + '% today</small>';
+      DATA.picks.forEach(function (p, i) {
+        var q = r.quotes[p.t], c = el.querySelector('[data-i="' + i + '"] [data-mvpx]'); if (!q || !c) return;
+        c.innerHTML = '$' + Number(q.p).toFixed(2) + '<small class="' + (q.dp >= 0 ? "up" : "dn") + '">' + (q.dp >= 0 ? "+" : "") + Number(q.dp).toFixed(2) + '% live</small>';
       });
-    }).catch(function () { /* keep the article prices */ });
+    }).catch(function () { });
   }
 
   function news(el, i) {
-    var box = el.querySelector('[data-mv="' + i + '"] [data-mvnw]'), a = api(); if (!box) return;
+    var box = el.querySelector('[data-i="' + i + '"] [data-mvnw]'), a = api(); if (!box) return;
     if (!a || !a.news) { box.innerHTML = '<div class="mv-nw">Sign in to see live headlines.</div>'; return; }
     box.innerHTML = '<div class="mv-nw">Loading…</div>';
-    a.news([PICKS[i].t]).then(function (r) {
+    a.news([DATA.picks[i].t]).then(function (r) {
       var items = (r && r.items || []).slice(0, 5);
-      box.innerHTML = '<div class="mv-nw">' + (items.length ? items.map(function (x) { return '<div><a href="' + esc(x.url || "#") + '" target="_blank" rel="noopener">' + esc(x.title) + '</a><br><span>' + esc(x.source || "") + ' · ' + new Date(x.ts).toLocaleDateString() + '</span></div>'; }).join("") : (r && r.configured === false ? "News feed is not set up yet." : "No headlines in the last week.")) + '</div>';
+      box.innerHTML = '<div class="mv-nw">' + (items.length ? items.map(function (x) { return '<div><a href="' + esc(/^https?:\/\//.test(x.url) ? x.url : "#") + '" target="_blank" rel="noopener">' + esc(x.title) + '</a><br><span>' + esc(x.source || "") + ' · ' + new Date(x.ts).toLocaleDateString() + '</span></div>'; }).join("") : (r && r.configured === false ? "News feed is not set up yet." : "No headlines in the last week.")) + '</div>';
     }).catch(function () { box.innerHTML = '<div class="mv-nw">Could not load headlines. Sign in and try again.</div>'; });
   }
 
-  var bound = false;
-  var loaded = false;
-  function load(el) { // the picks live in movers-data.json, which the daily refresh rewrites
+  function load() {
     return fetch("movers-data.json?v=" + Math.floor(Date.now() / 3600000)).then(function (r) { if (!r.ok) throw 0; return r.json(); })
-      .then(function (j) { if (j && j.picks && j.picks.length) { PICKS = j.picks; ASOF = j.asof || ""; loaded = true; } }).catch(function () { });
+      .then(function (j) { if (j && j.picks && j.picks.length) { DATA = j; DATA.picks = DATA.picks.filter(function (p) { return p && KINDS[p.kind] && p.t; }); ST.loaded = true; } }).catch(function () { });
   }
+
+  var bound = false;
   window.ParabolicMovers = { mount: function (el) {
-    (loaded ? Promise.resolve() : load(el)).then(function () { if (!PICKS.length) { el.textContent = "Could not load the movers list. Refresh the page."; return; } render(el); });
-    if (!bound) { bound = true; el.addEventListener("click", function (e) { var b = e.target.closest("[data-mvnews]"); if (b) news(el, +b.getAttribute("data-mvnews")); }); }
+    (ST.loaded ? Promise.resolve() : load()).then(function () { if (!DATA.picks.length) { el.textContent = "Could not load the movers list. Refresh the page."; return; } render(el); });
+    if (bound) return; bound = true;
+    el.addEventListener("click", function (e) {
+      var t = e.target, b;
+      if ((b = t.closest("[data-mvk]"))) { ST.kind = b.getAttribute("data-mvk"); ST.theme = ""; render(el); }
+      else if ((b = t.closest("[data-mvs]"))) { ST.sort = b.getAttribute("data-mvs"); render(el); }
+      else if ((b = t.closest("[data-mvt]"))) { ST.theme = b.getAttribute("data-mvt"); render(el); }
+      else if ((b = t.closest("[data-mvnews]"))) news(el, +b.getAttribute("data-mvnews"));
+      else if (t.closest("[data-mvprac]")) { var np = document.getElementById("navprac"); if (np) np.click(); }
+      else if ((b = t.closest("[data-mvq]"))) {
+        ans[+b.getAttribute("data-mvq")] = b.getAttribute("data-mva");
+        Array.prototype.forEach.call(el.querySelectorAll('[data-mvq="' + b.getAttribute("data-mvq") + '"]'), function (x) { x.classList.toggle("on", x === b); });
+        if (ans.filter(Boolean).length === QUIZ.length) {
+          var c = { day: 0, swing: 0, invest: 0 }; ans.forEach(function (a) { if (c[a] != null) c[a]++; });
+          var best = ["swing", "day", "invest"].sort(function (x, y) { return c[y] - c[x]; })[0], r = el.querySelector("#mvres");
+          r.innerHTML = 'You look like ' + ({ day: 'a day trader', swing: 'a swing trader', invest: 'an investor' }[best]) + '. <span class="k-' + best + '" style="display:none"></span><button class="mv-b" type="button" data-mvk="' + best + '">Show me ' + KINDS[best].name.toLowerCase() + '</button>';
+        }
+      }
+    });
   } };
 })();
