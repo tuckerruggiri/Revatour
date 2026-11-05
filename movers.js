@@ -2,7 +2,7 @@
    The list below is curated from dated news articles (source + date on every card). Live prices and headlines load when you are signed in. */
 (function () {
   "use strict";
-  var ASOF = "Nov 4, 2026";
+  var ASOF = "";
   var CRIT = [
     ["cat", "Catalyst this week", "A dated event (earnings, a big interview) that can move it"],
     ["low", "Far below its high", "Down 30%+ from the peak, so a rebound has room"],
@@ -11,28 +11,7 @@
     ["fun", "Funded to survive", "Can pay its bills without a bad refinancing"]
   ];
   // v: 1 = yes, 0 = no, -1 = the article did not say
-  var PICKS = [
-    { t: "IREN", n: "Iren", theme: "Neocloud / AI power", px: 21.71, hi: 77, lo: 5, hiN: "Nov 2025 high ~$77", cat: "Earnings Nov 5 (FQ1 2027)",
-      v: { cat: 1, low: 1, gro: -1, sel: 1, fun: -1 },
-      why: "Trades near a third of its high. 5.8 GW power pipeline; plans 500 MW online in 2027 to reach 800 MW. Talks for 2027 and 2028 capacity.",
-      risk: "The writer owns shares and calls. Earnings can gap it either way.",
-      src: "https://www.fool.com/investing/2026/11/04/a-major-neocloud-stock-rally-may-be-coming-these-3/", srcN: "Motley Fool, Nov 4" },
-    { t: "NBIS", n: "Nebius", theme: "Neocloud / AI cloud", px: 141.52, cat: "No date set",
-      v: { cat: 0, low: 1, gro: 1, sel: 1, fun: 1 },
-      why: "Q2 revenue +454% vs costs +251%. Contract value quadrupled from last quarter. Customer prepayments fund 50-60% of build-out; $3.5B Citi facility in October.",
-      risk: "Down about 42% in a month. Still unprofitable.",
-      src: "https://www.fool.com/investing/2026/11/04/a-major-neocloud-stock-rally-may-be-coming-these-3/", srcN: "Motley Fool, Nov 4" },
-    { t: "CRWV", n: "CoreWeave", theme: "Neocloud / AI cloud", px: 48.42, cat: "Debt refinancing",
-      v: { cat: 0, low: -1, gro: 1, sel: -1, fun: 0 },
-      why: "$104.2B backlog (3x last year). Q2 revenue more than doubled to $2.6B; operating margin nearly positive. 1.5 GW live, about 4.2 GW contracted.",
-      risk: "Current ratio 0.46 and debt coming due. The writer's least favorite of the three.",
-      src: "https://www.fool.com/investing/2026/11/04/a-major-neocloud-stock-rally-may-be-coming-these-3/", srcN: "Motley Fool, Nov 4" },
-    { t: "SPCX", n: "SpaceX", theme: "Space / AI infrastructure", px: 141.31, hi: 225.64, lo: 104.83, hiN: "52-wk range $104.83 - $225.64", cat: "Nov 6 Baron-Musk chat",
-      v: { cat: 1, low: 1, gro: -1, sel: 1, fun: -1 },
-      why: "Down about 38% from its post-IPO high. Baron, whose biggest holding is SpaceX, interviews Elon Musk on Nov 6. Topics could be Starlink Mobile, AI, orbital computing.",
-      risk: "Hype events are mixed: Tesla fell after Baron's 2022 event and rose about 6.5% after 2023.",
-      src: "https://www.fool.com/investing/2026/11/04/prediction-spacex-stock-will-go-parabolic-after-no/", srcN: "Motley Fool, Nov 4" }
-  ];
+  var PICKS = [];
 
   var CSS = '#movv{max-width:none;width:100%;box-sizing:border-box}#movv *{box-sizing:border-box}' +
     '#movv .mv-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;margin:0 0 6px}#movv .mv-h h2{margin:0;font-size:26px}#movv .mv-sub{color:var(--mute);font-size:14px}' +
@@ -113,8 +92,13 @@
   }
 
   var bound = false;
+  var loaded = false;
+  function load(el) { // the picks live in movers-data.json, which the daily refresh rewrites
+    return fetch("movers-data.json?v=" + Math.floor(Date.now() / 3600000)).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (j) { if (j && j.picks && j.picks.length) { PICKS = j.picks; ASOF = j.asof || ""; loaded = true; } }).catch(function () { });
+  }
   window.ParabolicMovers = { mount: function (el) {
-    render(el);
+    (loaded ? Promise.resolve() : load(el)).then(function () { if (!PICKS.length) { el.textContent = "Could not load the movers list. Refresh the page."; return; } render(el); });
     if (!bound) { bound = true; el.addEventListener("click", function (e) { var b = e.target.closest("[data-mvnews]"); if (b) news(el, +b.getAttribute("data-mvnews")); }); }
   } };
 })();
