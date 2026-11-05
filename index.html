@@ -366,6 +366,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <button class="nav" id="navzone" type="button">Zones</button>
   <button class="nav" id="navprac" type="button">Practice charts</button>
   <button class="nav" id="navals" type="button">Alerts</button>
+  <button class="nav" id="navmov" type="button">Parabolic movers</button>
   <button class="nav" id="navnews" type="button">News</button>
   <button class="nav" id="navrl" type="button">Risk Ladder</button>
   <button class="nav" id="navinv" type="button">Investments</button>
@@ -390,6 +391,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <div class="wrap" id="labv" hidden></div>
 <div class="wrap" id="zonev" hidden></div>
 <div class="wrap" id="pracv" hidden></div>
+<div class="wrap" id="movv" hidden></div>
 <div class="wrap" id="invv" hidden></div>
 <div class="wrap" id="gdv" hidden></div>
 <div class="wrap" id="profilev" hidden></div>
@@ -2241,6 +2243,8 @@ function showZones(){hideViews();$("navzone").classList.add("on");$("zonev").hid
 $("navzone").addEventListener("click",showZones);
 function showPractice(){hideViews();$("navprac").classList.add("on");$("pracv").hidden=false;if(window.PracticeChart)window.PracticeChart.mount($("pracv"));else $("pracv").textContent="Practice charts could not load. Refresh the page.";window.scrollTo(0,0)}
 $("navprac").addEventListener("click",showPractice);
+function showMovers(){hideViews();$("navmov").classList.add("on");$("movv").hidden=false;if(window.ParabolicMovers)window.ParabolicMovers.mount($("movv"));else $("movv").textContent="Parabolic movers could not load. Refresh the page."}
+$("navmov").addEventListener("click",showMovers);
 $("zonev").addEventListener("change",function(e){var t=e.target,k=t.getAttribute&&t.getAttribute("data-zck");if(k!=null){ZN.ck[k]=t.checked;znRender();return}if(t.id==="znpg"){ZN.pg=t.value;ZN.show=36;znRender();return}if(t.id==="zncat")ZN.cat=t.value});
 $("zonev").addEventListener("input",function(e){if(e.target.id==="znnote")ZN.note=e.target.value});
 $("zonev").addEventListener("click",async function(e){var t=e.target,b;
@@ -2471,8 +2475,8 @@ async function saveProfile(){if(store.db)await store.db.doc("meta/profile").set(
 function myAvUrl(){return prof.src||(prof.aid?blobUrl(prof.aid):"")}
 function avatarHTML(cls,url,name){var A=window.stockspotAuth||{},u=url!=null?url:myAvUrl(),nm=name||A.username||A.email||"?";
  return '<div class="pf-av'+(cls?" "+cls:"")+'">'+(u?'<img alt="" src="'+esc(u)+'">':esc((nm.charAt(0)||"?").toUpperCase()))+'</div>'}
-function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","scv","labv","zonev","pracv","invv","gdv","rlv","newsv"].forEach(function(i){$(i).hidden=true});
- ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navals","navsc","navlab","navzone","navprac"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
+function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","scv","labv","zonev","pracv","movv","invv","gdv","rlv","newsv"].forEach(function(i){$(i).hidden=true});
+ ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navals","navsc","navlab","navzone","navprac","navmov"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
 function paintProfNav(){$("navprofile").classList.toggle("on",profTab!=="coach");$("navcoach").classList.toggle("on",profTab==="coach")}
 function recordBlock(){var all=allTrades();if(!all.length)return '<div class="pf-panel hint" style="margin:8px 0">No saved trades yet. Save a day in Studio and your record shows here.</div>';
  var days=dailyPnl(),yr=pickYear(days),m=pnlModel(days,yr),s=withCtx({trades:all},[],stats);
@@ -3111,5 +3115,6 @@ restore();loadImgs();showStats();renderImgs();initStore();
 </script>
 <script src="practice-data.js"></script>
 <script src="practice.js"></script>
+<script src="movers.js"></script>
 </body>
 </html>
