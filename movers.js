@@ -2,13 +2,17 @@
    The picks live in movers-data.json (refreshed daily). Live prices and headlines load when you are signed in. */
 (function () {
   "use strict";
-  var DATA = { asof: "", tape: [], events: [], picks: [] }, ST = { kind: "day", sort: "heat", theme: "", loaded: false };
+  var DATA = { asof: "", tape: [], events: [], picks: [] }, ST = { kind: "radar", sort: "heat", theme: "", loaded: false };
   var ICON = {
+    radar: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12 19 5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>',
     day: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>',
     swing: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 14c3-8 6-8 9 0s6 8 9 0"/><path d="M2 20h20"/></svg>',
     invest: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V10"/><path d="M12 10c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 14c0-3-2-5-6-5 0 3 2 5 6 5z"/></svg>'
   };
   var KINDS = {
+    radar: { name: "Early radar", tag: "Before it runs", hold: "Days to weeks", goal: "Get in before the crowd", look: "Quiet buying, rising volume, a base", risk: 4, pos: [8, 40],
+      play: ["Smart money moves first: insiders, funds and options traders.", "Stage matters. Asleep is cheap but can stay asleep. Breaking out is confirmed but costs more.", "No signal is a promise. Want 3+ signals lined up, and size small."],
+      crit: [["inst", "Institutions adding", "Funds raising or opening positions"], ["ins", "Insiders buying", "Executives or 10% owners buying with their own cash"], ["vol", "Volume or options surging", "Trading well above normal before the move"], ["base", "Base or breakout, not extended", "Holding above its 50-day average, not already stretched"], ["cat", "Catalyst ahead", "A dated reason for the market to care"]] },
     day: { name: "Day trades", tag: "In and out today", hold: "Minutes to hours", goal: "Small, fast gains", look: "Gap, volume, the first 30 minutes", risk: 5, pos: [0, 4],
       play: ["Trade the first 30 minutes. That is where the volume is.", "Mark the premarket high and low plus VWAP. Take the break, or the failed break.", "Flat by the close. No overnight surprises."],
       crit: [["news", "Fresh news today", "A headline that is moving it right now"], ["gap", "Big gap or move", "Already moving 5%+ so there is range to trade"], ["vol", "Volume way up", "Several times its normal share volume"], ["iv", "Big swings priced in", "Options or short interest signal a wild ride"], ["liq", "Easy to trade", "Plenty of shares changing hands"]] },
@@ -33,8 +37,8 @@
     '#movv .mv-tl{position:relative;height:140px;margin:6px 8px 0}#movv .mv-tl .ax{position:absolute;left:0;right:0;top:64px;height:3px;background:var(--line);border-radius:2px}' +
     '#movv .mv-tl .dot{position:absolute;transform:translateX(-50%);font-size:11px;font-weight:700;text-align:center;white-space:nowrap}#movv .mv-tl .dot i{display:block;width:12px;height:12px;border-radius:50%;margin:0 auto 2px;border:2px solid var(--panel)}' +
     '#movv .mv-tl .tk{position:absolute;top:124px;transform:translateX(-50%);font-size:10px;color:var(--mute);white-space:nowrap}#movv .mv-tl .now{position:absolute;top:20px;width:2px;height:92px;opacity:.5;background:var(--accent)}' +
-    '#movv .k-day{--kc:#e0762b}#movv .k-swing{--kc:#2b7de0}#movv .k-invest{--kc:#1f9d63}' +
-    '#movv .mv-styles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 14px}@media(max-width:820px){#movv .mv-styles{grid-template-columns:minmax(0,1fr)}}' +
+    '#movv .k-radar{--kc:#8a4fe0}#movv .k-day{--kc:#e0762b}#movv .k-swing{--kc:#2b7de0}#movv .k-invest{--kc:#1f9d63}' +
+    '#movv .mv-styles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 14px}@media(max-width:1100px){#movv .mv-styles{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:620px){#movv .mv-styles{grid-template-columns:minmax(0,1fr)}}' +
     '#movv .mv-sty{text-align:left;background:var(--panel);color:var(--ink);border:2px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;font:inherit;display:flex;flex-direction:column;gap:8px;min-width:0}' +
     '#movv .mv-sty:hover{border-color:var(--kc)}#movv .mv-sty.on{border-color:var(--kc);box-shadow:0 0 0 3px color-mix(in srgb,var(--kc) 22%,transparent)}' +
     '#movv .mv-sty .hd{display:flex;align-items:center;gap:10px}#movv .mv-sty .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--kc);color:#fff}' +
@@ -62,7 +66,7 @@
     '#movv .mv-ft{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:var(--mute)}#movv .mv-ft a{color:inherit}' +
     '#movv .mv-nw{font-size:13px;border-top:1px dashed var(--line);padding-top:8px;display:flex;flex-direction:column;gap:6px}#movv .mv-nw a{color:var(--ink)}#movv .mv-nw span{color:var(--mute);font-size:11px}' +
     '#movv .mv-q{display:grid;gap:8px}#movv .mv-q .qq{font-weight:700;font-size:14px}#movv .mv-q .ops{display:flex;flex-wrap:wrap;gap:8px}#movv .mv-res{margin-top:10px;font-weight:700}' +
-    '#movv .mv-dis{color:var(--mute);font-size:12px;margin:16px 0 4px}';
+    '#movv .mv-stg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}#movv .mv-stg span{font-size:11px;text-align:center;padding:5px 2px;border-radius:6px;background:var(--line);color:var(--mute)}#movv .mv-stg span.on{background:var(--kc);color:#fff;font-weight:800}#movv .mv-stg span.late.on{background:var(--loss)}#movv .mv-stgt{font-size:11px;color:var(--mute);margin:-4px 0 0}#movv .mv-edge{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:0 0 12px}#movv .mv-edge div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;background:var(--panel)}#movv .mv-edge b{display:block;font-size:13px}#movv .mv-edge i{font-style:normal;color:var(--kc);font-weight:800;font-size:11px}#movv .mv-dis{color:var(--mute);font-size:12px;margin:16px 0 4px}';
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function score(p) { var n = 0; KINDS[p.kind].crit.forEach(function (c) { if (p.v && p.v[c[0]] === 1) n++; }); return n; }
@@ -100,11 +104,11 @@
     var range = p.hi && p.lo && p.px ? '<div><div class="mv-bar"><i style="left:calc(' + Math.max(0, Math.min(100, (p.px - p.lo) / (p.hi - p.lo) * 100)).toFixed(1) + '% - 2px)"></i></div><div class="mv-bl"><span>$' + esc(p.lo) + '</span><span>' + esc(p.hiN || "") + '</span></div></div>' : "";
     var chg = typeof p.chg === "number" ? '<small class="' + (p.chg >= 0 ? "up" : "dn") + '">' + (p.chg >= 0 ? "+" : "") + p.chg.toFixed(2) + '%</small>' : "";
     var cd = p.catDate ? " · " + inDays(p.catDate) : "";
-    return '<div class="mv-card k-' + esc(p.kind) + (top ? " top" : "") + '" data-i="' + i + '">' + (top ? '<div class="mv-rib">HOTTEST RIGHT NOW</div>' : "") +
+    return '<div class="mv-card k-' + esc(p.kind) + (top ? " top" : "") + '" data-i="' + i + '">' + (top ? '<div class="mv-rib">' + (p.kind === "radar" ? "STRONGEST SETUP" : "HOTTEST RIGHT NOW") + '</div>' : "") +
       '<div class="mv-r1"><div><div class="mv-t">' + esc(p.t) + '</div><div class="mv-n">' + esc(p.n) + '</div></div><div class="mv-px" data-mvpx>' + (p.px ? "$" + Number(p.px).toFixed(2) : "price n/a") + chg + '<small>' + esc(p.pxN || "") + '</small></div></div>' +
       '<div><span class="mv-tag">' + esc(p.theme) + '</span><span class="mv-tag mv-cat">' + esc(p.cat) + esc(cd) + '</span></div>' +
       '<div class="mv-heat"><div class="mv-fl" title="Heat: how many of the 5 checks the article supports">' + fl + '</div><span class="mv-sc">' + sc + '/5</span><span class="mv-why">' + esc(p.setup || "") + '</span></div>' +
-      '<div class="mv-dots">' + dots + '</div>' + range +
+      (p.stage ? '<div class="mv-stg">' + ["Asleep", "Waking up", "Breaking out", "Already ran"].map(function (n, q) { return '<span class="' + (q === 3 ? "late " : "") + (p.stage === q + 1 ? "on" : "") + '">' + n + '</span>'; }).join("") + '</div>' + (p.stageN ? '<div class="mv-stgt">' + esc(p.stageN) + '</div>' : "") : "") + '<div class="mv-dots">' + dots + '</div>' + range +
       '<p class="mv-p"><b>The story:</b> ' + esc(p.why) + '</p><p class="mv-p mv-rkp"><b>Watch out:</b> ' + esc(p.risk) + '</p>' +
       '<div class="mv-ft"><a href="' + esc(/^https:\/\//.test(p.src) ? p.src : "#") + '" target="_blank" rel="noopener">' + esc(p.srcN) + ' ↗</a><button class="mv-b" type="button" data-mvnews="' + i + '">Latest headlines</button></div><div data-mvnw></div></div>';
   }
@@ -121,16 +125,16 @@
     var list = all.map(function (p, i) { return { p: p, i: DATA.picks.indexOf(p) }; }).filter(function (x) { return !ST.theme || x.p.theme === ST.theme; });
     list.sort(function (a, b) {
       if (ST.sort === "date") { var da = dayNum(a.p.catDate), db = dayNum(b.p.catDate); da = isNaN(da) ? 1e9 : da; db = isNaN(db) ? 1e9 : db; return da - db || score(b.p) - score(a.p); }
-      return score(b.p) - score(a.p);
+      return ((a.p.stage === 4) - (b.p.stage === 4)) || score(b.p) - score(a.p);
     });
     var tape = (DATA.tape || []).map(function (t) { return '<span class="mv-chip">' + esc(t.l) + ' <b>' + esc(t.v) + '</b>' + (typeof t.d === "number" ? '<span class="' + (t.d >= 0 ? "up" : "dn") + '">' + (t.d >= 0 ? "+" : "") + t.d.toFixed(2) + '%</span>' : "") + '</span>'; }).join("");
     var leg = K.crit.map(function (c) { return '<div><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '</span></div>'; }).join("");
     el.innerHTML = '<style>' + CSS + '</style><div class="mv-h"><h2>Parabolic Movers</h2><span class="mv-sub">News-sourced candidates · updated ' + esc(DATA.asof) + '</span></div>' +
       (tape ? '<div class="mv-tape">' + tape + '</div>' : "") + timeline() +
-      '<div class="mv-styles">' + ["day", "swing", "invest"].map(styleCard).join("") + '</div>' +
+      '<div class="mv-styles">' + ["radar", "day", "swing", "invest"].map(styleCard).join("") + '</div>' +
       '<div class="k-' + ST.kind + '"><div class="mv-play">' + K.play.map(function (t) { return '<div>' + esc(t) + '</div>'; }).join("") + '</div>' +
       (ST.kind === "day" ? '<div class="mv-ctl"><button class="mv-b" type="button" data-mvprac="1">Practice day-trade setups →</button></div>' : "") +
-      '<div class="mv-leg">' + leg + '</div>' +
+      '<div class="mv-leg">' + leg + '</div>' + (ST.kind === "radar" ? '<div class="mv-edge"><div><i>2 DAYS OLD</i><b>Insider buys</b>Form 4 filings land within 2 business days. Cluster buys by several people count most.</div><div><i>SAME DAY</i><b>Volume and options</b>Calls and share volume well above normal show up before the headline does.</div><div><i>UP TO 45 DAYS OLD</i><b>Fund buys (13F)</b>Quarterly filings lag, so treat them as a clue, not a trigger.</div><div><i>YOUR EYES</i><b>The chart</b>A quiet base above the 50-day average beats a stock already up 4x.</div></div>' : "") +
       '<div class="mv-ctl"><button class="mv-b ' + (ST.sort === "heat" ? "on" : "") + '" data-mvs="heat" type="button">Hottest first</button><button class="mv-b ' + (ST.sort === "date" ? "on" : "") + '" data-mvs="date" type="button">Soonest catalyst</button><span class="mv-sp"></span>' +
       '<button class="mv-b ' + (ST.theme ? "" : "on") + '" data-mvt="" type="button">All themes</button>' + Object.keys(themes).map(function (t) { return '<button class="mv-b ' + (ST.theme === t ? "on" : "") + '" data-mvt="' + esc(t) + '" type="button">' + esc(t) + '</button>'; }).join("") + '</div>' +
       '<div class="mv-grid">' + list.map(function (x, n) { return card(x.p, x.i, n === 0 && ST.sort === "heat" && !ST.theme && score(x.p) >= 4); }).join("") + '</div></div>' +
@@ -184,7 +188,7 @@
         if (ans.filter(Boolean).length === QUIZ.length) {
           var c = { day: 0, swing: 0, invest: 0 }; ans.forEach(function (a) { if (c[a] != null) c[a]++; });
           var best = ["swing", "day", "invest"].sort(function (x, y) { return c[y] - c[x]; })[0], r = el.querySelector("#mvres");
-          r.innerHTML = 'You look like ' + ({ day: 'a day trader', swing: 'a swing trader', invest: 'an investor' }[best]) + '. <span class="k-' + best + '" style="display:none"></span><button class="mv-b" type="button" data-mvk="' + best + '">Show me ' + KINDS[best].name.toLowerCase() + '</button>';
+          r.innerHTML = 'You look like ' + ({ day: 'a day trader', swing: 'a swing trader', invest: 'an investor', radar: 'a hunter' }[best]) + '. <span class="k-' + best + '" style="display:none"></span><button class="mv-b" type="button" data-mvk="' + best + '">Show me ' + KINDS[best].name.toLowerCase() + '</button>';
         }
       }
     });
