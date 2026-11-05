@@ -2,7 +2,7 @@
    The picks live in movers-data.json (refreshed daily). Live prices and headlines load when you are signed in. */
 (function () {
   "use strict";
-  var DATA = { asof: "", tape: [], events: [], picks: [] }, ST = { kind: "radar", sort: "heat", theme: "", loaded: false };
+  var DATA = { asof: "", tape: [], events: [], picks: [] }, ST = { kind: "radar", sort: "heat", theme: "", loaded: false, view: "picks", lq: null }, LED = null;
   var ICON = {
     radar: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12 19 5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>',
     day: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>',
@@ -66,7 +66,13 @@
     '#movv .mv-ft{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:var(--mute)}#movv .mv-ft a{color:inherit}' +
     '#movv .mv-nw{font-size:13px;border-top:1px dashed var(--line);padding-top:8px;display:flex;flex-direction:column;gap:6px}#movv .mv-nw a{color:var(--ink)}#movv .mv-nw span{color:var(--mute);font-size:11px}' +
     '#movv .mv-q{display:grid;gap:8px}#movv .mv-q .qq{font-weight:700;font-size:14px}#movv .mv-q .ops{display:flex;flex-wrap:wrap;gap:8px}#movv .mv-res{margin-top:10px;font-weight:700}' +
-    '#movv .mv-stg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}#movv .mv-stg span{font-size:11px;text-align:center;padding:5px 2px;border-radius:6px;background:var(--line);color:var(--mute)}#movv .mv-stg span.on{background:var(--kc);color:#fff;font-weight:800}#movv .mv-stg span.late.on{background:var(--loss)}#movv .mv-stgt{font-size:11px;color:var(--mute);margin:-4px 0 0}#movv .mv-edge{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:0 0 12px}#movv .mv-edge div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;background:var(--panel)}#movv .mv-edge b{display:block;font-size:13px}#movv .mv-edge i{font-style:normal;color:var(--kc);font-weight:800;font-size:11px}#movv .mv-dis{color:var(--mute);font-size:12px;margin:16px 0 4px}';
+    '#movv .mv-stg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}#movv .mv-stg span{font-size:11px;text-align:center;padding:5px 2px;border-radius:6px;background:var(--line);color:var(--mute)}#movv .mv-stg span.on{background:var(--kc);color:#fff;font-weight:800}#movv .mv-stg span.late.on{background:var(--loss)}#movv .mv-stgt{font-size:11px;color:var(--mute);margin:-4px 0 0}#movv .mv-edge{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:0 0 12px}#movv .mv-edge div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;background:var(--panel)}#movv .mv-edge b{display:block;font-size:13px}#movv .mv-edge i{font-style:normal;color:var(--kc);font-weight:800;font-size:11px}#movv .mv-dis{color:var(--mute);font-size:12px;margin:16px 0 4px}' +
+    '#movv .mv-vt{display:flex;gap:8px;margin:0 0 12px}#movv .mv-vt .mv-b{font-size:14px;padding:8px 16px}' +
+    '#movv .mv-sk{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:0 0 12px}#movv .mv-sk>div{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--panel)}#movv .mv-sk .big{font-size:26px;font-weight:800;line-height:1.1}#movv .mv-sk small{display:block;color:var(--mute);font-size:11px;margin-top:2px}' +
+    '#movv .up{color:var(--gain)}#movv .dn{color:var(--loss)}' +
+    '#movv .mv-dv{display:grid;grid-template-columns:64px 1fr 74px;gap:8px;align-items:center;font-size:12px;margin:5px 0}#movv .mv-dv .tr{position:relative;height:16px;background:var(--line);border-radius:4px}#movv .mv-dv .tr:before{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:2px;background:var(--ink);opacity:.5}#movv .mv-dv .tr i{position:absolute;top:2px;bottom:2px;border-radius:3px}#movv .mv-dv b{font-weight:800}#movv .mv-dv em{font-style:normal;color:var(--mute);font-size:10px;margin-left:4px}' +
+    '#movv .mv-tb{width:100%;border-collapse:collapse;font-size:12px}#movv .mv-tb th{text-align:right;color:var(--mute);font-weight:600;padding:6px 6px;border-bottom:1px solid var(--line);white-space:nowrap}#movv .mv-tb td{text-align:right;padding:6px;border-bottom:1px solid var(--line);white-space:nowrap}#movv .mv-tb th:first-child,#movv .mv-tb td:first-child{text-align:left}#movv .mv-tw{overflow-x:auto}' +
+    '#movv .mv-note{border-left:4px solid var(--accent);background:var(--panel);padding:10px 12px;border-radius:8px;font-size:13px;margin:0 0 12px}';
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function score(p) { var n = 0; KINDS[p.kind].crit.forEach(function (c) { if (p.v && p.v[c[0]] === 1) n++; }); return n; }
@@ -119,8 +125,67 @@
     }).join("") + '</div><div class="mv-res" id="mvres"></div></div>';
   }
 
+
+  function pct(x) { return (x >= 0 ? "+" : "") + x.toFixed(1) + "%"; }
+  function usd(x) { return (x >= 0 ? "+$" : "-$") + Math.abs(x).toFixed(2); }
+  function cur(e) { if (e.status === "closed" && e.closed != null) return e.closed; var q = ST.lq && ST.lq[e.t]; return q && q.p ? Number(q.p) : e.last; }
+  function spyNow(e) { if (e.status === "closed" && e.spyClosed) return e.spyClosed; var q = ST.lq && ST.lq.SPY; return q && q.p ? Number(q.p) : LED.spyLast; }
+  function rowsOf() {
+    return LED.entries.filter(function (e) { return e.entry > 0 && e.spy > 0 && KINDS[e.kind]; }).map(function (e) {
+      var c = cur(e), r = (c - e.entry) / e.entry * 100, sr = (spyNow(e) - e.spy) / e.spy * 100;
+      return { e: e, c: c, r: r, d: c - e.entry, sr: sr, a: r - sr, days: Math.max(0, today() - dayNum(e.posted)) };
+    });
+  }
+  function stat(rs) {
+    if (!rs.length) return null;
+    var n = rs.length, w = rs.filter(function (x) { return x.r > 0; }).length, b = rs.filter(function (x) { return x.a > 0; }).length, sum = function (f) { return rs.reduce(function (t, x) { return t + f(x); }, 0); };
+    var srt = rs.slice().sort(function (x, y) { return y.r - x.r; });
+    return { n: n, w: w, b: b, ar: sum(function (x) { return x.r; }) / n, aa: sum(function (x) { return x.a; }) / n, sr: sum(function (x) { return x.sr; }) / n, best: srt[0], worst: srt[n - 1] };
+  }
+  function scoreView() {
+    if (!LED) return '<div class="mv-box">The scorecard file could not load. Refresh the page.</div>';
+    var rs = rowsOf(), all = stat(rs), pend = LED.entries.filter(function (e) { return !(e.entry > 0); });
+    var age = rs.length ? Math.max.apply(null, rs.map(function (x) { return x.days; })) : 0, hzs = LED.horizon || {};
+    var out = '<div class="mv-note"><b>How honest is this?</b> Every pick is logged on the day it is posted, at the price printed in its source. No backtests, no deleting losers. Tracking began ' + esc(fmtDate(LED.started)) + '. The market benchmark is ' + esc(LED.bench) + ' measured from the same moment. Holding periods: day trades 1 day, radar and swing about ' + (hzs.swing || 10) + ' trading days, investments about ' + (hzs.invest || 90) + ' days.' + (age < 3 ? ' <b>It is day ' + age + '.</b> Baselines are set; real results need days and weeks, so treat early numbers as noise.' : '') + (rs.length < 30 ? ' With only ' + rs.length + ' priced picks, even a good start is not proof of an edge (it takes 30+ to say much).' : '') + '</div>';
+    if (!all) return out + '<div class="mv-box">No priced picks yet.</div>';
+    var flat = rs.every(function (x) { return Math.abs(x.r) < 0.005; });
+    var edgeTxt = all.aa >= 0 ? "+" + all.aa.toFixed(1) + " pts" : all.aa.toFixed(1) + " pts";
+    out += '<div class="mv-sk"><div><div class="big ' + (all.w / all.n >= .5 ? "up" : "dn") + '">' + Math.round(all.w / all.n * 100) + '%</div>Hit rate<small>' + all.w + ' of ' + all.n + ' are up since posting</small></div>' +
+      '<div><div class="big ' + (all.ar >= 0 ? "up" : "dn") + '">' + pct(all.ar) + '</div>Average move<small>from the posted price</small></div>' +
+      '<div><div class="big ' + (all.sr >= 0 ? "up" : "dn") + '">' + edgeTxt + '</div>Edge vs ' + esc(LED.bench) + '<small>average pick minus the market over the same time</small></div>' +
+      '<div><div class="big up">' + esc(all.best.e.t) + '</div>Best so far<small>' + pct(all.best.r) + ' (' + usd(all.best.d) + '/share)</small></div>' +
+      '<div><div class="big dn">' + esc(all.worst.e.t) + '</div>Worst so far<small>' + pct(all.worst.r) + ' (' + usd(all.worst.d) + '/share)</small></div></div>';
+    out += '<div class="mv-box"><h3>Which style is earning its keep?</h3>' + ["radar", "day", "swing", "invest"].map(function (k) {
+      var st = stat(rs.filter(function (x) { return x.e.kind === k; }));
+      return '<div class="mv-dv k-' + k + '"><span style="color:var(--kc);font-weight:800">' + esc(KINDS[k].name) + '</span>' + (st ? '<div class="tr"><i style="background:' + (st.aa >= 0 ? "var(--gain)" : "var(--loss)") + ';' + (st.aa >= 0 ? "left:50%;" : "right:50%;") + 'width:' + Math.min(50, Math.abs(st.aa) * 2.5).toFixed(1) + '%"></i></div><span><b class="' + (st.aa >= 0 ? "up" : "dn") + '">' + pct(st.aa) + '</b><em>' + st.n + ' picks</em></span>' : '<div class="tr"></div><span>none</span>') + '</div>';
+    }).join("") + '<div class="mv-bl"><span>Beating the market ← 0 → Lagging</span><span>bars show average edge vs ' + esc(LED.bench) + ' in points</span></div></div>';
+    var sorted = rs.slice().sort(function (x, y) { return y.r - x.r; }), mx = Math.max(5, Math.max.apply(null, sorted.map(function (x) { return Math.abs(x.r); })));
+    out += '<div class="mv-box"><h3>Every pick since it was posted</h3>' + sorted.map(function (x) {
+      return '<div class="mv-dv k-' + x.e.kind + '"><span style="font-weight:800">' + esc(x.e.t) + '</span><div class="tr"><i style="background:' + (x.r >= 0 ? "var(--gain)" : "var(--loss)") + ';' + (x.r >= 0 ? "left:50%;" : "right:50%;") + 'width:' + (Math.abs(x.r) / mx * 50).toFixed(1) + '%"></i></div><span><b class="' + (x.r >= 0 ? "up" : "dn") + '">' + pct(x.r) + '</b></span></div>';
+    }).join("") + '</div>';
+    out += '<div class="mv-box"><h3>The full ledger</h3><div class="mv-tw"><table class="mv-tb"><thead><tr><th>Stock</th><th>Style</th><th>Posted</th><th>Entry</th><th>Now</th><th>$ move</th><th>% move</th><th>vs ' + esc(LED.bench) + '</th><th>Days</th><th>Status</th></tr></thead><tbody>' + sorted.map(function (x) {
+      var hz = hzs[x.e.kind] || 10, done = x.e.status === "closed";
+      return '<tr><td><b>' + esc(x.e.t) + '</b></td><td class="k-' + esc(x.e.kind) + '" style="color:var(--kc)">' + esc(KINDS[x.e.kind].name) + '</td><td>' + esc(fmtDate(x.e.posted)) + '</td><td title="' + esc(x.e.entryN || "") + '">$' + x.e.entry.toFixed(2) + '</td><td>$' + x.c.toFixed(2) + '</td><td class="' + (x.d >= 0 ? "up" : "dn") + '">' + usd(x.d) + '</td><td class="' + (x.r >= 0 ? "up" : "dn") + '">' + pct(x.r) + '</td><td class="' + (x.a >= 0 ? "up" : "dn") + '">' + pct(x.a) + '</td><td>' + x.days + '</td><td>' + (done ? "closed" : "open · " + hz + "d plan") + '</td></tr>';
+    }).join("") + '</tbody></table></div>' + (pend.length ? '<p class="mv-dis">Awaiting a first price (no price in the source article): ' + pend.map(function (e) { return esc(e.t); }).join(", ") + '. They join the stats once a price is logged.</p>' : "") + '</div>';
+    return out + '<p class="mv-dis">Entry prices come from the source articles and may be an intraday or prior-close quote, so the first day can be off by the gap. "Now" is live when you are signed in, otherwise the last price logged by the daily refresh. Past results do not predict future ones. Not advice.</p>';
+  }
+  function loadLed() {
+    return fetch("movers-ledger.json?v=" + Math.floor(Date.now() / 3600000)).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (j) { if (j && j.entries) LED = j; }).catch(function () { });
+  }
+  function liveScore(el) {
+    var a = api(); if (!a || !a.quotes || !LED) return;
+    var syms = ["SPY"]; LED.entries.forEach(function (e) { if (e.status !== "closed" && e.entry > 0 && syms.indexOf(e.t) < 0 && syms.length < 30) syms.push(e.t); });
+    a.quotes(syms).then(function (r) { if (r && r.quotes && r.quotes.SPY) { ST.lq = r.quotes; if (ST.view === "score") render(el, true); } }).catch(function () { });
+  }
+
+  function tabs() { return '<div class="mv-vt"><button type="button" class="mv-b ' + (ST.view === "picks" ? "on" : "") + '" data-mvv="picks">Picks</button><button type="button" class="mv-b ' + (ST.view === "score" ? "on" : "") + '" data-mvv="score">Scorecard</button></div>'; }
   var ans = [];
-  function render(el) {
+  function render(el, noLive) {
+    if (ST.view === "score") {
+      el.innerHTML = '<style>' + CSS + '</style><div class="mv-h"><h2>Parabolic Movers</h2><span class="mv-sub">Scorecard · how the picks are doing</span></div>' + tabs() + scoreView();
+      if (!noLive) liveScore(el); return;
+    }
     var K = KINDS[ST.kind], all = picksOf(ST.kind), themes = {}; all.forEach(function (p) { themes[p.theme] = 1; });
     var list = all.map(function (p, i) { return { p: p, i: DATA.picks.indexOf(p) }; }).filter(function (x) { return !ST.theme || x.p.theme === ST.theme; });
     list.sort(function (a, b) {
@@ -129,7 +194,7 @@
     });
     var tape = (DATA.tape || []).map(function (t) { return '<span class="mv-chip">' + esc(t.l) + ' <b>' + esc(t.v) + '</b>' + (typeof t.d === "number" ? '<span class="' + (t.d >= 0 ? "up" : "dn") + '">' + (t.d >= 0 ? "+" : "") + t.d.toFixed(2) + '%</span>' : "") + '</span>'; }).join("");
     var leg = K.crit.map(function (c) { return '<div><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '</span></div>'; }).join("");
-    el.innerHTML = '<style>' + CSS + '</style><div class="mv-h"><h2>Parabolic Movers</h2><span class="mv-sub">News-sourced candidates · updated ' + esc(DATA.asof) + '</span></div>' +
+    el.innerHTML = '<style>' + CSS + '</style><div class="mv-h"><h2>Parabolic Movers</h2><span class="mv-sub">News-sourced candidates · updated ' + esc(DATA.asof) + '</span></div>' + tabs() +
       (tape ? '<div class="mv-tape">' + tape + '</div>' : "") + timeline() +
       '<div class="mv-styles">' + ["radar", "day", "swing", "invest"].map(styleCard).join("") + '</div>' +
       '<div class="k-' + ST.kind + '"><div class="mv-play">' + K.play.map(function (t) { return '<div>' + esc(t) + '</div>'; }).join("") + '</div>' +
@@ -173,11 +238,12 @@
 
   var bound = false;
   window.ParabolicMovers = { mount: function (el) {
-    (ST.loaded ? Promise.resolve() : load()).then(function () { if (!DATA.picks.length) { el.textContent = "Could not load the movers list. Refresh the page."; return; } render(el); });
+    (ST.loaded ? Promise.resolve() : Promise.all([load(), loadLed()])).then(function () { if (!DATA.picks.length) { el.textContent = "Could not load the movers list. Refresh the page."; return; } render(el); });
     if (bound) return; bound = true;
     el.addEventListener("click", function (e) {
       var t = e.target, b;
-      if ((b = t.closest("[data-mvk]"))) { ST.kind = b.getAttribute("data-mvk"); ST.theme = ""; render(el); }
+      if ((b = t.closest("[data-mvv]"))) { ST.view = b.getAttribute("data-mvv"); render(el); }
+      else if ((b = t.closest("[data-mvk]"))) { ST.kind = b.getAttribute("data-mvk"); ST.theme = ""; ST.view = "picks"; render(el); }
       else if ((b = t.closest("[data-mvs]"))) { ST.sort = b.getAttribute("data-mvs"); render(el); }
       else if ((b = t.closest("[data-mvt]"))) { ST.theme = b.getAttribute("data-mvt"); render(el); }
       else if ((b = t.closest("[data-mvnews]"))) news(el, +b.getAttribute("data-mvnews"));
