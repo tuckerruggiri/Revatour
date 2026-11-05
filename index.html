@@ -23,6 +23,7 @@
  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000000;--panel:#0f0f0f;--ink:#f2f2f2;--mute:#9a9a9a;--line:#2a2a2a;--gain:#3ecfae;--loss:#ff7b72;--accent:#f2f2f2;--accent-ink:#000;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#000000;--panel:#0f0f0f;--ink:#f2f2f2;--mute:#9a9a9a;--line:#2a2a2a;--gain:#3ecfae;--loss:#ff7b72;--accent:#f2f2f2;--accent-ink:#000;color-scheme:dark}
+:root{--muted:var(--mute)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -272,7 +273,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 #zonev.wrap{max-width:none;width:100%;box-sizing:border-box;padding-left:28px;padding-right:28px}.zn-p{max-width:84ch;line-height:1.6;margin:0 0 10px}.zn-jump{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px}.zn-jump a{border:1px solid var(--line);border-radius:99px;padding:6px 14px;text-decoration:none;color:var(--ink);background:var(--panel);font-size:14px}
 .zn-fig{margin:12px 0;border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:10px}.zn-fig svg{width:100%;height:auto;display:block;cursor:zoom-in}.zn-bs{background:var(--bg);border-radius:12px;padding:14px;width:min(96vw,1500px);max-height:94vh;overflow:auto;flex:none}.zn-bs svg{width:100%;height:auto;display:block}.zn-fig figcaption{font-size:13px;color:var(--muted);margin:6px 2px 0;max-width:90ch}.zn-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.zn-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}@media(max-width:900px){.zn-2,.zn-3{grid-template-columns:1fr}}
 .zn-t{font:12px system-ui,sans-serif;fill:var(--ink)}.zn-m{font:11px system-ui,sans-serif;fill:var(--muted)}.zn-h{font:700 13px system-ui,sans-serif;fill:var(--ink)}
-.zn-steps{counter-reset:zs;list-style:none;margin:8px 0;padding:0;display:grid;gap:10px}.zn-steps li{counter-increment:zs;position:relative;padding:10px 12px 10px 48px;border:1px solid var(--line);border-radius:12px;background:var(--bg);line-height:1.55}.zn-steps li:before{content:counter(zs);position:absolute;left:12px;top:10px;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.zn-steps{counter-reset:zs;list-style:none;margin:8px 0;padding:0;display:grid;gap:10px}.zn-steps li{counter-increment:zs;position:relative;padding:10px 12px 10px 48px;border:1px solid var(--line);border-radius:12px;background:var(--bg);line-height:1.55}.zn-steps li:before{content:counter(zs);position:absolute;left:12px;top:10px;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--accent-ink,#fff);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
 .zn-h3{font-size:15px;margin:16px 0 4px}.zn-tb{width:100%;border-collapse:collapse;font-size:14px}.zn-tb th,.zn-tb td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}.zn-tb th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
 .zn-ck{display:grid;gap:8px;margin:8px 0}.zn-ck label{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;background:var(--bg)}.zn-ck input{width:auto;flex:none;margin-top:3px}.zn-score{font-size:1.2rem;font-weight:700;margin:8px 0}.zn-score.a{color:var(--gain)}.zn-score.c{color:var(--loss)}
 .zn-pill{display:inline-block;border-radius:8px;padding:1px 8px;font-size:12px;font-weight:700;margin-right:6px}.zn-pill.d{background:rgba(22,163,74,.16);color:var(--gain)}.zn-pill.s{background:rgba(220,38,38,.14);color:var(--loss)}
@@ -365,6 +366,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <button class="nav" id="navlab" type="button">Setup Lab</button>
   <button class="nav" id="navzone" type="button">Zones</button>
   <button class="nav" id="navprac" type="button">Practice charts</button>
+  <button class="nav" id="navfut" type="button">Futures</button>
   <button class="nav" id="navals" type="button">Alerts</button>
   <button class="nav" id="navmov" type="button">Parabolic movers</button>
   <button class="nav" id="navnews" type="button">News</button>
@@ -390,6 +392,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <div class="wrap" id="scv" hidden></div>
 <div class="wrap" id="labv" hidden></div>
 <div class="wrap" id="zonev" hidden></div>
+<div class="wrap" id="futv" hidden></div>
 <div class="wrap" id="pracv" hidden></div>
 <div class="wrap" id="movv" hidden></div>
 <div class="wrap" id="invv" hidden></div>
@@ -1179,7 +1182,7 @@ function applyDefaults(){try{
  if(settings.name&&!$("name").value.trim())$("name").value=settings.name;
  if(settings.voice)$("voice").value=settings.voice;
  if(settings.grouping&&$("grouping"))$("grouping").value=settings.grouping}catch(e){}}
-["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("invv").hidden=true;$("rlv").hidden=true;$("newsv").hidden=true;$("alv").hidden=true;$("scv").hidden=true;$("labv").hidden=true;$("zonev").hidden=true;$("pracv").hidden=true;$("navprac").classList.remove("on");$("navzone").classList.remove("on");$("navlab").classList.remove("on");$("navsc").classList.remove("on");$("navals").classList.remove("on");$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("gdv").hidden=true;$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
+["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("invv").hidden=true;$("rlv").hidden=true;$("newsv").hidden=true;$("alv").hidden=true;$("scv").hidden=true;$("labv").hidden=true;$("zonev").hidden=true;$("pracv").hidden=true;$("futv").hidden=true;$("navfut").classList.remove("on");$("navprac").classList.remove("on");$("navzone").classList.remove("on");$("navlab").classList.remove("on");$("navsc").classList.remove("on");$("navals").classList.remove("on");$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("gdv").hidden=true;$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
 /* ---------- Trade Plan: risk sizing + A+ checklist + plan log ---------- */
 var PLK="stockspot-plans-v1",PLD="stockspot-plan-draft-v1",plans=[],plLoaded=false,pl=null,rk=null,plPend=[],plEditId="";
 function todayStr(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
@@ -2241,6 +2244,8 @@ function znHtml(){
 function znRender(){var y=window.scrollY;$("zonev").innerHTML=znHtml();window.scrollTo(0,y)}
 function showZones(){hideViews();$("navzone").classList.add("on");$("zonev").hidden=false;$("zonev").innerHTML=znHtml();window.scrollTo(0,0);znLoad().then(function(){if(!$("zonev").hidden)znRender()})}
 $("navzone").addEventListener("click",showZones);
+function showFutures(){hideViews();$("navfut").classList.add("on");$("futv").hidden=false;if(window.FuturesPage)window.FuturesPage.mount($("futv"));else $("futv").textContent="The Futures page could not load. Refresh the page.";window.scrollTo(0,0)}
+$("navfut").addEventListener("click",showFutures);
 function showPractice(){hideViews();$("navprac").classList.add("on");$("pracv").hidden=false;if(window.PracticeChart)window.PracticeChart.mount($("pracv"));else $("pracv").textContent="Practice charts could not load. Refresh the page.";window.scrollTo(0,0)}
 $("navprac").addEventListener("click",showPractice);
 function showMovers(){hideViews();$("navmov").classList.add("on");$("movv").hidden=false;if(window.ParabolicMovers)window.ParabolicMovers.mount($("movv"));else $("movv").textContent="Parabolic movers could not load. Refresh the page."}
@@ -2475,8 +2480,8 @@ async function saveProfile(){if(store.db)await store.db.doc("meta/profile").set(
 function myAvUrl(){return prof.src||(prof.aid?blobUrl(prof.aid):"")}
 function avatarHTML(cls,url,name){var A=window.stockspotAuth||{},u=url!=null?url:myAvUrl(),nm=name||A.username||A.email||"?";
  return '<div class="pf-av'+(cls?" "+cls:"")+'">'+(u?'<img alt="" src="'+esc(u)+'">':esc((nm.charAt(0)||"?").toUpperCase()))+'</div>'}
-function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","scv","labv","zonev","pracv","movv","invv","gdv","rlv","newsv"].forEach(function(i){$(i).hidden=true});
- ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navals","navsc","navlab","navzone","navprac","navmov"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
+function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","scv","labv","zonev","pracv","futv","movv","invv","gdv","rlv","newsv"].forEach(function(i){$(i).hidden=true});
+ ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navals","navsc","navlab","navzone","navprac","navfut","navmov"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
 function paintProfNav(){$("navprofile").classList.toggle("on",profTab!=="coach");$("navcoach").classList.toggle("on",profTab==="coach")}
 function recordBlock(){var all=allTrades();if(!all.length)return '<div class="pf-panel hint" style="margin:8px 0">No saved trades yet. Save a day in Studio and your record shows here.</div>';
  var days=dailyPnl(),yr=pickYear(days),m=pnlModel(days,yr),s=withCtx({trades:all},[],stats);
@@ -3113,6 +3118,7 @@ $("igwrap").addEventListener("change",function(ev){if(ev.target.id==="igpal")igS
 restore();loadImgs();showStats();renderImgs();initStore();
 })();
 </script>
+<script src="futures.js"></script>
 <script src="practice-data.js"></script>
 <script src="practice.js"></script>
 <script src="movers.js"></script>
