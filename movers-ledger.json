@@ -8,7 +8,8 @@
   "day": 1,
   "radar": 10,
   "swing": 10,
-  "invest": 90
+  "invest": 90,
+  "penny": 5
  },
  "entries": [
   {
@@ -260,6 +261,78 @@
    "entryN": "Nov 4 price from article",
    "spy": 766.81,
    "last": 48.42,
+   "lastD": "2026-11-04",
+   "status": "open"
+  },
+  {
+   "id": "penny-NRXP-20261104",
+   "t": "NRXP",
+   "kind": "penny",
+   "posted": "2026-11-04",
+   "entry": 2.49,
+   "entryN": "Nov 4 close",
+   "spy": 766.81,
+   "last": 2.49,
+   "lastD": "2026-11-04",
+   "status": "open"
+  },
+  {
+   "id": "penny-OPEN-20261104",
+   "t": "OPEN",
+   "kind": "penny",
+   "posted": "2026-11-04",
+   "entry": 1.98,
+   "entryN": "Nov 4 (+13.8%)",
+   "spy": 766.81,
+   "last": 1.98,
+   "lastD": "2026-11-04",
+   "status": "open"
+  },
+  {
+   "id": "penny-CRIS-20261104",
+   "t": "CRIS",
+   "kind": "penny",
+   "posted": "2026-11-04",
+   "entry": 1.11,
+   "entryN": "Nov 4 (+55.5%)",
+   "spy": 766.81,
+   "last": 1.11,
+   "lastD": "2026-11-04",
+   "status": "open"
+  },
+  {
+   "id": "penny-CHSN-20261104",
+   "t": "CHSN",
+   "kind": "penny",
+   "posted": "2026-11-04",
+   "entry": 3.36,
+   "entryN": "Nov 4 close",
+   "spy": 766.81,
+   "last": 3.36,
+   "lastD": "2026-11-04",
+   "status": "open"
+  },
+  {
+   "id": "penny-PARA-20261104",
+   "t": "PARA",
+   "kind": "penny",
+   "posted": "2026-11-04",
+   "entry": 3.12,
+   "entryN": "Nov 3 midday",
+   "spy": 766.81,
+   "last": 3.12,
+   "lastD": "2026-11-04",
+   "status": "open"
+  },
+  {
+   "id": "penny-MERC-20261104",
+   "t": "MERC",
+   "kind": "penny",
+   "posted": "2026-11-04",
+   "entry": 0.22,
+   "entryN": "Nov 3",
+   "spy": 766.81,
+   "last": 0.22,
    "lastD": "2026-11-04",
    "status": "open"
   }
