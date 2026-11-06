@@ -1,9 +1,9 @@
 {
  "started": "2026-11-04",
- "asof": "2026-11-05",
+ "asof": "2026-11-06",
  "bench": "SPY",
- "spyLast": 766.81,
- "spyLastD": "2026-11-04",
+ "spyLast": 733.0,
+ "spyLastD": "2026-11-05",
  "horizon": {
   "day": 1,
   "radar": 10,
@@ -80,9 +80,12 @@
    "entry": 8.56,
    "entryN": "Nov 4, 2:50 pm ET",
    "spy": 766.81,
-   "last": 8.56,
-   "lastD": "2026-11-04",
-   "status": "open"
+   "last": 9.25,
+   "lastD": "2026-11-05",
+   "status": "closed",
+   "closed": 9.25,
+   "closedD": "2026-11-06",
+   "spyClosed": 733.0
   },
   {
    "id": "day-DUOL-20261104",
@@ -92,9 +95,12 @@
    "entry": 161.27,
    "entryN": "Nov 4 close",
    "spy": 766.81,
-   "last": 161.27,
-   "lastD": "2026-11-04",
-   "status": "open"
+   "last": 157.02,
+   "lastD": "2026-11-05",
+   "status": "closed",
+   "closed": 157.02,
+   "closedD": "2026-11-06",
+   "spyClosed": 733.0
   },
   {
    "id": "day-SMCI-20261104",
@@ -104,9 +110,12 @@
    "entry": 33.26,
    "entryN": "After hours Nov 3",
    "spy": 766.81,
-   "last": 33.26,
-   "lastD": "2026-11-04",
-   "status": "open"
+   "last": 27.08,
+   "lastD": "2026-11-05",
+   "status": "closed",
+   "closed": 27.08,
+   "closedD": "2026-11-06",
+   "spyClosed": 733.0
   },
   {
    "id": "day-MRVL-20261104",
@@ -116,9 +125,12 @@
    "entry": 171.97,
    "entryN": "Nov 3 close",
    "spy": 766.81,
-   "last": 159.8,
-   "lastD": "2026-11-04",
-   "status": "open"
+   "last": 133.55,
+   "lastD": "2026-11-05",
+   "status": "closed",
+   "closed": 133.55,
+   "closedD": "2026-11-06",
+   "spyClosed": 733.0
   },
   {
    "id": "day-DJT-20261104",
@@ -130,7 +142,10 @@
    "spy": null,
    "last": null,
    "lastD": "2026-11-04",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-06",
+   "spyClosed": 733.0
   },
   {
    "id": "swing-IREN-20261104",
@@ -152,8 +167,8 @@
    "entry": 141.31,
    "entryN": "Nov 3 close",
    "spy": 766.81,
-   "last": 135.92,
-   "lastD": "2026-11-04",
+   "last": 123.62,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -164,8 +179,8 @@
    "entry": 803.71,
    "entryN": "Nov 4, 11:22 am ET",
    "spy": 766.81,
-   "last": 803.71,
-   "lastD": "2026-11-04",
+   "last": 656.39,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -200,8 +215,8 @@
    "entry": 206.69,
    "entryN": "Nov 3 close",
    "spy": 766.81,
-   "last": 206.69,
-   "lastD": "2026-11-04",
+   "last": 181.6,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -212,8 +227,8 @@
    "entry": 331.37,
    "entryN": "Nov 4, 10:13 am ET",
    "spy": 766.81,
-   "last": 331.37,
-   "lastD": "2026-11-04",
+   "last": 291.53,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -224,8 +239,8 @@
    "entry": 803.71,
    "entryN": "Nov 4, 11:22 am ET",
    "spy": 766.81,
-   "last": 803.71,
-   "lastD": "2026-11-04",
+   "last": 656.39,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -272,8 +287,8 @@
    "entry": 2.49,
    "entryN": "Nov 4 close",
    "spy": 766.81,
-   "last": 2.49,
-   "lastD": "2026-11-04",
+   "last": 2.27,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -284,8 +299,8 @@
    "entry": 1.98,
    "entryN": "Nov 4 (+13.8%)",
    "spy": 766.81,
-   "last": 1.98,
-   "lastD": "2026-11-04",
+   "last": 1.79,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -296,8 +311,8 @@
    "entry": 1.11,
    "entryN": "Nov 4 (+55.5%)",
    "spy": 766.81,
-   "last": 1.11,
-   "lastD": "2026-11-04",
+   "last": 0.85,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -308,8 +323,8 @@
    "entry": 3.36,
    "entryN": "Nov 4 close",
    "spy": 766.81,
-   "last": 3.36,
-   "lastD": "2026-11-04",
+   "last": 2.35,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -320,8 +335,8 @@
    "entry": 3.12,
    "entryN": "Nov 3 midday",
    "spy": 766.81,
-   "last": 0.319,
-   "lastD": "2026-11-04",
+   "last": 0.164,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -368,8 +383,8 @@
    "entry": 58.3,
    "entryN": "Nov 4 (Quiver Quant)",
    "spy": 766.81,
-   "last": 58.3,
-   "lastD": "2026-11-04",
+   "last": 52.25,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -392,8 +407,8 @@
    "entry": 176.88,
    "entryN": "Nov 4 midday (MarketBeat)",
    "spy": 766.81,
-   "last": 176.88,
-   "lastD": "2026-11-04",
+   "last": 172.5,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -404,8 +419,8 @@
    "entry": 333.08,
    "entryN": "After hours Nov 4",
    "spy": 766.81,
-   "last": 333.08,
-   "lastD": "2026-11-04",
+   "last": 356.1,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -428,8 +443,8 @@
    "entry": 160.7,
    "entryN": "After hours Nov 4",
    "spy": 766.81,
-   "last": 160.7,
-   "lastD": "2026-11-04",
+   "last": 156.75,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -440,8 +455,8 @@
    "entry": 5.24,
    "entryN": "After hours Nov 4",
    "spy": 766.81,
-   "last": 5.24,
-   "lastD": "2026-11-04",
+   "last": 5.09,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -452,8 +467,8 @@
    "entry": 52.37,
    "entryN": "Nov 4 close (Alpha Vantage)",
    "spy": 766.81,
-   "last": 52.37,
-   "lastD": "2026-11-04",
+   "last": 45.99,
+   "lastD": "2026-11-05",
    "status": "open"
   },
   {
@@ -514,6 +529,174 @@
    "spy": 766.81,
    "last": 630.0,
    "lastD": "2026-11-04",
+   "status": "open"
+  },
+  {
+   "id": "radar-CAT-20261106",
+   "t": "CAT",
+   "kind": "radar",
+   "posted": "2026-11-06",
+   "entry": null,
+   "entryN": "",
+   "spy": null,
+   "last": null,
+   "lastD": "2026-11-06",
+   "status": "open"
+  },
+  {
+   "id": "radar-TBBK-20261106",
+   "t": "TBBK",
+   "kind": "radar",
+   "posted": "2026-11-06",
+   "entry": 47.34,
+   "entryN": "Nov 4 (MarketBeat)",
+   "spy": 733.0,
+   "last": 47.34,
+   "lastD": "2026-11-06",
+   "status": "open"
+  },
+  {
+   "id": "radar-PRLB-20261106",
+   "t": "PRLB",
+   "kind": "radar",
+   "posted": "2026-11-06",
+   "entry": 66.64,
+   "entryN": "Nov 4 (MarketBeat)",
+   "spy": 733.0,
+   "last": 66.64,
+   "lastD": "2026-11-06",
+   "status": "open"
+  },
+  {
+   "id": "radar-STRZ-20261106",
+   "t": "STRZ",
+   "kind": "radar",
+   "posted": "2026-11-06",
+   "entry": null,
+   "entryN": "",
+   "spy": null,
+   "last": null,
+   "lastD": "2026-11-06",
+   "status": "open"
+  },
+  {
+   "id": "day-NET-20261106",
+   "t": "NET",
+   "kind": "day",
+   "posted": "2026-11-06",
+   "entry": null,
+   "entryN": "",
+   "spy": null,
+   "last": null,
+   "lastD": "2026-11-06",
+   "status": "open"
+  },
+  {
+   "id": "day-ABNB-20261106",
+   "t": "ABNB",
+   "kind": "day",
+   "posted": "2026-11-06",
+   "entry": null,
+   "entryN": "",
+   "spy": null,
+   "last": null,
+   "lastD": "2026-11-06",
+   "status": "open"
+  },
+  {
+   "id": "day-TEAM-20261106",
+   "t": "TEAM",
+   "kind": "day",
+   "posted": "2026-11-06",
+   "entry": null,
+   "entryN": "",
+   "spy": null,
+   "last": null,
+   "lastD": "2026-11-06",
+   "status": "open"
+  },
+  {
+   "id": "day-DKNG-20261106",
+   "t": "DKNG",
+   "kind": "day",
+   "posted": "2026-11-06",
+   "entry": null,
+   "entryN": "",
+   "spy": null,
+   "last": null,
+   "lastD": "2026-11-06",
+   "status": "open"
+  },
+  {
+   "id": "swing-LRCX-20261106",
+   "t": "LRCX",
+   "kind": "swing",
+   "posted": "2026-11-06",
+   "entry": null,
+   "entryN": "",
+   "spy": null,
+   "last": null,
+   "lastD": "2026-11-06",
+   "status": "open"
+  },
+  {
+   "id": "invest-LLY-20261106",
+   "t": "LLY",
+   "kind": "invest",
+   "posted": "2026-11-06",
+   "entry": 1395.18,
+   "entryN": "Nov 5, 12:07 pm ET (Motley Fool)",
+   "spy": 733.0,
+   "last": 1395.18,
+   "lastD": "2026-11-06",
+   "status": "open"
+  },
+  {
+   "id": "invest-ISRG-20261106",
+   "t": "ISRG",
+   "kind": "invest",
+   "posted": "2026-11-06",
+   "entry": 466.13,
+   "entryN": "Nov 5 (Motley Fool)",
+   "spy": 733.0,
+   "last": 466.13,
+   "lastD": "2026-11-06",
+   "status": "open"
+  },
+  {
+   "id": "invest-TGT-20261106",
+   "t": "TGT",
+   "kind": "invest",
+   "posted": "2026-11-06",
+   "entry": 157.95,
+   "entryN": "Nov 5 close (Motley Fool)",
+   "spy": 733.0,
+   "last": 157.95,
+   "lastD": "2026-11-06",
+   "status": "open"
+  },
+  {
+   "id": "invest-MELI-20261106",
+   "t": "MELI",
+   "kind": "invest",
+   "posted": "2026-11-06",
+   "entry": 1530.28,
+   "entryN": "Nov 5 (Motley Fool)",
+   "spy": 733.0,
+   "last": 1530.28,
+   "lastD": "2026-11-06",
+   "status": "open"
+  },
+  {
+   "id": "invest-ONON-20261106",
+   "t": "ONON",
+   "kind": "invest",
+   "posted": "2026-11-06",
+   "entry": 37.54,
+   "entryN": "Nov 5 (Motley Fool)",
+   "spy": 733.0,
+   "last": 37.54,
+   "lastD": "2026-11-06",
    "status": "open"
   }
  ]
