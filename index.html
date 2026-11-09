@@ -1753,6 +1753,7 @@ $("rlv").addEventListener("click",function(ev){var b=ev.target.closest&&ev.targe
 
 /* ---------- Watchlist + News tab ---------- */
 var WL={sort:{k:"dp",d:1},syms:[],meta:{},hist:null,hmItems:[],loaded:false,quotes:{},qcfg:true,tab:"all",pick:"",items:[],upd:0,busy:false},WLQ=["SPY","QQQ","AAPL","NVDA","TSLA","MSFT"],nwTimer=null;
+window.StockPrefs={ready:function(){return !!store.db},get:async function(k){try{if(store.db){var s=await store.db.doc("meta/"+k).get();return s.exists?clone(s.data()):null}}catch(e){}return null},set:async function(k,v){try{if(store.db)await store.db.doc("meta/"+k).set(v)}catch(e){}}};
 window.StockWatch={has:function(s){return WL.syms.indexOf(s)>-1},ready:function(){return WL.loaded},list:function(){return WL.syms.slice()},load:function(){return wlLoad().then(function(){document.dispatchEvent(new Event("wl-change"))})},
  add:async function(s){await wlLoad();var ok=await wlAddSym(s);if(ok)toast("Added $"+String(s).toUpperCase().replace(/[^A-Z.]/g,"")+" to your watchlist");document.dispatchEvent(new Event("wl-change"));return ok},
  toggle:async function(s){await wlLoad();if(WL.syms.indexOf(s)>-1){await wlRemove(s);toast("Removed $"+s+" from your watchlist")}else{var ok=await wlAddSym(s);if(ok)toast("Added $"+s+" to your watchlist")}document.dispatchEvent(new Event("wl-change"))}};
@@ -3233,7 +3234,6 @@ restore();loadImgs();showStats();renderImgs();initStore();
 <script src="chart.js"></script>
 <script src="movers.js"></script>
 <script src="pulse.js"></script>
-<script>window.NAV_MODES=true</script>
 <script src="nav.js"></script>
 </body>
 </html>
