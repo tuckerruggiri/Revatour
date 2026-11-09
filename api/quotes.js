@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
   const key = process.env.FINNHUB_KEY || '';
   if (!key) return res.status(200).json({ configured: false, quotes: {} });
   const syms = Array.from(new Set(String((req.query && req.query.symbols) || '').toUpperCase().split(',')
-    .map((s) => s.trim()).filter((s) => /^[A-Z]{1,5}(\.[A-Z])?$/.test(s)))).slice(0, 25);
+    .map((s) => s.trim()).filter((s) => /^[A-Z]{1,5}(\.[A-Z])?$/.test(s)))).slice(0, 26);
   if (!syms.length) return res.status(400).json({ error: 'no valid symbols' });
 
   const out = {};
@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
       if (!r.ok) return;
       const j = await r.json();
       if (!j || !isFinite(j.c) || j.c === 0) return;
-      const q = { p: j.c, d: j.d, dp: j.dp, pc: j.pc, t: j.t ? j.t * 1000 : null };
+      const q = { p: j.c, d: j.d, dp: j.dp, pc: j.pc, h: isFinite(j.h) && j.h > 0 ? j.h : null, l: isFinite(j.l) && j.l > 0 ? j.l : null, o: isFinite(j.o) && j.o > 0 ? j.o : null, t: j.t ? j.t * 1000 : null };
       cache.set(s, { t: Date.now(), q });
       out[s] = q;
     } catch (e) { /* skip this ticker */ }
