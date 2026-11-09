@@ -103,22 +103,85 @@
       return /^[A-Z]{2,5}$/.test(w) && !STOP[w] ? '<button type="button" class="' + (cls || "pl-tk") + '" data-chart="' + w + '" title="Open ' + w + ' chart">' + w + '</button>' : esc;
     }).join("");
   }
-  /* add a small chart button after every $TICKER chip, alert, news tag and watchlist row on any page */
+  /* chart icon + watchlist star after every ticker on any page */
+  var STAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>';
+  function watching(s) { return !!(window.StockWatch && window.StockWatch.has(s)); }
+  var wlAsked = false;
+  function setHtml(n, html) { if (n.__h !== html) { n.__h = html; n.innerHTML = html; } }
+  function syncWl() {
+    if (window.StockWatch && !window.StockWatch.ready() && !wlAsked && document.documentElement.classList.contains("authed") && document.querySelector("[data-wl]")) { wlAsked = true; window.StockWatch.load(); }
+    [].forEach.call(document.querySelectorAll("[data-wl]"), function (n) {
+      var s = n.getAttribute("data-wl"), on = watching(s);
+      n.classList.toggle("on", on);
+      if (n.hasAttribute("data-wlbig")) setHtml(n, STAR + (on ? "On your watchlist" : "Add to watchlist"));
+      else if (n.classList.contains("sc-wl")) { setHtml(n, STAR + (n.getAttribute("data-lbl") ? (on ? "Watching" : "Watch") : "")); n.title = on ? "Remove " + s + " from watchlist" : "Add " + s + " to watchlist"; }
+    });
+    qwSync();
+  }
+  function wlBtn(s, label) {
+    var b = document.createElement("button"); b.type = "button"; b.className = "sc-wl"; b.setAttribute("data-wl", s);
+    if (label) b.setAttribute("data-lbl", "1"); b.setAttribute("aria-label", "Toggle " + s + " on watchlist"); return b;
+  }
   function dec(root) {
     if (!root.querySelectorAll) return;
-    var items = root.querySelectorAll('.tk[data-tk],[data-tk2]');
+    var items = root.querySelectorAll('.tk[data-tk],[data-tk2],.mv-tk[data-chart],.pl-tk[data-chart]'), added = false;
     [].forEach.call(items, function (n) {
-      if (n.getAttribute("data-sci") || n.closest(".sc-mod,.sc-inl")) return;
-      var s = clean(n.getAttribute("data-tk") || n.getAttribute("data-tk2")); if (!/^[A-Z]{1,5}(\.[A-Z])?$/.test(s)) return;
-      n.setAttribute("data-sci", "1");
-      var b = document.createElement("button"); b.type = "button"; b.className = "sc-ic"; b.setAttribute("data-chart", s); b.title = "Open " + s + " chart"; b.setAttribute("aria-label", "Open " + s + " chart"); b.innerHTML = ICON;
-      n.insertAdjacentElement("afterend", b);
+      if (n.getAttribute("data-sci") || n.closest(".sc-mod,.sc-inl,.al-strip,.qw-pop")) return;
+      var s = clean(n.getAttribute("data-tk") || n.getAttribute("data-tk2") || n.getAttribute("data-chart")); if (!/^[A-Z]{1,5}(\.[A-Z])?$/.test(s)) return;
+      n.setAttribute("data-sci", "1"); added = true;
+      var anchor = n;
+      if (!n.hasAttribute("data-chart")) {
+        var b = document.createElement("button"); b.type = "button"; b.className = "sc-ic"; b.setAttribute("data-chart", s); b.title = "Open " + s + " chart"; b.setAttribute("aria-label", "Open " + s + " chart"); b.innerHTML = ICON;
+        n.insertAdjacentElement("afterend", b); anchor = b;
+      }
+      anchor.insertAdjacentElement("afterend", wlBtn(s, n.classList.contains("mv-tk")));
     });
+    if (added) syncWl();
+  }
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest && e.target.closest("[data-wl]"); if (!t) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (window.StockWatch) window.StockWatch.toggle(t.getAttribute("data-wl")).then(syncWl);
+  }, true);
+  document.addEventListener("wl-change", syncWl);
+
+  /* floating quick-add button on every page */
+  var qw = null, fab = null;
+  function qwSync() {
+    if (!qw || !window.StockWatch) return;
+    var l = window.StockWatch.list(), pop = ["SPY", "QQQ", "AAPL", "NVDA", "TSLA", "MSFT", "AMD", "META"].filter(function (s) { return l.indexOf(s) < 0; }).slice(0, 6);
+    setHtml(qw.querySelector(".qw-have"), l.length ? l.map(function (s) { return '<button type="button" class="qw-chip" data-tk="' + s + '">' + s + '</button>'; }).join("") : '<span style="color:var(--mute);font-size:.85rem">Nothing yet. Add your first ticker above.</span>');
+    setHtml(qw.querySelector(".qw-sug"), pop.map(function (s) { return '<button type="button" class="qw-chip add" data-qwadd="' + s + '">' + s + '</button>'; }).join(""));
+    qw.querySelector(".qw-sugw").style.display = pop.length ? "" : "none";
+  }
+  function qwToggle(force) {
+    if (!qw) return;
+    var show = force == null ? qw.hidden : force; qw.hidden = !show;
+    if (show) { if (window.StockWatch) window.StockWatch.load(); qwSync(); setTimeout(function () { var i = qw.querySelector("input"); if (i) i.focus(); }, 30); }
+  }
+  function qwInit() {
+    if (fab || !document.body) return;
+    fab = document.createElement("button"); fab.type = "button"; fab.className = "qw-fab"; fab.setAttribute("aria-label", "Add a stock to your watchlist"); fab.innerHTML = STAR + "Add to watchlist";
+    qw = document.createElement("div"); qw.className = "qw-pop"; qw.hidden = true;
+    qw.innerHTML = '<h3>Add to your watchlist</h3><p>Type a ticker, or tap one below. It shows on your Home screen.</p><form class="qw-form" autocomplete="off"><input type="text" maxlength="7" placeholder="Ticker, like NVDA" aria-label="Ticker symbol"><button type="submit">Add</button></form><div class="qw-l">Quick add</div><div class="qw-chips qw-sugw"><span class="qw-sug qw-chips"></span></div><div class="qw-l">Your watchlist</div><div class="qw-chips qw-have"></div>';
+    document.body.appendChild(qw); document.body.appendChild(fab);
+    fab.addEventListener("click", function () { qwToggle(); });
+    qw.querySelector("form").addEventListener("submit", function (e) {
+      e.preventDefault(); var i = qw.querySelector("input"), v = i.value;
+      if (window.StockWatch) window.StockWatch.add(v).then(function (ok) { if (ok) i.value = ""; syncWl(); i.focus(); });
+    });
+    qw.addEventListener("click", function (e) {
+      var a = e.target.closest("[data-qwadd]");
+      if (a && window.StockWatch) { window.StockWatch.add(a.getAttribute("data-qwadd")).then(syncWl); return; }
+      if (e.target.closest("[data-tk]")) qwToggle(false);
+    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") qwToggle(false); });
+    document.addEventListener("click", function (e) { if (qw && !qw.hidden && e.target.isConnected && !qw.contains(e.target) && !fab.contains(e.target)) qwToggle(false); });
   }
   var pend = false;
-  function schedule() { if (pend) return; pend = true; (window.requestAnimationFrame || setTimeout)(function () { pend = false; dec(document.body); }); }
-  function start() { dec(document.body); new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true }); }
+  function schedule() { if (pend) return; pend = true; (window.requestAnimationFrame || setTimeout)(function () { pend = false; dec(document.body); syncWl(); }); }
+  function start() { qwInit(); dec(document.body); new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true }); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
 
-  window.StockChart = { open: open, close: close, link: link, embed: embed, icon: ICON };
+  window.StockChart = { syncWatch: syncWl, open: open, close: close, link: link, embed: embed, icon: ICON };
 })();
