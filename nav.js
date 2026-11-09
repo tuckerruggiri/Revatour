@@ -70,7 +70,7 @@
     ["You", "#7d8793", "user", YOU]
   ];
   function defaults() {
-    return { ts: 0, rec: true, v: 2, sections: DEF.map(function (s, i) { return { id: "s" + i, n: s[0], c: s[1], ic: s[2], ids: s[3].slice() }; }) };
+    return { ts: 0, rec: true, pg: "bottom", v: 2, sections: DEF.map(function (s, i) { return { id: "s" + i, n: s[0], c: s[1], ic: s[2], ids: s[3].slice() }; }) };
   }
 
   var CSS = '#side .nsrow{display:flex;gap:6px;margin:0 0 12px}#side .nsearch{box-sizing:border-box;overflow:hidden;flex:1;min-width:0;display:flex;align-items:center;gap:9px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--mute);font:500 .88rem "Instrument Sans",sans-serif;cursor:pointer;text-align:left;white-space:nowrap}#side .nsearch:hover{border-color:var(--accent);color:var(--ink)}#side .nsearch svg{width:15px;height:15px;flex:none}#side .nsearch kbd{white-space:nowrap;margin-left:auto;font:600 .68rem "Instrument Sans",sans-serif;border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:var(--panel);color:var(--mute)}' +
@@ -112,7 +112,7 @@
   var KEY = "ss-navlayout-v3", CKEY = "ss-navsec-v3", RKEY = "ss-navrecent", layout, editing = false, pp = null, arm = null, dragId = null, dragFrom = null, pushT = null;
   function sanitize(L) {
     if (!L || !Array.isArray(L.sections)) return defaults();
-    var out = { ts: +L.ts || 0, rec: L.rec !== false, v: 2, sections: [] };
+    var out = { ts: +L.ts || 0, rec: L.rec !== false, pg: L.pg === "top" ? "top" : "bottom", v: 2, sections: [] };
     L.sections.slice(0, 14).forEach(function (s) {
       var seen = {}, ids = (s.ids || []).filter(function (i) { if (!ITEMS[i] || seen[i]) return false; seen[i] = 1; return true; });
       out.sections.push({ id: String(s.id || uid()), n: String(s.n || "Section").slice(0, 24), c: hex(s.c), ic: P[s.ic] ? s.ic : "", ids: ids });
@@ -206,7 +206,7 @@
     var free = Object.keys(ITEMS).filter(function (i) { return !used[i]; });
     if (free.length) list.push({ id: "__un", n: "Unsorted", c: "#7d8793", ic: "folder", ids: free });
     main.innerHTML = "";
-    if (pgSec) { pgSec.classList.toggle("c", !!coll.__pages); pgSec.querySelector(".nsh").setAttribute("aria-expanded", String(!coll.__pages)); main.appendChild(pgSec); secEls.push(pgSec); }
+    if (pgSec) { pgSec.classList.toggle("c", !!coll.__pages); pgSec.querySelector(".nsh").setAttribute("aria-expanded", String(!coll.__pages)); if (layout.pg === "top") { main.appendChild(pgSec); secEls.push(pgSec); } }
     list.forEach(function (g) {
       var d = document.createElement("div"); shown.push(g.id);
       d.className = "ns" + (coll[g.id] ? " c" : ""); d.setAttribute("data-sid", g.id); d.style.setProperty("--sc", g.c);
@@ -221,6 +221,7 @@
         var c = d.classList.toggle("c"); this.setAttribute("aria-expanded", String(!c)); coll[g.id] = c; lsSet(CKEY, coll);
       });
     });
+    if (pgSec && layout.pg !== "top") { main.appendChild(pgSec); secEls.push(pgSec); }
     if (!list.length && !pgSec) main.innerHTML = '<p class="ned-note">No sections yet. Tap the pencil above to make one.</p>';
     syncActive();
   }
@@ -235,6 +236,7 @@
     });
     h += '<div class="ned-ft"><button type="button" data-act="addg"' + (S.length >= 14 ? " disabled" : "") + '>+ New section</button></div>';
     h += '<div class="ned-tray" data-drop="__tray"><div class="npp-l">Unsorted' + (free.length ? " (" + free.length + ")" : "") + '</div>' + (free.length ? free.map(function (id) { return rowHtml(id, "var(--mute)", "__tray"); }).join("") : '<div class="ned-empty">Every page is in a section. Drop one here to take it out of the section it came from.</div>') + '</div>';
+    h += '<label class="ned-chk"><input type="checkbox" data-act="pgtop"' + (layout.pg === "top" ? " checked" : "") + '> Show Pages at the top (otherwise at the bottom)</label>';
     h += '<label class="ned-chk"><input type="checkbox" data-act="rec"' + (layout.rec ? " checked" : "") + '> Show a “Recent” section at the top</label>';
     h += '<p class="ned-note"><b>Tip:</b> a page can live in several sections. Hold <b>Alt</b> (Option) while dragging to copy it, or use the Options menu. Changes save automatically' + (window.StockPrefs && window.StockPrefs.ready() ? " and follow you across devices." : ".") + '</p>';
     h += '<div class="ned-ft"><button type="button" class="' + (arm === "reset" ? "arm" : "") + '" data-act="reset">' + (arm === "reset" ? "Click again to reset everything" : "Reset to default layout") + '</button></div>';
@@ -290,6 +292,7 @@
       if (v === "r") move("rm", id, null, from); else move(v.charAt(0) === "a" ? "cp" : "mv", id, v.slice(2), from);
     }
     else if (a === "cc") { save(); render(); }
+    else if (a === "pgtop") { layout.pg = e.target.checked ? "top" : "bottom"; save(); }
     else if (a === "rec") { layout.rec = e.target.checked; save(); }
   });
   main.addEventListener("dragstart", function (e) {
