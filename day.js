@@ -30,6 +30,8 @@
     '.dy-live{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gain);margin-right:4px;animation:dyp 1.6s infinite}@keyframes dyp{50%{opacity:.3}}' +
     '.dy-card.ch.sm{margin:0;flex:1 1 0!important;min-height:0}#dayv .dy-cw .sc-mini .sc-hd{background:transparent;border:0}#dayv .dy-cw .sc-mini .sc-fr button,#dayv .dy-cw .sc-mini .sc-lk{background:transparent;border:0;padding:2px 7px}#dayv .dy-cw .sc-mini .sc-fr button.on{background:var(--accent);color:var(--accent-ink,#fff)}#dytlc{background:#000;border-color:#000;padding:0}#dytlc .dy-h{padding:8px 12px;color:#cfd3da}#dytlc .dy-h .tt{color:#fff}.dy-tl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;background:#222;padding:0}.dy-tile{background:#000;display:flex;flex-direction:column;min-width:0;color:#cfd3da}#dayv .dy-tile .sc-inl{margin:0;border:0;border-radius:0;background:#000;overflow:visible}#dayv .dy-tile .sc-inl .sc-body{height:min(52vh,520px);min-height:300px;flex:none}#dayv .dy-tile .sc-hd{background:#10131a;border:0;padding:4px 8px;gap:4px 6px;color:#e8eaed;flex-wrap:nowrap;overflow:hidden}.dy-tile .sc-sp{min-width:0}.dy-tile .sc-msg a{color:#6ea8ff}#dayv .dy-tile .sc-hd b{font-size:1rem;letter-spacing:.3px}#dayv .dy-tile .sc-fr{gap:0;flex-wrap:nowrap}#dayv .dy-tile .sc-fr button,#dayv .dy-tile .sc-lk{white-space:nowrap}.dy-tile form input{width:52px}#dayv .dy-tile .sc-hd .sc-lk{display:none}#dayv .dy-tile .sc-fr button,#dayv .dy-tile .sc-lk{background:transparent;border:0;border-radius:4px;color:#aeb4bf;padding:2px 5px;font-size:.72rem}#dayv .dy-tile .sc-fr button.on{background:#2b7de0;color:#fff}.dy-tile .dy-px{font-variant-numeric:tabular-nums;font-size:.82rem}.dy-tile form{display:inline-flex;gap:3px;margin:0}.dy-tile form input{width:54px;text-transform:uppercase;background:#000;color:#e8eaed;border-color:#2b303b;padding:2px 6px;font-size:.72rem}#dayv .dy-tile form .b,#dayv .dy-tile .b{background:#1b2230;color:#e8eaed;border-color:#2b303b;padding:2px 8px;font-size:.72rem}.dy-rd{padding:4px 10px 5px;font-size:.72rem;line-height:1.3;color:#cfd3da;background:#0a0c10;min-height:0}.dy-rd .sm2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.dy-rd .bi{display:inline-block;padding:0 8px;border-radius:999px;font-weight:700;font-size:.7rem;border:1px solid currentColor;margin-right:4px}.dy-rd .bi.up{color:#3ddc84}.dy-rd .bi.down{color:#ff5c5c}.dy-rd .bi.range{color:#9aa0a6}.dy-rd .lv{display:flex;flex-wrap:wrap;gap:2px 12px;margin-top:3px;font-variant-numeric:tabular-nums}.dy-rd .lv span{white-space:nowrap}.dy-rd .lv i{font-style:normal;color:#8a919e;font-size:.66rem;text-transform:uppercase;letter-spacing:.05em;margin-right:4px}.dy-rd .lv .r b{color:#ff7b7b;font-weight:600}.dy-rd .lv .s b{color:#4ee08f;font-weight:600}.dy-rd small,.dy-rd .er{color:#8a919e}#dytlc .dy-q{color:#8a919e}' +
     '.dy-car{position:fixed;right:26px;bottom:24px;z-index:50;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--ink);color:var(--bg);box-shadow:0 6px 20px rgba(0,0,0,.35);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}.dy-car:hover{transform:scale(1.07)}.dy-car svg{transition:transform .2s}.dy-car.up svg{transform:rotate(180deg)}' +
+    '.dy-mod{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.66);display:flex;align-items:flex-start;justify-content:center;padding:4vh 16px;overflow:auto}.dy-mod[hidden]{display:none}.dy-mb{width:min(1040px,100%);background:#0b0d12;color:#dfe3ea;border:1px solid #2b303b;border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.6);font-size:.88rem;line-height:1.5}.dy-mb h3{margin:0;font-size:1.15rem;color:#fff}.dy-mb h4{margin:0 0 6px;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#8a919e}.dy-mh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid #1d222c;position:sticky;top:0;background:#0b0d12;border-radius:14px 14px 0 0;z-index:2}.dy-mh .x{margin-left:auto;display:flex;gap:6px}.dy-mb .b{background:#1b2230;color:#e8eaed;border:1px solid #2b303b;border-radius:8px;padding:4px 10px;cursor:pointer;font:inherit;font-size:.78rem}.dy-mc{padding:14px 18px 18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.dy-sec{background:#10131a;border:1px solid #1d222c;border-radius:10px;padding:12px 14px;min-width:0}.dy-sec.w{grid-column:1/-1}.dy-sec p{margin:0}.dy-mb .bi{display:inline-block;padding:1px 10px;border-radius:999px;font-weight:700;font-size:.74rem;border:1px solid currentColor}.dy-mb .bi.up{color:#3ddc84}.dy-mb .bi.down{color:#ff5c5c}.dy-mb .bi.range{color:#9aa0a6}.dy-lvl{display:grid;grid-template-columns:70px 1fr;gap:2px 10px;margin-top:4px}.dy-lvl b{font-variant-numeric:tabular-nums}.dy-lvl .r{color:#ff7b7b}.dy-lvl .s{color:#4ee08f}.dy-lvl span{color:#aab1bd}.dy-mb table{width:100%;border-collapse:collapse;font-size:.8rem}.dy-mb th{text-align:left;color:#8a919e;font-weight:600;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;padding:2px 6px 4px 0}.dy-mb td{padding:3px 6px 3px 0;border-top:1px solid #1d222c;vertical-align:top;font-variant-numeric:tabular-nums}.dy-mb .buy{color:#4ee08f}.dy-mb .sell{color:#ff7b7b}.dy-mb .mut{color:#8a919e}.dy-chips{display:flex;flex-wrap:wrap;gap:6px}.dy-chips span{background:#0b0d12;border:1px solid #1d222c;border-radius:999px;padding:2px 10px;font-size:.76rem}.dy-sc{border-left:3px solid;padding-left:10px}.dy-sc.bu{border-color:#3ddc84}.dy-sc.be{border-color:#ff5c5c}.dy-mb a{color:#6ea8ff}.dy-mb ul{margin:0;padding-left:18px}.dy-if{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:start}.dy-if .tg{font-weight:700;font-size:.74rem;padding:1px 8px;border-radius:6px;border:1px solid currentColor;white-space:nowrap}.dy-if .tg.up{color:#3ddc84}.dy-if .tg.down{color:#ff5c5c}.dy-if .tg.mixed{color:#e6b84a}' +
+    '@media(max-width:820px){.dy-mc{grid-template-columns:minmax(0,1fr)}.dy-mh{padding:12px}.dy-mc{padding:12px}}' +
     '@media(max-width:1180px){#dayv{height:auto;overflow:visible}.dy-grid{height:auto}.dy-tl{grid-template-columns:repeat(2,minmax(0,1fr))}.dy-col .dy-card:not(.ch){flex:none!important;min-height:190px}.dy-col.c .dy-card{height:600px}.dy-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.dy-col.b{grid-column:1/-1;order:-1}.dy-col.b .dy-card.ch{height:420px}.dy-col.b{overflow:visible}.dy-card.ch.sm{height:auto!important}.dy-col.b .dy-card.ch.sm .dy-cw{height:300px}.dy-col.c{grid-column:1/-1}}@media(max-width:700px){.dy-tl{grid-template-columns:minmax(0,1fr)}#dayv{padding:10px 12px}.dy-grid{grid-template-columns:minmax(0,1fr)}.dy-cw{flex-direction:column}.dy-col.b .dy-card.ch{height:460px}.dy-les{max-width:none}}';
   CSS += 'body:has(#dayv:not([hidden])) .qw-fab,body:has(#dayv:not([hidden])) .qw-pop{display:none!important}';
   var st = document.createElement("style"); st.id = "day-css"; st.textContent = CSS; document.head.appendChild(st);
@@ -86,7 +88,8 @@
       '<div class="dy-tabs" id="dytabs"></div>' +
       '<div class="dy-tab" id="dytb-trades"></div><div class="dy-tab" id="dytb-feed"></div><div class="dy-tab" id="dytb-news"></div></div></div></div>' +
       '<div class="dy-card" id="dytlc" style="flex:none;min-height:0"><div class="dy-h"><span class="tt">Watchlist charts</span><span class="dy-q" style="text-transform:none;letter-spacing:0;font-weight:500">The first 6 stocks in this day&#39;s Watchlist. AI reads each chart in its own time frame</span><span class="dy-sp"></span><button type="button" class="b pri" data-dyact="readall">Read all with AI</button></div><div class="dy-tl" id="dytgrid"></div><div class="dy-q" style="padding:0 12px 10px;text-transform:none;letter-spacing:0">Scenarios from the candles on screen, not predictions or advice. Candle data is a free feed and can be delayed. Draw your own levels before you trade.</div></div>' +
-      '<button type="button" class="dy-car" id="dycar" aria-label="Jump to the watchlist charts" title="Jump to the watchlist charts"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>';
+      '<button type="button" class="dy-car" id="dycar" aria-label="Jump to the watchlist charts" title="Jump to the watchlist charts"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>' +
+      '<div class="dy-mod" id="dymod" hidden><div class="dy-mb" id="dymb" role="dialog" aria-modal="true" aria-label="Detailed AI read"></div></div>';
     D.sym = "SPY"; D.charts = "";
     paintAll(); paintChart();
   }
@@ -181,7 +184,7 @@
     S.forEach(function (sym, i) {
       if (!sym) return;
       D.ivs[sym] = D.ivs[sym] || DEF_IV;
-      window.StockChart.embed($("dytc" + i), sym, D.ivs[sym], { mini: true, extra: '<span class="dy-px" data-q="' + sym + '"></span><form data-dyswap="' + i + '" title="Type a ticker and press Enter"><input placeholder="Ticker" maxlength="6" autocomplete="off" aria-label="Change ticker for this chart"><button type="submit" class="b">Change</button></form>' + (swapsGet()[i] ? '<button type="button" class="b" data-dyreset="' + i + '" title="Back to the watchlist stock">↺</button>' : '') + '<button type="button" class="b" data-dyread="' + i + '">AI read</button>', onframe: function (f) { D.ivs[sym] = f; readOne(i); } });
+      window.StockChart.embed($("dytc" + i), sym, D.ivs[sym], { mini: true, extra: '<span class="dy-px" data-q="' + sym + '"></span><form data-dyswap="' + i + '" title="Type a ticker and press Enter"><input placeholder="Ticker" maxlength="6" autocomplete="off" aria-label="Change ticker for this chart"><button type="submit" class="b">Change</button></form>' + (swapsGet()[i] ? '<button type="button" class="b" data-dyreset="' + i + '" title="Back to the watchlist stock">↺</button>' : '') + '<button type="button" class="b" data-dyread="' + i + '">AI read</button><button type="button" class="b" data-dyexp="' + i + '" title="Open the full detailed read">Expand</button>', onframe: function (f) { D.ivs[sym] = f; readOne(i); } });
       paintRead(i);
     });
   }
@@ -195,7 +198,7 @@
     if (r.error) { el.innerHTML = '<span class="er">' + esc(r.error) + '</span>'; return; }
     var bi = r.bias === "up" ? "Up bias" : r.bias === "down" ? "Down bias" : "Range / unclear", at = r.asof ? new Date(r.asof * 1000).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" }) : "";
     el.innerHTML = '<span class="bi ' + esc(r.bias) + '">' + bi + '</span> <small>' + esc(ivName(iv)) + ' chart · ' + "●●●".slice(0, r.conf || 1) + "○○○".slice(0, 3 - (r.conf || 1)) + (at ? ' · last candle ' + at + ' ET' : '') + '</small><div class="sm2" title="' + esc(r.summary) + '">' + esc(r.summary) + '</div>' +
-      '<div class="lv"><span class="r"><i>Res</i><b>' + fmtL(r.resistance) + '</b></span><span class="s"><i>Sup</i><b>' + fmtL(r.support) + '</b></span><span><i>Target</i>' + (r.target ? f2(r.target) : "n/a") + '</span><span><i>Stop</i>' + (r.invalid ? "beyond " + f2(r.invalid) : "n/a") + '</span><span title="' + esc(r.trigger || "") + '"><i>Trigger</i>' + esc((r.trigger || "n/a").slice(0, 70)) + '</span></div>';
+      '<div class="lv"><span class="r"><i>Res</i><b>' + fmtL(r.resistance) + '</b></span><span class="s"><i>Sup</i><b>' + fmtL(r.support) + '</b></span><span><i>Target</i>' + (r.target ? f2(r.target) : "n/a") + '</span><span><i>Stop</i>' + (r.invalid ? "beyond " + f2(r.invalid) : "n/a") + '</span><span title="' + esc(r.trigger || "") + '"><i>Trigger</i>' + esc((r.trigger || "n/a").slice(0, 70)) + '</span><span><button type="button" data-dyexp="' + i + '" style="all:unset;cursor:pointer;color:#6ea8ff;font-weight:600">Full detail ›</button></span></div>';
   }
   function ivName(iv) { return { "1": "1 minute", "5": "5 minute", "15": "15 minute", "60": "1 hour", D: "daily", W: "weekly" }[iv] || iv; }
   async function readSyms(idx) {
@@ -224,6 +227,58 @@
     setTimeout(carSync, 450); setTimeout(carSync, 900);
   }
   root.addEventListener("scroll", carSync, { passive: true }); window.addEventListener("scroll", carSync, { passive: true }); window.addEventListener("resize", carSync);
+
+  /* ---------- expanded, detailed AI read ---------- */
+  var ACT = { P: ["Bought (open market)", "buy"], S: ["Sold (open market)", "sell"], M: ["Exercised options", "mut"], A: ["Stock award", "mut"], F: ["Shares withheld for tax", "mut"], G: ["Gift", "mut"] };
+  function usd(n) { return n >= 1e6 ? "$" + (n / 1e6).toFixed(2) + "M" : n >= 1e3 ? "$" + Math.round(n / 1e3) + "K" : "$" + Math.round(n); }
+  function lvRows(a, c) { return a && a.length ? '<div class="dy-lvl">' + a.map(function (o) { return '<b class="' + c + '">' + f2(o.p) + '</b><span>' + esc(o.why) + '</span>'; }).join("") + '</div>' : '<span class="mut">None given.</span>'; }
+  function scBox(o, cls, t) {
+    if (!o) return "";
+    return '<div class="dy-sc ' + cls + '"><h4>' + t + '</h4><p>' + esc(o.trigger) + '</p><p class="mut">' + (o.target ? "Target " + f2(o.target) : "") + (o.stop ? (o.target ? " · " : "") + "Stop " + f2(o.stop) : "") + '</p><p>' + esc(o.note) + '</p></div>';
+  }
+  function deepHtml(d) {
+    if (d.error) return '<div class="dy-mc"><div class="dy-sec w">' + esc(d.error) + '</div></div>';
+    var at = d.asof ? new Date(d.asof * 1000).toLocaleString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "";
+    var bias = d.bias === "up" ? "Up bias" : d.bias === "down" ? "Down bias" : "Range / unclear";
+    var ins = d.insiders === null ? '<p class="mut">Insider data was not available.</p>' : !d.insiders || !d.insiders.length ? '<p class="mut">No recent Form 4 filings found.</p>' :
+      '<table><tr><th>Date</th><th>Who</th><th>What</th><th>Shares</th><th>Price</th><th>Value</th></tr>' + d.insiders.map(function (t) { var a = ACT[t.code] || [t.code, "mut"]; return '<tr><td>' + esc(t.date) + '</td><td>' + esc(t.who) + '<div class="mut">' + esc(t.title) + '</div></td><td class="' + a[1] + '">' + a[0] + '</td><td>' + t.shares.toLocaleString() + '</td><td>' + (t.price ? f2(t.price) : "n/a") + '</td><td>' + (t.price ? usd(t.shares * t.price) : "n/a") + '</td></tr>'; }).join("") + '</table>';
+    var nw = d.news === null ? '<p class="mut">Headlines were not available.</p>' : !d.news || !d.news.length ? '<p class="mut">No headlines in the last 6 days.</p>' :
+      '<ul>' + d.news.map(function (n) { return '<li>' + (n.url ? '<a href="' + esc(n.url) + '" target="_blank" rel="noopener">' + esc(n.head) + '</a>' : esc(n.head)) + ' <span class="mut">' + esc(n.src) + (n.t ? " · " + new Date(n.t * 1000).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "") + '</span></li>'; }).join("") + '</ul>';
+    var ern = d.earnings ? '<p><b>Next earnings:</b> ' + esc(d.earnings.date) + (d.earnings.hour ? " (" + esc({ bmo: "before open", amc: "after close", dmh: "during hours" }[d.earnings.hour] || d.earnings.hour) + ")" : "") + (d.earnings.epsEst != null ? ", EPS estimate " + d.earnings.epsEst : "") + '</p>' : '<p class="mut">No earnings date found in the next 45 days.</p>';
+    var mk = (d.market || []).map(function (m) { return '<span>' + esc(m.name) + ' ' + f2(m.last) + (m.chg != null ? ' <b class="' + (m.chg >= 0 ? "buy" : "sell") + '">' + (m.chg >= 0 ? "+" : "") + m.chg + '%</b>' : "") + '</span>'; }).join("");
+    var L = d.levels || {}, lk = [["VWAP", L.vwap], ["9 EMA", L.ema9], ["20 EMA", L.ema20], ["50 SMA", L.sma50], ["200 SMA", L.sma200], ["Prior day high", L.priorDayHigh], ["Prior day low", L.priorDayLow], ["Prior close", L.priorDayClose], ["Session high", L.sessionHigh], ["Session low", L.sessionLow], ["ATR", L.atr]].filter(function (x) { return x[1] != null; }).map(function (x) { return '<span>' + x[0] + ' <b>' + f2(x[1]) + '</b></span>'; }).join("");
+    return '<div class="dy-mc">' +
+      '<div class="dy-sec w"><p><b>' + esc(d.headline) + '</b></p><p style="margin-top:6px">' + esc(d.priceAction) + '</p></div>' +
+      '<div class="dy-sec"><h4>Resistance (above)</h4>' + lvRows(d.resistance, "r") + '<h4 style="margin-top:12px">Support (below)</h4>' + lvRows(d.support, "s") + '</div>' +
+      '<div class="dy-sec"><h4>Scenarios</h4>' + scBox(d.bull, "bu", "If it goes up") + '<div style="height:10px"></div>' + scBox(d.bear, "be", "If it goes down") + (d.base ? '<p class="mut" style="margin-top:10px"><b>If neither:</b> ' + esc(d.base) + '</p>' : "") + '</div>' +
+      '<div class="dy-sec w"><h4>Key levels from the chart</h4><div class="dy-chips">' + lk + '</div></div>' +
+      '<div class="dy-sec w"><h4>Insider buying and selling (SEC Form 4)</h4>' + ins + (d.insidersNote ? '<p style="margin-top:8px">' + esc(d.insidersNote) + '</p>' : "") + '</div>' +
+      '<div class="dy-sec"><h4>News and catalysts</h4>' + ern + nw + (d.catalystsNote ? '<p style="margin-top:8px">' + esc(d.catalystsNote) + '</p>' : "") + '</div>' +
+      '<div class="dy-sec"><h4>If the economy does this</h4>' + '<div class="dy-if">' + (d.macroIf || []).map(function (m) { return '<span class="tg ' + m.effect + '">' + (m.effect === "up" ? "Helps" : m.effect === "down" ? "Hurts" : "Mixed") + '</span><span><b>' + esc(m.event) + '.</b> ' + esc(m.why) + '</span>'; }).join("") + '</div>' + (mk ? '<h4 style="margin-top:12px">Market right now</h4><div class="dy-chips">' + mk + '</div>' : "") + '</div>' +
+      '<div class="dy-sec w"><h4>Risks and what changes the view</h4><ul>' + (d.risks || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join("") + '</ul>' + (d.wrongIf ? '<p style="margin-top:8px"><b>Wrong if:</b> ' + esc(d.wrongIf) + '</p>' : "") + '</div>' +
+      '<div class="dy-sec w mut" style="font-size:.74rem">Scenarios built from the candles on screen, SEC Form 4 filings, recent headlines and the market snapshot. Not predictions or advice. Candle data is a free feed and can be delayed. Insider and headline data may be incomplete.</div></div>';
+  }
+  function modHead(sym, iv, d) {
+    var bias = d && !d.error ? '<span class="bi ' + esc(d.bias) + '">' + (d.bias === "up" ? "Up bias" : d.bias === "down" ? "Down bias" : "Range / unclear") + '</span> <span class="mut">' + "●●●".slice(0, d.conf || 1) + "○○○".slice(0, 3 - (d.conf || 1)) + '</span>' : "";
+    var at = d && d.asof ? '<span class="mut">last candle ' + new Date(d.asof * 1000).toLocaleString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) + ' ET</span>' : "";
+    return '<div class="dy-mh"><h3>' + esc(sym) + '</h3><span class="mut">' + esc(ivName(iv)) + ' chart</span>' + bias + at + '<span class="x"><button type="button" class="b" data-dyrefresh="1">Refresh</button><button type="button" class="b" data-dyclose="1">Close ✕</button></span></div>';
+  }
+  async function openDeep(i, force) {
+    var sym = slotsGet()[i]; if (!sym) return; var iv = D.ivs[sym] || DEF_IV, k = sym + "|" + iv, m = $("dymod"), box = $("dymb");
+    D.deepI = i; m.hidden = false; document.body.style.overflow = "hidden";
+    D.deep = D.deep || {};
+    if (!force && D.deep[k] && Date.now() - D.deep[k].t < 3 * 60 * 1000) { box.innerHTML = modHead(sym, iv, D.deep[k].d) + deepHtml(D.deep[k].d); return; }
+    box.innerHTML = modHead(sym, iv, null) + '<div class="dy-mc"><div class="dy-sec w mut">Reading ' + esc(sym) + ' on the ' + esc(ivName(iv)) + ' chart, plus insider filings, headlines, earnings and the market. This takes about 15 to 30 seconds…</div></div>';
+    var So = A.S(); if (!So || !So.chartRead) { box.innerHTML = modHead(sym, iv, null) + '<div class="dy-mc"><div class="dy-sec w">AI reads are not available here.</div></div>'; return; }
+    try {
+      var r = await So.chartRead([{ sym: sym, iv: iv }], true), d = r.deep || { error: "No read came back. Try Refresh." };
+      if (!d.error) D.deep[k] = { t: Date.now(), d: d };
+      if (D.deepI === i && !m.hidden) box.innerHTML = modHead(sym, iv, d) + deepHtml(d);
+    } catch (e) {
+      if (D.deepI === i && !m.hidden) box.innerHTML = modHead(sym, iv, null) + '<div class="dy-mc"><div class="dy-sec w">' + esc(e.code === 429 ? "The AI is busy. Try Refresh in a minute." : "The read failed (" + (e.message || "error") + "). Try Refresh.") + '</div></div>';
+    }
+  }
+  function closeDeep() { var m = $("dymod"); if (m) m.hidden = true; document.body.style.overflow = ""; D.deepI = null; }
 
   /* ---------- quotes ---------- */
   async function loadQ() {
@@ -354,11 +409,16 @@
 
   /* ---------- events ---------- */
   function confirmBtn(b, label, fn) { if (b.dataset.armed) { delete b.dataset.armed; fn(); return; } var t = b.innerHTML; b.dataset.armed = "1"; b.classList.add("arm"); b.textContent = label; setTimeout(function () { if (b.dataset.armed) { delete b.dataset.armed; b.classList.remove("arm"); b.innerHTML = t; } }, 2600); }
+  root.addEventListener("click", function (ev) { if (ev.target && ev.target.id === "dymod") closeDeep(); });
+  document.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && D.deepI != null) closeDeep(); });
   root.addEventListener("click", async function (ev) {
     var b = ev.target.closest && ev.target.closest("button, .dy-sym[data-dysym]"); if (!b) return; var d = b.dataset;
     if (b.id === "dycar") { carGo(); return; }
     if (d.dysym) { setSym(d.dysym); return; }
     if (d.dyread != null) { readSyms([+d.dyread]); return; }
+    if (d.dyexp != null) { ev.preventDefault && ev.preventDefault(); openDeep(+d.dyexp); return; }
+    if (d.dyrefresh) { if (D.deepI != null) openDeep(D.deepI, true); return; }
+    if (d.dyclose) { closeDeep(); return; }
     if (d.dyreset != null) { var o2 = swapsGet(); delete o2[d.dyreset]; swapsSet(o2); D.tkey = ""; paintTiles(); return; }
     if (d.dytab) { setTab(d.dytab); return; }
     if (d.dynw) { D.news.tab = d.dynw; paintNews(); loadNews(); return; }
