@@ -1,9 +1,9 @@
 {
  "started": "2026-11-04",
- "asof": "2026-11-06",
+ "asof": "2026-11-09",
  "bench": "SPY",
- "spyLast": 733.0,
- "spyLastD": "2026-11-05",
+ "spyLast": 735.29,
+ "spyLastD": "2026-11-06",
  "horizon": {
   "day": 1,
   "radar": 10,
@@ -86,7 +86,7 @@
    "status": "closed",
    "closed": 9.25,
    "closedD": "2026-11-06",
-   "spyClosed": 733.0
+   "spyClosed": 733
   },
   {
    "id": "day-DUOL-20261104",
@@ -101,7 +101,7 @@
    "status": "closed",
    "closed": 157.02,
    "closedD": "2026-11-06",
-   "spyClosed": 733.0
+   "spyClosed": 733
   },
   {
    "id": "day-SMCI-20261104",
@@ -116,7 +116,7 @@
    "status": "closed",
    "closed": 27.08,
    "closedD": "2026-11-06",
-   "spyClosed": 733.0
+   "spyClosed": 733
   },
   {
    "id": "day-MRVL-20261104",
@@ -131,7 +131,7 @@
    "status": "closed",
    "closed": 133.55,
    "closedD": "2026-11-06",
-   "spyClosed": 733.0
+   "spyClosed": 733
   },
   {
    "id": "day-DJT-20261104",
@@ -146,7 +146,7 @@
    "status": "closed",
    "closed": null,
    "closedD": "2026-11-06",
-   "spyClosed": 733.0
+   "spyClosed": 733
   },
   {
    "id": "swing-IREN-20261104",
@@ -216,8 +216,8 @@
    "entry": 206.69,
    "entryN": "Nov 3 close",
    "spy": 766.81,
-   "last": 181.6,
-   "lastD": "2026-11-05",
+   "last": 186.64,
+   "lastD": "2026-11-06",
    "status": "open"
   },
   {
@@ -422,7 +422,10 @@
    "spy": 766.81,
    "last": 356.1,
    "lastD": "2026-11-05",
-   "status": "open"
+   "status": "closed",
+   "closed": 356.1,
+   "closedD": "2026-11-09",
+   "spyClosed": 735.29
   },
   {
    "id": "day-COHR-20261105",
@@ -434,7 +437,10 @@
    "spy": 766.81,
    "last": 204.77,
    "lastD": "2026-11-04",
-   "status": "open"
+   "status": "closed",
+   "closed": 204.77,
+   "closedD": "2026-11-09",
+   "spyClosed": 735.29
   },
   {
    "id": "day-QCOM-20261105",
@@ -446,7 +452,10 @@
    "spy": 766.81,
    "last": 156.75,
    "lastD": "2026-11-05",
-   "status": "open"
+   "status": "closed",
+   "closed": 156.75,
+   "closedD": "2026-11-09",
+   "spyClosed": 735.29
   },
   {
    "id": "day-SNAP-20261105",
@@ -458,7 +467,10 @@
    "spy": 766.81,
    "last": 5.09,
    "lastD": "2026-11-05",
-   "status": "open"
+   "status": "closed",
+   "closed": 5.09,
+   "closedD": "2026-11-09",
+   "spyClosed": 735.29
   },
   {
    "id": "swing-RKLB-20261105",
@@ -468,8 +480,8 @@
    "entry": 52.37,
    "entryN": "Nov 4 close (Alpha Vantage)",
    "spy": 766.81,
-   "last": 45.99,
-   "lastD": "2026-11-05",
+   "last": 53.07,
+   "lastD": "2026-11-06",
    "status": "open"
   },
   {
@@ -480,8 +492,8 @@
    "entry": 245.72,
    "entryN": "Nov 4 close (Alpha Vantage)",
    "spy": 766.81,
-   "last": 245.72,
-   "lastD": "2026-11-04",
+   "last": 249.95,
+   "lastD": "2026-11-06",
    "status": "open"
   },
   {
@@ -525,10 +537,10 @@
    "t": "META",
    "kind": "invest",
    "posted": "2026-11-05",
-   "entry": 630.0,
+   "entry": 630,
    "entryN": "Nov 4 close",
    "spy": 766.81,
-   "last": 630.0,
+   "last": 630,
    "lastD": "2026-11-04",
    "status": "open"
   },
@@ -551,7 +563,7 @@
    "posted": "2026-11-06",
    "entry": 47.34,
    "entryN": "Nov 4 (MarketBeat)",
-   "spy": 733.0,
+   "spy": 733,
    "last": 47.34,
    "lastD": "2026-11-06",
    "status": "open"
@@ -563,7 +575,7 @@
    "posted": "2026-11-06",
    "entry": 66.64,
    "entryN": "Nov 4 (MarketBeat)",
-   "spy": 733.0,
+   "spy": 733,
    "last": 66.64,
    "lastD": "2026-11-06",
    "status": "open"
@@ -590,7 +602,10 @@
    "spy": null,
    "last": null,
    "lastD": "2026-11-06",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-09",
+   "spyClosed": 735.29
   },
   {
    "id": "day-ABNB-20261106",
@@ -602,7 +617,10 @@
    "spy": null,
    "last": null,
    "lastD": "2026-11-06",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-09",
+   "spyClosed": 735.29
   },
   {
    "id": "day-TEAM-20261106",
@@ -614,7 +632,10 @@
    "spy": null,
    "last": null,
    "lastD": "2026-11-06",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-09",
+   "spyClosed": 735.29
   },
   {
    "id": "day-DKNG-20261106",
@@ -626,7 +647,10 @@
    "spy": null,
    "last": null,
    "lastD": "2026-11-06",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-09",
+   "spyClosed": 735.29
   },
   {
    "id": "swing-LRCX-20261106",
@@ -647,7 +671,7 @@
    "posted": "2026-11-06",
    "entry": 1395.18,
    "entryN": "Nov 5, 12:07 pm ET (Motley Fool)",
-   "spy": 733.0,
+   "spy": 733,
    "last": 1395.18,
    "lastD": "2026-11-06",
    "status": "open"
@@ -659,7 +683,7 @@
    "posted": "2026-11-06",
    "entry": 466.13,
    "entryN": "Nov 5 (Motley Fool)",
-   "spy": 733.0,
+   "spy": 733,
    "last": 466.13,
    "lastD": "2026-11-06",
    "status": "open"
@@ -671,7 +695,7 @@
    "posted": "2026-11-06",
    "entry": 157.95,
    "entryN": "Nov 5 close (Motley Fool)",
-   "spy": 733.0,
+   "spy": 733,
    "last": 157.95,
    "lastD": "2026-11-06",
    "status": "open"
@@ -683,7 +707,7 @@
    "posted": "2026-11-06",
    "entry": 1530.28,
    "entryN": "Nov 5 (Motley Fool)",
-   "spy": 733.0,
+   "spy": 733,
    "last": 1530.28,
    "lastD": "2026-11-06",
    "status": "open"
@@ -695,7 +719,7 @@
    "posted": "2026-11-06",
    "entry": 37.54,
    "entryN": "Nov 5 (Motley Fool)",
-   "spy": 733.0,
+   "spy": 733,
    "last": 37.54,
    "lastD": "2026-11-06",
    "status": "open"
@@ -707,7 +731,7 @@
    "posted": "2026-11-09",
    "entry": 0.54,
    "entryN": "Nov 5 close (screener)",
-   "spy": 733.0,
+   "spy": 733,
    "last": 0.54,
    "lastD": "2026-11-05",
    "status": "open"
@@ -719,7 +743,7 @@
    "posted": "2026-11-09",
    "entry": 0.377,
    "entryN": "Nov 5 close (screener)",
-   "spy": 733.0,
+   "spy": 733,
    "last": 0.377,
    "lastD": "2026-11-05",
    "status": "open"
@@ -731,7 +755,7 @@
    "posted": "2026-11-09",
    "entry": 0.0424,
    "entryN": "Nov 5 close (screener)",
-   "spy": 733.0,
+   "spy": 733,
    "last": 0.0424,
    "lastD": "2026-11-05",
    "status": "open"
@@ -743,9 +767,117 @@
    "posted": "2026-11-09",
    "entry": 0.496,
    "entryN": "Nov 5 close (screener)",
-   "spy": 733.0,
+   "spy": 733,
    "last": 0.496,
    "lastD": "2026-11-05",
+   "status": "open"
+  },
+  {
+   "id": "radar-LKQ-20261109",
+   "t": "LKQ",
+   "kind": "radar",
+   "posted": "2026-11-09",
+   "entry": 20.03,
+   "entryN": "Price cited Nov 6 (DividendChannel)",
+   "spy": 735.29,
+   "last": 20.03,
+   "lastD": "2026-11-09",
+   "status": "open"
+  },
+  {
+   "id": "radar-BXMT-20261109",
+   "t": "BXMT",
+   "kind": "radar",
+   "posted": "2026-11-09",
+   "entry": null,
+   "entryN": "",
+   "spy": null,
+   "last": null,
+   "lastD": "2026-11-09",
+   "status": "open"
+  },
+  {
+   "id": "day-CEG-20261109",
+   "t": "CEG",
+   "kind": "day",
+   "posted": "2026-11-09",
+   "entry": 249.95,
+   "entryN": "Nov 6 close (Alpha Vantage)",
+   "spy": 735.29,
+   "last": 249.95,
+   "lastD": "2026-11-09",
+   "status": "open"
+  },
+  {
+   "id": "day-NVDA-20261109",
+   "t": "NVDA",
+   "kind": "day",
+   "posted": "2026-11-09",
+   "entry": 186.64,
+   "entryN": "Nov 6 close (Alpha Vantage)",
+   "spy": 735.29,
+   "last": 186.64,
+   "lastD": "2026-11-09",
+   "status": "open"
+  },
+  {
+   "id": "day-NVR-20261109",
+   "t": "NVR",
+   "kind": "day",
+   "posted": "2026-11-09",
+   "entry": null,
+   "entryN": "",
+   "spy": null,
+   "last": null,
+   "lastD": "2026-11-09",
+   "status": "open"
+  },
+  {
+   "id": "day-ARGX-20261109",
+   "t": "ARGX",
+   "kind": "day",
+   "posted": "2026-11-09",
+   "entry": null,
+   "entryN": "",
+   "spy": null,
+   "last": null,
+   "lastD": "2026-11-09",
+   "status": "open"
+  },
+  {
+   "id": "day-SAP-20261109",
+   "t": "SAP",
+   "kind": "day",
+   "posted": "2026-11-09",
+   "entry": null,
+   "entryN": "",
+   "spy": null,
+   "last": null,
+   "lastD": "2026-11-09",
+   "status": "open"
+  },
+  {
+   "id": "swing-CRWV-20261109",
+   "t": "CRWV",
+   "kind": "swing",
+   "posted": "2026-11-09",
+   "entry": null,
+   "entryN": "",
+   "spy": null,
+   "last": null,
+   "lastD": "2026-11-09",
+   "status": "open"
+  },
+  {
+   "id": "swing-AMAT-20261109",
+   "t": "AMAT",
+   "kind": "swing",
+   "posted": "2026-11-09",
+   "entry": null,
+   "entryN": "",
+   "spy": null,
+   "last": null,
+   "lastD": "2026-11-09",
    "status": "open"
   }
  ]
