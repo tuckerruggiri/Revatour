@@ -10,7 +10,20 @@ const TTL = 45 * 1000;
 
 const r2 = (x) => (isFinite(x) ? Math.round(x * 100) / 100 : null);
 function ema(v, n) { const k = 2 / (n + 1); let e = null; const out = []; v.forEach((x) => { e = e == null ? x : x * k + e * (1 - k); out.push(e); }); return out; }
-function parseJson(t) { const s = String(t || '').replace(/^```(?:json)?/i, '').replace(/```\s*$/, '').trim(); const a = s.indexOf('{'), b = s.lastIndexOf('}'); if (a < 0 || b < a) return null; try { return JSON.parse(s.slice(a, b + 1)); } catch (e) { return null; } }
+function parseJson(t) {
+  let s = String(t || '').replace(/^\s*```(?:json)?/i, '').replace(/```\s*$/, '').trim();
+  const a = s.indexOf('{'); if (a < 0) return null; s = s.slice(a);
+  const tries = [s.slice(0, s.lastIndexOf('}') + 1)];
+  const clean = (x) => x.replace(/[\u0000-\u001f]+/g, ' ').replace(/,\s*([}\]])/g, '$1');
+  tries.push(clean(tries[0]));
+  // cut-off answer: close any open string, arrays and objects
+  let x = clean(s), st = [], inStr = false, esc = false;
+  for (let i = 0; i < x.length; i++) { const c = x[i]; if (inStr) { if (esc) esc = false; else if (c === '\\') esc = true; else if (c === '"') inStr = false; } else if (c === '"') inStr = true; else if (c === '{' || c === '[') st.push(c); else if (c === '}' || c === ']') st.pop(); }
+  if (inStr) x += '"'; x = x.replace(/,\s*$/, '').replace(/,\s*"[^"]*"\s*:\s*$/, '').replace(/:\s*$/, ':null'); while (st.length) x += st.pop() === '{' ? '}' : ']';
+  tries.push(x);
+  for (const c of tries) { try { return JSON.parse(c); } catch (e) { /* next */ } }
+  return null;
+}
 const nyDay = (ts) => new Date(ts * 1000).toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
 
 async function yahoo(sym, interval, range) {
@@ -146,9 +159,15 @@ Return ONLY JSON in this shape: {"bias":"up|down|range","conf":1-3,"headline":"o
     const payload = { sym: it.sym, interval: D.chart.interval, levels: L, candles: D.chart.bars, form4: D.ins === null ? 'unavailable' : D.ins, headlines: D.nws === null ? 'unavailable' : D.nws.map((n) => ({ head: n.head, src: n.src, date: new Date((n.t || 0) * 1000).toISOString().slice(0, 10) })), nextEarnings: D.ern || 'none found in the next 45 days (or unavailable)', market: D.mac };
     try {
       const up = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5', max_tokens: 4500, system: sysD, messages: [{ role: 'user', content: [{ type: 'text', text: JSON.stringify(payload) }] }] }) });
+        body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5', max_tokens: 7000, system: sysD, messages: [{ role: 'user', content: [{ type: 'text', text: JSON.stringify(payload) }] }] }) });
       if (!up.ok) { console.error('anthropic error', up.status, await up.text()); return res.status(up.status === 429 ? 429 : 502).json({ error: 'AI request failed' }); }
-      const j = await up.json(); const a = parseJson((j.content || []).filter((b) => b.type === 'text').map((b) => b.text).join(''));
+      let j = await up.json(), txt = (j.content || []).filter((b) => b.type === 'text').map((b) => b.text).join(''), a = parseJson(txt);
+      if (!a) {
+        console.error('deep read unparsable', j.stop_reason, String(txt).slice(0, 300));
+        const up2 = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+          body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5', max_tokens: 7000, system: sysD + '\nIMPORTANT: your whole reply must be one valid JSON object, no text before or after it, no line breaks inside strings, keep every text field short.', messages: [{ role: 'user', content: [{ type: 'text', text: JSON.stringify(payload) }] }] }) });
+        if (up2.ok) { j = await up2.json(); txt = (j.content || []).filter((b) => b.type === 'text').map((b) => b.text).join(''); a = parseJson(txt); if (!a) console.error('deep read retry unparsable', j.stop_reason, String(txt).slice(0, 300)); }
+      }
       if (!a) return res.status(502).json({ error: 'AI answer could not be read' });
       const p = L.last, num = (x) => { x = Number(x); return isFinite(x) && x > 0 && Math.abs(x - p) / p < 0.6 ? r2(x) : null; };
       const lv = (arr) => (Array.isArray(arr) ? arr : []).map((o) => ({ p: num(o && o.p), why: String((o && o.why) || '').slice(0, 220) })).filter((o) => o.p != null).slice(0, 4);
