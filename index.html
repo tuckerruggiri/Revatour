@@ -347,7 +347,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .wl-card .wl-tk{font-size:1.02rem;font-weight:800;padding:13px 2px;color:var(--ink);letter-spacing:.2px}.wl-card .wl-tk.up,.wl-card .wl-tk.dn{color:var(--ink)}
 .wl-card .wl-px{color:var(--ink);font-size:.95rem;font-weight:600}
 .wl-card .wl-pc{font-weight:700;font-size:.78rem;padding:3px 8px;text-align:center;border-radius:99px;justify-self:end}.wl-card .wl-pc.up{color:var(--gain);background:color-mix(in srgb,var(--gain) 14%,transparent)}.wl-card .wl-pc.dn{color:var(--loss);background:color-mix(in srgb,var(--loss) 14%,transparent)}
-.hm-top2{grid-template-columns:minmax(560px,1.25fr) minmax(0,1fr)}
+.hm-top2{grid-template-columns:minmax(0,1fr)}
 .wl-sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0 4px}.wl-sum:empty{display:none}
 .wl-sc{display:flex;flex-direction:column;gap:3px;text-align:left;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:14px;padding:12px 16px;cursor:pointer}.wl-sc small{color:var(--mute);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}.wl-sc b{font:800 1.35rem/1.15 "Bricolage Grotesque",sans-serif}.wl-sc span{font-weight:800;font-size:1.05rem}.wl-sc em{font-style:normal;color:var(--mute);font-size:.82rem}
 .wl-sc.up{border-left-color:var(--gain)}.wl-sc.up span{color:var(--gain)}.wl-sc.dn{border-left-color:var(--loss)}.wl-sc.dn span{color:var(--loss)}.wl-sc:not(.mood):hover{border-color:var(--accent)}.wl-sc.mood{cursor:default;border-left-color:var(--accent)}
@@ -2849,11 +2849,9 @@ function newsList(items,showSym,max){items=(items||[]).slice(0,max||12);if(!item
 var newsTimer=null;
 function newsWatch(){var L=[],seen={};try{WL.syms.forEach(function(x){if(!seen[x]){seen[x]=1;L.push(x)}})}catch(e){}try{var cur=typeof ivCur==="function"?ivCur():null;if(cur){cur.rows.filter(function(r){return r.k!=="Cash"&&r.k!=="Mutual fund"}).sort(function(a,b){return b.v-a.v}).forEach(function(r){var t=String(r.s).toUpperCase();if(/^[A-Z]{1,5}$/.test(t)&&!seen[t]&&L.length<10){seen[t]=1;L.push(t)}})}}catch(e){}
  try{var T=allTrades();for(var i=T.length-1;i>=0&&L.length<14;i--){var t2=String(T[i].t||"").toUpperCase();if(/^[A-Z]{1,5}$/.test(t2)&&!seen[t2]){seen[t2]=1;L.push(t2)}}}catch(e){}return L}
-async function homeNews(){var el=$("hmnews");if(!el||$("home").hidden)return;var So=S();if(!So||!So.news){el.innerHTML='<span class="hint">News is not available here.</span>';return}
- try{await wlLoad()}catch(e){}if(typeof ivLoad==="function"){try{await ivLoad()}catch(e){}}var L=newsWatch().slice(0,15);
- if(!L.length){el.innerHTML='<span class="hint">Import your Fidelity holdings or save some trades, and news on those stocks shows up here.</span>';return}
- try{var N=await So.news(L);if(!$("hmnews"))return;WL.hmItems=N.items||[];wlRender();$("hmnews").innerHTML=(N.configured?"":'<p class="hint" style="margin:0 0 8px">Showing SEC filings only. Add FINNHUB_KEY in Vercel to turn on headlines.</p>')+'<p class="hint" style="margin:0 0 8px">Watching '+L.map(function(x){return "$"+x}).join(", ")+'</p>'+newsList(N.items,true,30)}catch(e){if($("hmnews"))$("hmnews").innerHTML='<span class="hint">Could not load news.</span>'}
- if(newsTimer)clearInterval(newsTimer);newsTimer=setInterval(function(){if(!$("hmnews")||$("home").hidden||document.hidden){if(!$("hmnews")||$("home").hidden){clearInterval(newsTimer);newsTimer=null}return}homeNews()},60000)}
+async function homeNews(){if($("home").hidden)return;var So=S();if(!So||!So.news)return;try{await wlLoad()}catch(e){}if(typeof ivLoad==="function"){try{await ivLoad()}catch(e){}}var L=newsWatch().slice(0,15);if(!L.length)return;
+ try{var N=await So.news(L);WL.hmItems=N.items||[];wlRender()}catch(e){}
+ if(newsTimer)clearInterval(newsTimer);newsTimer=setInterval(function(){if($("home").hidden){clearInterval(newsTimer);newsTimer=null;return}if(!document.hidden)homeNews()},60000)}
 function newsWhen(t){var m=/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})/.exec(t||"");if(!m)return "";return new Date(Date.UTC(+m[1],+m[2]-1,+m[3],+m[4],+m[5])).toLocaleDateString([],{month:"short",day:"numeric"})}
 async function tkNews(sym,fallback){var So=S();if(!So||!So.news){return}
  var run=async function(){if($("tickerv").hidden||!$("tknews"))return false;try{var N=await So.news([sym]);if($("tickerv").hidden||!$("tknews"))return false;$("tknews").innerHTML=(N.configured?"":'<p class="hint" style="margin:0 0 8px">Showing SEC filings only. Add FINNHUB_KEY in Vercel to turn on live headlines.</p>')+((N.items&&N.items.length)?newsList(N.items,false,15):'<span class="hint">No recent headlines or filings.</span>')+'<p class="hint" style="margin:8px 0 0">Updates every minute while you are on this page.</p>'}catch(e){}return true};
@@ -3007,7 +3005,7 @@ function renderHome(){var el=$("home");if(!el)return;
  var who=($("whoami")&&$("whoami").textContent)||"";
  var h='<div class="hm-top"><div><h1>Watchlist</h1><p class="sub">'+(who?esc(who)+". ":"")+esc(dayLabel(td))+'</p></div>'+bellHtml()+'</div>';
  h+=alStrip();
- h+='<div class="wl-sum" id="wlsum">'+wlSummary()+'</div><div class="hm-top2"><aside class="hm-side wl-slot">'+wlHtml()+'</aside><section class="hm-newsbox"><div class="wl-h"><h2>News</h2><small id="hmnwmeta">Your watchlist and stocks you trade</small></div><div id="hmnews" class="hm-newsscroll"><span class="hint">Loading...</span></div></section></div><section class="wl-rep"><div class="wl-h"><h2>Watchlist report card</h2><small>How your picks have done since you added them</small></div><div id="wlrep">'+wlReport()+'</div></section>';
+ h+='<div class="wl-sum" id="wlsum">'+wlSummary()+'</div><div class="hm-top2"><aside class="hm-side wl-slot">'+wlHtml()+'</aside></div><section class="wl-rep"><div class="wl-h"><h2>Watchlist report card</h2><small>How your picks have done since you added them</small></div><div id="wlrep">'+wlReport()+'</div></section>';
  el.innerHTML=h;wlLoad().then(function(){if(!$("home").hidden){wlRender();wlQuote()}});
  if(!AL.loaded)alLoad().then(function(){if(!$("home").hidden&&(alToday().length||AL.board[todayISO()]))renderHome()});
  homeNews()}
