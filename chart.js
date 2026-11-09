@@ -15,9 +15,10 @@
     '.sc-fr button.on{background:var(--accent,#2b7de0);color:var(--accent-ink,#fff);border-color:var(--accent,#2b7de0);font-weight:700}.sc-sp{flex:1}' +
     '.sc-body{flex:1;min-height:0;position:relative}.sc-body>div{position:absolute;inset:0}.sc-msg{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;height:100%;color:var(--mute,#777);padding:20px;text-align:center}' +
     '.sc-ft{padding:6px 14px;border-top:1px solid var(--line,#ddd);font-size:11px;color:var(--mute,#777)}' +
+    '.sc-sv{position:relative;display:inline-block}.sc-pn{position:absolute;right:0;top:calc(100% + 6px);z-index:5;width:min(360px,86vw);background:var(--panel,#fff);color:var(--ink,#111);border:1px solid var(--line,#ddd);border-radius:12px;padding:10px;box-shadow:0 10px 30px rgba(0,0,0,.25);font-size:13px;text-align:left}.sc-pn[hidden]{display:none}.sc-pn h4{margin:0 0 6px;font-size:13px}.sc-pn .sv-r{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--line,#eee)}.sc-pn .sv-r a{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--accent,#2b7de0);text-decoration:none;font-weight:600}.sc-pn .sv-r button{border:0;background:none;color:var(--mute,#777);cursor:pointer;font-size:14px}.sc-pn input{width:100%;box-sizing:border-box;margin-top:6px;padding:6px 8px;border:1px solid var(--line,#ddd);border-radius:8px;background:var(--bg,#f6f6f6);color:inherit;font:inherit}.sc-pn .sv-n{color:var(--mute,#777);font-size:11px;margin-top:6px;line-height:1.4}' +
     '[data-chart]{cursor:pointer}.pl-tk,.mv-tk{background:none;border:0;border-bottom:1px dotted currentColor;color:inherit;font:inherit;font-weight:700;padding:0 1px;margin:0;cursor:pointer}.pl-tk:hover,.mv-tk:hover{color:var(--accent)}' +
     '.sc-ic{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin-left:5px;padding:0;vertical-align:middle;border:1px solid var(--line,#ddd);border-radius:6px;background:var(--bg,#f6f6f6);color:var(--mute,#777);cursor:pointer}.sc-ic:hover{color:var(--accent,#2b7de0);border-color:var(--accent,#2b7de0)}' +
-    '.sc-inl{margin:14px 0;border:1px solid var(--line,#ddd);border-radius:14px;background:var(--panel,#fff);overflow:hidden}.sc-inl .sc-hd{padding:8px 12px}.sc-inl .sc-body{height:min(70vh,560px)}' +
+    '.sc-inl{margin:14px 0;border:1px solid var(--line,#ddd);border-radius:14px;background:var(--panel,#fff);overflow:visible}.sc-inl .sc-hd{padding:8px 12px}.sc-inl .sc-body{height:min(70vh,560px)}' +
     '@media(max-width:700px){.sc-mod{padding:0}.sc-box{border-radius:0}}';
 
   function dark() {
@@ -55,6 +56,38 @@
       body.innerHTML = '<div class="sc-msg">The chart could not load (offline or blocked). <a href="https://www.tradingview.com/chart/?symbol=' + encodeURIComponent(sym) + '" target="_blank" rel="noopener" style="margin-left:6px">Open on TradingView ↗</a></div>';
     });
   }
+
+  /* Saved TradingView charts: the embedded widget cannot sign in, so we keep links to the user's own saved layouts
+     (they open in the user's logged-in TradingView tab) and sync them with their account when possible. */
+  var SV = null, SVK = "ss-tvcharts";
+  function svLoad() {
+    if (SV) return SV;
+    try { SV = JSON.parse(localStorage.getItem(SVK) || "[]"); } catch (e) { SV = []; }
+    if (window.StockPrefs && window.StockPrefs.ready && window.StockPrefs.ready() && !svLoad.p) { svLoad.p = 1; window.StockPrefs.get("tvcharts").then(function (r) { if (r && r.list && r.list.length >= SV.length) { SV = r.list; try { localStorage.setItem(SVK, JSON.stringify(SV)); } catch (e) {} } }); }
+    return SV;
+  }
+  function svSave() { try { localStorage.setItem(SVK, JSON.stringify(SV)); } catch (e) {} if (window.StockPrefs && window.StockPrefs.ready && window.StockPrefs.ready()) window.StockPrefs.set("tvcharts", { list: SV, ts: Date.now() }); }
+  function esc(x) { return String(x).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function svBtn(sym) { return '<span class="sc-sv"><button type="button" class="sc-lk" data-svt>My charts ▾</button><div class="sc-pn" hidden data-svp="' + sym + '"></div></span><a class="sc-lk" target="_blank" rel="tvmine" href="https://www.tradingview.com/chart/?symbol=' + encodeURIComponent(sym) + '">My TradingView ↗</a>'; }
+  function svPanel(p) {
+    var sym = p.getAttribute("data-svp"), l = svLoad();
+    p.innerHTML = '<h4>Saved charts</h4>' + (l.length ? l.map(function (c, i) { return '<div class="sv-r"><a target="tvmine" rel="noopener" href="' + esc(c.url) + '">' + esc(c.name) + '</a><button type="button" data-svd="' + i + '" title="Remove">✕</button></div>'; }).join("") : '<div class="sv-n">Nothing saved yet.</div>') +
+      '<input data-svn placeholder="Name (e.g. ' + esc(sym) + ' 5m setup)"><input data-svu placeholder="Paste your TradingView chart link, press Enter">' +
+      '<div class="sv-n">In TradingView, sign in once and use Save (Ctrl+S) to save a layout. Then copy its address from the browser and paste it here. Links open in your signed-in TradingView tab, with your drawings and indicators. The chart on this page is TradingView\'s free embed, which cannot sign in.</div>';
+  }
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest && e.target.closest("[data-svt]");
+    if (t) { var p = t.parentNode.querySelector(".sc-pn"); if (p.hidden) svPanel(p); p.hidden = !p.hidden; return; }
+    var d = e.target.closest && e.target.closest("[data-svd]");
+    if (d) { svLoad().splice(+d.getAttribute("data-svd"), 1); svSave(); svPanel(d.closest(".sc-pn")); return; }
+    if (!e.target.closest || !e.target.closest(".sc-pn")) [].forEach.call(document.querySelectorAll(".sc-pn"), function (p) { p.hidden = true; });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter" || !e.target.matches || !e.target.matches("[data-svu]")) return;
+    var p = e.target.closest(".sc-pn"), u = e.target.value.trim(), n = p.querySelector("[data-svn]").value.trim();
+    if (!/^https:\/\/([a-z]+\.)?tradingview\.com\//i.test(u)) { e.target.value = ""; e.target.placeholder = "That is not a tradingview.com link"; return; }
+    svLoad().push({ name: n || p.getAttribute("data-svp") + " chart", url: u }); svSave(); svPanel(p);
+  }, true);
   function frames(cur2) {
     return FRAMES.map(function (f) { return '<button type="button" data-scf="' + f[0] + '" class="' + (f[0] === (cur2 || iv) ? "on" : "") + '">' + f[1] + '</button>'; }).join("");
   }
@@ -63,7 +96,7 @@
     sym = clean(sym); if (!sym || !host) return;
     ensureCss();
     var f = iv0 || "D"; host.className = (host.className + " sc-inl").trim();
-    host.innerHTML = '<div class="sc-hd"><b>' + sym + ' chart</b><div class="sc-fr">' + frames(f) + '</div><span class="sc-sp"></span><a class="sc-lk" target="_blank" rel="noopener" href="https://www.tradingview.com/chart/?symbol=' + encodeURIComponent(sym) + '">Full TradingView ↗</a></div><div class="sc-body"></div>';
+    host.innerHTML = '<div class="sc-hd"><b>' + sym + ' chart</b><div class="sc-fr">' + frames(f) + '</div><span class="sc-sp"></span>' + svBtn(sym) + '</div><div class="sc-body"></div>';
     host.onclick = function (e) {
       var b = e.target.closest("[data-scf]"); if (!b) return;
       f = b.getAttribute("data-scf"); [].forEach.call(host.querySelectorAll("[data-scf]"), function (x) { x.classList.toggle("on", x === b); }); draw(host, sym, f, false);
@@ -77,7 +110,7 @@
     ensureCss();
     box = document.createElement("div"); box.className = "sc-mod"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", sym + " chart");
     box.innerHTML = '<div class="sc-box"><div class="sc-hd"><span class="sc-t"></span><div class="sc-fr">' + frames() + '</div><span class="sc-sp"></span>' +
-      '<button type="button" class="tp-watch" data-wl="' + sym + '" data-wlbig="1"></button><a class="sc-lk" target="_blank" rel="noopener" href="https://www.tradingview.com/chart/?symbol=' + encodeURIComponent(sym) + '">Full TradingView ↗</a><button type="button" class="sc-x" data-scx>Close ✕</button></div>' +
+      '<button type="button" class="tp-watch" data-wl="' + sym + '" data-wlbig="1"></button>' + svBtn(sym) + '<button type="button" class="sc-x" data-scx>Close ✕</button></div>' +
       '<div class="sc-body"></div><div class="sc-ft">Candles with a 9 EMA, 200 MA, VWAP and volume. Use the toolbar to change time frame, draw lines and add indicators. Chart by TradingView; prices may be delayed. Not investment advice.</div></div>';
     box.querySelector(".sc-t").textContent = sym;
     document.body.appendChild(box); if (window.StockChart && window.StockChart.syncWatch) window.StockChart.syncWatch();
