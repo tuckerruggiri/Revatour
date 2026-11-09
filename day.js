@@ -14,7 +14,7 @@
     ':where(#dayv) button{font:inherit}:where(#dayv) .b{padding:5px 10px;font-size:.78rem;font-weight:600;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer;white-space:nowrap}#dayv .b:hover{border-color:var(--accent)}#dayv .b.pri{background:var(--ink);color:var(--panel);border-color:var(--ink)}#dayv .b.on{background:var(--ink);color:var(--panel);border-color:var(--ink)}#dayv .b.arm{background:var(--loss);color:#fff;border-color:var(--loss)}:where(#dayv) .ib{padding:0;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:6px;background:none;color:var(--mute);cursor:pointer;font-size:.9rem;line-height:1;flex:none}#dayv .ib:hover{background:var(--bg);color:var(--ink)}' +
     '.dy-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;flex:none}.dy-dt{display:flex;align-items:center;gap:6px}.dy-dt h1{margin:0;font-size:1.25rem;letter-spacing:-.01em;white-space:nowrap}.dy-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:.78rem;font-weight:600;white-space:nowrap}.dy-chip i{width:8px;height:8px;border-radius:50%;background:var(--mute)}.dy-chip.on i{background:var(--gain);box-shadow:0 0 0 3px color-mix(in srgb,var(--gain) 25%,transparent)}.dy-chip.pre i{background:#d4a017}.dy-chip small{color:var(--mute);font-weight:500}.dy-chip b{font-variant-numeric:tabular-nums}.gain{color:var(--gain)}.loss{color:var(--loss)}' +
     '.dy-clk small{display:inline-flex;gap:8px;font-variant-numeric:tabular-nums}.dy-clk small span{min-width:3.6em}.dy-clk small .nx{color:var(--loss);font-weight:700}.dy-clk b{font-size:.95rem;letter-spacing:.02em;min-width:5.6em;display:inline-block}.dy-clk{transition:background .15s,border-color .15s}.dy-clk.hot{border-color:var(--loss);animation:dyfl 1s infinite}.dy-clk.hot.fast{animation-duration:.4s}@keyframes dyfl{0%,100%{background:var(--panel)}50%{background:color-mix(in srgb,var(--loss) 38%,var(--panel))}}' +
-    '.dy-sp{flex:1}.dy-les{flex:1 1 120px;min-width:110px;max-width:300px}.dy-grid{flex:none;height:440px;display:grid;grid-template-columns:290px minmax(0,1fr) 370px;gap:10px}.dy-col{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}' +
+    '.dy-sp{flex:1}.dy-les{flex:1 1 120px;min-width:110px;max-width:300px}.dy-grid{flex:none;height:560px;display:grid;grid-template-columns:290px minmax(0,1fr) 370px;gap:10px}.dy-col{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}' +
     '.dy-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden}.dy-h{display:flex;align-items:center;gap:8px;padding:8px 12px 6px;font:700 .68rem "Instrument Sans",sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);flex:none}.dy-h .dy-sp{flex:1}.dy-h .tt{color:var(--ink);letter-spacing:.06em}.dy-bd{padding:2px 12px 10px;overflow:auto;min-height:0;flex:1}.dy-bd.np{padding:0}' +
     '.dy-fm{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 8px;flex:none}.dy-fm input{flex:1 1 60px}.dy-fm .s{flex:none}.dy-fm .s{width:64px;flex:none;text-transform:uppercase}.dy-fm .b{flex:none}.dy-fm .n{flex:3 1 90px}' +
     '.dy-r{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);font-size:.82rem}.dy-r:last-child{border-bottom:0}.dy-sym{padding:2px 7px!important;border:0;border-radius:6px;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--ink);font-weight:700;font-size:.78rem;cursor:pointer}.dy-sym:hover{background:color-mix(in srgb,var(--accent) 28%,transparent)}.dy-nt{flex:1;min-width:0;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dy-q{font-variant-numeric:tabular-nums;font-size:.76rem;white-space:nowrap}.dy-q b{font-weight:700}.dy-em{padding:10px 2px;color:var(--mute);font-size:.8rem}' +
@@ -84,7 +84,7 @@
       '</div><div class="dy-col c"><div class="dy-card" style="flex:1">' +
       '<div class="dy-tabs" id="dytabs"></div>' +
       '<div class="dy-tab" id="dytb-trades"></div><div class="dy-tab" id="dytb-feed"></div><div class="dy-tab" id="dytb-news"></div></div></div></div>' +
-      '<div class="dy-card" id="dytlc" style="flex:none;min-height:0"><div class="dy-h"><span class="tt">Watchlist charts</span><span class="dy-q" style="text-transform:none;letter-spacing:0;font-weight:500">AI reads each chart in its own time frame</span><span class="dy-sp"></span><button type="button" class="b pri" data-dyact="readall">Read all with AI</button></div><div class="dy-tl" id="dytl"></div><div class="dy-q" style="padding:0 12px 10px;text-transform:none;letter-spacing:0">Scenarios from the candles on screen, not predictions or advice. Candle data is a free feed and can be delayed. Draw your own levels before you trade.</div></div>';
+      '<div class="dy-card" id="dytlc" style="flex:none;min-height:0"><div class="dy-h"><span class="tt">Watchlist charts</span><span class="dy-q" style="text-transform:none;letter-spacing:0;font-weight:500">The first 6 stocks in this day&#39;s Watchlist. AI reads each chart in its own time frame</span><span class="dy-sp"></span><button type="button" class="b pri" data-dyact="readall">Read all with AI</button></div><div class="dy-tl" id="dytl"></div><div class="dy-q" style="padding:0 12px 10px;text-transform:none;letter-spacing:0">Scenarios from the candles on screen, not predictions or advice. Candle data is a free feed and can be delayed. Draw your own levels before you trade.</div></div>';
     D.sym = "SPY"; D.charts = "";
     paintAll(); paintChart();
   }
@@ -160,20 +160,15 @@
   /* ---------- six watchlist charts with an AI read ---------- */
   var DEF_IV = "5";
   function slotsGet() {
-    var sv = null; try { sv = JSON.parse(localStorage.getItem("ss-dayslots") || "null"); } catch (e) {}
-    var a = (sv && sv.length ? sv : []).slice(0, 6);
-    var auto = uniq(board().map(function (i) { return i.sym; }).concat(window.StockWatch && window.StockWatch.list ? window.StockWatch.list() : [])).filter(function (x) { return /^[A-Z]{1,5}(\.[A-Z])?$/.test(x) && x !== "SPY"; });
-    auto = auto.filter(function (x) { return a.indexOf(x) < 0; });
-    for (var i = 0; i < 6; i++) if (!a[i]) a[i] = auto.shift() || "";
-    return a.slice(0, 6);
+    var a = board().map(function (i) { return i.sym; }).filter(function (x) { return /^[A-Z]{1,5}(\.[A-Z])?$/.test(x); });
+    a = uniq(a).slice(0, 6); while (a.length < 6) a.push(""); return a;
   }
-  function slotsSave(a) { try { localStorage.setItem("ss-dayslots", JSON.stringify(a)); } catch (e) {} }
   function paintTiles() {
     var host = $("dytl"); if (!host || !window.StockChart || !window.StockChart.embed) return;
     var S = slotsGet(), key = S.join(",");
     if (D.tkey === key) return; D.tkey = key; D.reads = D.reads || {}; D.ivs = D.ivs || {};
     host.innerHTML = S.map(function (sym, i) {
-      return '<div class="dy-tile" data-slot="' + i + '"><div id="dytc' + i + '">' + (sym ? "" : '<div class="dy-em" style="padding:40px 10px;text-align:center;color:#8a919e">Empty slot<form data-dyswap="' + i + '" style="margin-left:8px"><input placeholder="ticker" maxlength="6" autocomplete="off" aria-label="Ticker"></form></div>') + '</div><div class="dy-rd" id="dyrd' + i + '"></div></div>';
+      return '<div class="dy-tile" data-slot="' + i + '"><div id="dytc' + i + '">' + (sym ? "" : '<div class="dy-em" style="padding:40px 10px;text-align:center;color:#8a919e">Add stock ' + (i + 1) + ' to this day\'s Watchlist (left) and it shows here.</div>') + '</div><div class="dy-rd" id="dyrd' + i + '"></div></div>';
     }).join("");
     S.forEach(function (sym, i) {
       if (!sym) return;
@@ -387,7 +382,6 @@
     ev.preventDefault(); var f = ev.target.id;
     if (f === "dywf") { await addBoard($("dyws").value, $("dywn").value.trim()); $("dyws").value = ""; $("dywn").value = ""; $("dyws").focus(); return; }
     if (f === "dycf") { setSym($("dycs").value); return; }
-    if (ev.target.dataset && ev.target.dataset.dyswap != null) { var sy = ev.target.querySelector("input").value.toUpperCase().replace(/[^A-Z.]/g, ""); if (!sy) return; var S2 = slotsGet(); S2[+ev.target.dataset.dyswap] = sy; slotsSave(S2); D.tkey = ""; paintTiles(); return; }
     if (f === "dyaf") {
       var p = A.alParse($("dyat").value, $("dyas").value); if (!p.raw) return; if (!p.sym) { A.toast("Add a ticker"); return; }
       var AL = A.al(); AL.list.unshift({ id: "a" + Date.now().toString(36) + Math.floor(Math.random() * 1e3), ts: isToday() ? Date.now() : new Date(D.date + "T12:00:00").getTime(), sym: p.sym, side: p.side, trig: p.trig, tw: p.tw, t1: p.t1, stop: p.stop, rr: p.rr, raw: p.raw, status: "watching", posted: 0 });
