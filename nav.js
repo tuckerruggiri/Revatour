@@ -56,7 +56,7 @@
       g: [["Market", ["navpulse", "navnews", "navmov", "navfut"]], ["Charts & zones", ["navzone", "navprac", "navlab"]], ["My list", ["navhome", "navals"]], ["You", YOU]] }
   };
 
-  var CSS = '#side .nsearch{display:flex;align-items:center;gap:9px;width:100%;margin:0 0 12px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--mute);font:500 .88rem "Instrument Sans",sans-serif;cursor:pointer;text-align:left;white-space:nowrap}#side .nsearch:hover{border-color:var(--accent);color:var(--ink)}#side .nsearch svg{width:15px;height:15px;flex:none}#side .nsearch kbd{white-space:nowrap;margin-left:auto;font:600 .68rem "Instrument Sans",sans-serif;border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:var(--panel);color:var(--mute)}' +
+  var CSS = '#side .nsearch{box-sizing:border-box;overflow:hidden;display:flex;align-items:center;gap:9px;width:100%;margin:0 0 12px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--mute);font:500 .88rem "Instrument Sans",sans-serif;cursor:pointer;text-align:left;white-space:nowrap}#side .nsearch:hover{border-color:var(--accent);color:var(--ink)}#side .nsearch svg{width:15px;height:15px;flex:none}#side .nsearch kbd{white-space:nowrap;margin-left:auto;font:600 .68rem "Instrument Sans",sans-serif;border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:var(--panel);color:var(--mute)}' +
     '.ns{margin:0 0 4px}.nsh{display:flex;align-items:center;gap:8px;width:100%;border:0;background:none;padding:9px 10px 5px;color:var(--mute);font:700 .66rem "Instrument Sans",sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;text-align:left}.nsh:hover{color:var(--ink)}.nsh i{width:8px;height:8px;border-radius:50%;background:var(--sc);flex:none}.nsh .nsc{width:13px;height:13px;margin-left:auto;transition:transform .2s;flex:none}.ns.c .nsh .nsc{transform:rotate(-90deg)}.ns.c.has-on .nsh::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--sc);order:3}' +
     '.nsb{display:grid;grid-template-rows:1fr;transition:grid-template-rows .22s ease}.ns.c .nsb{grid-template-rows:0fr}.nsi{overflow:hidden;min-height:0}' +
     '#side .ns .nav,#side .nmain .nav{position:relative;margin:1px 0;padding:7px 10px 7px 12px;border-radius:9px;color:var(--mute)}#side .nav .nl{display:flex;align-items:center;gap:11px;min-width:0}#side .nav .ni{width:18px;height:18px;flex:none;color:var(--sc,var(--mute));opacity:.7;transition:opacity .15s,transform .15s}#side .nav:hover .ni{opacity:1;transform:scale(1.08)}#side .nav:hover{color:var(--ink);background:var(--bg)}' +
@@ -85,7 +85,7 @@
 
   var anchor = $("pnlcard") || side.querySelector(".brand");
   var searchBtn = document.createElement("button"); searchBtn.type = "button"; searchBtn.className = "nsearch";
-  searchBtn.innerHTML = svg("search", "") + '<span>Search or jump to…</span><kbd>' + (/Mac|iPhone|iPad/.test(navigator.platform) ? "⌘K" : "Ctrl K") + '</kbd>';
+  searchBtn.innerHTML = svg("search", "") + '<span style="overflow:hidden;text-overflow:ellipsis">Search…</span><kbd>' + (/Mac|iPhone|iPad/.test(navigator.platform) ? "⌘K" : "Ctrl K") + '</kbd>';
   anchor.insertAdjacentElement("afterend", searchBtn);
 
   var secEls = [], mode = null, main = null, hold = null, tagEl = null, modeBtns = {};
