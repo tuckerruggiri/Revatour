@@ -1,5 +1,5 @@
 {
- "asof": "Nov 6, 2026",
+ "asof": "Nov 9, 2026",
  "tape": [
   {
    "l": "Dow",
@@ -637,6 +637,114 @@
    "risk": "Whether the company filed for a hearing is unconfirmed, so suspension remains possible. A study example of a trap.",
    "src": "https://www.sec.gov/Archives/edgar/data/0001826011/000143774926034210/para20261030_8k.htm",
    "srcN": "Company 8-K, Oct 30; Alpha Vantage, Nov 5"
+  },
+  {
+   "kind": "micro",
+   "t": "LABT",
+   "n": "Lakewood-Amedex Biotherapeutics",
+   "theme": "Biotech, antimicrobials",
+   "px": 0.54,
+   "pxN": "Nov 5 close",
+   "chg": 181.5,
+   "cat": "Series C preferred fully redeemed (Nov 5 release)",
+   "setup": "One-day spike on capital-structure news",
+   "stage": 3,
+   "stageN": "Up about 181% in one session; the spike may already be priced in.",
+   "v": {
+    "news": 1,
+    "vol": -1,
+    "buzz": -1,
+    "buy": -1,
+    "dil": 1
+   },
+   "why": "On Nov 5 the company said it redeemed the last 127,097 Series C preferred shares for $1,270,970 cash (agreement dated Nov 2), so no preferred stock or borrowed-money debt remains and no more conversion shares can be issued. It has a Phase 2a trial of Nu-3 in infected diabetic foot ulcers (first patient dosed Sep 24).",
+   "soc": "Not checked.",
+   "opt": "Not stated.",
+   "ins": "Not stated.",
+   "risk": "The release gives no cash balance or runway, and says the redemption may shorten runway. A 181% one-day move in a sub-$1 name often fades.",
+   "src": "https://finviz.com/news/417213/lakewood-amedex-biotherapeutics-announces-completion-of-series-c-convertible-preferred-stock-redemption",
+   "srcN": "Company press release, Nov 5; price from screener"
+  },
+  {
+   "kind": "micro",
+   "t": "SDA",
+   "n": "SunCar Technology Group",
+   "theme": "Unexplained spike",
+   "px": 0.377,
+   "pxN": "Nov 5 close",
+   "chg": 144.8,
+   "cat": "None found",
+   "setup": "Big gain with no news found",
+   "stage": 3,
+   "stageN": "Up about 145% in one session.",
+   "v": {
+    "news": 0,
+    "vol": -1,
+    "buzz": -1,
+    "buy": -1,
+    "dil": -1
+   },
+   "why": "The stock jumped about 145% and no company news explaining it was found in dated sources.",
+   "soc": "Not checked.",
+   "opt": "Not stated.",
+   "ins": "Not stated.",
+   "risk": "A spike with no stated reason is the classic pump-and-fade pattern. Treat it as a study example, not a setup.",
+   "src": "https://www.marketbeat.com/",
+   "srcN": "Screener data, Nov 5"
+  },
+  {
+   "kind": "micro",
+   "t": "RCT",
+   "n": "RedCloud Holdings",
+   "theme": "Delisting appeal, consolidation",
+   "px": 0.0424,
+   "pxN": "Nov 5 close",
+   "chg": 41.33,
+   "cat": "Share consolidation expected about Nov 13",
+   "setup": "Bounce before a reverse split",
+   "stage": 4,
+   "stageN": "Price already jumped ahead of the consolidation date.",
+   "v": {
+    "news": 1,
+    "vol": -1,
+    "buzz": -1,
+    "buy": 0,
+    "dil": 0
+   },
+   "why": "The company is appealing a delisting notice and a share consolidation is expected around Nov 13. Another source listed the price near $0.25, so the quote needs checking before use.",
+   "soc": "Not checked.",
+   "opt": "Not stated.",
+   "ins": "Not stated.",
+   "risk": "Reverse splits usually reset the price and then it keeps falling. This is the trap most sub-$1 buyers fall into.",
+   "src": "https://www.marketbeat.com/",
+   "srcN": "Screener and filings summaries, Nov 5"
+  },
+  {
+   "kind": "micro",
+   "t": "VIVK",
+   "n": "Vivakor",
+   "theme": "Going concern, retail chatter",
+   "px": 0.496,
+   "pxN": "Nov 5 close",
+   "chg": 34.11,
+   "cat": "Retail sentiment on Stocktwits",
+   "setup": "Social-driven bounce",
+   "stage": 4,
+   "stageN": "Three reverse splits already.",
+   "v": {
+    "news": 0,
+    "vol": -1,
+    "buzz": 1,
+    "buy": -1,
+    "dil": 0
+   },
+   "why": "The stock rose 34% on Stocktwits buzz. Reports describe a going-concern warning and three prior reverse splits.",
+   "soc": "Stocktwits sentiment was elevated on the day.",
+   "opt": "Not stated.",
+   "ins": "Not stated.",
+   "risk": "Going-concern language plus repeated reverse splits point to ongoing dilution.",
+   "src": "https://stocktwits.com/",
+   "srcN": "Stocktwits coverage, Nov 5"
   }
  ]
 }
