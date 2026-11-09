@@ -294,13 +294,15 @@
     if (ITEMS[id]) { pushRecent(id); setTimeout(function () { if (!editing && !document.querySelector(".nsh:focus")) render(); }, 350); }
   });
 
+  var lastOn = null;
   function syncActive() {
     if (editing) return;
     var on = side.querySelector(".nav.on[data-ni]"), id = on && on.id;
     [].forEach.call(main.querySelectorAll(".pxy"), function (p) { p.classList.toggle("on", !!id && p.getAttribute("data-for") === id); });
+    var changed = id !== lastOn; lastOn = id;
     secEls.forEach(function (d) {
       var has = !!(d.querySelector(".nav.on")); d.classList.toggle("has-on", has);
-      if (has && d.classList.contains("c")) { d.classList.remove("c"); d.querySelector(".nsh").setAttribute("aria-expanded", "true"); }
+      if (has && changed && d.classList.contains("c")) { d.classList.remove("c"); d.querySelector(".nsh").setAttribute("aria-expanded", "true"); }
     });
   }
   new MutationObserver(syncActive).observe(side, { attributes: true, attributeFilter: ["class"], subtree: true });
