@@ -59,10 +59,10 @@
     return FRAMES.map(function (f) { return '<button type="button" data-scf="' + f[0] + '" class="' + (f[0] === (cur2 || iv) ? "on" : "") + '">' + f[1] + '</button>'; }).join("");
   }
   /* embedded chart that fills a container on a page (used by each ticker page) */
-  function embed(host, sym) {
+  function embed(host, sym, iv0) {
     sym = clean(sym); if (!sym || !host) return;
     ensureCss();
-    var f = "D"; host.className = (host.className + " sc-inl").trim();
+    var f = iv0 || "D"; host.className = (host.className + " sc-inl").trim();
     host.innerHTML = '<div class="sc-hd"><b>' + sym + ' chart</b><div class="sc-fr">' + frames(f) + '</div><span class="sc-sp"></span><a class="sc-lk" target="_blank" rel="noopener" href="https://www.tradingview.com/chart/?symbol=' + encodeURIComponent(sym) + '">Full TradingView ↗</a></div><div class="sc-body"></div>';
     host.onclick = function (e) {
       var b = e.target.closest("[data-scf]"); if (!b) return;

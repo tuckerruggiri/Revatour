@@ -164,7 +164,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .cal-dow,.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.cal-dow span{text-align:center;color:var(--mute);font-size:.78rem;padding:4px 0}
 .cal-cell{min-height:78px;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:6px;display:flex;flex-direction:column;gap:2px;text-align:left;font:inherit;color:var(--ink);overflow:hidden}
 .cal-cell.empty{background:transparent;border-color:transparent}.cal-cell .dn{font-size:.85rem;color:var(--mute)}.cal-cell.today{outline:2px solid var(--accent);outline-offset:-2px}
-.cal-cell.has{cursor:pointer;border-color:var(--accent)}.cal-cell.has:hover{background:var(--bg)}.cal-cell.has .dn{color:var(--ink);font-weight:700}.cal-cell b{font-size:.78rem}.cal-cell small{color:var(--mute);font-size:.7rem}
+.cal-cell[data-day]{cursor:pointer}.cal-cell[data-day]:hover{background:var(--bg)}.cal-cell.has{cursor:pointer;border-color:var(--accent)}.cal-cell.has:hover{background:var(--bg)}.cal-cell.has .dn{color:var(--ink);font-weight:700}.cal-cell b{font-size:.78rem}.cal-cell small{color:var(--mute);font-size:.7rem}
 @media (max-width:640px){.cal-cell{min-height:60px;padding:4px}.cal-cell b{font-size:.66rem}.cal-cell small{display:none}.cal-dow,.cal-grid{gap:3px}}
 .ptabs{display:flex;border-bottom:1px solid var(--line);margin:22px 0 12px}.ptabs button{flex:1;border:0;background:none;color:var(--mute);font:inherit;font-weight:600;padding:12px 8px;cursor:pointer;border-bottom:3px solid transparent;border-radius:0}
 .ptabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
@@ -427,6 +427,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <div id="acct" style="display:flex;align-items:center;gap:8px;margin:2px 0 10px;font-size:.82rem;color:var(--mute)"><span id="whoami" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span><button id="themebtn" type="button" aria-label="Switch between light and dark" title="Light / dark" style="border:1px solid var(--line);background:none;color:var(--ink);border-radius:7px;padding:4px 8px;font:inherit;cursor:pointer;line-height:1"></button><button id="logout" type="button" style="border:1px solid var(--line);background:none;color:var(--ink);border-radius:7px;padding:4px 9px;font:inherit;cursor:pointer">Log out</button></div>
   <div id="pnlcard"></div>
   <button class="nav on" id="navhome" type="button">Watchlist</button>
+  <button class="nav" id="navday" type="button">Trading day</button>
   <button class="nav" id="navprofile" type="button">Profile</button>
   <button class="nav" id="navstudio" type="button">Studio</button>
   <button class="nav" id="navplan" type="button">Trade Plan</button>
@@ -465,6 +466,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <div class="wrap" id="pracv" hidden></div>
 <div class="wrap" id="movv" hidden></div>
 <div class="wrap" id="pulsev" hidden></div>
+<div class="wrap" id="dayv" hidden></div>
 <div class="wrap" id="invv" hidden></div>
 <div class="wrap" id="gdv" hidden></div>
 <div class="wrap" id="profilev" hidden></div>
@@ -1221,19 +1223,19 @@ function showPublishes(){hideViews();$("navpub").classList.add("on");$("pubv").h
  if(!pubCal){var ds=Object.keys(entries).sort(),last=ds.length?ds[ds.length-1]:todayISO();pubCal={y:+last.slice(0,4),m:+last.slice(5,7)-1}}
  renderPubCal();renderSide();window.scrollTo(0,0)}
 function renderPubCal(){var el=$("pubv"),y=pubCal.y,m=pubCal.m,first=new Date(y,m,1),days=new Date(y,m+1,0).getDate(),lead=first.getDay(),today=todayISO(),n=0;
- var h='<h1>Publishes</h1><p class="sub">Pick a day to open what you saved and generated. Marked days have a publish.</p>'+
+ var h='<h1>Publishes</h1><p class="sub">Pick any day to open its Trading Day page: chart, trades, alerts, news and your notes. Marked days have saved activity.</p>'+
   '<div class="cal-head"><button type="button" id="calprev" aria-label="Previous month">&lsaquo;</button><b>'+esc(first.toLocaleDateString(undefined,{month:"long",year:"numeric"}))+'</b><button type="button" id="calnext" aria-label="Next month">&rsaquo;</button><button type="button" id="caltoday">Today</button></div>'+
   '<div class="cal" role="grid"><div class="cal-dow">'+["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(function(d){return '<span>'+d+'</span>'}).join("")+'</div><div class="cal-grid">';
  for(var i=0;i<lead;i++)h+='<span class="cal-cell empty"></span>';
  for(var d=1;d<=days;d++){var iso=y+"-"+("0"+(m+1)).slice(-2)+"-"+("0"+d).slice(-2),e=entries[iso],cls="cal-cell"+(iso===today?" today":"");
   if(e){n++;var net=entryNet(e),k=(e.outputs||[]).length;
    h+='<button type="button" class="'+cls+' has" data-day="'+iso+'" aria-label="Open '+esc(dayLabel(iso))+'"><span class="dn">'+d+'</span>'+((e.trades||[]).length?'<b class="'+(net>=0?"gain":"loss")+'">'+sgn(net)+'</b>':'')+'<small>'+(k?k+(k===1?" piece":" pieces"):"saved")+'</small></button>'}
-  else h+='<span class="'+cls+'"><span class="dn">'+d+'</span></span>'}
+  else h+='<button type="button" class="'+cls+'" data-day="'+iso+'" aria-label="Open '+esc(dayLabel(iso))+'"><span class="dn">'+d+'</span></button>'}
  h+='</div></div><p class="hint">'+n+(n===1?" publish":" publishes")+' this month.</p>';
  el.innerHTML=h}
 $("navpub").addEventListener("click",showPublishes);
 $("pubv").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("button");if(!b)return;
- if(b.dataset.day){renderEntry(b.dataset.day);return}
+ if(b.dataset.day){if(window.TradingDay)window.TradingDay.show(b.dataset.day);else if(entries[b.dataset.day])renderEntry(b.dataset.day);return}
  if(b.id==="calprev"||b.id==="calnext"){pubCal.m+=b.id==="calnext"?1:-1;if(pubCal.m<0){pubCal.m=11;pubCal.y--}if(pubCal.m>11){pubCal.m=0;pubCal.y++}renderPubCal();return}
  if(b.id==="caltoday"){var t=new Date();pubCal={y:t.getFullYear(),m:t.getMonth()};renderPubCal()}});
 /* Theme */
@@ -1252,7 +1254,7 @@ function applyDefaults(){try{
  if(settings.name&&!$("name").value.trim())$("name").value=settings.name;
  if(settings.voice)$("voice").value=settings.voice;
  if(settings.grouping&&$("grouping"))$("grouping").value=settings.grouping}catch(e){}}
-["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("invv").hidden=true;$("rlv").hidden=true;$("newsv").hidden=true;$("alv").hidden=true;$("scv").hidden=true;$("labv").hidden=true;$("zonev").hidden=true;$("pracv").hidden=true;$("futv").hidden=true;$("navfut").classList.remove("on");$("navprac").classList.remove("on");$("navzone").classList.remove("on");$("navlab").classList.remove("on");$("navsc").classList.remove("on");$("navals").classList.remove("on");$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("gdv").hidden=true;$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
+["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("invv").hidden=true;$("rlv").hidden=true;$("newsv").hidden=true;$("alv").hidden=true;$("scv").hidden=true;$("labv").hidden=true;$("zonev").hidden=true;$("pracv").hidden=true;$("futv").hidden=true;$("dayv").hidden=true;$("navday").classList.remove("on");$("navfut").classList.remove("on");$("navprac").classList.remove("on");$("navzone").classList.remove("on");$("navlab").classList.remove("on");$("navsc").classList.remove("on");$("navals").classList.remove("on");$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("gdv").hidden=true;$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
 /* ---------- Trade Plan: risk sizing + A+ checklist + plan log ---------- */
 var PLK="stockspot-plans-v1",PLD="stockspot-plan-draft-v1",plans=[],plLoaded=false,pl=null,rk=null,plPend=[],plEditId="";
 function todayStr(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
@@ -2408,7 +2410,7 @@ dragSort($("side"),{item:"#side > button.nav",sibs:function(){return navBtns()},
 dragSort($("pglist"),{item:".navrow:not(.chan)",sibs:function(){return [].slice.call($("pglist").querySelectorAll(".navrow:not(.chan)"))},drop:function(el,m){var id=el.dataset.pid,arr=listFor(id);if(arr[m])movePageTo(id,arr[m].id)}});
 dragSort($("pglist"),{item:".navrow.chan",sibs:function(el){return [].slice.call($("pglist").querySelectorAll('.navrow.chan[data-par="'+el.dataset.par+'"]'))},drop:function(el,m){var id=el.dataset.pid,arr=listFor(id),par=el.dataset.par;if(arr[m])Promise.resolve(movePageTo(id,arr[m].id)).then(function(){if(curPage===par&&!$("pagev").hidden)showPage(par)})}});
 dragSort($("pagev"),{item:".chrow",sibs:function(){return [].slice.call($("pagev").querySelectorAll(".chrow"))},drop:function(el,m){var id=el.dataset.id,arr=listFor(id);if(arr[m])Promise.resolve(movePageTo(id,arr[m].id)).then(function(){showPage(curPage)})}});
-function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv","planv","invv","gdv","rlv","newsv","alv","scv","labv","zonev"].forEach(function(i){$(i).hidden=true});$("navsc").classList.remove("on");$("navals").classList.remove("on");$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
+function showSettings(){["home","studio","entry","pagev","profilev","tickerv","pubv","notifv","planv","invv","gdv","rlv","newsv","alv","scv","labv","zonev","dayv"].forEach(function(i){$(i).hidden=true});$("navday").classList.remove("on");$("navsc").classList.remove("on");$("navals").classList.remove("on");$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on");
  $("navhome").classList.remove("on");$("navstudio").classList.remove("on");$("navset").classList.add("on");
  curDate="";curPage="";renderSettings();$("settingsv").hidden=false;window.scrollTo(0,0)}
 function renderSettings(){var A=window.stockspotAuth||{},el=$("settingsv"),vs=["Direct and plain-spoken","Professional and measured","Energetic and motivational","Analytical and data-first"];
@@ -2595,8 +2597,8 @@ async function saveProfile(){if(store.db)await store.db.doc("meta/profile").set(
 function myAvUrl(){return prof.src||(prof.aid?blobUrl(prof.aid):"")}
 function avatarHTML(cls,url,name){var A=window.stockspotAuth||{},u=url!=null?url:myAvUrl(),nm=name||A.username||A.email||"?";
  return '<div class="pf-av'+(cls?" "+cls:"")+'">'+(u?'<img alt="" src="'+esc(u)+'">':esc((nm.charAt(0)||"?").toUpperCase()))+'</div>'}
-function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","scv","labv","zonev","pracv","futv","movv","pulsev","invv","gdv","rlv","newsv"].forEach(function(i){$(i).hidden=true});
- ["navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navals","navsc","navlab","navzone","navprac","navfut","navmov","navpulse"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
+function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","scv","labv","zonev","pracv","futv","movv","pulsev","invv","gdv","rlv","newsv","dayv"].forEach(function(i){$(i).hidden=true});
+ ["navday","navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navals","navsc","navlab","navzone","navprac","navfut","navmov","navpulse"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
 function paintProfNav(){$("navprofile").classList.toggle("on",profTab!=="coach");$("navcoach").classList.toggle("on",profTab==="coach")}
 function recordBlock(){var all=allTrades();if(!all.length)return '<div class="pf-panel hint" style="margin:8px 0">No saved trades yet. Save a day in Studio and your record shows here.</div>';
  var days=dailyPnl(),yr=pickYear(days),m=pnlModel(days,yr),s=withCtx({trades:all},[],stats);
@@ -3227,6 +3229,11 @@ $("igwrap").addEventListener("click",async function(ev){var b=ev.target.closest&
   b.disabled=false;b.textContent=old}});
 $("igwrap").addEventListener("change",function(ev){if(ev.target.id==="igpal")igShow()});
 
+window.StockDay={entries:function(){return entries},put:function(e){return putEntry(e)},store:function(){return store},todayISO:todayISO,dayLabel:dayLabel,toast:toast,money:money,sgn:sgn,esc:esc,S:S,shrink:shrink,dataToBlob:dataToBlob,imgUrl:imgUrl,newId:newId,
+ al:function(){return AL},alLoad:alLoad,alSave:alSave,alParse:alParse,alFmt:alFmt,alAgo:alAgo,alStat:alStat,alSt:AL_ST,risk:function(){try{rkInit()}catch(e){}return rk||{}},
+ openEntry:function(d){renderEntry(d)},calendar:showPublishes,renderSide:renderSide,hide:hideViews,plan:showPlan,studio:showStudio,wlSync:function(){return wlLoad()},
+ onShow:function(){}};
+$("navday").addEventListener("click",function(){if(window.TradingDay)window.TradingDay.show()});
 restore();loadImgs();showStats();renderImgs();initStore();
 })();
 </script>
@@ -3236,6 +3243,7 @@ restore();loadImgs();showStats();renderImgs();initStore();
 <script src="chart.js"></script>
 <script src="movers.js"></script>
 <script src="pulse.js"></script>
+<script src="day.js"></script>
 <script src="nav.js"></script>
 </body>
 </html>

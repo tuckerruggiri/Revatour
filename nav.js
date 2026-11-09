@@ -49,26 +49,28 @@
   function svg(k, cls) { return '<svg class="' + (cls == null ? "ni" : cls) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (P[k] || P.list) + '</svg>'; }
 
   var ITEMS = {
-    navhome: ["list", "Watchlist"], navals: ["bell", "Alerts"], navplan: ["target", "Trade Plan"], navfut: ["candles", "Futures"],
+    navhome: ["list", "Watchlist"], navday: ["cal", "Trading day"], navals: ["bell", "Alerts"], navplan: ["target", "Trade Plan"], navfut: ["candles", "Futures"],
     navmov: ["zap", "Parabolic movers"], navpulse: ["pulse", "Market pulse"], navnews: ["news", "News"], navzone: ["layers", "Zones"],
     navinv: ["pie", "Investments"], navrl: ["ladder", "Risk Ladder"],
     navstudio: ["book", "Studio"], navsc: ["award", "Scorecard"], navlab: ["flask", "Setup Lab"], navprac: ["play", "Practice charts"], navcoach: ["spark", "AI Coach"],
     navprofile: ["user", "Profile"], navpub: ["send", "Publishes"], navnotif: ["inbox", "Notifications"], navgd: ["help", "How-To"], navset: ["gear", "Settings"]
   };
+  P.sun = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+  P.cal = '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M8 15h3"/>';
   P.clock = '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>';
   P.folder = '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>';
   P.fold = '<path d="M7 9l5-5 5 5M7 15l5 5 5-5"/>';
-  PICK.push("clock", "folder");
+  PICK.push("clock", "folder", "cal");
   var YOU = ["navprofile", "navpub", "navnotif", "navgd", "navset"];
   var DEF = [
-    ["Trading day", "#e8782a", "zap", ["navhome", "navals", "navplan", "navfut", "navmov"]],
+    ["Trading day", "#e8782a", "zap", ["navday", "navhome", "navals", "navplan", "navfut", "navmov"]],
     ["Investing", "#1f9d55", "pie", ["navinv", "navrl", "navhome"]],
     ["Research", "#2b7de0", "search", ["navpulse", "navnews", "navzone", "navmov"]],
     ["Review & practice", "#8b4fe0", "book", ["navstudio", "navsc", "navlab", "navprac", "navcoach"]],
     ["You", "#7d8793", "user", YOU]
   ];
   function defaults() {
-    return { ts: 0, rec: true, sections: DEF.map(function (s, i) { return { id: "s" + i, n: s[0], c: s[1], ic: s[2], ids: s[3].slice() }; }) };
+    return { ts: 0, rec: true, v: 2, sections: DEF.map(function (s, i) { return { id: "s" + i, n: s[0], c: s[1], ic: s[2], ids: s[3].slice() }; }) };
   }
 
   var CSS = '#side .nsrow{display:flex;gap:6px;margin:0 0 12px}#side .nsearch{box-sizing:border-box;overflow:hidden;flex:1;min-width:0;display:flex;align-items:center;gap:9px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--mute);font:500 .88rem "Instrument Sans",sans-serif;cursor:pointer;text-align:left;white-space:nowrap}#side .nsearch:hover{border-color:var(--accent);color:var(--ink)}#side .nsearch svg{width:15px;height:15px;flex:none}#side .nsearch kbd{white-space:nowrap;margin-left:auto;font:600 .68rem "Instrument Sans",sans-serif;border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:var(--panel);color:var(--mute)}' +
@@ -110,11 +112,12 @@
   var KEY = "ss-navlayout-v3", CKEY = "ss-navsec-v3", RKEY = "ss-navrecent", layout, editing = false, pp = null, arm = null, dragId = null, dragFrom = null, pushT = null;
   function sanitize(L) {
     if (!L || !Array.isArray(L.sections)) return defaults();
-    var out = { ts: +L.ts || 0, rec: L.rec !== false, sections: [] };
+    var out = { ts: +L.ts || 0, rec: L.rec !== false, v: 2, sections: [] };
     L.sections.slice(0, 14).forEach(function (s) {
       var seen = {}, ids = (s.ids || []).filter(function (i) { if (!ITEMS[i] || seen[i]) return false; seen[i] = 1; return true; });
       out.sections.push({ id: String(s.id || uid()), n: String(s.n || "Section").slice(0, 24), c: hex(s.c), ic: P[s.ic] ? s.ic : "", ids: ids });
     });
+    if (!(L.v >= 2) && out.sections.length && !out.sections.some(function (s) { return s.ids.indexOf("navday") > -1; })) out.sections[0].ids.unshift("navday");
     return out;
   }
   layout = sanitize(lsGet(KEY, null));
