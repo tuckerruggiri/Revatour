@@ -9,7 +9,8 @@
   "radar": 10,
   "swing": 10,
   "invest": 90,
-  "penny": 5
+  "penny": 5,
+  "micro": 3
  },
  "entries": [
   {
@@ -697,6 +698,54 @@
    "spy": 733.0,
    "last": 37.54,
    "lastD": "2026-11-06",
+   "status": "open"
+  },
+  {
+   "id": "micro-LABT-20261109",
+   "t": "LABT",
+   "kind": "micro",
+   "posted": "2026-11-09",
+   "entry": 0.54,
+   "entryN": "Nov 5 close (screener)",
+   "spy": 733.0,
+   "last": 0.54,
+   "lastD": "2026-11-05",
+   "status": "open"
+  },
+  {
+   "id": "micro-SDA-20261109",
+   "t": "SDA",
+   "kind": "micro",
+   "posted": "2026-11-09",
+   "entry": 0.377,
+   "entryN": "Nov 5 close (screener)",
+   "spy": 733.0,
+   "last": 0.377,
+   "lastD": "2026-11-05",
+   "status": "open"
+  },
+  {
+   "id": "micro-RCT-20261109",
+   "t": "RCT",
+   "kind": "micro",
+   "posted": "2026-11-09",
+   "entry": 0.0424,
+   "entryN": "Nov 5 close (screener)",
+   "spy": 733.0,
+   "last": 0.0424,
+   "lastD": "2026-11-05",
+   "status": "open"
+  },
+  {
+   "id": "micro-VIVK-20261109",
+   "t": "VIVK",
+   "kind": "micro",
+   "posted": "2026-11-09",
+   "entry": 0.496,
+   "entryN": "Nov 5 close (screener)",
+   "spy": 733.0,
+   "last": 0.496,
+   "lastD": "2026-11-05",
    "status": "open"
   }
  ]
