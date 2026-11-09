@@ -232,7 +232,23 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .iv-ins{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}.iv-in{display:flex;flex-direction:column;gap:4px;font-size:.78rem;color:var(--mute)}.iv-in span{display:flex;align-items:center;gap:6px}.iv-in input{width:100%;min-width:0}.iv-in em{font-style:normal;font-size:.8rem}
 #rlv.wrap{max-width:1180px}
 .nw{gap:3px}.nw-sym{color:var(--accent)}.nw-new{font-style:normal;font-size:.66rem;font-weight:800;color:#fff;background:#ef4444;border-radius:99px;padding:1px 7px}.nw-f{font-style:normal;font-size:.66rem;font-weight:800;color:var(--accent);border:1px solid var(--accent);border-radius:99px;padding:0 7px}a.nw{text-decoration:none}a.nw:hover{border-color:var(--accent)}
-#home.wrap,#newsv.wrap{max-width:1560px}
+#home.wrap,#newsv.wrap{max-width:none;width:100%;box-sizing:border-box;padding-left:28px;padding-right:28px}
+.hm-top{align-items:center;margin-bottom:10px}.hm-top h1{margin:0;font-size:2.2rem;line-height:1.1}
+.hm-top2{grid-template-columns:minmax(420px,520px) minmax(0,1fr)}
+.wl-h{flex-wrap:wrap;align-items:center;gap:2px 12px}.wl-h small{font-size:.82rem}
+.hm-newsbox .wl-h{display:block;margin-bottom:12px}.hm-newsbox .wl-h h2{margin:0 0 2px}.hm-newsbox .wl-h small{display:block}
+.al-strip{padding:16px 20px;margin:12px 0 4px}.al-strip .al-bh{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}.al-strip .al-bh h2{margin:0;font-size:1.1rem}
+.al-chips{gap:8px;margin-bottom:12px}.al-chips .al-sym{border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:5px 12px;font-weight:700;cursor:pointer}
+.al-row{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));align-items:start}.al-row .al-card{min-width:0;overflow:hidden}
+@media(max-width:700px){#home.wrap,#newsv.wrap{padding-left:14px;padding-right:14px}.hm-top h1{font-size:1.8rem}}
+/* add-to-watchlist everywhere */
+.sc-wl{display:inline-flex;align-items:center;gap:4px;height:22px;margin-left:5px;padding:0 7px;vertical-align:middle;border:1px solid var(--line);border-radius:99px;background:var(--bg);color:var(--mute);font:600 .72rem/1 inherit;cursor:pointer;white-space:nowrap}.sc-wl:hover{color:var(--accent);border-color:var(--accent)}.sc-wl.on{color:#c9961a;border-color:#c9961a;background:color-mix(in srgb,#c9961a 14%,transparent)}.sc-wl svg{width:12px;height:12px}.sc-wl.on svg{fill:currentColor}
+.tp-watch{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:700 .9rem/1 inherit;cursor:pointer}.tp-watch:hover{border-color:#c9961a;color:#c9961a}.tp-watch.on{background:color-mix(in srgb,#c9961a 16%,transparent);border-color:#c9961a;color:#c9961a}.tp-watch svg{width:16px;height:16px}.tp-watch.on svg{fill:currentColor}
+.qw-fab{position:fixed;right:20px;bottom:20px;z-index:60;display:flex;align-items:center;gap:8px;padding:12px 18px;border:0;border-radius:99px;background:var(--ink);color:var(--panel);font:700 .92rem/1 inherit;box-shadow:0 8px 24px rgba(0,0,0,.28);cursor:pointer}.qw-fab svg{width:16px;height:16px}.qw-fab:hover{transform:translateY(-1px)}
+.qw-pop{position:fixed;right:20px;bottom:78px;z-index:61;width:min(360px,calc(100vw - 32px));background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.3);padding:16px}.qw-pop h3{margin:0 0 4px;font-size:1.05rem}.qw-pop p{margin:0 0 12px;color:var(--mute);font-size:.85rem}
+.qw-form{display:flex;gap:8px}.qw-form input{flex:1;min-width:0;text-transform:uppercase;font-size:1rem;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}.qw-form button{padding:10px 16px;border:0;border-radius:10px;background:var(--accent);color:var(--accent-ink,#fff);font-weight:700;cursor:pointer}
+.qw-l{margin:14px 0 6px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}.qw-chips{display:flex;flex-wrap:wrap;gap:6px}.qw-chip{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:5px 11px;font:700 .82rem/1 inherit;cursor:pointer}.qw-chip:hover{border-color:var(--accent);color:var(--accent)}.qw-chip.add::before{content:"+ ";color:var(--accent)}
+@media(max-width:700px){.qw-fab{right:12px;bottom:12px;padding:11px 15px}.qw-pop{right:12px;bottom:66px}}
 #commnote{font-size:.78rem}#pagev.wrap{max-width:none;width:100%;box-sizing:border-box;padding-left:28px;padding-right:28px}#pagev .dc-stream{min-height:calc(100vh - 330px);max-height:calc(100vh - 250px)}#pagev .dc-imgs img{max-width:min(100%,1100px);max-height:760px}#pagev .dc-imgs.n2 img,#pagev .dc-imgs.n3 img,#pagev .dc-imgs.n4 img{max-width:calc(50% - 3px);max-height:min(70vh,620px)}#pagev .dc-imgs img{width:auto;height:auto;object-fit:contain}#pagev .dc-imgs video{max-width:min(100%,1100px);max-height:620px}
 #pagev .feed{max-width:none}
 .hm-cols{display:grid;grid-template-columns:330px minmax(0,1fr);gap:20px;align-items:start;margin-top:10px}.hm-side{position:sticky;top:16px;background:none;border:none;padding:0;margin:0}
@@ -1710,7 +1726,10 @@ $("rlv").addEventListener("click",function(ev){var b=ev.target.closest&&ev.targe
 
 /* ---------- Watchlist + News tab ---------- */
 var WL={sort:{k:"dp",d:1},syms:[],loaded:false,quotes:{},qcfg:true,tab:"all",pick:"",items:[],upd:0,busy:false},WLQ=["SPY","QQQ","AAPL","NVDA","TSLA","MSFT"],nwTimer=null;
-async function wlLoad(){if(WL.loaded)return;try{var d=null;if(store.db){var s=await store.db.doc("meta/watchlist").get();if(s.exists)d=clone(s.data())}else d=JSON.parse(localStorage.getItem("ss-watch")||"null");WL.syms=((d&&d.syms)||[]).filter(function(x){return /^[A-Z]{1,5}(\.[A-Z])?$/.test(x)})}catch(e){WL.syms=[]}WL.loaded=true}
+window.StockWatch={has:function(s){return WL.syms.indexOf(s)>-1},ready:function(){return WL.loaded},list:function(){return WL.syms.slice()},load:function(){return wlLoad().then(function(){document.dispatchEvent(new Event("wl-change"))})},
+ add:async function(s){await wlLoad();var ok=await wlAddSym(s);if(ok)toast("Added $"+String(s).toUpperCase().replace(/[^A-Z.]/g,"")+" to your watchlist");document.dispatchEvent(new Event("wl-change"));return ok},
+ toggle:async function(s){await wlLoad();if(WL.syms.indexOf(s)>-1){await wlRemove(s);toast("Removed $"+s+" from your watchlist")}else{var ok=await wlAddSym(s);if(ok)toast("Added $"+s+" to your watchlist")}document.dispatchEvent(new Event("wl-change"))}};
+async function wlLoad(){if(WL.loaded)return;try{var d=null;if(store.db){var s=await store.db.doc("meta/watchlist").get();if(s.exists)d=clone(s.data())}else d=JSON.parse(localStorage.getItem("ss-watch")||"null");WL.syms=((d&&d.syms)||[]).filter(function(x){return /^[A-Z]{1,5}(\.[A-Z])?$/.test(x)})}catch(e){WL.syms=[]}WL.loaded=true;document.dispatchEvent(new Event("wl-change"))}
 async function wlSave(){try{if(store.db)await store.db.doc("meta/watchlist").set({syms:WL.syms});else localStorage.setItem("ss-watch",JSON.stringify({syms:WL.syms}))}catch(e){toast("Could not save your watchlist")}}
 async function wlQuote(){var So=S();if(!So||!WL.syms.length)return;var got={},syms=WL.syms.slice();
  if(WL.sch===false&&Date.now()-(WL.schAt||0)>300000)WL.sch=undefined;
@@ -2781,7 +2800,7 @@ async function showTicker(sym){var prevProfile=!$("profilev").hidden,prevPage=cu
  var all=allTrades().filter(function(t){return String(t.t||"").toUpperCase()===sym}),el=$("tickerv");
  var net=all.reduce(function(a,t){return a+(t.p||0)},0),wins=all.filter(function(t){return t.p>0}).length;
  var tile=function(l,v){return '<div class="hm-tile"><b>'+v+'</b><span>'+l+'</span></div>'};
- var h='<button class="crumb" type="button" id="tkback">&larr; Back</button><div class="tp-head"><div><h1>$'+esc(sym)+'</h1><p class="sub" id="tkname">&nbsp;</p></div><div class="tp-px" id="tkpx"></div></div>'+
+ var h='<button class="crumb" type="button" id="tkback">&larr; Back</button><div class="tp-head"><div><h1>$'+esc(sym)+'</h1><p class="sub" id="tkname">&nbsp;</p></div><div class="tp-px" id="tkpx"></div><button type="button" class="tp-watch" data-wl="'+esc(sym)+'" data-wlbig="1"></button></div>'+
   '<div class="tp-main"><div class="tp-chart" id="tkchartbox"></div><aside class="tp-side"><div class="pf-panel tp-card"><h3>Today</h3><div id="tkquote"><div class="hint">Loading market data...</div></div></div><div class="pf-panel tp-card"><h3>About</h3><div id="tkabout"><span class="hint">Loading...</span></div></div></aside></div>'+
   '<div class="tp-rows"><div class="tp-col"><h2 class="pf-sec">News</h2><div class="pf-panel" id="tknews"><span class="hint">Loading...</span></div></div><div class="tp-col"><h2 class="pf-sec">Your trades in $'+esc(sym)+'</h2>';
  if(!all.length)h+='<div class="pf-panel hint">No saved trades in this ticker yet.</div>';
