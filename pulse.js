@@ -19,7 +19,7 @@
     '#pulsev .pl-lc{border:1px solid var(--line);border-radius:16px;padding:16px;background:var(--panel)}#pulsev .pl-lc .tt{font-weight:800;font-size:16px}#pulsev .pl-lc .sb{color:var(--mute);font-size:12px}#pulsev .pl-lc .hd{font-weight:700;margin:10px 0 10px;font-size:15px}#pulsev .pl-lc p{margin:10px 0 0;font-size:13px;line-height:1.5;color:var(--mute)}' +
     '#pulsev .pl-g{position:relative;height:14px;border-radius:8px;background:linear-gradient(90deg,var(--dn),var(--line) 50%,var(--up))}#pulsev .pl-g i{position:absolute;top:-5px;width:8px;height:24px;border-radius:4px;background:var(--ink);box-shadow:0 0 0 3px var(--panel)}#pulsev .pl-gl{display:flex;justify-content:space-between;font-size:10px;color:var(--mute);margin-top:6px}' +
     '#pulsev .pl-sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}' +
-    '#pulsev .pl-sc{border:1px solid var(--line);border-top:5px solid var(--line);border-radius:14px;padding:14px;background:var(--panel);position:relative}#pulsev .pl-sc.u{border-top-color:var(--up)}#pulsev .pl-sc.d{border-top-color:var(--dn)}#pulsev .pl-sc .nm{font-weight:800;font-size:15px;padding-right:56px}#pulsev .pl-sc .et{color:var(--mute);font-size:11px;margin-bottom:10px;letter-spacing:.04em}#pulsev .pl-sc .nt{position:absolute;right:12px;top:12px;font-size:11px;font-weight:800;border-radius:999px;padding:2px 8px;background:var(--line);color:var(--mute)}#pulsev .pl-sc.u .nt{background:var(--up);color:#fff}#pulsev .pl-sc.d .nt{background:var(--dn);color:#fff}' +
+    '#pulsev .pl-sc{border:1px solid var(--line);border-top:5px solid var(--line);border-radius:14px;padding:14px;background:var(--panel);position:relative}#pulsev .pl-sc.u{border-top-color:var(--up)}#pulsev .pl-sc.d{border-top-color:var(--dn)}#pulsev .pl-sc .nm{font-weight:800;font-size:15px;padding-right:56px}#pulsev .pl-sc .et{color:var(--mute);font-size:12px;margin-bottom:10px;letter-spacing:.04em;display:flex;gap:8px;flex-wrap:wrap}#pulsev .pl-sc .et .pl-tk{color:var(--ink)}#pulsev .pl-sc .nt{position:absolute;right:12px;top:12px;font-size:11px;font-weight:800;border-radius:999px;padding:2px 8px;background:var(--line);color:var(--mute)}#pulsev .pl-sc.u .nt{background:var(--up);color:#fff}#pulsev .pl-sc.d .nt{background:var(--dn);color:#fff}' +
     '#pulsev .pl-ar{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:10px}#pulsev .pl-ar span{text-align:center;border-radius:8px;padding:5px 0;font-size:11px;background:var(--line);color:var(--mute)}#pulsev .pl-ar span b{display:block;font-size:15px}#pulsev .pl-ar .u{background:var(--up);color:#fff}#pulsev .pl-ar .d{background:var(--dn);color:#fff}#pulsev .pl-sc p{margin:0;font-size:12px;color:var(--mute);line-height:1.5}' +
     '#pulsev .pl-sn{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}#pulsev .pl-b{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:7px 16px;font:inherit;font-size:13px;cursor:pointer;transition:transform .08s}#pulsev .pl-b:hover{border-color:var(--cc,var(--accent))}#pulsev .pl-b:active{transform:scale(.97)}#pulsev .pl-b.on{background:var(--cc,var(--accent));color:#fff;border-color:var(--cc,var(--accent));font-weight:700}#pulsev .pl-b.on.c-all{color:var(--accent-ink)}' +
     '#pulsev .pl-so{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}#pulsev .pl-so div{border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:12px;background:var(--panel);border-left:4px solid var(--line)}#pulsev .pl-so div.u{border-left-color:var(--up)}#pulsev .pl-so div.d{border-left-color:var(--dn)}#pulsev .pl-so b{display:block;font-size:14px;margin-bottom:2px}' +
@@ -42,6 +42,7 @@
   function fmt(iso) { return new Date(dayNum(iso) * 86400000).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" }); }
   function cls(d) { return d > 0 ? "u" : d < 0 ? "d" : ""; }
   function arrow(d) { return d > 0 ? "▲" : d < 0 ? "▼" : "◆"; }
+  function lk(t) { return window.StockChart ? window.StockChart.link(t) : esc(t); }
   function cid(c) { return /^[a-z]+$/.test(c) ? c : "all"; }
 
   function mood(L) {
@@ -59,14 +60,14 @@
   }
   function sector(S) {
     var lab = ["Today", "2-4 wks", "6-12 mo"], net = S.d.reduce(function (t, x) { return t + x; }, 0);
-    return '<div class="pl-sc ' + cls(net) + '"><span class="nt">' + (net > 0 ? "+" + net : net) + '</span><div class="nm">' + esc(S.s) + '</div><div class="et">' + esc(S.etf) + '</div><div class="pl-ar">' + S.d.map(function (d, i) { return '<span class="' + cls(d) + '"><b>' + arrow(d) + '</b>' + lab[i] + '</span>'; }).join("") + '</div><p>' + esc(S.why) + '</p></div>';
+    return '<div class="pl-sc ' + cls(net) + '"><span class="nt">' + (net > 0 ? "+" + net : net) + '</span><div class="nm">' + esc(S.s) + '</div><div class="et">' + lk(S.etf) + '</div><div class="pl-ar">' + S.d.map(function (d, i) { return '<span class="' + cls(d) + '"><b>' + arrow(d) + '</b>' + lab[i] + '</span>'; }).join("") + '</div><p>' + esc(S.why) + '</p></div>';
   }
   function newsCard(n) {
     var cf = ""; for (var i = 1; i <= 3; i++) cf += '<u class="' + (i <= n.conf ? "on" : "") + '"></u>';
     var catName = (DATA.cats.filter(function (c) { return c[0] === n.cat; })[0] || [0, n.cat])[1];
     return '<div class="pl-n c-' + cid(n.cat) + '"><div class="top"><span class="tag">' + esc(catName) + '</span><span>' + esc(n.when) + '</span></div><div class="hd">' + esc(n.head) + '</div>' +
       '<p><b>What it means:</b> ' + esc(n.mean) + '</p>' +
-      '<div class="pl-rc">' + n.react.map(function (r) { return '<span class="' + cls(r[1]) + '">' + arrow(r[1]) + ' ' + esc(r[0]) + '<small>' + esc(r[2]) + '</small></span>'; }).join("") + '</div>' +
+      '<div class="pl-rc">' + n.react.map(function (r) { return '<span class="' + cls(r[1]) + '">' + arrow(r[1]) + ' ' + lk(r[0]) + '<small>' + esc(r[2]) + '</small></span>'; }).join("") + '</div>' +
       '<div class="pl-hi"><b>What history says</b>' + esc(n.hist) + (n.histU && /^https:\/\//.test(n.histU) ? ' <a href="' + esc(n.histU) + '" target="_blank" rel="noopener">' + esc(n.histN || "source") + ' ↗</a>' : "") + '</div>' +
       '<div class="pl-tl"><div><b>⚡ TRADE TODAY</b>' + esc(n.today) + '</div><div><b>🌱 INVEST LATER</b>' + esc(n.later) + '</div></div>' +
       '<div class="pl-ft"><span class="pl-cf" title="How sure we are: more dots = more evidence">' + cf + '</span><span>Confidence</span><a href="' + esc(/^https:\/\//.test(n.src) ? n.src : "#") + '" target="_blank" rel="noopener">' + esc(n.srcN) + ' ↗</a></div></div>';
