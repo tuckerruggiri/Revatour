@@ -223,6 +223,9 @@
     marketNews: async function () { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
       var r = await fetch('/api/news?market=1', { headers: { Authorization: 'Bearer ' + tok } });
       if (!r.ok) throw new Error('news failed'); return r.json(); },
+    chartRead: async function (items) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
+      var r = await fetch('/api/read', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify({ items: items }) });
+      var j = await r.json().catch(function () { return {}; }); if (!r.ok) { var e = new Error(j.error || 'failed'); e.code = r.status; throw e; } return j; },
     schwab: async function (action, q, body) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
       var url = '/api/schwab/' + action + (q ? '?' + new URLSearchParams(q).toString() : '');
       var r = await fetch(url, { method: body ? 'POST' : 'GET', headers: Object.assign({ Authorization: 'Bearer ' + tok }, body ? { 'Content-Type': 'application/json' } : {}), body: body ? JSON.stringify(body) : undefined });
