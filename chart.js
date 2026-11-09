@@ -92,14 +92,15 @@
     return FRAMES.map(function (f) { return '<button type="button" data-scf="' + f[0] + '" class="' + (f[0] === (cur2 || iv) ? "on" : "") + '">' + f[1] + '</button>'; }).join("");
   }
   /* embedded chart that fills a container on a page (used by each ticker page) */
-  function embed(host, sym, iv0) {
+  function embed(host, sym, iv0, opt) {
+    opt = opt || {};
     sym = clean(sym); if (!sym || !host) return;
     ensureCss();
     var f = iv0 || "D"; host.className = (host.className + " sc-inl").trim();
-    host.innerHTML = '<div class="sc-hd"><b>' + sym + ' chart</b><div class="sc-fr">' + frames(f) + '</div><span class="sc-sp"></span>' + svBtn(sym) + '</div><div class="sc-body"></div>';
+    host.innerHTML = '<div class="sc-hd"><b>' + sym + ' chart</b><div class="sc-fr">' + frames(f) + '</div><span class="sc-sp"></span>' + (opt.mini ? '<a class="sc-lk" target="tvmine" rel="noopener" href="https://www.tradingview.com/chart/?symbol=' + encodeURIComponent(sym) + '" title="Open in your TradingView">↗</a>' : svBtn(sym)) + '</div><div class="sc-body"></div>';
     host.onclick = function (e) {
       var b = e.target.closest("[data-scf]"); if (!b) return;
-      f = b.getAttribute("data-scf"); [].forEach.call(host.querySelectorAll("[data-scf]"), function (x) { x.classList.toggle("on", x === b); }); draw(host, sym, f, false);
+      f = b.getAttribute("data-scf"); [].forEach.call(host.querySelectorAll("[data-scf]"), function (x) { x.classList.toggle("on", x === b); }); draw(host, sym, f, false); if (opt.onframe) opt.onframe(f);
     };
     draw(host, sym, f, false);
   }

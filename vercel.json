@@ -15,6 +15,9 @@
     "api/discord.js": {
       "maxDuration": 30
     },
+    "api/read.js": {
+      "maxDuration": 60
+    },
     "api/sort.js": {
       "maxDuration": 60
     },

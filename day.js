@@ -9,12 +9,12 @@
   var D = { date: "", tab: "trades", sym: "SPY", q: {}, ent: null, pend: [], news: { tab: "watch", w: null, m: null, busy: false }, tside: "long", pside: "long", timers: [], built: false };
   try { var t0 = localStorage.getItem("ss-daytab"); if (/^(trades|feed|news)$/.test(t0)) D.tab = t0; } catch (e) {}
 
-  var CSS = '#dayv{max-width:none;width:100%;box-sizing:border-box;padding:12px 18px 14px;display:flex;flex-direction:column;gap:10px;height:100vh;overflow:hidden;--up:var(--gain);--dn:var(--loss)}#dayv *{box-sizing:border-box}#dayv[hidden]{display:none}' +
+  var CSS = '#dayv{max-width:none;width:100%;box-sizing:border-box;padding:12px 18px 14px;display:flex;flex-direction:column;gap:10px;height:100vh;overflow-y:auto;overflow-x:hidden;--up:var(--gain);--dn:var(--loss)}#dayv *{box-sizing:border-box}#dayv[hidden]{display:none}' +
     ':where(#dayv) input,:where(#dayv) select,:where(#dayv) textarea{padding:6px 8px;font:inherit;font-size:.82rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:auto;min-width:0;margin:0}:where(#dayv) textarea{width:100%;resize:none}#dayv input:focus,#dayv textarea:focus,#dayv select:focus{outline:2px solid color-mix(in srgb,var(--accent) 45%,transparent);outline-offset:0}' +
     ':where(#dayv) button{font:inherit}:where(#dayv) .b{padding:5px 10px;font-size:.78rem;font-weight:600;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer;white-space:nowrap}#dayv .b:hover{border-color:var(--accent)}#dayv .b.pri{background:var(--ink);color:var(--panel);border-color:var(--ink)}#dayv .b.on{background:var(--ink);color:var(--panel);border-color:var(--ink)}#dayv .b.arm{background:var(--loss);color:#fff;border-color:var(--loss)}:where(#dayv) .ib{padding:0;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:6px;background:none;color:var(--mute);cursor:pointer;font-size:.9rem;line-height:1;flex:none}#dayv .ib:hover{background:var(--bg);color:var(--ink)}' +
     '.dy-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;flex:none}.dy-dt{display:flex;align-items:center;gap:6px}.dy-dt h1{margin:0;font-size:1.25rem;letter-spacing:-.01em;white-space:nowrap}.dy-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:.78rem;font-weight:600;white-space:nowrap}.dy-chip i{width:8px;height:8px;border-radius:50%;background:var(--mute)}.dy-chip.on i{background:var(--gain);box-shadow:0 0 0 3px color-mix(in srgb,var(--gain) 25%,transparent)}.dy-chip.pre i{background:#d4a017}.dy-chip small{color:var(--mute);font-weight:500}.dy-chip b{font-variant-numeric:tabular-nums}.gain{color:var(--gain)}.loss{color:var(--loss)}' +
     '.dy-clk small{display:inline-flex;gap:8px;font-variant-numeric:tabular-nums}.dy-clk small span{min-width:3.6em}.dy-clk small .nx{color:var(--loss);font-weight:700}.dy-clk b{font-size:.95rem;letter-spacing:.02em;min-width:5.6em;display:inline-block}.dy-clk{transition:background .15s,border-color .15s}.dy-clk.hot{border-color:var(--loss);animation:dyfl 1s infinite}.dy-clk.hot.fast{animation-duration:.4s}@keyframes dyfl{0%,100%{background:var(--panel)}50%{background:color-mix(in srgb,var(--loss) 38%,var(--panel))}}' +
-    '.dy-sp{flex:1}.dy-les{flex:1 1 120px;min-width:110px;max-width:300px}.dy-grid{flex:1;min-height:0;display:grid;grid-template-columns:290px minmax(0,1fr) 370px;gap:10px}.dy-col{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}' +
+    '.dy-sp{flex:1}.dy-les{flex:1 1 120px;min-width:110px;max-width:300px}.dy-grid{flex:none;height:max(500px,calc(100vh - 220px));display:grid;grid-template-columns:290px minmax(0,1fr) 370px;gap:10px}.dy-col{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}' +
     '.dy-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden}.dy-h{display:flex;align-items:center;gap:8px;padding:8px 12px 6px;font:700 .68rem "Instrument Sans",sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);flex:none}.dy-h .dy-sp{flex:1}.dy-h .tt{color:var(--ink);letter-spacing:.06em}.dy-bd{padding:2px 12px 10px;overflow:auto;min-height:0;flex:1}.dy-bd.np{padding:0}' +
     '.dy-fm{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 8px;flex:none}.dy-fm input{flex:1 1 60px}.dy-fm .s{flex:none}.dy-fm .s{width:64px;flex:none;text-transform:uppercase}.dy-fm .b{flex:none}.dy-fm .n{flex:3 1 90px}' +
     '.dy-r{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);font-size:.82rem}.dy-r:last-child{border-bottom:0}.dy-sym{padding:2px 7px!important;border:0;border-radius:6px;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--ink);font-weight:700;font-size:.78rem;cursor:pointer}.dy-sym:hover{background:color-mix(in srgb,var(--accent) 28%,transparent)}.dy-nt{flex:1;min-width:0;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dy-q{font-variant-numeric:tabular-nums;font-size:.76rem;white-space:nowrap}.dy-q b{font-weight:700}.dy-em{padding:10px 2px;color:var(--mute);font-size:.8rem}' +
@@ -28,7 +28,8 @@
     '.dy-ps{padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);font-size:.84rem}.dy-ps:last-child{border-bottom:0}.dy-ps .h{display:flex;gap:6px;align-items:center;color:var(--mute);font-size:.72rem;margin-bottom:2px}.dy-ps p{margin:0;white-space:pre-wrap;word-break:break-word;line-height:1.4}.dy-ps img{max-height:140px;max-width:100%;border-radius:8px;border:1px solid var(--line);margin-top:6px;display:block}' +
     '.dy-nt2{display:flex;gap:4px;padding:8px 12px 4px;flex-wrap:wrap;flex:none}.dy-nt2 .b{padding:3px 9px}.dy-nw{display:block;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);color:var(--ink);text-decoration:none}.dy-nw:last-child{border-bottom:0}.dy-nw:hover b{text-decoration:underline}.dy-nw b{display:block;font-size:.82rem;line-height:1.32;font-weight:600}.dy-nw small{color:var(--mute);font-size:.7rem}.dy-nw .nw{background:var(--loss);color:#fff;border-radius:4px;padding:0 5px;font-size:.6rem;font-weight:800;margin-right:4px;font-style:normal;vertical-align:1px}' +
     '.dy-live{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gain);margin-right:4px;animation:dyp 1.6s infinite}@keyframes dyp{50%{opacity:.3}}' +
-    '@media(max-width:1180px){#dayv{height:auto;overflow:visible}.dy-col .dy-card:not(.ch){flex:none!important;min-height:190px}.dy-col.c .dy-card{height:600px}.dy-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.dy-col.b{grid-column:1/-1;order:-1}.dy-col.b .dy-card.ch{height:420px}.dy-col.c{grid-column:1/-1}}@media(max-width:700px){#dayv{padding:10px 12px}.dy-grid{grid-template-columns:minmax(0,1fr)}.dy-cw{flex-direction:column}.dy-col.b .dy-card.ch{height:460px}.dy-les{max-width:none}}';
+    '.dy-card.ch.sm{margin:0}.dy-card.ch.sm{flex:none!important;height:250px}.dy-tl{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:10px;padding:0 10px 10px}.dy-tile{border:1px solid var(--line);border-radius:12px;background:var(--bg);display:flex;flex-direction:column;min-width:0}#dayv .dy-tile .sc-inl{margin:0;border:0;border-radius:12px 12px 0 0;background:transparent}#dayv .dy-tile .sc-inl .sc-body{height:215px;flex:none}.dy-tf{display:flex;gap:6px;align-items:center;padding:6px 10px;border-top:1px solid var(--line)}.dy-tf input{width:70px;text-transform:uppercase}.dy-rd{padding:8px 10px;border-top:1px solid var(--line);font-size:.8rem;line-height:1.4;min-height:96px}.dy-rd .bi{display:inline-block;padding:1px 9px;border-radius:999px;font-weight:700;font-size:.74rem;border:1px solid currentColor}.dy-rd .bi.up{color:var(--up)}.dy-rd .bi.down{color:var(--dn)}.dy-rd .bi.range{color:var(--mute)}.dy-rd .lv{display:grid;grid-template-columns:auto 1fr;gap:1px 8px;margin-top:5px;font-variant-numeric:tabular-nums}.dy-rd .lv i{font-style:normal;color:var(--mute);font-size:.7rem;text-transform:uppercase;letter-spacing:.05em}.dy-rd .lv .r{color:var(--dn)}.dy-rd .lv .s{color:var(--up)}.dy-rd small{color:var(--mute)}.dy-rd .er{color:var(--mute)}' +
+    '@media(max-width:1180px){#dayv{height:auto;overflow:visible}.dy-grid{height:auto}.dy-col .dy-card:not(.ch){flex:none!important;min-height:190px}.dy-col.c .dy-card{height:600px}.dy-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.dy-col.b{grid-column:1/-1;order:-1}.dy-col.b .dy-card.ch{height:420px}.dy-col.b{overflow:visible}.dy-card.ch.sm{height:auto!important}.dy-col.b .dy-card.ch.sm .dy-cw{height:300px}.dy-col.c{grid-column:1/-1}}@media(max-width:700px){.dy-tl{grid-template-columns:minmax(0,1fr)}#dayv{padding:10px 12px}.dy-grid{grid-template-columns:minmax(0,1fr)}.dy-cw{flex-direction:column}.dy-col.b .dy-card.ch{height:460px}.dy-les{max-width:none}}';
   CSS += 'body:has(#dayv:not([hidden])) .qw-fab,body:has(#dayv:not([hidden])) .qw-pop{display:none!important}';
   var st = document.createElement("style"); st.id = "day-css"; st.textContent = CSS; document.head.appendChild(st);
 
@@ -78,15 +79,16 @@
       '<div class="dy-card" style="flex:1"><div class="dy-h"><span class="tt">Watchlist</span><span class="dy-sp"></span><button type="button" class="b" data-dyact="wlimp" title="Add everything from your main watchlist">+ From my list</button></div><form class="dy-fm" id="dywf"><input class="s" id="dyws" placeholder="Ticker" maxlength="6" autocomplete="off"><input class="n" id="dywn" placeholder="Why / levels" autocomplete="off"><button class="b pri" type="submit">Add</button></form><div class="dy-bd" id="dywl"></div></div>' +
       '<div class="dy-card" style="flex:1.25"><div class="dy-h"><span class="tt">Alerts</span><span class="dy-sp"></span><span id="dyalc"></span></div><form class="dy-fm" id="dyaf"><input class="s" id="dyas" placeholder="Ticker" maxlength="6" autocomplete="off"><input class="n" id="dyat" placeholder="short below 248.8, target 246.5, stop 249.2" autocomplete="off"><button class="b pri" type="submit">Alert</button></form><div class="dy-bd" id="dyal"></div></div>' +
       '</div><div class="dy-col b">' +
-      '<div class="dy-card ch" style="flex:1"><div class="dy-h"><span class="tt">Chart</span><span class="dy-sp"></span><span class="dy-q" style="text-transform:none;letter-spacing:0;font-weight:500">SPY is always on. Pick a stock to see it next to SPY.</span></div><div class="dy-chs" id="dychs"></div><div class="dy-cw" id="dycw"></div></div>' +
+      '<div class="dy-card ch sm"><div class="dy-h"><span class="tt">Chart</span><span class="dy-sp"></span><span class="dy-q" style="text-transform:none;letter-spacing:0;font-weight:500">SPY is always on. Pick a stock to see it next to SPY.</span></div><div class="dy-chs" id="dychs"></div><div class="dy-cw" id="dycw"></div></div>' +
       '<div class="dy-card" id="dyplan" style="flex:none"></div>' +
       '</div><div class="dy-col c"><div class="dy-card" style="flex:1">' +
       '<div class="dy-tabs" id="dytabs"></div>' +
-      '<div class="dy-tab" id="dytb-trades"></div><div class="dy-tab" id="dytb-feed"></div><div class="dy-tab" id="dytb-news"></div></div></div></div>';
+      '<div class="dy-tab" id="dytb-trades"></div><div class="dy-tab" id="dytb-feed"></div><div class="dy-tab" id="dytb-news"></div></div></div></div>' +
+      '<div class="dy-card" id="dytlc" style="flex:none;min-height:0"><div class="dy-h"><span class="tt">Watchlist charts</span><span class="dy-q" style="text-transform:none;letter-spacing:0;font-weight:500">AI reads each chart in its own time frame</span><span class="dy-sp"></span><button type="button" class="b pri" data-dyact="readall">Read all with AI</button></div><div class="dy-tl" id="dytl"></div><div class="dy-q" style="padding:0 12px 10px;text-transform:none;letter-spacing:0">Scenarios from the candles on screen, not predictions or advice. Candle data is a free feed and can be delayed. Draw your own levels before you trade.</div></div>';
     D.sym = "SPY"; D.charts = "";
     paintAll(); paintChart();
   }
-  function paintAll() { paintBar(); paintWatch(); paintAlerts(); paintPlan(); paintTabs(); paintTrades(); paintFeed(); paintNews(); paintQuotes(); }
+  function paintAll() { paintBar(); paintWatch(); paintTiles(); paintAlerts(); paintPlan(); paintTabs(); paintTrades(); paintFeed(); paintNews(); paintQuotes(); }
 
   /* ---------- top bar ---------- */
   function stats() {
@@ -121,7 +123,7 @@
     var AL = A.al(), b = AL.board[D.date] || (AL.board[D.date] = { items: [] });
     var ex = b.items.filter(function (i) { return i.sym === sym; })[0];
     if (ex) { if (note) ex.note = note; } else b.items.push({ sym: sym, note: note || "" });
-    await A.alSave(); paintWatch(); loadQ();
+    await A.alSave(); paintWatch(); paintTiles(); loadQ();
   }
 
   /* ---------- alerts ---------- */
@@ -154,6 +156,62 @@
     paintChips();
   }
   function setSym(s) { s = String(s || "").toUpperCase().replace(/[^A-Z.]/g, ""); if (!s) return; D.sym = s; paintChart(); loadQ(); }
+
+  /* ---------- six watchlist charts with an AI read ---------- */
+  var DEF_IV = "5";
+  function slotsGet() {
+    var sv = null; try { sv = JSON.parse(localStorage.getItem("ss-dayslots") || "null"); } catch (e) {}
+    var a = (sv && sv.length ? sv : []).slice(0, 6);
+    var auto = uniq(board().map(function (i) { return i.sym; }).concat(window.StockWatch && window.StockWatch.list ? window.StockWatch.list() : [])).filter(function (x) { return /^[A-Z]{1,5}(\.[A-Z])?$/.test(x) && x !== "SPY"; });
+    auto = auto.filter(function (x) { return a.indexOf(x) < 0; });
+    for (var i = 0; i < 6; i++) if (!a[i]) a[i] = auto.shift() || "";
+    return a.slice(0, 6);
+  }
+  function slotsSave(a) { try { localStorage.setItem("ss-dayslots", JSON.stringify(a)); } catch (e) {} }
+  function paintTiles() {
+    var host = $("dytl"); if (!host || !window.StockChart || !window.StockChart.embed) return;
+    var S = slotsGet(), key = S.join(",");
+    if (D.tkey === key) return; D.tkey = key; D.reads = D.reads || {}; D.ivs = D.ivs || {};
+    host.innerHTML = S.map(function (sym, i) {
+      return '<div class="dy-tile" data-slot="' + i + '"><div id="dytc' + i + '">' + (sym ? "" : '<div class="dy-em" style="padding:50px 10px;text-align:center">Empty slot. Add a ticker below.</div>') + '</div>' +
+        '<div class="dy-rd" id="dyrd' + i + '"></div>' +
+        '<form class="dy-tf" data-dyswap="' + i + '"><input placeholder="' + (sym ? "Swap" : "Ticker") + '" maxlength="6" autocomplete="off" aria-label="Ticker for chart ' + (i + 1) + '"><button class="b" type="submit">' + (sym ? "Swap" : "Add") + '</button><span class="dy-sp"></span>' + (sym ? '<button type="button" class="b" data-dyread="' + i + '">AI read</button>' : "") + '</form></div>';
+    }).join("");
+    S.forEach(function (sym, i) {
+      if (!sym) return;
+      D.ivs[sym] = D.ivs[sym] || DEF_IV;
+      window.StockChart.embed($("dytc" + i), sym, D.ivs[sym], { mini: true, onframe: function (f) { D.ivs[sym] = f; readOne(i); } });
+      paintRead(i);
+    });
+  }
+  function fmtL(a) { return (a || []).map(function (x) { return f2(x); }).join(" · ") || "n/a"; }
+  function paintRead(i) {
+    var el = $("dyrd" + i); if (!el) return; var sym = slotsGet()[i];
+    if (!sym) { el.innerHTML = ""; return; }
+    var iv = D.ivs[sym] || DEF_IV, r = (D.reads || {})[sym + "|" + iv];
+    if (D.busy && D.busy[sym + "|" + iv]) { el.innerHTML = '<span class="er">Reading ' + esc(sym) + ' on the ' + esc(ivName(iv)) + ' chart…</span>'; return; }
+    if (!r) { el.innerHTML = '<span class="er">Press AI read for levels and where ' + esc(sym) + ' could go on the ' + esc(ivName(iv)) + ' chart.</span>'; return; }
+    if (r.error) { el.innerHTML = '<span class="er">' + esc(r.error) + '</span>'; return; }
+    var bi = r.bias === "up" ? "Up bias" : r.bias === "down" ? "Down bias" : "Range / unclear", at = r.asof ? new Date(r.asof * 1000).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" }) : "";
+    el.innerHTML = '<span class="bi ' + esc(r.bias) + '">' + bi + '</span> <small>' + esc(ivName(iv)) + ' chart · ' + "●●●".slice(0, r.conf || 1) + "○○○".slice(0, 3 - (r.conf || 1)) + (at ? ' · last candle ' + at + ' ET' : '') + '</small><div>' + esc(r.summary) + '</div>' +
+      '<div class="lv"><i>Resistance</i><span class="r">' + fmtL(r.resistance) + '</span><i>Support</i><span class="s">' + fmtL(r.support) + '</span><i>Trigger</i><span>' + esc(r.trigger || "n/a") + '</span><i>Target</i><span>' + (r.target ? f2(r.target) : "n/a") + '</span><i>Wrong if</i><span>' + (r.invalid ? "beyond " + f2(r.invalid) : "n/a") + '</span></div>';
+  }
+  function ivName(iv) { return { "1": "1 minute", "5": "5 minute", "15": "15 minute", "60": "1 hour", D: "daily", W: "weekly" }[iv] || iv; }
+  async function readSyms(idx) {
+    var So = A.S(); if (!So || !So.chartRead) { A.toast("AI reads are not available here"); return; }
+    var S = slotsGet(), items = [];
+    idx.forEach(function (i) { var sym = S[i]; if (sym) items.push({ sym: sym, iv: D.ivs[sym] || DEF_IV, i: i }); });
+    if (!items.length) { A.toast("Add tickers to the chart slots first"); return; }
+    D.busy = D.busy || {}; items.forEach(function (x) { D.busy[x.sym + "|" + x.iv] = 1; paintRead(x.i); });
+    try {
+      var r = await So.chartRead(items.map(function (x) { return { sym: x.sym, iv: x.iv }; })); D.reads = D.reads || {};
+      items.forEach(function (x) { var k = x.sym + "|" + x.iv; D.reads[k] = (r.reads || {})[k] || { error: "No read came back. Try again." }; });
+    } catch (e) {
+      items.forEach(function (x) { D.reads = D.reads || {}; D.reads[x.sym + "|" + x.iv] = { error: e.code === 429 ? "The AI is busy. Try again in a minute." : /AI key/.test(e.message || "") ? "AI key is not set on the server." : "The read failed (" + (e.message || "error") + "). Try again." }; });
+    }
+    items.forEach(function (x) { delete D.busy[x.sym + "|" + x.iv]; paintRead(x.i); });
+  }
+  function readOne(i) { clearTimeout(D.rt && D.rt[i]); D.rt = D.rt || {}; D.rt[i] = setTimeout(function () { readSyms([i]); }, 600); }
 
   /* ---------- quotes ---------- */
   async function loadQ() {
@@ -287,6 +345,7 @@
   root.addEventListener("click", async function (ev) {
     var b = ev.target.closest && ev.target.closest("button, .dy-sym[data-dysym]"); if (!b) return; var d = b.dataset;
     if (d.dysym) { setSym(d.dysym); return; }
+    if (d.dyread != null) { readSyms([+d.dyread]); return; }
     if (d.dytab) { setTab(d.dytab); return; }
     if (d.dynw) { D.news.tab = d.dynw; paintNews(); loadNews(); return; }
     if (d.dyts) { D.tside = d.dyts; paintTrades(); return; }
@@ -294,10 +353,11 @@
     var act = d.dyact;
     if (act === "prev") return open(addDays(D.date, -1)); if (act === "next") return open(addDays(D.date, 1)); if (act === "today") return open(today());
     if (act === "cal") return A.calendar();
+    if (act === "readall") { readSyms([0, 1, 2, 3, 4, 5]); return; }
     if (act === "gen") { var e = cur(); if (e && (e.outputs || []).length) A.openEntry(D.date); else A.toast("Nothing generated for this day yet. Use Studio to create posts from your trades."); return; }
     if (act === "fullplan") return A.plan();
     if (act === "nwref") { D.news.w = null; D.news.m = null; paintNews(); loadNews(); return; }
-    if (act === "wlimp") { var L = window.StockWatch ? window.StockWatch.list() : []; if (!L.length) { A.toast("Your main watchlist is empty"); return; } var AL = A.al(), bd = AL.board[D.date] || (AL.board[D.date] = { items: [] }); L.slice(0, 25).forEach(function (s) { if (!bd.items.some(function (i) { return i.sym === s; })) bd.items.push({ sym: s, note: "" }); }); await A.alSave(); paintWatch(); loadQ(); return; }
+    if (act === "wlimp") { var L = window.StockWatch ? window.StockWatch.list() : []; if (!L.length) { A.toast("Your main watchlist is empty"); return; } var AL = A.al(), bd = AL.board[D.date] || (AL.board[D.date] = { items: [] }); L.slice(0, 25).forEach(function (s) { if (!bd.items.some(function (i) { return i.sym === s; })) bd.items.push({ sym: s, note: "" }); }); await A.alSave(); paintWatch(); paintTiles(); loadQ(); return; }
     if (d.dywrm != null) { var AL2 = A.al(), b2 = AL2.board[D.date]; if (b2) { b2.items.splice(+d.dywrm, 1); await A.alSave(); paintWatch(); } return; }
     if (d.dyaldel) { var AL3 = A.al(); AL3.list = AL3.list.filter(function (x) { return x.id !== d.dyaldel; }); await A.alSave(); paintAlerts(); return; }
     if (d.dypst) { var pp = d.dypst.split("|"); await mutate(function (e2) { (e2.dplans || []).forEach(function (p) { if (p.id === pp[0]) p.st = pp[1]; }); }); paintPlan(); return; }
@@ -329,6 +389,7 @@
     ev.preventDefault(); var f = ev.target.id;
     if (f === "dywf") { await addBoard($("dyws").value, $("dywn").value.trim()); $("dyws").value = ""; $("dywn").value = ""; $("dyws").focus(); return; }
     if (f === "dycf") { setSym($("dycs").value); return; }
+    if (ev.target.dataset && ev.target.dataset.dyswap != null) { var sy = ev.target.querySelector("input").value.toUpperCase().replace(/[^A-Z.]/g, ""); if (!sy) return; var S2 = slotsGet(); S2[+ev.target.dataset.dyswap] = sy; slotsSave(S2); D.tkey = ""; paintTiles(); return; }
     if (f === "dyaf") {
       var p = A.alParse($("dyat").value, $("dyas").value); if (!p.raw) return; if (!p.sym) { A.toast("Add a ticker"); return; }
       var AL = A.al(); AL.list.unshift({ id: "a" + Date.now().toString(36) + Math.floor(Math.random() * 1e3), ts: isToday() ? Date.now() : new Date(D.date + "T12:00:00").getTime(), sym: p.sym, side: p.side, trig: p.trig, tw: p.tw, t1: p.t1, stop: p.stop, rr: p.rr, raw: p.raw, status: "watching", posted: 0 });
