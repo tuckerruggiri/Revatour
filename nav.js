@@ -122,12 +122,22 @@
     document.documentElement.style.setProperty("--mc", m.c); tagEl.textContent = m.tag;
     Object.keys(modeBtns).forEach(function (x) { modeBtns[x].classList.toggle("on", x === k); });
     [].slice.call(main.querySelectorAll("button.nav")).forEach(function (b) { hold.appendChild(b); });
-    main.innerHTML = "";
+    main.innerHTML = ""; secEls.length = 0;
+    var coll = lsGet("ss-navsec-m", {});
+    var GC = { "Today": "#e8782a", "Review & practice": "#8b4fe0", "My portfolio": "#1f9d55", "Find ideas": "#2b7de0", "Market": "#2b7de0", "Charts & zones": "#8b4fe0", "My list": "#e8782a", "You": "#7d8793" };
     m.g.forEach(function (g) {
-      var h = document.createElement("div"); h.className = "nmh"; h.textContent = g[0]; main.appendChild(h);
-      g[1].forEach(function (id) { var b = $(id); if (b) { b.style.setProperty("--sc", m.c); main.appendChild(b); } });
+      var key = k + "|" + g[0], col = GC[g[0]] || m.c;
+      var d = document.createElement("div"); d.className = "ns" + (coll[key] ? " c" : ""); d.style.setProperty("--sc", col);
+      d.innerHTML = '<button type="button" class="nsh" aria-expanded="' + (!coll[key]) + '"><i></i><span>' + g[0] + '</span>' + svg("chev", "nsc") + '</button><div class="nsb"><div class="nsi"></div></div>';
+      var body = d.querySelector(".nsi");
+      g[1].forEach(function (id) { var b = $(id); if (b) { b.style.setProperty("--sc", col); body.appendChild(b); } });
+      main.appendChild(d); secEls.push(d);
+      d.querySelector(".nsh").addEventListener("click", function () {
+        var c = d.classList.toggle("c"); this.setAttribute("aria-expanded", String(!c)); coll[key] = c; lsSet("ss-navsec-m", coll);
+      });
     });
     if (go) { var hb = $(m.home); if (hb) hb.click(); }
+    syncActive();
   }
   if (MODES) setMode(mode, false);
 
