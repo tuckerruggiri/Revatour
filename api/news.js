@@ -83,6 +83,27 @@ async function forSymbol(sym, key) {
   return items;
 }
 
+
+const ECON = /\b(fed|fomc|powell|rate (cut|hike|decision)|interest rate|inflation|cpi|ppi|pce|jobs report|payrolls?|unemployment|jobless|gdp|retail sales|ism|pmi|treasury|yield|tariffs?|trade war|opec|oil prices?|crude|recession|consumer (confidence|sentiment)|housing starts|economy|economic)\b/i;
+let mcache = { t: 0, v: null };
+async function market(key) {
+  if (mcache.v && Date.now() - mcache.t < TTL) return mcache.v;
+  const today = ymd(new Date());
+  const [gen, earn] = await Promise.all([
+    fetch('https://finnhub.io/api/v1/news?category=general&token=' + key).then((r) => (r.ok ? r.json() : [])).catch(() => []),
+    fetch(`https://finnhub.io/api/v1/calendar/earnings?from=${today}&to=${today}&token=${key}`).then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
+  ]);
+  const all = (Array.isArray(gen) ? gen : []).map((x) => ({
+    id: 'fm-' + x.id, sym: '', kind: 'market', ts: (x.datetime || 0) * 1000, title: String(x.headline || '').slice(0, 220),
+    url: x.url, source: x.source || 'News', summary: String(x.summary || '').slice(0, 200),
+  })).filter((x) => x.title && x.ts);
+  const econ = all.filter((x) => ECON.test(x.title + ' ' + x.summary));
+  const earnings = ((earn && earn.earningsCalendar) || []).filter((e) => e.symbol && /^[A-Z]{1,5}$/.test(e.symbol)).slice(0, 80)
+    .map((e) => ({ sym: e.symbol, hour: e.hour || '', eps: e.epsEstimate == null ? null : e.epsEstimate, rev: e.revenueEstimate == null ? null : e.revenueEstimate }));
+  mcache = { t: Date.now(), v: { market: all.slice(0, 40), econ: econ.slice(0, 30), earnings } };
+  return mcache.v;
+}
+
 module.exports = async (req, res) => {
   const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
   if (!token) return res.status(401).json({ error: 'log in first' });
@@ -93,6 +114,11 @@ module.exports = async (req, res) => {
     if (!r.ok) return res.status(401).json({ error: 'invalid login' });
   } catch (e) { return res.status(500).json({ error: 'auth check failed' }); }
 
+  if (req.query && req.query.market) {
+    const k = process.env.FINNHUB_KEY || '';
+    res.setHeader('Cache-Control', 'private, max-age=30');
+    return res.status(200).json(Object.assign({ configured: !!k, ts: Date.now() }, k ? await market(k) : { market: [], econ: [], earnings: [] }));
+  }
   const raw = String((req.query && (req.query.symbols || req.query.symbol)) || '');
   const syms = Array.from(new Set(raw.toUpperCase().split(',').map((s) => s.trim()).filter((s) => /^[A-Z]{1,5}(\.[A-Z])?$/.test(s)))).slice(0, 15);
   if (!syms.length) return res.status(400).json({ error: 'no valid symbols' });
