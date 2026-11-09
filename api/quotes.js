@@ -8,6 +8,8 @@ const TTL = 15 * 1000;
 // 4 new ones are fetched per request. Anything not fetched yet simply shows as a dash.
 const vcache = new Map(); // SYMBOL -> { t, v }
 const VTTL = 3 * 3600 * 1000;
+const mcache = new Map(); // SYMBOL -> { t, hi, lo } 52-week range, kept 12 hours
+const MTTL = 12 * 3600 * 1000;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 module.exports = async (req, res) => {
@@ -39,6 +41,22 @@ module.exports = async (req, res) => {
       cache.set(s, { t: Date.now(), q });
       out[s] = q;
     } catch (e) { /* skip this ticker */ }
+  }));
+  // 52-week range from Finnhub's free metric endpoint (at most 10 new symbols per request)
+  let mb = 10;
+  await Promise.all(Object.keys(out).map(async (s) => {
+    let m = mcache.get(s);
+    if (!m || Date.now() - m.t > MTTL) {
+      if (mb <= 0) { if (m) out[s] = Object.assign({}, out[s], { w52h: m.hi, w52l: m.lo }); return; }
+      mb--;
+      try {
+        const r = await fetch('https://finnhub.io/api/v1/stock/metric?' + new URLSearchParams({ symbol: s, metric: 'all', token: key }).toString());
+        const j = r.ok ? await r.json() : null;
+        const hi = j && j.metric ? Number(j.metric['52WeekHigh']) : NaN, lo = j && j.metric ? Number(j.metric['52WeekLow']) : NaN;
+        if (isFinite(hi) && isFinite(lo)) { m = { t: Date.now(), hi, lo }; mcache.set(s, m); }
+      } catch (e) { /* skip */ }
+    }
+    if (m) out[s] = Object.assign({}, out[s], { w52h: m.hi, w52l: m.lo });
   }));
   const avKey = process.env.ALPHAVANTAGE_KEY || '';
   let budget = 4;
