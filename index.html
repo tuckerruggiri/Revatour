@@ -404,7 +404,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <div class="brand">Stockspot</div>
   <div id="acct" style="display:flex;align-items:center;gap:8px;margin:2px 0 10px;font-size:.82rem;color:var(--mute)"><span id="whoami" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span><button id="themebtn" type="button" aria-label="Switch between light and dark" title="Light / dark" style="border:1px solid var(--line);background:none;color:var(--ink);border-radius:7px;padding:4px 8px;font:inherit;cursor:pointer;line-height:1"></button><button id="logout" type="button" style="border:1px solid var(--line);background:none;color:var(--ink);border-radius:7px;padding:4px 9px;font:inherit;cursor:pointer">Log out</button></div>
   <div id="pnlcard"></div>
-  <button class="nav on" id="navhome" type="button">Home</button>
+  <button class="nav on" id="navhome" type="button">Watchlist</button>
   <button class="nav" id="navprofile" type="button">Profile</button>
   <button class="nav" id="navstudio" type="button">Studio</button>
   <button class="nav" id="navplan" type="button">Trade Plan</button>
@@ -2945,7 +2945,7 @@ function coachBody(){return coach&&coach.md?'<div class="out ptxt coachbox" id="
 function renderHome(){var el=$("home");if(!el)return;
  var td=todayISO();
  var who=($("whoami")&&$("whoami").textContent)||"";
- var h='<div class="hm-top"><div><h1>Home</h1><p class="sub">'+(who?esc(who)+". ":"")+esc(dayLabel(td))+'</p></div>'+bellHtml()+'</div>';
+ var h='<div class="hm-top"><div><h1>Watchlist</h1><p class="sub">'+(who?esc(who)+". ":"")+esc(dayLabel(td))+'</p></div>'+bellHtml()+'</div>';
  h+=alStrip();
  h+='<div class="hm-top2"><aside class="hm-side wl-slot">'+wlHtml()+'</aside><section class="hm-newsbox"><div class="wl-h"><h2>News</h2><small id="hmnwmeta">Your watchlist and stocks you trade</small></div><div id="hmnews" class="hm-newsscroll"><span class="hint">Loading...</span></div></section></div>';
  el.innerHTML=h;wlLoad().then(function(){if(!$("home").hidden){wlRender();wlQuote()}});
