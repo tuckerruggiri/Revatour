@@ -13,7 +13,7 @@
     '.sc-hd{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 14px;border-bottom:1px solid var(--line,#ddd)}.sc-t{font-size:22px;font-weight:800;letter-spacing:.5px}.sc-sub{color:var(--mute,#777);font-size:12px}' +
     '.sc-fr{display:flex;gap:6px;flex-wrap:wrap}.sc-fr button,.sc-x,.sc-lk{border:1px solid var(--line,#ddd);background:var(--bg,#f6f6f6);color:var(--ink,#111);border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer;text-decoration:none}' +
     '.sc-fr button.on{background:var(--accent,#2b7de0);color:var(--accent-ink,#fff);border-color:var(--accent,#2b7de0);font-weight:700}.sc-sp{flex:1}' +
-    '.sc-body{flex:1;min-height:0;position:relative}.sc-body>div{position:absolute;inset:0}.sc-msg{display:grid;place-items:center;height:100%;color:var(--mute,#777);padding:20px;text-align:center}' +
+    '.sc-body{flex:1;min-height:0;position:relative}.sc-body>div{position:absolute;inset:0}.sc-msg{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;height:100%;color:var(--mute,#777);padding:20px;text-align:center}' +
     '.sc-ft{padding:6px 14px;border-top:1px solid var(--line,#ddd);font-size:11px;color:var(--mute,#777)}' +
     '[data-chart]{cursor:pointer}.pl-tk,.mv-tk{background:none;border:0;border-bottom:1px dotted currentColor;color:inherit;font:inherit;font-weight:700;padding:0 1px;margin:0;cursor:pointer}.pl-tk:hover,.mv-tk:hover{color:var(--accent)}' +
     '.sc-ic{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin-left:5px;padding:0;vertical-align:middle;border:1px solid var(--line,#ddd);border-radius:6px;background:var(--bg,#f6f6f6);color:var(--mute,#777);cursor:pointer}.sc-ic:hover{color:var(--accent,#2b7de0);border-color:var(--accent,#2b7de0)}' +
@@ -77,10 +77,10 @@
     ensureCss();
     box = document.createElement("div"); box.className = "sc-mod"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", sym + " chart");
     box.innerHTML = '<div class="sc-box"><div class="sc-hd"><span class="sc-t"></span><div class="sc-fr">' + frames() + '</div><span class="sc-sp"></span>' +
-      '<a class="sc-lk" target="_blank" rel="noopener" href="https://www.tradingview.com/chart/?symbol=' + encodeURIComponent(sym) + '">Full TradingView ↗</a><button type="button" class="sc-x" data-scx>Close ✕</button></div>' +
+      '<button type="button" class="tp-watch" data-wl="' + sym + '" data-wlbig="1"></button><a class="sc-lk" target="_blank" rel="noopener" href="https://www.tradingview.com/chart/?symbol=' + encodeURIComponent(sym) + '">Full TradingView ↗</a><button type="button" class="sc-x" data-scx>Close ✕</button></div>' +
       '<div class="sc-body"></div><div class="sc-ft">Candles with a 9 EMA, 200 MA, VWAP and volume. Use the toolbar to change time frame, draw lines and add indicators. Chart by TradingView; prices may be delayed. Not investment advice.</div></div>';
     box.querySelector(".sc-t").textContent = sym;
-    document.body.appendChild(box);
+    document.body.appendChild(box); if (window.StockChart && window.StockChart.syncWatch) window.StockChart.syncWatch();
     box.addEventListener("click", function (e) {
       if (e.target === box || e.target.closest("[data-scx]")) return close();
       var b = e.target.closest("[data-scf]");
@@ -104,7 +104,8 @@
     }).join("");
   }
   /* chart icon + watchlist star after every ticker on any page */
-  var STAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>';
+  var PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+  var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   function watching(s) { return !!(window.StockWatch && window.StockWatch.has(s)); }
   var wlAsked = false;
   function setHtml(n, html) { if (n.__h !== html) { n.__h = html; n.innerHTML = html; } }
@@ -113,8 +114,8 @@
     [].forEach.call(document.querySelectorAll("[data-wl]"), function (n) {
       var s = n.getAttribute("data-wl"), on = watching(s);
       n.classList.toggle("on", on);
-      if (n.hasAttribute("data-wlbig")) setHtml(n, STAR + (on ? "On your watchlist" : "Add to watchlist"));
-      else if (n.classList.contains("sc-wl")) { setHtml(n, STAR + (n.getAttribute("data-lbl") ? (on ? "Watching" : "Watch") : "")); n.title = on ? "Remove " + s + " from watchlist" : "Add " + s + " to watchlist"; }
+      if (n.hasAttribute("data-wlbig")) setHtml(n, (on ? CHECK : PLUS) + (on ? "On your watchlist" : "Add to watchlist"));
+      else if (n.classList.contains("sc-wl")) { setHtml(n, (on ? CHECK : PLUS) + (n.getAttribute("data-lbl") ? (on ? "Watching" : "Watch") : "")); n.title = on ? "Remove " + s + " from watchlist" : "Add " + s + " to watchlist"; }
     });
     qwSync();
   }
@@ -161,7 +162,7 @@
   }
   function qwInit() {
     if (fab || !document.body) return;
-    fab = document.createElement("button"); fab.type = "button"; fab.className = "qw-fab"; fab.setAttribute("aria-label", "Add a stock to your watchlist"); fab.innerHTML = STAR + "Add to watchlist";
+    fab = document.createElement("button"); fab.type = "button"; fab.className = "qw-fab"; fab.setAttribute("aria-label", "Add a stock to your watchlist"); fab.innerHTML = PLUS + "Add to watchlist";
     qw = document.createElement("div"); qw.className = "qw-pop"; qw.hidden = true;
     qw.innerHTML = '<h3>Add to your watchlist</h3><p>Type a ticker, or tap one below. It shows on your Home screen.</p><form class="qw-form" autocomplete="off"><input type="text" maxlength="7" placeholder="Ticker, like NVDA" aria-label="Ticker symbol"><button type="submit">Add</button></form><div class="qw-l">Quick add</div><div class="qw-chips qw-sugw"><span class="qw-sug qw-chips"></span></div><div class="qw-l">Your watchlist</div><div class="qw-chips qw-have"></div>';
     document.body.appendChild(qw); document.body.appendChild(fab);
