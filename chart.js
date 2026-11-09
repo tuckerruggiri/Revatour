@@ -58,18 +58,17 @@
   function frames(cur2) {
     return FRAMES.map(function (f) { return '<button type="button" data-scf="' + f[0] + '" class="' + (f[0] === (cur2 || iv) ? "on" : "") + '">' + f[1] + '</button>'; }).join("");
   }
-  /* inline chart: lives inside a page (used on each ticker's own page) */
-  function mount(host, sym) {
+  /* embedded chart that fills a container on a page (used by each ticker page) */
+  function embed(host, sym) {
     sym = clean(sym); if (!sym || !host) return;
     ensureCss();
-    var wrap = document.createElement("div"); wrap.className = "sc-inl"; wrap.id = "tkchart"; var f = "D";
-    wrap.innerHTML = '<div class="sc-hd"><b>Chart</b><div class="sc-fr">' + frames(f) + '</div><span class="sc-sp"></span><button type="button" class="sc-lk" data-chart="' + sym + '">Expand ⤢</button></div><div class="sc-body"></div>';
-    host.insertAdjacentElement("afterend", wrap);
-    wrap.addEventListener("click", function (e) {
+    var f = "D"; host.className = (host.className + " sc-inl").trim();
+    host.innerHTML = '<div class="sc-hd"><b>' + sym + ' chart</b><div class="sc-fr">' + frames(f) + '</div><span class="sc-sp"></span><a class="sc-lk" target="_blank" rel="noopener" href="https://www.tradingview.com/chart/?symbol=' + encodeURIComponent(sym) + '">Full TradingView ↗</a></div><div class="sc-body"></div>';
+    host.onclick = function (e) {
       var b = e.target.closest("[data-scf]"); if (!b) return;
-      f = b.getAttribute("data-scf"); [].forEach.call(wrap.querySelectorAll("[data-scf]"), function (x) { x.classList.toggle("on", x === b); }); draw(wrap, sym, f, false);
-    });
-    draw(wrap, sym, f, false);
+      f = b.getAttribute("data-scf"); [].forEach.call(host.querySelectorAll("[data-scf]"), function (x) { x.classList.toggle("on", x === b); }); draw(host, sym, f, false);
+    };
+    draw(host, sym, f, false);
   }
   function ensureCss() { if (!document.getElementById("sc-css")) { var st = document.createElement("style"); st.id = "sc-css"; st.textContent = CSS; document.head.appendChild(st); } }
   function open(sym) {
@@ -107,22 +106,19 @@
   /* add a small chart button after every $TICKER chip, alert, news tag and watchlist row on any page */
   function dec(root) {
     if (!root.querySelectorAll) return;
-    var items = root.querySelectorAll('.tk[data-tk],[data-tk2],.wl-tk[data-wlsel]');
+    var items = root.querySelectorAll('.tk[data-tk],[data-tk2]');
     [].forEach.call(items, function (n) {
       if (n.getAttribute("data-sci") || n.closest(".sc-mod,.sc-inl")) return;
-      var s = clean(n.getAttribute("data-tk") || n.getAttribute("data-tk2") || n.getAttribute("data-wlsel")); if (!/^[A-Z]{1,5}(\.[A-Z])?$/.test(s)) return;
+      var s = clean(n.getAttribute("data-tk") || n.getAttribute("data-tk2")); if (!/^[A-Z]{1,5}(\.[A-Z])?$/.test(s)) return;
       n.setAttribute("data-sci", "1");
       var b = document.createElement("button"); b.type = "button"; b.className = "sc-ic"; b.setAttribute("data-chart", s); b.title = "Open " + s + " chart"; b.setAttribute("aria-label", "Open " + s + " chart"); b.innerHTML = ICON;
       n.insertAdjacentElement("afterend", b);
     });
-    var tq = root.id === "tickerv" ? root : root.querySelector && root.querySelector("#tickerv");
-    var h1 = tq && tq.querySelector("h1"), q = tq && tq.querySelector("#tkquote");
-    if (h1 && q && !tq.querySelector("#tkchart")) { var sym = clean((h1.textContent || "").replace("$", "")); if (/^[A-Z]{1,5}(\.[A-Z])?$/.test(sym)) { ensureCss(); mount(q, sym); } }
   }
   var pend = false;
   function schedule() { if (pend) return; pend = true; (window.requestAnimationFrame || setTimeout)(function () { pend = false; dec(document.body); }); }
   function start() { dec(document.body); new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true }); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
 
-  window.StockChart = { open: open, close: close, link: link, mount: mount, icon: ICON };
+  window.StockChart = { open: open, close: close, link: link, embed: embed, icon: ICON };
 })();

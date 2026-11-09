@@ -302,6 +302,27 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .wl-tk{background:none;border:none;text-align:left;font-family:inherit;font-weight:600;font-size:.8rem;line-height:1.35;padding:2px 2px;cursor:pointer;color:#e6e6e6}.wl-tk.up{color:#22d36b}.wl-tk.dn{color:#ff6a3d}
 .wl-px,.wl-vol,.wl-pc{font-family:inherit;font-weight:500;font-size:.8rem;line-height:1.35;font-variant-numeric:tabular-nums;padding:2px}.wl-px{color:#cfe0ee}.wl-vol{color:#e6e6e6;font-size:.8rem}.wl-pc.up{color:#22d36b}.wl-pc.dn{color:#ff6a3d}
 .wl-x{border:none;background:none;color:#7b8a99;padding:0 2px;font-size:.7rem;cursor:pointer;opacity:0}.wl-row:hover .wl-x{opacity:1}.wl-x:hover{color:#ff6a3d}
+#tickerv.wrap{max-width:none;width:100%;box-sizing:border-box;padding-left:28px;padding-right:28px}
+.tp-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 24px;margin:6px 0 16px}.tp-head h1{margin:0;font-size:2.6rem;line-height:1;letter-spacing:-.02em}.tp-head .sub{margin:6px 0 0}.tp-px{display:flex;align-items:center;gap:12px}.tp-px b{font:800 2.3rem/1 "Bricolage Grotesque",sans-serif}.tp-px .wl-pill{font-size:.95rem;padding:5px 12px}
+.tp-main{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}.tp-chart.sc-inl{margin:0;border-radius:16px}.tp-chart .sc-body{height:min(74vh,640px)}
+.tp-side{display:grid;gap:14px}.tp-card{margin:0;padding:16px;border-radius:16px}.tp-card h3{margin:0 0 10px;font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}
+.tp-st{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:.92rem}.tp-st:last-child{border-bottom:0}.tp-st span{color:var(--mute)}
+.tp-rg{margin:2px 0 12px}.tp-rg small{display:flex;justify-content:space-between;color:var(--mute);font-size:.78rem}.tp-rg .bar{position:relative;height:8px;border-radius:5px;background:linear-gradient(90deg,var(--loss),var(--line),var(--gain));margin:7px 0}.tp-rg .bar i{position:absolute;top:-4px;width:6px;height:16px;border-radius:3px;background:var(--ink);box-shadow:0 0 0 2px var(--panel)}
+.tp-g.hm-grid{grid-template-columns:1fr 1fr;margin:0 0 12px;gap:8px}.tp-g .hm-tile{padding:9px 11px}.tp-g .hm-tile b{font-size:1.05rem}
+.tp-rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px;margin-top:4px;align-items:start}
+@media(max-width:1100px){.tp-main,.tp-rows{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:700px){#tickerv.wrap{padding-left:14px;padding-right:14px}.tp-head h1{font-size:2rem}.tp-px b{font-size:1.8rem}}
+/* clean, theme-aware watchlist (replaces the dark TOS look) */
+.wl-card .wl-t{background:var(--panel);border:1px solid var(--line);border-radius:14px;max-height:640px;font-family:inherit}
+.wl-card .wl-tr{grid-template-columns:1.1fr 1fr 1.1fr 1fr 24px;gap:8px;padding:0 14px}
+.wl-card .wl-hd{background:var(--bg);border-bottom:1px solid var(--line);padding:0 14px}
+.wl-card .wl-th{color:var(--mute);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:11px 2px}.wl-card .wl-th.on{color:var(--ink)}
+.wl-card .wl-row{border-bottom:1px solid var(--line);color:var(--ink);min-height:50px;transition:background .1s}.wl-card .wl-row:last-child{border-bottom:0}.wl-card .wl-row:hover{background:var(--bg)}
+.wl-card .wl-tk{font-size:1.02rem;font-weight:800;padding:13px 2px;color:var(--ink);letter-spacing:.2px}.wl-card .wl-tk.up,.wl-card .wl-tk.dn{color:var(--ink)}
+.wl-card .wl-px{color:var(--ink);font-size:.95rem;font-weight:600}
+.wl-card .wl-pc{font-weight:700;font-size:.82rem;padding:3px 10px;border-radius:99px;justify-self:end}.wl-card .wl-pc.up{color:var(--gain);background:color-mix(in srgb,var(--gain) 14%,transparent)}.wl-card .wl-pc.dn{color:var(--loss);background:color-mix(in srgb,var(--loss) 14%,transparent)}
+.wl-card .wl-vol{color:var(--mute);font-size:.85rem}.wl-card .wl-x{color:var(--mute);font-size:.8rem}.wl-card .wl-row:hover .wl-x{opacity:1}
+
 .gd-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.gd-top input{min-width:200px}
 .gd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;margin:14px 0 30px}
 .gd-card{display:flex;flex-direction:column;text-align:left;padding:0;overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:16px;cursor:pointer;font:inherit;color:var(--ink);transition:transform .15s,box-shadow .15s}.gd-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.14)}
@@ -1724,8 +1745,7 @@ document.addEventListener("click",function(ev){var t=ev.target,b=t.closest&&t.cl
  if(d.wlsort){WL.sort=WL.sort.k===d.wlsort?{k:d.wlsort,d:-WL.sort.d}:{k:d.wlsort,d:d.wlsort==='s'?1:-1};wlRender();return}
  if(d.wlq){wlAddSym(d.wlq);return}
  if(d.wlrm){wlRemove(d.wlrm);return}
- if(d.wlsel!=null&&$("newsv").hidden){ev.stopPropagation();showTicker(d.wlsel);return}
- if(d.wlsel!=null&&!$("newsv").hidden){WL.pick=WL.pick===d.wlsel?"":d.wlsel;var tb=$("nwtabs");if(tb)tb.querySelectorAll(".iv-chip").forEach(function(c){c.remove()});renderNews();wlRender();wlQuote();nwLoad();ev.stopPropagation();return}
+ if(d.wlsel!=null){ev.stopPropagation();showTicker(d.wlsel);return}
  if(d.nwtab){WL.pick="";WL.tab=d.nwtab;renderNews();wlRender();wlQuote();nwLoad();return}
  if(b.id==="nwref"){nwLoad();wlQuote();return}},true);
 
@@ -2750,31 +2770,30 @@ function newsWhen(t){var m=/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})/.exec(t||"");i
 async function tkNews(sym,fallback){var So=S();if(!So||!So.news){return}
  var run=async function(){if($("tickerv").hidden||!$("tknews"))return false;try{var N=await So.news([sym]);if($("tickerv").hidden||!$("tknews"))return false;$("tknews").innerHTML=(N.configured?"":'<p class="hint" style="margin:0 0 8px">Showing SEC filings only. Add FINNHUB_KEY in Vercel to turn on live headlines.</p>')+((N.items&&N.items.length)?newsList(N.items,false,15):'<span class="hint">No recent headlines or filings.</span>')+'<p class="hint" style="margin:8px 0 0">Updates every minute while you are on this page.</p>'}catch(e){}return true};
  await run();if(window.tkNewsT)clearInterval(window.tkNewsT);window.tkNewsT=setInterval(async function(){if(document.hidden)return;var ok=await run();if(!ok){clearInterval(window.tkNewsT)}},60000)}
+function tpRange(l,lo,hi,px){if(lo==null||hi==null||!(hi>lo))return "";var p=px==null?null:Math.max(0,Math.min(100,(px-lo)/(hi-lo)*100));return '<div class="tp-rg"><small><span>'+l+'</span></small><div class="bar">'+(p==null?"":'<i style="left:calc('+p+'% - 3px)"></i>')+'</div><small><span>'+money(lo)+'</span><span>'+money(hi)+'</span></small></div>'}
 async function showTicker(sym){var prevProfile=!$("profilev").hidden,prevPage=curPage,prevPageOpen=!$("pagev").hidden,prevHome=!$("home").hidden,prevNews=!$("newsv").hidden;
  tkBack=prevNews?showNews:prevProfile?showProfile:(prevPageOpen&&prevPage?function(){showPage(prevPage)}:(prevHome?showHome:showStudio));
  hideViews();$("tickerv").hidden=false;
  var all=allTrades().filter(function(t){return String(t.t||"").toUpperCase()===sym}),el=$("tickerv");
  var net=all.reduce(function(a,t){return a+(t.p||0)},0),wins=all.filter(function(t){return t.p>0}).length;
  var tile=function(l,v){return '<div class="hm-tile"><b>'+v+'</b><span>'+l+'</span></div>'};
- var h='<button class="crumb" type="button" id="tkback">&larr; Back</button><h1>$'+esc(sym)+'</h1><p class="sub" id="tkname">&nbsp;</p>'+
-  '<div id="tkquote" class="hm-grid"><div class="hint">Loading market data...</div></div>'+
-  '<h2 class="pf-sec">Chart</h2><div class="pf-panel" id="tkchart"><span class="hint">Loading...</span></div>'+
-  '<h2 class="pf-sec">About</h2><div class="pf-panel" id="tkabout"><span class="hint">Loading...</span></div>'+
-  '<h2 class="pf-sec">News</h2><div class="pf-panel" id="tknews"><span class="hint">Loading...</span></div>'+
-  '<h2 class="pf-sec">Your trades in $'+esc(sym)+'</h2>';
+ var h='<button class="crumb" type="button" id="tkback">&larr; Back</button><div class="tp-head"><div><h1>$'+esc(sym)+'</h1><p class="sub" id="tkname">&nbsp;</p></div><div class="tp-px" id="tkpx"></div></div>'+
+  '<div class="tp-main"><div class="tp-chart" id="tkchartbox"></div><aside class="tp-side"><div class="pf-panel tp-card"><h3>Today</h3><div id="tkquote"><div class="hint">Loading market data...</div></div></div><div class="pf-panel tp-card"><h3>About</h3><div id="tkabout"><span class="hint">Loading...</span></div></div></aside></div>'+
+  '<div class="tp-rows"><div class="tp-col"><h2 class="pf-sec">News</h2><div class="pf-panel" id="tknews"><span class="hint">Loading...</span></div></div><div class="tp-col"><h2 class="pf-sec">Your trades in $'+esc(sym)+'</h2>';
  if(!all.length)h+='<div class="pf-panel hint">No saved trades in this ticker yet.</div>';
  else h+='<div class="hm-grid">'+tile("Trades",String(all.length))+tile("Net P&amp;L",'<span class="'+(net>=0?"gain":"loss")+'">'+sgn(net)+'</span>')+tile("Win rate",Math.round(wins/all.length*100)+"%")+'</div>';
- h+='<h2 class="pf-sec">On Stockspot</h2><div id="tkwall" class="feed"><p class="hint">Loading...</p></div><p class="hint">Market data from Alpha Vantage, may be delayed. Not financial advice.</p>';
- el.innerHTML=h;window.scrollTo(0,0);
+ h+='<h2 class="pf-sec">On Stockspot</h2><div id="tkwall" class="feed"><p class="hint">Loading...</p></div></div></div><p class="hint">Chart by TradingView. Company data from Alpha Vantage. Prices may be delayed. Not financial advice.</p>';
+ el.innerHTML=h;window.scrollTo(0,0);if(window.StockChart&&window.StockChart.embed)window.StockChart.embed($("tkchartbox"),sym);
  var So=S();
  function fill(id,html){if($("tickerv").hidden||!$(id))return;$(id).innerHTML=html}
  if(So&&So.market)So.market(sym).then(function(M){
   if(!M.configured){var nm='<span class="hint">Market data is not connected yet. Add the ALPHAVANTAGE_KEY in Vercel to turn it on.</span>';fill("tkquote",nm);fill("tkchart",nm);fill("tkabout",nm);fill("tknews",nm);return}
   var q=M.quote;
   if(M.about&&M.about.name){var nl=$("tkname");if(nl)nl.textContent=M.about.name+(M.about.sector?" · "+M.about.sector:"")}
-  fill("tkquote",q?tile("Price",money(q.price))+tile("Change",'<span class="'+((q.change||0)>=0?"gain":"loss")+'">'+(q.change>=0?"+":"")+(q.change==null?"":q.change.toFixed(2))+(q.pct==null?"":" ("+(q.pct>=0?"+":"")+q.pct.toFixed(2)+"%)")+'</span>')+tile("Open",money(q.open))+tile("Previous close",money(q.prev))+tile("Day range",money(q.low)+" - "+money(q.high))+tile("Volume",compactNum(q.volume)):'<span class="hint">No price available right now. The free data limit may be used up for today. Try again later.</span>');
-  var D=M.daily||[];fill("tkchart",D.length>1?sparkline(D.map(function(x){return x.c}),D[D.length-1].c>=D[0].c)+'<p class="hint" style="margin:6px 0 0">Last '+D.length+' trading days, closing price.</p>':'<span class="hint">'+(M.dailyError==="limit"?"Data limit reached. Wait a minute and reopen this page.":"Chart not available right now.")+'</span>');
-  var A=M.about;fill("tkabout",A?'<div class="hm-grid">'+tile("Market cap",compactNum(A.cap))+tile("P/E",A.pe==null?"&mdash;":A.pe.toFixed(1))+tile("EPS",A.eps==null?"&mdash;":money(A.eps))+tile("Dividend yield",A.yield==null?"&mdash;":(A.yield*100).toFixed(2)+"%")+tile("52-week high",A.hi52==null?"&mdash;":money(A.hi52))+tile("52-week low",A.lo52==null?"&mdash;":money(A.lo52))+'</div>'+(A.desc?'<p class="hint" style="margin:8px 0 0">'+esc(A.desc)+(A.desc.length>=400?"...":"")+'</p>':""):'<span class="hint">'+(M.aboutError==="limit"?"Data limit reached. Wait a minute and reopen this page.":"No company details for this symbol (ETFs and some tickers have none).")+'</span>');
+  var chg=q&&q.change!=null?q.change:null,upq=(chg||0)>=0,st=function(l,v){return '<div class="tp-st"><span>'+l+'</span><b>'+v+'</b></div>'},pxEl=$("tkpx");
+  if(q&&pxEl)pxEl.innerHTML='<b>'+money(q.price)+'</b><span class="wl-pill '+(upq?"up":"dn")+'">'+(chg==null?"":(upq?"+":"")+chg.toFixed(2))+(q.pct==null?"":" ("+(q.pct>=0?"+":"")+q.pct.toFixed(2)+"%)")+'</span>';
+  fill("tkquote",q?tpRange("Day range",q.low,q.high,q.price)+st("Open",money(q.open))+st("Previous close",money(q.prev))+st("Volume",compactNum(q.volume)):'<span class="hint">No price available right now. The free data limit may be used up for today. Try again later.</span>');
+  var A=M.about;fill("tkabout",A?'<div class="hm-grid tp-g">'+tile("Market cap",compactNum(A.cap))+tile("P/E",A.pe==null?"&mdash;":A.pe.toFixed(1))+tile("EPS",A.eps==null?"&mdash;":money(A.eps))+tile("Dividend yield",A.yield==null?"&mdash;":(A.yield*100).toFixed(2)+"%")+'</div>'+tpRange("52-week range",A.lo52,A.hi52,q&&q.price)+(A.desc?'<p class="hint" style="margin:8px 0 0">'+esc(A.desc)+(A.desc.length>=400?"...":"")+'</p>':""):'<span class="hint">'+(M.aboutError==="limit"?"Data limit reached. Wait a minute and reopen this page.":"No company details for this symbol (ETFs and some tickers have none).")+'</span>');
   fill("tknews",M.news&&M.news.length?'<div class="nlist">'+M.news.map(function(x){var u=/^https?:\/\//.test(x.url||"")?x.url:"";return (u?'<a class="nitem" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">':'<div class="nitem">')+'<span>'+esc(x.title)+'</span><small>'+esc(x.source||"")+(newsWhen(x.time)?" · "+newsWhen(x.time):"")+'</small>'+(u?'</a>':'</div>')}).join("")+'</div>':'<span class="hint">No recent headlines.</span>')
  tkNews(sym,M&&M.news)}).catch(function(){var m='<span class="hint">Could not load market data.</span>';fill("tkquote",m);fill("tkchart",m);fill("tkabout",m);fill("tknews",m)});
  else{var m2='<span class="hint">Market data is not available here.</span>';fill("tkquote",m2);fill("tkchart",m2);fill("tkabout",m2);fill("tknews",m2)}
