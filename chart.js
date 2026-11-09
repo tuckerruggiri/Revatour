@@ -40,15 +40,15 @@
   function clean(sym) { return String(sym || "").toUpperCase().replace(/[^A-Z0-9.\-:]/g, "").slice(0, 20); }
   function draw(root, sym, interval, isOpen) {
     root = root || box; sym = sym || cur; interval = interval || iv;
-    var body = root.querySelector(".sc-body"), cid = "sc-tv-" + (++seq);
+    var mini = root.classList && root.classList.contains("sc-mini"), body = root.querySelector(".sc-body"), cid = "sc-tv-" + (++seq);
     body.innerHTML = '<div class="sc-msg">Loading chart…</div>';
     loadTV().then(function () {
       if (!root.isConnected || (isOpen !== false && root === box && !box)) return;
       body.innerHTML = '<div id="' + cid + '"></div>';
       new window.TradingView.widget({
         container_id: cid, autosize: true, symbol: sym, interval: interval, timezone: "America/New_York",
-        theme: dark() ? "dark" : "light", style: "1", locale: "en", enable_publishing: false,
-        allow_symbol_change: true, withdateranges: true, hide_side_toolbar: false, save_image: true, details: false,
+        theme: mini ? "dark" : dark() ? "dark" : "light", style: "1", locale: "en", enable_publishing: false,
+        allow_symbol_change: !mini, withdateranges: !mini, hide_side_toolbar: mini, hide_top_toolbar: mini, save_image: true, details: false,
         studies: ["Volume@tv-basicstudies", "MAExp@tv-basicstudies", "MASimple@tv-basicstudies", "VWAP@tv-basicstudies"],
         studies_overrides: { "moving average exponential.length": 9, "moving average.length": 200 }
       });
@@ -96,8 +96,8 @@
     opt = opt || {};
     sym = clean(sym); if (!sym || !host) return;
     ensureCss();
-    var f = iv0 || "D"; host.className = (host.className + " sc-inl").trim();
-    host.innerHTML = '<div class="sc-hd"><b>' + sym + ' chart</b><div class="sc-fr">' + frames(f) + '</div><span class="sc-sp"></span>' + (opt.mini ? '<a class="sc-lk" target="tvmine" rel="noopener" href="https://www.tradingview.com/chart/?symbol=' + encodeURIComponent(sym) + '" title="Open in your TradingView">↗</a>' : svBtn(sym)) + '</div><div class="sc-body"></div>';
+    var f = iv0 || "D"; host.className = (host.className + " sc-inl" + (opt.mini ? " sc-mini" : "")).trim();
+    host.innerHTML = '<div class="sc-hd"><b>' + sym + (opt.mini ? '' : ' chart') + '</b><div class="sc-fr">' + frames(f) + '</div><span class="sc-sp"></span>' + (opt.mini ? '<a class="sc-lk" target="tvmine" rel="noopener" href="https://www.tradingview.com/chart/?symbol=' + encodeURIComponent(sym) + '" title="Open in your TradingView">↗</a>' + (opt.extra || '') : svBtn(sym)) + '</div><div class="sc-body"></div>';
     host.onclick = function (e) {
       var b = e.target.closest("[data-scf]"); if (!b) return;
       f = b.getAttribute("data-scf"); [].forEach.call(host.querySelectorAll("[data-scf]"), function (x) { x.classList.toggle("on", x === b); }); draw(host, sym, f, false); if (opt.onframe) opt.onframe(f);
