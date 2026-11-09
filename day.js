@@ -79,12 +79,12 @@
       '<div class="dy-card" style="flex:1"><div class="dy-h"><span class="tt">Watchlist</span><span class="dy-sp"></span><button type="button" class="b" data-dyact="wlimp" title="Add everything from your main watchlist">+ From my list</button></div><form class="dy-fm" id="dywf"><input class="s" id="dyws" placeholder="Ticker" maxlength="6" autocomplete="off"><input class="n" id="dywn" placeholder="Why / levels" autocomplete="off"><button class="b pri" type="submit">Add</button></form><div class="dy-bd" id="dywl"></div></div>' +
       '<div class="dy-card" style="flex:1.25"><div class="dy-h"><span class="tt">Alerts</span><span class="dy-sp"></span><span id="dyalc"></span></div><form class="dy-fm" id="dyaf"><input class="s" id="dyas" placeholder="Ticker" maxlength="6" autocomplete="off"><input class="n" id="dyat" placeholder="short below 248.8, target 246.5, stop 249.2" autocomplete="off"><button class="b pri" type="submit">Alert</button></form><div class="dy-bd" id="dyal"></div></div>' +
       '</div><div class="dy-col b">' +
-      '<div class="dy-card ch sm"><div class="dy-h"><span class="tt">Chart</span><span class="dy-sp"></span><span class="dy-q" style="text-transform:none;letter-spacing:0;font-weight:500">SPY is always on. Pick a stock to see it next to SPY.</span></div><div class="dy-chs" id="dychs"></div><div class="dy-cw" id="dycw"></div></div>' +
+      '<div class="dy-card ch sm"><div class="dy-h"><span class="tt">SPY</span><span class="dy-q" data-q="SPY" style="text-transform:none;letter-spacing:0"></span></div><div class="dy-cw" id="dycw"></div></div>' +
       '<div class="dy-card" id="dyplan" style="flex:none"></div>' +
       '</div><div class="dy-col c"><div class="dy-card" style="flex:1">' +
       '<div class="dy-tabs" id="dytabs"></div>' +
       '<div class="dy-tab" id="dytb-trades"></div><div class="dy-tab" id="dytb-feed"></div><div class="dy-tab" id="dytb-news"></div></div></div></div>' +
-      '<div class="dy-card" id="dytlc" style="flex:none;min-height:0"><div class="dy-h"><span class="tt">Watchlist charts</span><span class="dy-q" style="text-transform:none;letter-spacing:0;font-weight:500">The first 6 stocks in this day&#39;s Watchlist. AI reads each chart in its own time frame</span><span class="dy-sp"></span><button type="button" class="b pri" data-dyact="readall">Read all with AI</button></div><div class="dy-tl" id="dytl"></div><div class="dy-q" style="padding:0 12px 10px;text-transform:none;letter-spacing:0">Scenarios from the candles on screen, not predictions or advice. Candle data is a free feed and can be delayed. Draw your own levels before you trade.</div></div>';
+      '<div class="dy-card" id="dytlc" style="flex:none;min-height:0"><div class="dy-h"><span class="tt">Watchlist charts</span><span class="dy-q" style="text-transform:none;letter-spacing:0;font-weight:500">The first 6 stocks in this day&#39;s Watchlist. AI reads each chart in its own time frame</span><span class="dy-sp"></span><button type="button" class="b pri" data-dyact="readall">Read all with AI</button></div><div class="dy-tl" id="dytgrid"></div><div class="dy-q" style="padding:0 12px 10px;text-transform:none;letter-spacing:0">Scenarios from the candles on screen, not predictions or advice. Candle data is a free feed and can be delayed. Draw your own levels before you trade.</div></div>';
     D.sym = "SPY"; D.charts = "";
     paintAll(); paintChart();
   }
@@ -149,13 +149,15 @@
   }
   function paintChart() {
     var host = $("dycw"); if (!host || !window.StockChart || !window.StockChart.embed) { if (host) host.innerHTML = '<div class="dy-em">Chart is not available.</div>'; return; }
-    var key = D.sym; if (D.charts === key) return; D.charts = key;
-    host.innerHTML = '<div id="dyc1"></div>' + (D.sym !== "SPY" ? '<div id="dyc2"></div>' : "");
-    window.StockChart.embed($("dyc1"), "SPY", "5", { mini: true });
-    if (D.sym !== "SPY") window.StockChart.embed($("dyc2"), D.sym, "5", { mini: true });
-    paintChips();
+    if (D.charts === "SPY") return; D.charts = "SPY";
+    host.innerHTML = '<div id="dyc1"></div>'; window.StockChart.embed($("dyc1"), "SPY", "5", { mini: true });
   }
-  function setSym(s) { s = String(s || "").toUpperCase().replace(/[^A-Z.]/g, ""); if (!s) return; D.sym = s; paintChart(); loadQ(); }
+  function setSym(s) {
+    s = String(s || "").toUpperCase().replace(/[^A-Z.]/g, ""); if (!s) return; D.sym = s;
+    ["dtsym", "dyas", "dpsym"].forEach(function (id) { var x = $(id); if (x) x.value = s; });
+    var n = $("dyat"); if (n) { n.focus(); n.select(); }
+    A.toast && A.toast(s + " added to Trades, Alerts and Trade plan"); loadQ();
+  }
 
   /* ---------- six watchlist charts with an AI read ---------- */
   var DEF_IV = "5";
@@ -164,7 +166,7 @@
     a = uniq(a).slice(0, 6); while (a.length < 6) a.push(""); return a;
   }
   function paintTiles() {
-    var host = $("dytl"); if (!host || !window.StockChart || !window.StockChart.embed) return;
+    var host = $("dytgrid"); if (!host || !window.StockChart || !window.StockChart.embed) return;
     var S = slotsGet(), key = S.join(",");
     if (D.tkey === key) return; D.tkey = key; D.reads = D.reads || {}; D.ivs = D.ivs || {};
     host.innerHTML = S.map(function (sym, i) {
