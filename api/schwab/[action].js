@@ -1,5 +1,5 @@
 // api/schwab/[action].js — connect a Schwab account (Trader API) and pull executed trades.
-// Routes: /api/schwab/start  /callback  /save  /status  /trades  /quotes  /chain  /disconnect
+// Routes: /api/schwab/start  /callback  /save  /status  /trades  /quotes  /fund  /chain  /disconnect
 // Vercel env vars: SCHWAB_APP_KEY, SCHWAB_APP_SECRET, SUPABASE_URL, SUPABASE_ANON_KEY
 // Optional: SCHWAB_REDIRECT_URI (must match the callback URL registered with Schwab; default below)
 // The refresh token is encrypted with a key derived from SCHWAB_APP_SECRET and stored in the user's own row (ss_broker, RLS).
@@ -184,7 +184,7 @@ module.exports = async (req, res) => {
         catch (e) { if (e.status === 400 || e.status === 401) return res.status(200).json({ configured: true, reconnect: true }); throw e; }
       }
       const IDX = new Set(['TNX', 'TYX', 'FVX', 'IRX', 'VIX', 'SPX', 'DJI', 'COMPX']), wire = (x) => (IDX.has(x) ? '$' + x : x); // Schwab writes index symbols with a leading $
-      const r = await fetch(MARKET + '/quotes?' + new URLSearchParams({ symbols: syms.map(wire).join(','), fields: 'quote,reference' }).toString(), { headers: { Authorization: 'Bearer ' + at.token, Accept: 'application/json' } });
+      const r = await fetch(MARKET + '/quotes?' + new URLSearchParams({ symbols: syms.map(wire).join(','), fields: 'quote,reference,fundamental' }).toString(), { headers: { Authorization: 'Bearer ' + at.token, Accept: 'application/json' } });
       if (r.status === 401) atCache.delete(u.id);
       if (!r.ok) return res.status(200).json({ configured: true, noMarket: true, status: r.status });
       const j = await r.json();
@@ -195,11 +195,33 @@ module.exports = async (req, res) => {
         const p = isFinite(last) && last > 0 ? last : mark; if (!isFinite(p) || p <= 0) return;
         const m = isFinite(mark) && mark > 0 ? mark : p;
         const dp = isFinite(close) && close > 0 ? (m - close) / close * 100 : Number(q.netPercentChange);
-        out[s] = { n: (j[wire(s)].reference && j[wire(s)].reference.description) || undefined, p, m, d: isFinite(close) && close > 0 ? m - close : Number(q.netChange), dp: isFinite(dp) ? dp : null, pc: isFinite(close) ? close : null, o: isFinite(Number(q.openPrice)) && Number(q.openPrice) > 0 ? Number(q.openPrice) : null, w52h: isFinite(Number(q['52WeekHigh'])) ? Number(q['52WeekHigh']) : null, w52l: isFinite(Number(q['52WeekLow'])) ? Number(q['52WeekLow']) : null, h: isFinite(Number(q.highPrice)) && Number(q.highPrice) > 0 ? Number(q.highPrice) : null, l: isFinite(Number(q.lowPrice)) && Number(q.lowPrice) > 0 ? Number(q.lowPrice) : null, v: isFinite(Number(q.totalVolume)) ? Number(q.totalVolume) : null, t: Number(q.quoteTime) || null };
+        const fu = j[wire(s)].fundamental || {}, nz = (x) => (isFinite(Number(x)) && Number(x) > 0 ? Number(x) : null);
+        out[s] = { pe: nz(fu.peRatio), eps: isFinite(Number(fu.eps)) && fu.eps !== null ? Number(fu.eps) : null, dy: isFinite(Number(fu.divYield)) && fu.divYield !== null ? Number(fu.divYield) : null, av: nz(fu.avg10DaysVolume), av1: nz(fu.avg1YearVolume), n: (j[wire(s)].reference && j[wire(s)].reference.description) || undefined, p, m, d: isFinite(close) && close > 0 ? m - close : Number(q.netChange), dp: isFinite(dp) ? dp : null, pc: isFinite(close) ? close : null, o: isFinite(Number(q.openPrice)) && Number(q.openPrice) > 0 ? Number(q.openPrice) : null, w52h: isFinite(Number(q['52WeekHigh'])) ? Number(q['52WeekHigh']) : null, w52l: isFinite(Number(q['52WeekLow'])) ? Number(q['52WeekLow']) : null, h: isFinite(Number(q.highPrice)) && Number(q.highPrice) > 0 ? Number(q.highPrice) : null, l: isFinite(Number(q.lowPrice)) && Number(q.lowPrice) > 0 ? Number(q.lowPrice) : null, v: isFinite(Number(q.totalVolume)) ? Number(q.totalVolume) : null, t: Number(q.quoteTime) || null };
       });
       ['TNX', 'TYX', 'FVX', 'IRX'].forEach((y) => { const o = out[y]; if (o) ['p', 'm', 'd', 'pc', 'o', 'h', 'l', 'w52h', 'w52l'].forEach((k) => { if (typeof o[k] === 'number') o[k] = o[k] / 10; }); }); // Schwab quotes these yield indexes as yield x 10 (48.64 = 4.864%)
       res.setHeader('Cache-Control', 'private, max-age=5');
       return res.status(200).json({ configured: true, source: 'schwab', ts: Date.now(), quotes: out });
+    }
+    if (action === 'fund') { // slow-changing fundamentals (market cap, beta, ratios), cached 6h per symbol
+      if (!c || daysLeft <= 0) return res.status(200).json({ configured: true, reconnect: true });
+      const syms = Array.from(new Set(String(req.query.symbols || '').toUpperCase().split(',').map((x) => x.trim()).filter((x) => /^[A-Z]{1,5}(\.[A-Z])?$/.test(x) && !['TNX', 'TYX', 'FVX', 'IRX', 'VIX', 'SPX', 'DJI', 'COMPX'].includes(x)))).slice(0, 50);
+      if (!syms.length) return res.status(200).json({ configured: true, fund: {} });
+      global.__fundCache = global.__fundCache || new Map(); const fc = global.__fundCache, now = Date.now(), out = {}, need = [];
+      syms.forEach((x) => { const h = fc.get(x); if (h && now - h.t < 6 * 3600e3) out[x] = h.f; else need.push(x); });
+      if (need.length) {
+        let at = atCache.get(u.id);
+        if (!at || at.exp < now + 60000) {
+          try { const tk = await tokenCall({ grant_type: 'refresh_token', refresh_token: c.rt }); at = { token: tk.access_token, exp: Date.now() + (Number(tk.expires_in) || 1800) * 1000 }; atCache.set(u.id, at); }
+          catch (e) { if (e.status === 400 || e.status === 401) return res.status(200).json({ configured: true, reconnect: true }); throw e; }
+        }
+        const r = await fetch(MARKET + '/instruments?' + new URLSearchParams({ symbol: need.join(','), projection: 'fundamental' }).toString(), { headers: { Authorization: 'Bearer ' + at.token, Accept: 'application/json' } });
+        if (r.status === 401) atCache.delete(u.id);
+        if (!r.ok) return res.status(200).json({ configured: true, noMarket: true, status: r.status, fund: out });
+        const j = await r.json(), num = (x) => { x = Number(x); return isFinite(x) && x !== 0 ? x : null; };
+        (j.instruments || []).forEach((it) => { const f = it.fundamental; if (!f || !it.symbol) return; const v = { mc: num(f.marketCap), beta: num(f.beta), pe: num(f.peRatio), pb: num(f.pbRatio), nm: num(f.netProfitMarginTTM), roe: num(f.returnOnEquity), dy: num(f.dividendYield), sh: num(f.sharesOutstanding) }; fc.set(it.symbol, { t: now, f: v }); out[it.symbol] = v; });
+      }
+      res.setHeader('Cache-Control', 'private, max-age=60');
+      return res.status(200).json({ configured: true, source: 'schwab', fund: out });
     }
     if (action === 'chain') { // option chain for the Options school page (needs the Market Data product on the Schwab app)
       if (!c || daysLeft <= 0) return res.status(200).json({ configured: true, reconnect: true });
