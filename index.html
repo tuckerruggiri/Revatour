@@ -436,6 +436,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <button class="nav" id="navzone" type="button">Zones</button>
   <button class="nav" id="navprac" type="button">Practice charts</button>
   <button class="nav" id="navfut" type="button">Futures</button>
+  <button class="nav" id="navopt" type="button">Options school</button>
   <button class="nav" id="navals" type="button">Alerts</button>
   <button class="nav" id="navmov" type="button">Parabolic movers</button>
   <button class="nav" id="navpulse" type="button">Market pulse</button>
@@ -463,6 +464,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <div class="wrap" id="labv" hidden></div>
 <div class="wrap" id="zonev" hidden></div>
 <div class="wrap" id="futv" hidden></div>
+<div class="wrap" id="optv" hidden></div>
 <div class="wrap" id="pracv" hidden></div>
 <div class="wrap" id="movv" hidden></div>
 <div class="wrap" id="pulsev" hidden></div>
@@ -2361,6 +2363,8 @@ function showZones(){hideViews();$("navzone").classList.add("on");$("zonev").hid
 $("navzone").addEventListener("click",showZones);
 function showFutures(){hideViews();$("navfut").classList.add("on");$("futv").hidden=false;if(window.FuturesPage)window.FuturesPage.mount($("futv"));else $("futv").textContent="The Futures page could not load. Refresh the page.";window.scrollTo(0,0)}
 $("navfut").addEventListener("click",showFutures);
+function showOptions(){hideViews();$("navopt").classList.add("on");$("optv").hidden=false;if(window.OptionsPage)window.OptionsPage.mount($("optv"));else $("optv").textContent="The Options page could not load. Refresh the page.";window.scrollTo(0,0)}
+$("navopt").addEventListener("click",showOptions);
 function showPractice(){hideViews();$("navprac").classList.add("on");$("pracv").hidden=false;if(window.PracticeChart)window.PracticeChart.mount($("pracv"));else $("pracv").textContent="Practice charts could not load. Refresh the page.";window.scrollTo(0,0)}
 $("navprac").addEventListener("click",showPractice);
 function showMovers(){hideViews();$("navmov").classList.add("on");$("movv").hidden=false;if(window.ParabolicMovers)window.ParabolicMovers.mount($("movv"));else $("movv").textContent="Parabolic movers could not load. Refresh the page."}
@@ -2597,8 +2601,8 @@ async function saveProfile(){if(store.db)await store.db.doc("meta/profile").set(
 function myAvUrl(){return prof.src||(prof.aid?blobUrl(prof.aid):"")}
 function avatarHTML(cls,url,name){var A=window.stockspotAuth||{},u=url!=null?url:myAvUrl(),nm=name||A.username||A.email||"?";
  return '<div class="pf-av'+(cls?" "+cls:"")+'">'+(u?'<img alt="" src="'+esc(u)+'">':esc((nm.charAt(0)||"?").toUpperCase()))+'</div>'}
-function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","scv","labv","zonev","pracv","futv","movv","pulsev","invv","gdv","rlv","newsv","dayv"].forEach(function(i){$(i).hidden=true});
- ["navday","navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navals","navsc","navlab","navzone","navprac","navfut","navmov","navpulse"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
+function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","scv","labv","zonev","pracv","futv","optv","movv","pulsev","invv","gdv","rlv","newsv","dayv"].forEach(function(i){$(i).hidden=true});
+ ["navday","navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navals","navsc","navlab","navzone","navprac","navfut","navopt","navmov","navpulse"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
 function paintProfNav(){$("navprofile").classList.toggle("on",profTab!=="coach");$("navcoach").classList.toggle("on",profTab==="coach")}
 function recordBlock(){var all=allTrades();if(!all.length)return '<div class="pf-panel hint" style="margin:8px 0">No saved trades yet. Save a day in Studio and your record shows here.</div>';
  var days=dailyPnl(),yr=pickYear(days),m=pnlModel(days,yr),s=withCtx({trades:all},[],stats);
@@ -3238,6 +3242,7 @@ restore();loadImgs();showStats();renderImgs();initStore();
 })();
 </script>
 <script src="futures.js"></script>
+<script src="options.js"></script>
 <script src="practice-data.js"></script>
 <script src="practice.js"></script>
 <script src="chart.js"></script>
