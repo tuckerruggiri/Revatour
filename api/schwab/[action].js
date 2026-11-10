@@ -183,13 +183,14 @@ module.exports = async (req, res) => {
         try { const tk = await tokenCall({ grant_type: 'refresh_token', refresh_token: c.rt }); at = { token: tk.access_token, exp: Date.now() + (Number(tk.expires_in) || 1800) * 1000 }; atCache.set(u.id, at); }
         catch (e) { if (e.status === 400 || e.status === 401) return res.status(200).json({ configured: true, reconnect: true }); throw e; }
       }
-      const r = await fetch(MARKET + '/quotes?' + new URLSearchParams({ symbols: syms.join(','), fields: 'quote' }).toString(), { headers: { Authorization: 'Bearer ' + at.token, Accept: 'application/json' } });
+      const IDX = new Set(['TNX', 'TYX', 'FVX', 'IRX', 'VIX', 'SPX', 'DJI', 'COMPX']), wire = (x) => (IDX.has(x) ? '$' + x : x); // Schwab writes index symbols with a leading $
+      const r = await fetch(MARKET + '/quotes?' + new URLSearchParams({ symbols: syms.map(wire).join(','), fields: 'quote' }).toString(), { headers: { Authorization: 'Bearer ' + at.token, Accept: 'application/json' } });
       if (r.status === 401) atCache.delete(u.id);
       if (!r.ok) return res.status(200).json({ configured: true, noMarket: true, status: r.status });
       const j = await r.json();
       const out = {};
       syms.forEach((s) => {
-        const q = j && j[s] && j[s].quote; if (!q) return;
+        const q = j && j[wire(s)] && j[wire(s)].quote; if (!q) return;
         const last = Number(q.lastPrice), mark = Number(q.mark), close = Number(q.closePrice);
         const p = isFinite(last) && last > 0 ? last : mark; if (!isFinite(p) || p <= 0) return;
         const m = isFinite(mark) && mark > 0 ? mark : p;
