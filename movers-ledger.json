@@ -2,8 +2,8 @@
  "started": "2026-11-04",
  "asof": "2026-11-10",
  "bench": "SPY",
- "spyLast": 735.29,
- "spyLastD": "2026-11-06",
+ "spyLast": 752.69,
+ "spyLastD": "2026-11-09",
  "horizon": {
   "day": 1,
   "radar": 10,
@@ -21,8 +21,8 @@
    "entry": 12.4,
    "entryN": "Nov 4",
    "spy": 766.81,
-   "last": 12.4,
-   "lastD": "2026-11-04",
+   "last": 13.78,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -69,8 +69,8 @@
    "entry": 258.38,
    "entryN": "Nov 4",
    "spy": 766.81,
-   "last": 258.38,
-   "lastD": "2026-11-04",
+   "last": 269,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -180,8 +180,8 @@
    "entry": 803.71,
    "entryN": "Nov 4, 11:22 am ET",
    "spy": 766.81,
-   "last": 656.39,
-   "lastD": "2026-11-05",
+   "last": 733.15,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -216,8 +216,8 @@
    "entry": 206.69,
    "entryN": "Nov 3 close",
    "spy": 766.81,
-   "last": 186.64,
-   "lastD": "2026-11-06",
+   "last": 178.67,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -240,8 +240,8 @@
    "entry": 803.71,
    "entryN": "Nov 4, 11:22 am ET",
    "spy": 766.81,
-   "last": 656.39,
-   "lastD": "2026-11-05",
+   "last": 733.15,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -276,8 +276,8 @@
    "entry": 48.42,
    "entryN": "Nov 4 price from article",
    "spy": 766.81,
-   "last": 48.42,
-   "lastD": "2026-11-04",
+   "last": 48.98,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -288,8 +288,8 @@
    "entry": 2.49,
    "entryN": "Nov 4 close",
    "spy": 766.81,
-   "last": 2.27,
-   "lastD": "2026-11-05",
+   "last": 2.38,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -300,8 +300,8 @@
    "entry": 1.98,
    "entryN": "Nov 4 (+13.8%)",
    "spy": 766.81,
-   "last": 1.79,
-   "lastD": "2026-11-05",
+   "last": 1.41,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -312,8 +312,8 @@
    "entry": 1.11,
    "entryN": "Nov 4 (+55.5%)",
    "spy": 766.81,
-   "last": 0.85,
-   "lastD": "2026-11-05",
+   "last": 0.6976,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -336,8 +336,8 @@
    "entry": 3.12,
    "entryN": "Nov 3 midday",
    "spy": 766.81,
-   "last": 0.164,
-   "lastD": "2026-11-05",
+   "last": 0.0875,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -480,8 +480,8 @@
    "entry": 52.37,
    "entryN": "Nov 4 close (Alpha Vantage)",
    "spy": 766.81,
-   "last": 53.07,
-   "lastD": "2026-11-06",
+   "last": 58.86,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -492,8 +492,8 @@
    "entry": 245.72,
    "entryN": "Nov 4 close (Alpha Vantage)",
    "spy": 766.81,
-   "last": 249.95,
-   "lastD": "2026-11-06",
+   "last": 276.09,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -732,8 +732,8 @@
    "entry": 0.54,
    "entryN": "Nov 5 close (screener)",
    "spy": 733,
-   "last": 0.54,
-   "lastD": "2026-11-05",
+   "last": 0.418,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -744,8 +744,8 @@
    "entry": 0.377,
    "entryN": "Nov 5 close (screener)",
    "spy": 733,
-   "last": 0.377,
-   "lastD": "2026-11-05",
+   "last": 0.44,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -768,8 +768,8 @@
    "entry": 0.496,
    "entryN": "Nov 5 close (screener)",
    "spy": 733,
-   "last": 0.496,
-   "lastD": "2026-11-05",
+   "last": 0.3793,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -804,9 +804,12 @@
    "entry": 249.95,
    "entryN": "Nov 6 close (Alpha Vantage)",
    "spy": 735.29,
-   "last": 249.95,
+   "last": 276.09,
    "lastD": "2026-11-09",
-   "status": "open"
+   "status": "closed",
+   "closed": 276.09,
+   "closedD": "2026-11-09",
+   "spyClosed": 752.69
   },
   {
    "id": "day-NVDA-20261109",
@@ -816,9 +819,12 @@
    "entry": 186.64,
    "entryN": "Nov 6 close (Alpha Vantage)",
    "spy": 735.29,
-   "last": 186.64,
+   "last": 178.67,
    "lastD": "2026-11-09",
-   "status": "open"
+   "status": "closed",
+   "closed": 178.67,
+   "closedD": "2026-11-09",
+   "spyClosed": 752.69
   },
   {
    "id": "day-NVR-20261109",
@@ -861,10 +867,10 @@
    "t": "CRWV",
    "kind": "swing",
    "posted": "2026-11-09",
-   "entry": null,
-   "entryN": "",
-   "spy": null,
-   "last": null,
+   "entry": 48.98,
+   "entryN": "Nov 9 close (Alpha Vantage / StockAnalysis)",
+   "spy": 752.69,
+   "last": 48.98,
    "lastD": "2026-11-09",
    "status": "open"
   },
@@ -885,11 +891,11 @@
    "t": "AMD",
    "kind": "day",
    "posted": "2026-11-10",
-   "entry": null,
-   "entryN": "",
-   "spy": null,
-   "last": null,
-   "lastD": "2026-11-10",
+   "entry": 508.58,
+   "entryN": "Nov 9 close (Alpha Vantage / StockAnalysis)",
+   "spy": 752.69,
+   "last": 508.58,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -897,11 +903,11 @@
    "t": "HIMS",
    "kind": "day",
    "posted": "2026-11-10",
-   "entry": null,
-   "entryN": "",
-   "spy": null,
-   "last": null,
-   "lastD": "2026-11-10",
+   "entry": 22.94,
+   "entryN": "Nov 9 close (Alpha Vantage / StockAnalysis)",
+   "spy": 752.69,
+   "last": 22.94,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -909,11 +915,11 @@
    "t": "TLS",
    "kind": "day",
    "posted": "2026-11-10",
-   "entry": null,
-   "entryN": "",
-   "spy": null,
-   "last": null,
-   "lastD": "2026-11-10",
+   "entry": 7.17,
+   "entryN": "Nov 9 close (Alpha Vantage / StockAnalysis)",
+   "spy": 752.69,
+   "last": 7.17,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -921,11 +927,11 @@
    "t": "MRNA",
    "kind": "swing",
    "posted": "2026-11-10",
-   "entry": null,
-   "entryN": "",
-   "spy": null,
-   "last": null,
-   "lastD": "2026-11-10",
+   "entry": 269,
+   "entryN": "Nov 9 close (Alpha Vantage / StockAnalysis)",
+   "spy": 752.69,
+   "last": 269,
+   "lastD": "2026-11-09",
    "status": "open"
   },
   {
@@ -1022,6 +1028,102 @@
    "spy": null,
    "last": null,
    "lastD": "2026-11-10",
+   "status": "open"
+  },
+  {
+   "id": "day-CEG-20261110",
+   "t": "CEG",
+   "kind": "day",
+   "posted": "2026-11-10",
+   "entry": 276.09,
+   "entryN": "Nov 9 close (Alpha Vantage)",
+   "spy": 752.69,
+   "last": 276.09,
+   "lastD": "2026-11-09",
+   "status": "open"
+  },
+  {
+   "id": "day-NVDA-20261110",
+   "t": "NVDA",
+   "kind": "day",
+   "posted": "2026-11-10",
+   "entry": 178.67,
+   "entryN": "Nov 9 close (Stocktitan)",
+   "spy": 752.69,
+   "last": 178.67,
+   "lastD": "2026-11-09",
+   "status": "open"
+  },
+  {
+   "id": "day-TTD-20261110",
+   "t": "TTD",
+   "kind": "day",
+   "posted": "2026-11-10",
+   "entry": null,
+   "entryN": "After-hours Nov 9; exact move unclear",
+   "spy": 752.69,
+   "last": null,
+   "lastD": "2026-11-10",
+   "status": "open"
+  },
+  {
+   "id": "day-DCTH-20261110",
+   "t": "DCTH",
+   "kind": "day",
+   "posted": "2026-11-10",
+   "entry": null,
+   "entryN": "Nov 9 session",
+   "spy": 752.69,
+   "last": null,
+   "lastD": "2026-11-10",
+   "status": "open"
+  },
+  {
+   "id": "day-NRG-20261110",
+   "t": "NRG",
+   "kind": "day",
+   "posted": "2026-11-10",
+   "entry": null,
+   "entryN": "Nov 9 session",
+   "spy": 752.69,
+   "last": null,
+   "lastD": "2026-11-10",
+   "status": "open"
+  },
+  {
+   "id": "penny-EDSA-20261110",
+   "t": "EDSA",
+   "kind": "penny",
+   "posted": "2026-11-10",
+   "entry": 2.63,
+   "entryN": "Nov 9 close (MarketBeat via DailyPolitical)",
+   "spy": 752.69,
+   "last": 2.63,
+   "lastD": "2026-11-09",
+   "status": "open"
+  },
+  {
+   "id": "penny-NWGL-20261110",
+   "t": "NWGL",
+   "kind": "penny",
+   "posted": "2026-11-10",
+   "entry": 3.23,
+   "entryN": "Nov 9 close (MarketBeat via DailyPolitical)",
+   "spy": 752.69,
+   "last": 3.23,
+   "lastD": "2026-11-09",
+   "status": "open"
+  },
+  {
+   "id": "micro-SOC-20261110",
+   "t": "SOC",
+   "kind": "micro",
+   "posted": "2026-11-10",
+   "entry": 0.81,
+   "entryN": "Nov 9 close (MarketBeat via DailyPolitical)",
+   "spy": 752.69,
+   "last": 0.81,
+   "lastD": "2026-11-09",
    "status": "open"
   }
  ]

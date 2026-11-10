@@ -3,43 +3,39 @@
  "tape": [
   {
    "l": "Dow",
-   "v": "51,286",
-   "d": -0.46
+   "v": "52,390",
+   "d": 2.15
   },
   {
    "l": "S&P 500",
-   "v": "7,377",
-   "d": 0.31
+   "v": "7,550",
+   "d": 2.35
   },
   {
    "l": "Nasdaq",
-   "v": "24,579",
-   "d": 1.09
+   "v": "25,253",
+   "d": 2.74
   },
   {
    "l": "Gold",
-   "v": "$4,075",
-   "d": -0.94
+   "v": "$4,138",
+   "d": 1.74
   },
   {
    "l": "WTI oil",
-   "v": "$90.83",
-   "d": 0.34
+   "v": "$84.99",
+   "d": -2.1
   },
   {
    "l": "10-yr yield",
-   "v": "4.86%"
+   "v": "4.88%"
   }
  ],
- "tapeSrc": "https://finance.yahoo.com/markets/live/stock-market-today-friday-november-6-dow-sp-500-nasdaq-jobs-report-earnings-135953863.html",
+ "tapeSrc": "https://finance.yahoo.com/markets/stocks/articles/stock-market-today-nov-9-222339218.html",
  "events": [
   {
-   "d": "2026-11-09",
-   "l": "CEG, RKLB, OXY earnings"
-  },
-  {
    "d": "2026-11-10",
-   "l": "CPI, CoreWeave earnings"
+   "l": "CPI, 10-yr auction, CoreWeave earnings"
   },
   {
    "d": "2026-11-11",
@@ -47,11 +43,15 @@
   },
   {
    "d": "2026-11-12",
-   "l": "Nebius, Cisco, Applied Materials earnings"
+   "l": "Nebius, Cisco, Applied Materials earnings; Freddie Mac rates"
   },
   {
    "d": "2026-11-13",
    "l": "PPI"
+  },
+  {
+   "d": "2026-11-17",
+   "l": "Nvidia earnings"
   }
  ],
  "picks": [
@@ -154,15 +154,15 @@
    "t": "QXO",
    "n": "QXO",
    "theme": "Unusual call volume",
-   "px": 12.4,
-   "pxN": "Nov 4 (MarketBeat)",
+   "px": 13.78,
+   "pxN": "Nov 9 close (Alpha Vantage)",
    "hi": 27.61,
    "lo": 10.03,
-   "hiN": "52-wk range $10.03 - $27.61",
+   "hiN": "52-week range (MarketBeat, Nov 4)",
    "cat": "No date set",
    "setup": "Call volume about 82% above normal",
-   "stage": 2,
-   "stageN": "Rose 5.9% to $12.40 but still far under its 200-day average ($17.21).",
+   "stage": 4,
+   "stageN": "Up about 19% Nov 9 after the options signal; the move may already have run.",
    "v": {
     "inst": -1,
     "ins": -1,
@@ -170,10 +170,11 @@
     "base": 1,
     "cat": -1
    },
-   "why": "48,052 calls traded vs a typical 26,427 (about 82% above). The shares rose 5.9% to $12.40 on Nov 4, against a 52-week range of $10.03 to $27.61.",
+   "why": "48,052 calls traded vs a typical 26,427 (about 82% above). The shares rose 5.9% to $12.40 on Nov 4, against a 52-week range of $10.03 to $27.61. It then rose 19.08% on Nov 9 (Stocktitan), well above the unusual call volume day.",
    "risk": "Option flow alone says little about direction, and the stock sits about 28% under its 200-day average. No Nov 5 update was found.",
    "src": "https://www.marketbeat.com/instant-alerts/options-qxo-sees-unusually-large-options-volume-nyse-qxo-2026-11-04/",
-   "srcN": "MarketBeat, Nov 4"
+   "srcN": "MarketBeat, Nov 4",
+   "chg": 19.2
   },
   {
    "kind": "radar",
@@ -274,9 +275,9 @@
    "t": "CEG",
    "n": "Constellation Energy",
    "theme": "Earnings beat, raised guide",
-   "px": 249.95,
-   "pxN": "Nov 6 close (Alpha Vantage)",
-   "chg": 4.3,
+   "px": 276.09,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": 10.46,
    "cat": "Q3 beat, 2026 guide raised (Nov 9)",
    "setup": "Beat and raise, up over 4% premarket",
    "v": {
@@ -286,7 +287,7 @@
     "iv": -1,
     "liq": -1
    },
-   "why": "Adjusted EPS was $5.06 vs $3.89 expected and revenue $9.55B vs $9.35B. 2026 adjusted EPS guidance is $12.50-$12.80 vs $12.22 expected. It is buying a 609 MW Rhode Island plant from Shell for $715M and has a 690 MW Amazon deal.",
+   "why": "Adjusted EPS was $5.06 vs $3.89 expected and revenue $9.55B vs $9.35B. 2026 adjusted EPS guidance is $12.50-$12.80 vs $12.22 expected. It is buying a 609 MW Rhode Island plant from Shell for $715M and has a 690 MW Amazon deal. It closed Nov 9 at $276.09 (+10.5%).",
    "risk": "Premarket gains can fade at the open, and the group sold off hard on Nov 5 on data-center regulation fears. Options had implied about an 8% move.",
    "src": "https://www.investing.com/news/earnings/constellation-shares-up-4-in-premarket-trade-on-q3-earnings-beat-higher-outlook-5011526",
    "srcN": "Investing.com, Nov 9"
@@ -296,9 +297,9 @@
    "t": "NVDA",
    "n": "Nvidia",
    "theme": "Board probe of CEO",
-   "px": 186.64,
-   "pxN": "Nov 6 close (Alpha Vantage)",
-   "chg": -4,
+   "px": 178.67,
+   "pxN": "Nov 9 close (Stocktitan)",
+   "chg": -4.27,
    "cat": "Board investigation of CEO Jensen Huang (reported Nov 9)",
    "setup": "Down more than 4% premarket on the probe",
    "v": {
@@ -315,77 +316,17 @@
    "soc": "Stocktwits retail sentiment was 'extremely bullish' for the week of Nov 2-6 even as the stock fell 8.8%; AltIndex's Nov 10 list shows about 15,400 Stocktwits mentions, up 54% in a day."
   },
   {
-   "kind": "day",
-   "t": "NVR",
-   "n": "NVR Inc",
-   "theme": "Homebuilders rally on election result",
-   "chg": 26,
-   "cat": "Democratic control of Congress (Nov 9)",
-   "setup": "Up more than 26% premarket",
-   "v": {
-    "news": 1,
-    "gap": 1,
-    "vol": -1,
-    "iv": -1,
-    "liq": -1
-   },
-   "why": "Homebuilders rallied after Democrats won the Senate and House. UBS says Democratic control could improve the odds of lower tariffs on building materials.",
-   "risk": "A move this large on a political read can retrace, and mortgage rates are still above 7%. No volume or price level was in the source.",
-   "src": "https://www.investing.com/news/stock-market-news/premarket-movers-nvidia-slides-on-huang-probe-nvr-extends-rally-5011241",
-   "srcN": "Investing.com, Nov 9"
-  },
-  {
-   "kind": "day",
-   "t": "ARGX",
-   "n": "argenx",
-   "theme": "Acquisition",
-   "chg": 2.2,
-   "cat": "Agrees to buy Unnatural Products (Nov 9)",
-   "setup": "Up 2.2% premarket on a deal",
-   "v": {
-    "news": 1,
-    "gap": 1,
-    "vol": -1,
-    "iv": -1,
-    "liq": -1
-   },
-   "why": "argenx agreed to acquire Unnatural Products for up to about $1.15B, including $550M upfront.",
-   "risk": "The premarket move is small and deal terms can include milestone payments that may never be paid. No price or volume was in the source.",
-   "src": "https://www.investing.com/news/stock-market-news/premarket-movers-nvidia-slides-on-huang-probe-nvr-extends-rally-5011241",
-   "srcN": "Investing.com, Nov 9"
-  },
-  {
-   "kind": "day",
-   "t": "SAP",
-   "n": "SAP",
-   "theme": "Analyst upgrade",
-   "chg": 3,
-   "cat": "JPMorgan upgrade to Overweight (Nov 9)",
-   "setup": "Up about 3% on an upgrade",
-   "v": {
-    "news": 1,
-    "gap": 1,
-    "vol": -1,
-    "iv": -1,
-    "liq": -1
-   },
-   "why": "SAP rose about 3% after JPMorgan upgraded it to Overweight from Neutral.",
-   "risk": "An upgrade-driven move can fade, and the article gave no price, volume or target. The software group has been volatile.",
-   "src": "https://www.investing.com/news/stock-market-news/premarket-movers-nvidia-slides-on-huang-probe-nvr-extends-rally-5011241",
-   "srcN": "Investing.com, Nov 9"
-  },
-  {
    "kind": "swing",
    "t": "RKLB",
    "n": "Rocket Lab",
    "theme": "Space, earnings",
-   "px": 53.07,
-   "pxN": "Nov 6 close (Alpha Vantage)",
-   "chg": 15.39,
+   "px": 58.86,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": 10.91,
    "hi": 151,
    "lo": 37.57,
    "hiN": "52-wk range $37.57 - $151.00",
-   "cat": "Earnings Mon Nov 9 after close",
+   "cat": "Reported Nov 9 after close; shares fell after hours",
    "catDate": "2026-11-09",
    "setup": "Earnings after a 12% drop",
    "v": {
@@ -395,7 +336,7 @@
     "mom": -1,
     "thm": 1
    },
-   "why": "Closed Nov 6 at $53.07 (+15.4%) after falling 12.2% on Nov 5, still far below its record close of $150.23. Options imply about a 15.4% move on the Nov 9 report (EarningsWatcher, Nov 6); consensus was about -$0.02 EPS on $256.51M revenue.",
+   "why": "Closed Nov 6 at $53.07 (+15.4%) after falling 12.2% on Nov 5, still far below its record close of $150.23. Options imply about a 15.4% move on the Nov 9 report (EarningsWatcher, Nov 6); consensus was about -$0.02 EPS on $256.51M revenue. Reported after the close Nov 9: record revenue of $268M, and the stock was down 6.66% after hours (Stocktitan, Nov 9).",
    "risk": "The Neutron rocket slipped to 2027 and the stock trades near 30x sales. Earnings can gap it either way, and it already bounced 15% going in.",
    "src": "https://earnings-watcher.com/earnings-this-week",
    "srcN": "EarningsWatcher, Nov 6; Motley Fool, Nov 5"
@@ -415,10 +356,13 @@
     "mom": -1,
     "thm": 1
    },
-   "why": "Reports after the close Nov 10 (call 5 pm ET). Consensus revenue is about $3.5B (+159% y/y); EPS estimates conflict (about -$1.17 to -$1.55). Options imply about a 21.2% move; the stock fell 9.9% on Nov 4.",
+   "why": "Reports after the close Nov 10 (call 5 pm ET). Consensus revenue is about $3.5B (+159% y/y); EPS estimates conflict (about -$1.17 to -$1.55). Options imply about a 21.2% move; the stock fell 9.9% on Nov 4. Premarket Nov 10 it was up about 1-2% (Hawksmoor, Nov 10); consensus is EPS -$1.53 on $3.54B revenue.",
    "risk": "AI data-center names are the center of the Nov 5 regulation scare, and the implied move is large. Sources disagree on the EPS consensus.",
    "src": "https://hamzareddani.substack.com/p/weekly-market-prep-midterm-malaise",
-   "srcN": "Hamza Reddani, Nov 9; EarningsWatcher, Nov 6"
+   "srcN": "Hamza Reddani, Nov 9; EarningsWatcher, Nov 6",
+   "px": 48.98,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": 5.56
   },
   {
    "kind": "swing",
@@ -636,9 +580,9 @@
    "t": "OPEN",
    "n": "Opendoor Technologies",
    "theme": "Housing, earnings reaction",
-   "px": 1.79,
-   "pxN": "Nov 5 close (Alpha Vantage)",
-   "chg": -9.6,
+   "px": 1.41,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": 0.71,
    "cat": "Q3 results out Nov 5",
    "setup": "Post-earnings drop after a run-up",
    "stage": 3,
@@ -660,9 +604,9 @@
    "t": "NRXP",
    "n": "NRx Pharmaceuticals",
    "theme": "Biotech, news already out",
-   "px": 2.27,
-   "pxN": "Nov 5 close (Alpha Vantage)",
-   "chg": -8.8,
+   "px": 2.38,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": 0,
    "cat": "FDA ANDA approved Oct 30; Nov 10 goal date moot",
    "catDate": "2026-11-10",
    "setup": "Approval announced before the goal date",
@@ -685,9 +629,9 @@
    "t": "CRIS",
    "n": "Curis",
    "theme": "Biotech, cash-strapped",
-   "px": 0.85,
-   "pxN": "Nov 5 close (Alpha Vantage)",
-   "chg": -23.4,
+   "px": 0.6976,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": -23.04,
    "cat": "Proxy filing (routine)",
    "setup": "Spike on a routine filing, now fading",
    "stage": 4,
@@ -709,9 +653,9 @@
    "t": "PARA",
    "n": "Parabolic Technologies (formerly Banzai)",
    "theme": "Delisting fight",
-   "px": 0.164,
-   "pxN": "Nov 5 close (Alpha Vantage)",
-   "chg": -48.6,
+   "px": 0.0875,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": -23.58,
    "cat": "Nasdaq suspension at Nov 5 open unless a hearing was requested",
    "catDate": "2026-11-05",
    "setup": "Delisting determination after three reverse splits",
@@ -734,9 +678,9 @@
    "t": "LABT",
    "n": "Lakewood-Amedex Biotherapeutics",
    "theme": "Biotech, antimicrobials",
-   "px": 0.54,
-   "pxN": "Nov 5 close",
-   "chg": 181.5,
+   "px": 0.418,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": 8.21,
    "cat": "Series C preferred fully redeemed (Nov 5 release)",
    "setup": "One-day spike on capital-structure news",
    "stage": 3,
@@ -748,7 +692,7 @@
     "buy": -1,
     "dil": 1
    },
-   "why": "On Nov 5 the company said it redeemed the last 127,097 Series C preferred shares for $1,270,970 cash (agreement dated Nov 2), so no preferred stock or borrowed-money debt remains and no more conversion shares can be issued. It has a Phase 2a trial of Nu-3 in infected diabetic foot ulcers (first patient dosed Sep 24).",
+   "why": "On Nov 5 the company said it redeemed the last 127,097 Series C preferred shares for $1,270,970 cash (agreement dated Nov 2), so no preferred stock or borrowed-money debt remains and no more conversion shares can be issued. It has a Phase 2a trial of Nu-3 in infected diabetic foot ulcers (first patient dosed Sep 24). On Nov 9 it closed at $0.418, below the $0.54 first logged.",
    "soc": "Not checked.",
    "opt": "Not stated.",
    "ins": "Not stated.",
@@ -761,9 +705,9 @@
    "t": "SDA",
    "n": "SunCar Technology Group",
    "theme": "Unexplained spike",
-   "px": 0.377,
-   "pxN": "Nov 5 close",
-   "chg": 144.8,
+   "px": 0.44,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": 16.87,
    "cat": "None found",
    "setup": "Big gain with no news found",
    "stage": 3,
@@ -815,9 +759,9 @@
    "t": "VIVK",
    "n": "Vivakor",
    "theme": "Going concern, retail chatter",
-   "px": 0.496,
-   "pxN": "Nov 5 close",
-   "chg": 34.11,
+   "px": 0.3793,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": -23.56,
    "cat": "Retail sentiment on Stocktwits",
    "setup": "Social-driven bounce",
    "stage": 4,
@@ -843,8 +787,8 @@
    "n": "Advanced Micro Devices",
    "theme": "Upgrade plus Nvidia headline fallout",
    "px": 508.58,
-   "pxN": "Nov 9 close",
-   "chg": 13,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": 13.26,
    "cat": "Oppenheimer upgrade; Google Cloud TPU host-CPU win (Nov 9)",
    "setup": "Upgrade-driven breakout on its best day in six months",
    "v": {
@@ -889,28 +833,28 @@
    "n": "Telos Corporation",
    "theme": "Big gainer, cause unconfirmed",
    "px": 7.17,
-   "pxN": "Nov 9 (StockAnalysis gainers)",
+   "pxN": "Nov 9 close (Alpha Vantage)",
    "chg": 48.76,
-   "cat": "Q3 results were scheduled for Nov 9",
+   "cat": "Q3 revenue +7.3%, 2026 forecast raised (Nov 9)",
    "setup": "Large one-day gain on 4.1M shares",
    "v": {
-    "news": -1,
-    "gap": -1,
+    "news": 1,
+    "gap": 1,
     "vol": -1,
     "iv": -1,
     "liq": -1
    },
-   "why": "Telos rose 48.8% to $7.17 on 4.1 million shares and has a $527M market cap. The company had announced it would report third-quarter results on Nov 9. I did not find an article confirming what drove the move.",
+   "why": "Telos rose 48.76% on Nov 9 to $7.17 (Alpha Vantage close; prior close $4.82). Stocktitan lists Q3 revenue up 7.3% and a raised 2026 revenue forecast as the reason. Market cap was about $527M (StockAnalysis, Nov 9).",
    "risk": "Without a confirmed reason, a 49% jump can reverse quickly. Check the earnings release before trusting it.",
-   "src": "https://stockanalysis.com/markets/gainers/",
-   "srcN": "StockAnalysis gainers, Nov 9"
+   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-9-2026",
+   "srcN": "Stocktitan, Nov 9; Alpha Vantage close"
   },
   {
    "kind": "swing",
    "t": "MRNA",
    "n": "Moderna",
    "theme": "Profit turn, analyst upgrades",
-   "chg": 5,
+   "chg": 5.83,
    "cat": "First profitable quarter in two years; Piper Sandler and Goldman raised targets (Nov 9)",
    "setup": "Near five-year high after a profit turn",
    "v": {
@@ -924,7 +868,9 @@
    "soc": "Stocktwits retail sentiment was 'bullish' (Stocktwits, Nov 9).",
    "risk": "It is already near a five-year high, so a pullback is possible, and the skin cancer vaccine is still experimental.",
    "src": "https://stocktwits.com/news-articles/markets/equity/why-did-u-mrna-abnb-stocks-surge-to-52-week-highs-today/cNGudeWR97K",
-   "srcN": "Stocktwits, Nov 9"
+   "srcN": "Stocktwits, Nov 9",
+   "px": 269,
+   "pxN": "Nov 9 close (Alpha Vantage)"
   },
   {
    "kind": "swing",
@@ -1114,6 +1060,145 @@
    "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
    "src": "https://stockanalysis.com/markets/gainers/",
    "srcN": "StockAnalysis gainers, Nov 9"
+  },
+  {
+   "kind": "day",
+   "t": "TTD",
+   "n": "The Trade Desk",
+   "theme": "Ad tech, earnings gap",
+   "pxN": "After-hours Nov 9; exact move unclear",
+   "cat": "Q3 report Nov 9 after close",
+   "catDate": "2026-11-09",
+   "setup": "Earnings beat and big guidance, then a fade after hours",
+   "v": {
+    "news": 1,
+    "gap": 1,
+    "vol": -1,
+    "iv": -1,
+    "liq": -1
+   },
+   "why": "Q3 revenue was $736M vs about $651M expected and adjusted EPS $0.33 vs $0.25. Q4 guidance is at least $755M revenue vs $692M estimated, and the buyback was raised by $731M. Shares were up as much as 26% after hours, then about +4%; the stock is down 61% year to date.",
+   "soc": "Stocktwits sentiment 'extremely bullish' and message volume 'extremely high' (Stocktwits, Nov 9).",
+   "risk": "Two Stocktwits articles disagree on the move (one says +4%, one says up 15% in the regular session), and management's cautious tone gave back most of the spike.",
+   "src": "https://stocktwits.com/news-articles/markets/equity/ttd-stock-spikes-after-hours-on-q3-earnings-beat-then-retreats-on-management-s-cautious-tone/cNGMzg6R97a",
+   "srcN": "Stocktwits, Nov 9"
+  },
+  {
+   "kind": "day",
+   "t": "DCTH",
+   "n": "Delcath Systems",
+   "theme": "Medical device, earnings",
+   "pxN": "Nov 9 session",
+   "chg": 35.77,
+   "cat": "Q3 revenue $35.1M, 2026 forecast raised (Nov 9)",
+   "catDate": "2026-11-09",
+   "setup": "Earnings gap on revenue growth",
+   "v": {
+    "news": 1,
+    "gap": 1,
+    "vol": -1,
+    "iv": -1,
+    "liq": -1
+   },
+   "why": "Delcath rose 35.77% on Nov 9. Q3 revenue was $35.1M vs $20.6M a year earlier and it raised its 2026 revenue forecast (Stocktitan, Nov 9).",
+   "risk": "The source gives no price, volume or cash data, and a one-day earnings gap can fade.",
+   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-9-2026",
+   "srcN": "Stocktitan, Nov 9"
+  },
+  {
+   "kind": "day",
+   "t": "NRG",
+   "n": "NRG Energy",
+   "theme": "Power, asset sale",
+   "pxN": "Nov 9 session",
+   "chg": 10.45,
+   "cat": "Sells six gas plants to LS Power for $4B (Nov 9)",
+   "catDate": "2026-11-09",
+   "setup": "Deal-driven gap higher",
+   "v": {
+    "news": 1,
+    "gap": 1,
+    "vol": -1,
+    "iv": -1,
+    "liq": -1
+   },
+   "why": "NRG rose 10.45% on Nov 9 after agreeing to sell six gas plants to LS Power for $4B (Stocktitan, Nov 9).",
+   "risk": "The source gives no price or deal terms beyond the headline; asset sales can already be priced in after a double-digit gap.",
+   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-9-2026",
+   "srcN": "Stocktitan, Nov 9"
+  },
+  {
+   "kind": "penny",
+   "t": "EDSA",
+   "n": "Edesa Biotech",
+   "theme": "Study example: no-news volume spike",
+   "px": 2.63,
+   "pxN": "Nov 9 close (MarketBeat via DailyPolitical)",
+   "cat": "No reason found",
+   "setup": "Study example: 81M shares traded vs a 1.8M average, no news found",
+   "stage": 4,
+   "stageN": "Likely trap: huge volume with no cause found.",
+   "v": {
+    "news": 0,
+    "vol": 1,
+    "list": 1,
+    "cash": -1,
+    "dil": -1
+   },
+   "why": "EDSA (Nasdaq) closed at $2.63, up $0.49, on volume of about 81.3M vs a 1.79M average, with a market cap near $25.4M (MarketBeat list, Nov 9). I found no article explaining the move.",
+   "risk": "A spike with no news on a tiny market cap is a classic fade; cash and dilution were not checked.",
+   "src": "https://www.dailypolitical.com/2026/11/09/penny-stocks-to-research-november-9th.html",
+   "srcN": "DailyPolitical citing MarketBeat, Nov 9"
+  },
+  {
+   "kind": "penny",
+   "t": "NWGL",
+   "n": "NWGL (Nasdaq)",
+   "theme": "Study example: no-news volume spike",
+   "px": 3.23,
+   "pxN": "Nov 9 close (MarketBeat via DailyPolitical)",
+   "cat": "No reason found",
+   "hi": 158.4,
+   "lo": 2.09,
+   "hiN": "12-month range (MarketBeat, Nov 9)",
+   "setup": "Study example: 53.5M shares vs a 339K average, no news found",
+   "stage": 4,
+   "stageN": "Likely trap: volume 150x average, no cause found, 12-month high of $158.40.",
+   "v": {
+    "news": 0,
+    "vol": 1,
+    "list": 1,
+    "cash": -1,
+    "dil": -1
+   },
+   "why": "NWGL closed at $3.23, up $0.70, on volume of about 53.5M vs a 339K average; its 12-month range is $2.09-$158.40 (MarketBeat list, Nov 9). I found no article explaining the move.",
+   "risk": "The wide range suggests heavy past price destruction, and a no-news spike can reverse fast; cash and dilution were not checked.",
+   "src": "https://www.dailypolitical.com/2026/11/09/penny-stocks-to-research-november-9th.html",
+   "srcN": "DailyPolitical citing MarketBeat, Nov 9"
+  },
+  {
+   "kind": "micro",
+   "t": "SOC",
+   "n": "Sable Offshore",
+   "theme": "Study example: sharp drop on high volume",
+   "px": 0.81,
+   "pxN": "Nov 9 close (MarketBeat via DailyPolitical)",
+   "chg": -57.8,
+   "cat": "No reason confirmed",
+   "setup": "Study example: fell $1.11 on 220M shares",
+   "stage": 4,
+   "stageN": "Likely trap: a sub-$1 name collapsing on huge volume; cause not confirmed.",
+   "v": {
+    "news": 0,
+    "vol": 1,
+    "buzz": -1,
+    "buy": -1,
+    "dil": -1
+   },
+   "why": "SOC (NYSE) closed at $0.81, down $1.11 (about -58%, my arithmetic), on about 220M shares vs an 8.7M average. Current ratio is 0.24, debt/equity 1.85 and the 52-week range $0.51-$19.25 (MarketBeat list, Nov 9). I did not confirm the cause.",
+   "risk": "Weak liquidity ratios and a collapsing price; I found no dated article stating dilution, so that check is not stated.",
+   "src": "https://www.dailypolitical.com/2026/11/09/penny-stocks-to-research-november-9th.html",
+   "srcN": "DailyPolitical citing MarketBeat, Nov 9"
   }
  ]
 }
