@@ -6,7 +6,7 @@
 
   var CSS = '#pulsev{max-width:none;width:100%;box-sizing:border-box;padding-left:28px;padding-right:28px;--up:var(--gain);--dn:var(--loss)}#pulsev *{box-sizing:border-box}' +
     '#pulsev .c-fed{--cc:#8a4fe0}#pulsev .c-housing{--cc:#e0762b}#pulsev .c-banks{--cc:#2b7de0}#pulsev .c-economy{--cc:#1a9a9a}#pulsev .c-stocks{--cc:#d6478a}#pulsev .c-commodities{--cc:#c9961a}#pulsev .c-politics{--cc:#d2503f}#pulsev .c-all{--cc:var(--accent)}' +
-    '#pulsev .pl-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin:0 0 12px}#pulsev .pl-h h2{margin:0;font-size:28px;letter-spacing:-.01em}#pulsev .pl-sub{color:var(--mute);font-size:14px}' +
+    '#pulsev .pl-rf{border:1px solid var(--line);border-radius:10px;padding:6px 12px;background:var(--panel);color:var(--ink);font:inherit;font-size:13px;cursor:pointer;margin-left:10px}.pl-rf:hover{border-color:var(--accent)}.pl-rf:disabled{opacity:.6}.pl-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin:0 0 12px}#pulsev .pl-h h2{margin:0;font-size:28px;letter-spacing:-.01em}#pulsev .pl-sub{color:var(--mute);font-size:14px}' +
     '#pulsev .pl-top{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin:0 0 14px}' +
     '#pulsev .pl-hero{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:18px;padding:22px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 14%,var(--panel)),var(--panel) 62%);display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:24px;align-items:center}@media(max-width:700px){#pulsev .pl-hero{grid-template-columns:minmax(0,1fr)}}' +
     '#pulsev .pl-hero b{font-size:clamp(20px,2.2vw,28px);line-height:1.2;display:block;margin-bottom:10px;letter-spacing:-.01em}#pulsev .pl-hero p{margin:0;font-size:14px;color:var(--mute);line-height:1.55}' +
@@ -80,7 +80,7 @@
   function render(el) {
     var D = DATA, sc = D.scen.opts.filter(function (o) { return o.k === ST.scen; })[0] || D.scen.opts[0];
     var feed = D.news.filter(function (n) { return ST.cat === "all" || n.cat === ST.cat; });
-    el.innerHTML = '<style>' + CSS + '</style><div class="pl-h"><h2>Market Pulse</h2><span class="pl-sub">What the news may mean for sectors, and how it played out before · ' + esc(D.asof) + '</span></div>' +
+    el.innerHTML = '<style>' + CSS + '</style><div class="pl-h"><h2>Market Pulse</h2><span class="pl-sub">What the news may mean for sectors, and how it played out before · ' + esc(D.asof) + '</span><button type="button" class="pl-rf" data-plrf title="Reload the latest data and live prices">↻ Refresh</button><span class="pl-sub" id="plrfs">' + (ST.ref ? 'Refreshed ' + esc(ST.ref) : '') + '</span></div>' +
       '<div class="pl-top"><div class="pl-hero"><div><b>' + esc(D.headline) + '</b><p>' + esc(D.regime) + '</p></div>' + mood(D.lean) + '</div><div class="pl-rt">' + D.rates.map(function (r) { return '<div><small>' + esc(r.l) + '</small><b>' + esc(r.v) + '</b><span>' + esc(r.n) + '</span></div>'; }).join("") + '</div></div>' + tape() +
       '<h3 class="pl-s">Where we lean</h3><div class="pl-lean">' + D.lean.map(lean).join("") + '</div>' +
       '<h3 class="pl-s">Sector heat map</h3><p class="pl-sec">▲ lean up, ▼ lean down, ◆ no clear lean. Three time frames: day trade, swing, investment. The badge adds them up.</p><div class="pl-sg">' + D.sectors.map(sector).join("") + '</div>' +
@@ -98,8 +98,8 @@
     a.quotes(TAPE).then(function (r) { if (r && r.quotes) { ST.lq = r.quotes; var t = el.querySelector(".pl-top"); if (t && !el.querySelector(".pl-tape")) t.insertAdjacentHTML("afterend", tape()); } }).catch(function () { });
   }
 
-  function load() {
-    return fetch("pulse-data.json?v=" + Math.floor(Date.now() / 3600000)).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+  function load(fresh) {
+    return fetch("pulse-data.json?v=" + (fresh ? Date.now() : Math.floor(Date.now() / 3600000)), fresh ? { cache: "no-store" } : undefined).then(function (r) { if (!r.ok) throw 0; return r.json(); })
       .then(function (j) { if (j && j.news && j.news.length) { DATA = j; ST.loaded = true; } }).catch(function () { });
   }
 
@@ -109,6 +109,10 @@
     el.addEventListener("click", function (e) {
       var b;
       if ((b = e.target.closest("[data-plc]"))) { ST.cat = b.getAttribute("data-plc"); render(el); }
+      else if ((b = e.target.closest("[data-plrf]"))) {
+        b.disabled = true; b.textContent = "Refreshing…"; var old = DATA && DATA.asof;
+        load(true).then(function () { ST.lq = null; ST.ref = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) + (DATA && DATA.asof === old ? " (no newer news yet)" : ""); render(el); });
+      }
       else if ((b = e.target.closest("[data-plsc]"))) { ST.scen = b.getAttribute("data-plsc"); render(el); }
     });
   } };
