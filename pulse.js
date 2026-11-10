@@ -13,6 +13,7 @@
     '#pulsev .pl-hero b{font-size:clamp(20px,2.2vw,28px);line-height:1.2;display:block;margin-bottom:10px;letter-spacing:-.01em}#pulsev .pl-hero p{margin:0;font-size:14px;color:var(--mute);line-height:1.55}' +
     '#pulsev .pl-mood{text-align:center}#pulsev .pl-mood svg{width:100%;max-width:230px;height:auto;display:block;margin:0 auto}#pulsev .pl-mood .mv{font-weight:800;font-size:16px;margin-top:-4px}#pulsev .pl-mood .ms{font-size:11px;color:var(--mute)}' +
     '#pulsev .pl-rt .pl-mc{height:130px;margin-top:8px;border:0;padding:0;background:none;border-left:0;overflow:hidden}#pulsev .pl-mc iframe{border:0}' +
+    '#pulsev .pl-vx{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0;background:var(--panel)}#pulsev .pl-vx h4{margin:0 0 8px;font-size:13px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}#pulsev .pl-vxb{position:relative;display:flex;height:22px;border-radius:11px;overflow:hidden}#pulsev .pl-vxb i{display:block;height:100%}#pulsev .pl-vxm{position:absolute;top:-5px;width:4px;height:32px;margin-left:-2px;background:var(--ink);border-radius:2px;box-shadow:0 0 0 2px var(--panel)}#pulsev .pl-vxl{display:flex;margin-top:6px;font-size:11px;color:var(--mute)}#pulsev .pl-vxl span{text-align:center;line-height:1.3}#pulsev .pl-vxl b{display:block;color:var(--ink);font-size:12px}' +
     '#pulsev .pl-rt{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}@media(max-width:900px){#pulsev .pl-rt{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:480px){#pulsev .pl-rt{grid-template-columns:minmax(0,1fr)}}' +
     '#pulsev .pl-rt div{border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:10px 12px;background:var(--panel)}#pulsev .pl-rt small{display:block;color:var(--mute);font-size:11px;text-transform:uppercase;letter-spacing:.05em}#pulsev .pl-rt b{font-size:24px;display:block;margin:2px 0;letter-spacing:-.01em}#pulsev .pl-rt span{font-size:11px;color:var(--mute);line-height:1.35;display:block}' +
     '#pulsev .pl-tape{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}#pulsev .pl-chip{border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;background:var(--panel)}#pulsev .pl-chip b{margin:0 5px 0 3px}' +
@@ -47,6 +48,16 @@
   function lk(t) { return window.StockChart ? window.StockChart.link(t) : esc(t); }
   function cid(c) { return /^[a-z]+$/.test(c) ? c : "all"; }
 
+  function vixGauge() {
+    var r = (DATA.rates || []).filter(function (x) { return x.l === "VIX"; })[0], v = r ? parseFloat(String(r.v).replace(/[^0-9.]/g, "")) : NaN;
+    if (!(v > 0)) return "";
+    var Z = [[0, 12, "#2e9e6b", "Very calm", "Under 12"], [12, 20, "#8bc34a", "Normal", "12 to 20"], [20, 30, "#f0b429", "Nervous", "20 to 30"], [30, 40, "#e8743b", "Fear", "30 to 40"], [40, 60, "#d64545", "Panic", "40+"]], tot = 60, cur = Z[Z.length - 1];
+    Z.forEach(function (z) { if (v >= z[0] && v < z[1]) cur = z; });
+    var pos = Math.min(v, tot) / tot * 100;
+    return '<div class="pl-vx"><h4><span>VIX fear gauge: <span style="color:' + cur[2] + '">' + esc(cur[3]) + '</span></span><span>Now ' + v.toFixed(1) + ' (long-run average is about 19 to 20)</span></h4><div class="pl-vxb">' +
+      Z.map(function (z) { return '<i style="width:' + (z[1] - z[0]) / tot * 100 + '%;background:' + z[2] + '"></i>'; }).join("") + '<div class="pl-vxm" style="left:' + pos + '%"></div></div><div class="pl-vxl">' +
+      Z.map(function (z) { return '<span style="width:' + (z[1] - z[0]) / tot * 100 + '%"><b>' + z[3] + '</b>' + z[4] + '</span>'; }).join("") + '</div></div>';
+  }
   function mood(L) {
     var avg = L.reduce(function (t, x) { return t + (+x.s || 0); }, 0) / (L.length || 1);
     var lab = avg < -40 ? "Bearish" : avg < -15 ? "Leaning bearish" : avg < 15 ? "Mixed" : avg < 40 ? "Leaning bullish" : "Bullish";
@@ -83,7 +94,7 @@
     var D = DATA, sc = D.scen.opts.filter(function (o) { return o.k === ST.scen; })[0] || D.scen.opts[0];
     var feed = D.news.filter(function (n) { return ST.cat === "all" || n.cat === ST.cat; });
     el.innerHTML = '<style>' + CSS + '</style><div class="pl-h"><h2>Market Pulse</h2><span class="pl-sub">What the news may mean for sectors, and how it played out before · ' + esc(D.asof) + '</span><button type="button" class="pl-rf" data-plrf title="Reload the latest data and live prices">↻ Refresh</button><span class="pl-sub" id="plrfs">' + (ST.ref ? 'Refreshed ' + esc(ST.ref) : '') + '</span></div>' +
-      '<div class="pl-top"><div class="pl-hero"><div><b>' + esc(D.headline) + '</b><p>' + esc(D.regime) + '</p></div>' + mood(D.lean) + '</div><div class="pl-rt">' + D.rates.map(function (r) { return '<div><small>' + esc(r.l) + '</small><b>' + esc(r.v) + '</b><span>' + esc(r.n) + '</span>' + (MINI[r.l] ? '<div class="pl-mc" data-mc="' + MINI[r.l] + '"></div>' : '') + '</div>'; }).join("") + '</div></div>' + tape() +
+      '<div class="pl-top"><div class="pl-hero"><div><b>' + esc(D.headline) + '</b><p>' + esc(D.regime) + '</p></div>' + mood(D.lean) + '</div><div class="pl-rt">' + D.rates.map(function (r) { return '<div><small>' + esc(r.l) + '</small><b>' + esc(r.v) + '</b><span>' + esc(r.n) + '</span>' + (MINI[r.l] ? '<div class="pl-mc" data-mc="' + MINI[r.l] + '"></div>' : '') + '</div>'; }).join("") + '</div></div>' + vixGauge() + tape() +
       '<h3 class="pl-s">Where we lean</h3><div class="pl-lean">' + D.lean.map(lean).join("") + '</div>' +
       '<h3 class="pl-s">Sector heat map</h3><p class="pl-sec">▲ lean up, ▼ lean down, ◆ no clear lean. Three time frames: day trade, swing, investment. The badge adds them up.</p><div class="pl-sg">' + D.sectors.map(sector).join("") + '</div>' +
       '<h3 class="pl-s">' + esc(D.scen.title) + '</h3><div class="pl-sn">' + D.scen.opts.map(function (o) { return '<button type="button" class="pl-b c-all ' + (o.k === sc.k ? "on" : "") + '" data-plsc="' + esc(o.k) + '">' + esc(o.l) + '</button>'; }).join("") + '</div><div class="pl-so">' + sc.out.map(function (o) { return '<div class="' + cls(o[1]) + '"><b style="color:var(--' + (o[1] > 0 ? "gain" : o[1] < 0 ? "loss" : "mute") + ')">' + arrow(o[1]) + ' ' + esc(o[0]) + '</b>' + esc(o[2]) + '</div>'; }).join("") + '</div>' +
