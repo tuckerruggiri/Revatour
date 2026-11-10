@@ -28,10 +28,13 @@
     ".op-ctl input[type=range]{padding:0;width:200px}",
     ".op-legs{width:100%;border-collapse:collapse;font-size:13px}.op-legs th{text-align:left;color:var(--mute);font-weight:600;padding:4px}.op-legs td{padding:3px 4px}.op-legs input{width:76px;padding:4px 6px}",
     ".op-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:10px 0}.op-stat{border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--panel)}.op-stat b{display:block;font-size:19px}.op-stat span{font-size:12px;color:var(--mute)}",
+    ".op-plain{border:2px solid var(--accent);border-radius:14px;background:var(--panel);padding:12px 16px;margin:0 0 12px;display:grid;gap:8px}.op-plain h4{margin:0;font-size:17px}.op-plain p{margin:0;font-size:15px;line-height:1.5}.op-plain p.ex{background:var(--bg);border-radius:10px;padding:8px 10px}.op-plain p.sm{font-size:13px;color:var(--mute);margin-top:4px}",
+    ".op-exs{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px}.op-ex{border-radius:12px;padding:8px 10px;display:grid;gap:2px;border:1px solid var(--line);border-left:5px solid}.op-ex.w{border-left-color:var(--gain)}.op-ex.l{border-left-color:var(--loss)}.op-ex span{font-size:12px;color:var(--mute)}.op-ex i{font-style:normal;font-size:13px}.op-ex b{font-size:18px}.op-ex.w b{color:var(--gain)}.op-ex.l b{color:var(--loss)}",
+    "#opch,#opst{position:relative;z-index:1}.op-spot{position:relative;isolation:isolate;contain:paint}.op-bld{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:18px;align-items:start;margin-top:14px}@media(max-width:1100px){.op-bld{grid-template-columns:1fr}}",
     "#opch{max-width:1100px}#opch svg{width:100%;height:auto}.op-gain{color:var(--gain)}.op-loss{color:var(--loss)}",
     ".op-rep{display:grid;gap:6px;margin-top:8px}.op-rep div{display:flex;gap:8px;font-size:13px;line-height:1.4;align-items:baseline}.op-rep i{font-style:normal;flex:none;width:20px}",
-    ".op-chain{display:grid;grid-template-columns:minmax(0,1fr) 460px;gap:14px;align-items:start}@media(max-width:1250px){.op-chain{grid-template-columns:1fr}}",
-    ".op-tw{overflow:auto;max-height:560px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}",
+    ".op-chain{display:grid;grid-template-columns:minmax(0,1fr) 520px;gap:14px;align-items:start}@media(max-width:1250px){.op-chain{grid-template-columns:1fr}}",
+    ".op-tw{overflow:auto;max-height:420px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}",
     ".op-t{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}.op-t th{position:sticky;top:0;background:var(--bg);color:var(--mute);padding:5px 6px;text-align:right;font-weight:600;z-index:1}",
     ".op-t td{padding:4px 6px;text-align:right;border-top:1px solid var(--line)}.op-t td.k{text-align:center;font-weight:700;background:var(--bg)}.op-t td.itm{background:rgba(37,99,235,.08)}",
     ".op-t tr.atm td{border-top:2px solid var(--accent);border-bottom:2px solid var(--accent)}.op-t td.c{cursor:pointer}.op-t td.c:hover{background:var(--accent);color:var(--accent-ink,#fff)}",
@@ -55,7 +58,7 @@
   function step(S) { return S < 10 ? 0.5 : S < 50 ? 1 : S < 200 ? 2.5 : 5; }
   function rk(S, x) { var s = step(S); return Math.max(s, Math.round(x / s) * s); }
   function r2(x) { return Math.round(x * 100) / 100; }
-  function $$(n, d) { if (n === Infinity) return "Unlimited"; if (n === -Infinity) return "Unlimited loss"; var a = Math.abs(n); return (n < 0 ? "-$" : "$") + a.toLocaleString("en-US", { maximumFractionDigits: d == null ? 0 : d, minimumFractionDigits: d == null ? 0 : d }); }
+  function $$(n, d) { if (n === Infinity) return "Unlimited"; if (n === -Infinity) return "Unlimited loss"; var a = Math.abs(n); if (n < 0 && Math.round(a * Math.pow(10, d == null ? 0 : d)) === 0) n = 0; return (n < 0 ? "-$" : "$") + a.toLocaleString("en-US", { maximumFractionDigits: d == null ? 0 : d, minimumFractionDigits: d == null ? 0 : d }); }
   function legVal(l, S, T, iv) { if (l.t === "s") return S; if (T <= 0) return l.t === "c" ? Math.max(S - l.k, 0) : Math.max(l.k - S, 0); return bs(l.t, S, l.k, T, iv).p; }
   function pl(legs, S, T, iv) { var s = 0; legs.forEach(function (l) { s += l.side * l.q * (l.t === "s" ? 100 : 100) * (legVal(l, S, T, iv) - l.prem); }); return s; }
   function analyze(legs, S, dte, iv) {
@@ -145,10 +148,10 @@
   }
   function builderHtml() {
     var adds = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">' + ["c|1|Buy call", "c|-1|Sell call", "p|1|Buy put", "p|-1|Sell put", "s|1|Buy 100 shares"].map(function (a) { var p = a.split("|"); return '<button class="op-btn sm" data-o="add" data-t="' + p[0] + '" data-s="' + p[1] + '">+ ' + p[2] + "</button>"; }).join("") + '<button class="op-btn sm" data-o="clear">Clear</button></div>';
-    return '<div id="oplegs">' + legRows() + "</div>" + adds +
-      '<div class="op-ctl"><label>Stock price<input data-g="S" type="number" step="any" value="' + L.S + '"></label><label>IV % (how jumpy)<input data-g="iv" type="number" step="1" value="' + Math.round(L.iv * 100) + '"></label><label>Days to expiration<input data-g="dte" type="number" min="1" step="1" value="' + L.dte + '"></label></div>' +
-      '<div id="opch"></div><div class="op-ctl" style="margin-top:8px"><label>Time travel: day <b id="opdayv">0</b><input data-g="day" type="range" min="0" max="' + L.dte + '" value="' + L.day + '"></label><label>What if price is <b id="opmkv"></b><input data-g="mark" type="range" step="any"></label></div>' +
-      '<div id="opst"></div>';
+    return '<div class="op-bld"><div><div id="oplegs">' + legRows() + "</div>" + adds +
+      '<div class="op-ctl"><label>Stock price<input data-g="S" type="number" step="any" value="' + L.S + '"></label><label>IV % (how jumpy)<input data-g="iv" type="number" step="1" value="' + Math.round(L.iv * 100) + '"></label><label>Days to expiration<input data-g="dte" type="number" min="1" step="1" value="' + L.dte + '"></label></div></div><div>' +
+      '<div id="oppl"></div><div id="opch"></div><div class="op-ctl" style="margin-top:8px"><label>Time travel: day <b id="opdayv">0</b><input data-g="day" type="range" min="0" max="' + L.dte + '" value="' + L.day + '"></label><label>What if price is <b id="opmkv"></b><input data-g="mark" type="range" step="any"></label></div>' +
+      '<div id="opst"></div></div></div>';
   }
   function paintLab() {
     var c = el.querySelector("#opch"); if (!c) return;
@@ -156,23 +159,47 @@
     var mkR = el.querySelector('[data-g="mark"]'), em = S * iv * Math.sqrt(L.dte / 365), wd = Math.max(0.12, Math.min(0.6, 2.4 * em / S)); if (mkR) { mkR.min = (S * (1 - wd)).toFixed(2); mkR.max = (S * (1 + wd)).toFixed(2); mkR.value = L.mark == null ? S : L.mark; }
     var dr = el.querySelector('[data-g="day"]'); if (dr) { dr.max = L.dte; dr.value = L.day; }
     var mk = L.mark == null ? S : L.mark, T = Math.max(L.dte - L.day, 0) / 365, st = el.querySelector("#opst"); el.querySelector("#opdayv").textContent = L.day; el.querySelector("#opmkv").textContent = "$" + (+mk).toFixed(2);
-    if (!legs.length) { st.innerHTML = ""; return; }
+    if (!legs.length) { st.innerHTML = ""; var p0 = el.querySelector("#oppl"); if (p0) p0.innerHTML = ""; return; }
     var A = analyze(legs, S, L.dte, iv), now = pl(legs, mk, T, iv), cost = 0; legs.forEach(function (l) { if (l.t !== "s") cost += l.side * l.q * 100 * l.prem; });
     var cls = function (v) { return v >= 0 ? "op-gain" : "op-loss"; };
     var stat = function (b, s, c) { return '<div class="op-stat"><b class="' + (c || "") + '">' + b + "</b><span>" + s + "</span></div>"; };
-    var html = '<div class="op-stats">' + stat($$(now), "Result at the price/day above", cls(now)) + stat(cost > 0 ? $$(cost) + " paid" : $$(-cost) + " collected", "Up-front " + (cost > 0 ? "cost (debit)" : "cash (credit)"), "") + stat($$(A.maxP), "Best case at expiration", A.maxP > 0 ? "op-gain" : "") + stat($$(A.maxL), "Worst case at expiration", A.maxL < 0 ? "op-loss" : "") + stat(A.pop == null ? "—" : Math.round(A.pop * 100) + "%", "Rough chance of any profit (model)", "") + stat(A.be.length ? A.be.map(function (b) { return "$" + b.toFixed(2); }).join(" · ") : "—", "Break-even price(s)", "") + "</div>";
+    var html = '<div class="op-stats">' + stat($$(now), "If stock is $" + (+mk).toFixed(2) + (L.day ? " on day " + L.day : " at expiration"), cls(now)) + stat(cost > 0 ? $$(cost) : $$(-cost), cost > 0 ? "You pay up front" : "You get paid up front", "") + stat(A.maxP === Infinity ? "No limit 🚀" : $$(A.maxP), "Most you can MAKE", A.maxP > 0 ? "op-gain" : "") + stat(A.maxL === -Infinity ? "No limit 😬" : $$(A.maxL), "Most you can LOSE", A.maxL < 0 ? "op-loss" : "") + stat(A.pop == null ? "—" : Math.round(A.pop * 100) + " in 100", "Rough odds you make money (a guess)", "") + stat(A.be.length ? A.be.map(function (b) { return "$" + b.toFixed(2); }).join(" · ") : "—", "Stock must get here so you break even", "") + "</div>";
     var rep = [], ok = "✅", wr = "⚠️", bd = "❌";
-    if (A.maxL === -Infinity) rep.push([bd, "<b>Unlimited loss.</b> This is a naked short call style trade. Real accounts need the highest approval level, big margin, and a plan to cut it fast."]);
-    else if (A.maxL < -L.S * 100 * 0.5 && legs.some(function (l) { return l.side < 0; })) rep.push([wr, "Worst case is " + $$(A.maxL) + ": big compared with a typical account. Size it so you could lose it."]);
-    else if (A.maxL < 0) rep.push([ok, "Your loss is capped at " + $$(A.maxL) + ". Know that number before you click."]);
-    if (A.be.length && A.em) { var b0 = A.be[0], mv = (b0 - S) / S * 100, emp = A.em / S * 100; rep.push([Math.abs(mv) < emp * 0.7 ? ok : wr, "Needs the stock at $" + b0.toFixed(2) + " (" + (mv >= 0 ? "+" : "") + mv.toFixed(1) + "%) to break even. The market's rough expected move by expiration is about ±" + emp.toFixed(1) + "%."]); }
-    if (A.pop != null) rep.push([A.pop >= 0.5 ? ok : A.pop >= 0.3 ? wr : bd, "Model says about " + Math.round(A.pop * 100) + "% chance of finishing with any profit. Low chance can still be fine if the win is big, high chance often means a small win and a bigger loss."]);
-    if (L.dte < 14) rep.push([wr, "Under 2 weeks left: time melts fast. Good for sellers, tough for buyers."]);
-    else if (L.dte > 120) rep.push([wr, "Far-dated: slow decay, ties up more money. That is normal for LEAPS-style trades."]);
-    var liq = liqCheck(); liq.forEach(function (x) { rep.push(x); });
-    if (L.src !== "live") rep.push(["ℹ️", "Prices here are modeled (" + MOD + ") so volume, open interest and bid/ask gaps are not checked. In TOS always check them."]);
-    html += '<div class="op-rep">' + rep.map(function (r) { return "<div><i>" + r[0] + "</i><span>" + r[1] + "</span></div>"; }).join("") + '</div><p class="op-sub" style="margin-top:8px">Education only, not a prediction or advice.</p>';
-    st.innerHTML = html;
+    if (A.maxL === -Infinity) rep.push([bd, "<b>You can lose a LOT.</b> Selling a call with no shares behind it has no ceiling on losses. Real accounts need special approval for this."]);
+    else if (A.maxL < -L.S * 100 * 0.5 && legs.some(function (l) { return l.side < 0; })) rep.push([wr, "Worst case is " + $$(A.maxL) + ". Only do it if losing that much would not hurt."]);
+    else if (A.maxL < 0) rep.push([ok, "You can't lose more than " + $$(-A.maxL) + " on this. Know that number before you click."]);
+    if (A.be.length && A.em) { var b0 = A.be[0], mv = (b0 - S) / S * 100, emp = A.em / S * 100; rep.push([Math.abs(mv) < emp * 0.7 ? ok : wr, "The stock has to move " + (mv >= 0 ? "up " : "down ") + Math.abs(mv).toFixed(1) + "% for you to break even. The market thinks a normal move by then is about " + emp.toFixed(1) + "%. " + (Math.abs(mv) < emp * 0.7 ? "That is a fairly easy bar." : "That is a tall order.")]); }
+    if (L.dte < 14) rep.push([wr, "Less than 2 weeks left. The option loses value fast. Bad for buyers, good for sellers."]);
+    liqCheck().forEach(function (x) { rep.push(x); });
+    if (L.src !== "live") rep.push(["ℹ️", "These prices are made up by a math model (" + MOD + "). In TOS, always check the real bid/ask and volume first."]);
+    html += '<div class="op-rep">' + rep.map(function (r) { return "<div><i>" + r[0] + "</i><span>" + r[1] + "</span></div>"; }).join("") + '</div><p class="op-sub" style="margin-top:8px">Just for learning. Not advice and not a prediction.</p>';
+    st.innerHTML = html; var pe = el.querySelector("#oppl"); if (pe) pe.innerHTML = plainHtml(A, cost, mk, now, S);
+  }
+
+  function plainHtml(A, cost, mk, now, S) {
+    var legs = L.legs, exp = new Date(Date.now() + L.dte * 864e5).toLocaleDateString("en-US", { month: "short", day: "numeric" }), lines = legs.map(function (l) {
+      var n = l.q > 1 ? l.q + " " : "1 ", d = $$(l.prem * l.q * 100, 0);
+      if (l.t === "s") return "🏠 You <b>own 100 shares</b> bought at $" + l.k + ".";
+      var nm = "$" + l.k + " " + (l.t === "c" ? "call" : "put");
+      if (l.side > 0 && l.t === "c") return "🟢 You <b>BUY " + n + nm + "</b> and pay <b>" + d + "</b>. That gives you the right to buy 100 shares at $" + l.k + ", even if the stock costs more.";
+      if (l.side > 0) return "🟢 You <b>BUY " + n + nm + "</b> and pay <b>" + d + "</b>. That gives you the right to sell 100 shares at $" + l.k + ", even if the stock is worth less.";
+      if (l.t === "c") return "🔴 You <b>SELL " + n + nm + "</b> and get paid <b>" + d + "</b> today. In return you promise to sell 100 shares at $" + l.k + " if the buyer asks.";
+      return "🔴 You <b>SELL " + n + nm + "</b> and get paid <b>" + d + "</b> today. In return you promise to buy 100 shares at $" + l.k + " if the buyer asks.";
+    });
+    var head = cost > 0 ? "You pay <b>" + $$(cost) + "</b> to start." : cost < 0 ? "You get paid <b>" + $$(-cost) + "</b> to start." : "No money changes hands to start.";
+    head += A.maxL === -Infinity ? " The most you can <b class=\"op-loss\">lose is unlimited</b>." : A.maxL < 0 ? " The most you can <b class=\"op-loss\">lose is " + $$(-A.maxL) + "</b>." : "";
+    head += A.maxP === Infinity ? " The most you can <b class=\"op-gain\">make is unlimited</b>." : A.maxP > 0 ? " The most you can <b class=\"op-gain\">make is " + $$(A.maxP) + "</b>." : "";
+    var be = A.be.length ? " You start making money once the stock is " + (A.be[0] > S ? "above" : "below") + " <b>$" + A.be[0].toFixed(2) + "</b> on " + exp + "." : "";
+    var pts = [-0.1, -0.05, 0, 0.05, 0.1].map(function (p) { var px = S * (1 + p), v = pl(legs, px, 0, L.iv); return '<div class="op-ex ' + (v >= 0 ? "w" : "l") + '"><span>' + (p === 0 ? "Stock stays" : p > 0 ? "Stock goes up " + p * 100 + "%" : "Stock drops " + (-p * 100) + "%") + "</span><i>$" + px.toFixed(2) + "</i><b>" + (v >= 0 ? "+" : "-") + $$(Math.abs(v)).replace("-", "") + "</b></div>"; }).join("");
+    var ex = "";
+    if (legs.length === 1 && legs[0].t === "c" && legs[0].side > 0) ex = "Think of it like putting a <b>deposit</b> on a game console that costs $" + legs[0].k + ". If the price jumps to $" + (legs[0].k + 10) + ", your deposit lets you still pay $" + legs[0].k + ", so you win. If the price never gets there, you just lose the deposit. That is all.";
+    else if (legs.length === 1 && legs[0].t === "c" && legs[0].side < 0) ex = "Think of it like <b>selling a coupon</b> for your game console. You keep the money for the coupon. But if the console's price shoots way up, you still have to hand it over at the old price. That is why this one is risky.";
+    else if (legs.length === 1 && legs[0].t === "p" && legs[0].side > 0) ex = "Think of it like <b>insurance</b> on your phone. You pay a small fee. If the phone breaks (the stock drops), the insurance pays. If nothing happens, the fee is gone.";
+    else if (legs.length === 1 && legs[0].t === "p" && legs[0].side < 0) ex = "Think of it like <b>getting paid to put an item on layaway</b>. You collect a fee. If the price falls below your price, you have to buy it anyway at the higher price you promised.";
+    else if (legs.some(function (l) { return l.t === "s"; }) && legs.some(function (l) { return l.t === "c" && l.side < 0; })) ex = "You own the stock and <b>rent out the upside</b>. You collect rent today. If the stock jumps past the strike, your shares get sold at that price, so you miss the extra gain.";
+    else if (legs.some(function (l) { return l.t === "s"; }) && legs.some(function (l) { return l.t === "p" && l.side > 0; })) ex = "You own the stock and bought <b>insurance</b>. If it crashes, the put limits how much you lose. The insurance costs money, so your gains are a little smaller.";
+    else if (legs.length >= 2) ex = "This trade has " + legs.length + " pieces. Some pieces you buy (they cost money, they can pay off). Some you sell (you get paid, but you take on a promise). Together they set a floor and a ceiling on what you can win or lose.";
+    return '<div class="op-plain"><h4>🧒 In plain English</h4>' + lines.map(function (x) { return "<p>" + x + "</p>"; }).join("") + "<p>" + head + be + "</p>" + (ex ? '<p class="ex">💡 ' + ex + "</p>" : "") + '<p class="sm"><b>Try it:</b> if you do this on a $' + S.toFixed(2) + " stock, here is what happens on " + exp + " (the day it expires):</p>" + '<div class="op-exs">' + pts + "</div></div>";
   }
   function liqCheck() {
     var out = []; if (L.src !== "live" || !L.chain) return out; var ex = L.chain.exps[L.exp]; if (!ex) return out;
@@ -225,7 +252,7 @@
     return '<h3 class="op-h">Option chain, thinkorswim style</h3><p class="op-sub">Calls on the left, puts on the right, strikes in the middle. Click an <b>Ask</b> to BUY it, click a <b>Bid</b> to SELL it. The trade builds on the right.</p>' +
       '<div class="op-ctl"><label>Ticker<input id="opsym" type="text" value="' + (L.sym || "SPY") + '" style="text-transform:uppercase"></label><button class="op-btn p" data-o="load">Load chain</button>' + (L.chain ? '<label>Strikes shown<select data-g="rng"><option value="5"' + (L.rng == 5 ? " selected" : "") + '>±5</option><option value="8"' + (L.rng == 8 ? " selected" : "") + '>±8</option><option value="15"' + (L.rng == 15 ? " selected" : "") + '>±15</option></select></label>' : "") + (L.chain && L.src !== "live" ? '<label>Price<input data-g="cp" type="number" step="any" value="' + L.S + '"></label><label>IV %<input data-g="civ" type="number" step="1" value="' + Math.round(L.iv * 100) + '"></label>' : "") + "</div>" +
       (L.loading ? '<div class="op-note">Loading…</div>' : "") + (L.msg ? '<div class="op-note">' + L.msg + "</div>" : "") +
-      (L.chain ? '<div class="op-chain"><div><div id="opexps" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"></div><div class="op-tw" id="optw"></div></div><div><div class="op-spot" id="opspot"></div>' + builderHtml() + "</div></div>" : '<div class="op-note">Enter a ticker and press Load chain. If your Schwab account is connected and has market data you get the real chain. If not, you get a practice chain built from the model, clearly marked.</div>');
+      (L.chain ? '<div class="op-chain"><div><div id="opexps" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"></div><div class="op-tw" id="optw"></div></div><div><div class="op-spot" id="opspot"></div></div></div>' + builderHtml() : '<div class="op-note">Enter a ticker and press Load chain. If your Schwab account is connected and has market data you get the real chain. If not, you get a practice chain built from the model, clearly marked.</div>');
   }
   function paintChain() {
     var ch = L.chain; if (!ch) return; var ex = ch.exps[L.exp] || ch.exps[0]; if (!ex) return;
