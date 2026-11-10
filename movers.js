@@ -38,7 +38,7 @@
   ];
 
   var CSS = '#movv{max-width:none;width:100%;box-sizing:border-box}#movv *{box-sizing:border-box}' +
-    '#movv .mv-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin:0 0 10px}#movv .mv-h h2{margin:0;font-size:26px}#movv .mv-sub{color:var(--mute);font-size:14px}' +
+    '#movv .mv-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin:0 0 10px}#movv .mv-h h2{margin:0;font-size:26px}#movv .mv-sub{color:var(--mute);font-size:14px}#movv .mv-rf{border:1px solid var(--line);border-radius:10px;padding:6px 12px;background:var(--panel);color:var(--ink);font:inherit;font-size:13px;cursor:pointer}#movv .mv-rf:hover{border-color:var(--accent)}#movv .mv-rf:disabled{opacity:.6}' +
     '#movv .mv-tape{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}#movv .mv-chip{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 11px;font-size:13px}' +
     '#movv .mv-chip b{font-weight:700}#movv .up{color:var(--gain)}#movv .dn{color:var(--loss)}' +
     '#movv .mv-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0;margin:0 0 14px}#movv .mv-box h3{margin:0 0 10px;font-size:15px}' +
@@ -178,7 +178,7 @@
     return out + '<p class="mv-dis">Entry prices come from the source articles and may be an intraday or prior-close quote, so the first day can be off by the gap. "Now" is live when you are signed in, otherwise the last price logged by the daily refresh. Past results do not predict future ones. Not advice.</p>';
   }
   function loadLed() {
-    return fetch("movers-ledger.json?v=" + Math.floor(Date.now() / 3600000)).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+    return fetch("movers-ledger.json?v=" + (arguments[0] ? Date.now() : Math.floor(Date.now() / 3600000)), arguments[0] ? { cache: "no-store" } : undefined).then(function (r) { if (!r.ok) throw 0; return r.json(); })
       .then(function (j) { if (j && j.entries) LED = j; }).catch(function () { });
   }
   function liveScore(el) {
@@ -202,7 +202,7 @@
     });
     var tape = (DATA.tape || []).map(function (t) { return '<span class="mv-chip">' + esc(t.l) + ' <b>' + esc(t.v) + '</b>' + (typeof t.d === "number" ? '<span class="' + (t.d >= 0 ? "up" : "dn") + '">' + (t.d >= 0 ? "+" : "") + t.d.toFixed(2) + '%</span>' : "") + '</span>'; }).join("");
     var leg = K.crit.map(function (c) { return '<div><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '</span></div>'; }).join("");
-    el.innerHTML = '<style>' + CSS + '</style><div class="mv-h"><h2>Parabolic Movers</h2><span class="mv-sub">News-sourced candidates · updated ' + esc(DATA.asof) + '</span></div>' + tabs() +
+    el.innerHTML = '<style>' + CSS + '</style><div class="mv-h"><h2>Parabolic Movers</h2><span class="mv-sub">News-sourced candidates · updated ' + esc(DATA.asof) + '</span><button type="button" class="mv-rf" data-mvrf title="Reload the latest picks, scorecard and live prices">\u21bb Refresh</button><span class="mv-sub">' + (ST.ref ? "Refreshed " + esc(ST.ref) : "") + '</span></div>' + tabs() +
       (tape ? '<div class="mv-tape">' + tape + '</div>' : "") + timeline() +
       '<div class="mv-styles">' + ["radar", "day", "swing", "invest", "penny", "micro"].map(styleCard).join("") + '</div>' +
       '<div class="k-' + ST.kind + '"><div class="mv-play">' + K.play.map(function (t) { return '<div>' + esc(t) + '</div>'; }).join("") + '</div>' +
@@ -239,8 +239,8 @@
     }).catch(function () { box.innerHTML = '<div class="mv-nw">Could not load headlines. Sign in and try again.</div>'; });
   }
 
-  function load() {
-    return fetch("movers-data.json?v=" + Math.floor(Date.now() / 3600000)).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+  function load(fresh) {
+    return fetch("movers-data.json?v=" + (fresh ? Date.now() : Math.floor(Date.now() / 3600000)), fresh ? { cache: "no-store" } : undefined).then(function (r) { if (!r.ok) throw 0; return r.json(); })
       .then(function (j) { if (j && j.picks && j.picks.length) { DATA = j; DATA.picks = DATA.picks.filter(function (p) { return p && KINDS[p.kind] && p.t; }); ST.loaded = true; } }).catch(function () { });
   }
 
@@ -250,7 +250,11 @@
     if (bound) return; bound = true;
     el.addEventListener("click", function (e) {
       var t = e.target, b;
-      if ((b = t.closest("[data-mvv]"))) { ST.view = b.getAttribute("data-mvv"); render(el); }
+      if ((b = t.closest("[data-mvrf]"))) {
+        b.disabled = true; b.textContent = "Refreshing\u2026"; var old = DATA.asof, n0 = DATA.picks.length;
+        Promise.all([load(true), loadLed(true)]).then(function () { ST.lq = null; ST.ref = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) + (DATA.asof === old && DATA.picks.length === n0 ? " (no newer picks yet)" : ""); render(el); });
+      }
+      else if ((b = t.closest("[data-mvv]"))) { ST.view = b.getAttribute("data-mvv"); render(el); }
       else if ((b = t.closest("[data-mvk]"))) { ST.kind = b.getAttribute("data-mvk"); ST.theme = ""; ST.view = "picks"; render(el); }
       else if ((b = t.closest("[data-mvs]"))) { ST.sort = b.getAttribute("data-mvs"); render(el); }
       else if ((b = t.closest("[data-mvt]"))) { ST.theme = b.getAttribute("data-mvt"); render(el); }
