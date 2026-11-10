@@ -128,6 +128,43 @@ async function deepData(sym, iv) {
   const d = { chart, ins, nws, ern, mac }; dcache.set(k, { t: Date.now(), d }); return d;
 }
 
+
+/* ---------- ticker-page brief: bio, key stats, insiders, options, social, earnings, short AI read ---------- */
+const FH = async (path) => { const key = process.env.FINNHUB_KEY; if (!key) return null; return jget(`https://finnhub.io/api/v1${path}${path.includes('?') ? '&' : '?'}token=${key}`); };
+async function bProfile(sym) { const p = await FH(`/stock/profile2?symbol=${encodeURIComponent(sym)}`); return p && p.name ? { name: p.name, website: p.weburl || '', industry: p.finnhubIndustry || '', country: p.country || '', exchange: p.exchange || '', ipo: p.ipo || '', capM: p.marketCapitalization || null } : null; }
+async function bMetric(sym) {
+  const j = await FH(`/stock/metric?symbol=${encodeURIComponent(sym)}&metric=all`); const m = (j && j.metric) || null; if (!m) return null;
+  const g = (k) => (m[k] != null && isFinite(m[k]) ? r2(m[k]) : null);
+  return { pe: g('peTTM'), eps: g('epsTTM'), revGrowth: g('revenueGrowthTTMYoy'), epsGrowth: g('epsGrowthTTMYoy'), grossMargin: g('grossMarginTTM'), netMargin: g('netProfitMarginTTM'), roe: g('roeTTM'), debtEq: g('totalDebt/totalEquityQuarterly'), beta: g('beta'), hi52: g('52WeekHigh'), lo52: g('52WeekLow'), ret13w: g('13WeekPriceReturnDaily'), ret52w: g('52WeekPriceReturnDaily'), divYield: g('dividendYieldIndicatedAnnual') };
+}
+async function bSurprises(sym) { const j = await FH(`/stock/earnings?symbol=${encodeURIComponent(sym)}&limit=4`); return (Array.isArray(j) ? j : []).map((e) => ({ period: e.period, actual: e.actual != null ? r2(e.actual) : null, est: e.estimate != null ? r2(e.estimate) : null, surprisePct: e.surprisePercent != null ? r2(e.surprisePercent) : null })); }
+async function bRecs(sym) { const j = await FH(`/stock/recommendation?symbol=${encodeURIComponent(sym)}`); const e = Array.isArray(j) && j[0]; return e ? { period: e.period, strongBuy: e.strongBuy, buy: e.buy, hold: e.hold, sell: e.sell, strongSell: e.strongSell } : null; }
+async function bSocial(sym) { // Stocktwits public stream; may be blocked from servers, so this is best effort
+  const j = await jget(`https://api.stocktwits.com/api/2/streams/symbol/${encodeURIComponent(sym)}.json`, { 'User-Agent': 'Mozilla/5.0 (compatible; Revatour)', Accept: 'application/json' });
+  const ms = (j && j.messages) || []; let bull = 0, bear = 0; ms.forEach((m) => { const s = m.entities && m.entities.sentiment && m.entities.sentiment.basic; if (s === 'Bullish') bull++; else if (s === 'Bearish') bear++; });
+  return { source: 'Stocktwits', sample: ms.length, bullish: bull, bearish: bear, watchers: j && j.symbol ? j.symbol.watchlist_count || null : null };
+}
+function insSummary(rows) {
+  if (!rows) return null; const cut = Date.now() - 90 * 864e5; let b = 0, bv = 0, s = 0, sv = 0, last = null;
+  rows.forEach((t) => { if (new Date(t.date).getTime() < cut) return; const v = (t.shares || 0) * (t.price || 0); if (t.code === 'P') { b++; bv += v; if (!last) last = t; } else if (t.code === 'S') { s++; sv += v; } });
+  return { days: 90, buys: b, buyValue: Math.round(bv), sells: s, sellValue: Math.round(sv), latestBuy: last ? { who: last.who, title: last.title, date: last.date, shares: last.shares, price: last.price } : null, note: 'Only the 8 most recent Form 4 filings are checked.' };
+}
+const bcache = new Map();
+async function briefData(sym) {
+  const hit = bcache.get(sym); if (hit && Date.now() - hit.t < 20 * 60 * 1000) return hit.d;
+  const [profile, metric, surprises, recs, social, ins, nws, ern, chart] = await Promise.all([bProfile(sym), bMetric(sym), bSurprises(sym), bRecs(sym), bSocial(sym), form4(sym), news(sym), earnings(sym), build(sym, 'D')].map((p) => p.catch(() => null)));
+  const d = { profile, metric, surprises, recs, social, insRows: ins, insiders: insSummary(ins), news: nws, earnings: ern, levels: chart ? chart.levels : null };
+  bcache.set(sym, { t: Date.now(), d }); return d;
+}
+const BRIEF_SYS = `You write a fast, useful "quick brief" for a stock page, for a trader who wants only the things that matter. You receive JSON with: company profile, key stats, last 4 earnings (actual vs estimate), next earnings date, analyst ratings, insider activity (Form 4, last 90 days), options summary (from the user's broker feed, may be missing), social sentiment sample (Stocktwits, may be missing), recent headlines, daily-chart levels, and a company description.
+Rules: use ONLY the data given. If a part is missing, say "not available" for that part, never guess. Never invent numbers, dates or quotes. No predictions or promises and no personal advice: describe scenarios ("could", "if"). Plain English, short sentences, no jargon without a few words of explanation. Insider rule: open-market buys matter most; sales are weak evidence; awards and tax withholding are routine. Social rule: crowd excitement is a risk signal as much as a positive one.
+Return ONLY one valid JSON object, no text around it, no line breaks inside strings: {"bio":"2 sentences: what the company does and how it makes money","bias":"up|down|range","conf":1-3,"headline":"one line verdict","read":"3 to 4 sentences on where it could go and why, naming 2 price levels from the chart data","upIf":"what would have to happen for it to go higher, 1 sentence","downIf":"what would send it lower, 1 sentence","earnings":"1 to 2 sentences: next date and how it has done versus estimates","insiders":"1 to 2 sentences","options":"1 to 2 sentences, or say not available","social":"1 to 2 sentences, or say not available","watch":["3 short things to watch next"],"flags":[{"t":"short fact worth knowing, with a number","tone":"good|bad|warn"}]} where flags has 4 to 6 items.`;
+async function briefAI(sym, d, extra) {
+  const payload = { sym, profile: d.profile, stats: d.metric, lastEarnings: d.surprises, nextEarnings: d.earnings, analysts: d.recs, insiders: d.insiders, insiderLatest: (d.insRows || []).slice(0, 5), options: extra.opts || 'not available', social: d.social || 'not available', headlines: (d.news || []).slice(0, 6).map((n) => ({ head: n.head, src: n.src, date: new Date((n.t || 0) * 1000).toISOString().slice(0, 10) })), chart: d.levels, description: String(extra.desc || '').slice(0, 900) };
+  const call = async (sys) => { const up = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' }, body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5', max_tokens: 2500, system: sys, messages: [{ role: 'user', content: JSON.stringify(payload) }] }) }); if (!up.ok) throw new Error('ai ' + up.status); const j = await up.json(); return parseJson((j.content || []).filter((b) => b.type === 'text').map((b) => b.text).join('')); };
+  return (await call(BRIEF_SYS)) || (await call(BRIEF_SYS + '\nIMPORTANT: your whole reply must be one valid JSON object and nothing else.'));
+}
+
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'use POST' });
   const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
@@ -147,6 +184,20 @@ module.exports = async (req, res) => {
     .map((i) => ({ sym: String(i.sym || '').toUpperCase(), iv: String(i.iv || '5') })).filter((i) => /^[A-Z]{1,5}([.-][A-Z])?$/.test(i.sym) && IV[i.iv]);
   if (!items.length) return res.status(400).json({ error: 'no valid charts' });
 
+
+  if (body && body.brief) {
+    const sym = String(body.sym || (items[0] && items[0].sym) || '').toUpperCase(); if (!/^[A-Z]{1,5}([.-][A-Z])?$/.test(sym)) return res.status(400).json({ error: 'bad symbol' });
+    const str2 = (x, n) => String(x || '').slice(0, n);
+    try {
+      const d = await briefData(sym), o = body.opts && typeof body.opts === 'object' ? body.opts : null;
+      const opts = o ? { putCallVolume: Number(o.pcVol) || null, putCallOpenInterest: Number(o.pcOi) || null, nearIV: Number(o.iv) || null, expectedMovePct: Number(o.move) || null, expiry: str2(o.exp, 20), callVolume: Number(o.cv) || null, putVolume: Number(o.pv) || null } : null;
+      let a = null; try { a = await briefAI(sym, d, { opts, desc: body.desc }); } catch (e) { console.error('brief ai', e); }
+      const flags = a && Array.isArray(a.flags) ? a.flags.slice(0, 6).map((f) => ({ t: str2(f && f.t, 200), tone: /^(good|bad|warn)$/.test(f && f.tone) ? f.tone : 'warn' })).filter((f) => f.t) : [];
+      return res.status(200).json({ brief: { sym, profile: d.profile, stats: d.metric, surprises: d.surprises, nextEarnings: d.earnings, analysts: d.recs, insiders: d.insiders, social: d.social, opts, levels: d.levels,
+        ai: a ? { bio: str2(a.bio, 500), bias: /^(up|down|range)$/.test(a.bias) ? a.bias : 'range', conf: Math.max(1, Math.min(3, Math.round(Number(a.conf)) || 1)), headline: str2(a.headline, 200), read: str2(a.read, 900), upIf: str2(a.upIf, 300), downIf: str2(a.downIf, 300), earnings: str2(a.earnings, 400), insiders: str2(a.insiders, 400), options: str2(a.options, 400), social: str2(a.social, 400), watch: (Array.isArray(a.watch) ? a.watch : []).slice(0, 4).map((x) => str2(x, 140)), flags } : null,
+        keys: { finnhub: !!process.env.FINNHUB_KEY }, asof: Date.now() } });
+    } catch (e) { console.error(e); return res.status(502).json({ error: 'brief failed' }); }
+  }
 
   if (body && body.deep) {
     const it = items[0]; if (!it) return res.status(400).json({ error: 'no valid chart' });
