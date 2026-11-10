@@ -176,7 +176,7 @@ module.exports = async (req, res) => {
     }
     if (action === 'quotes') { // live prices + volume for a watchlist (needs the Market Data product on the Schwab app)
       if (!c || daysLeft <= 0) return res.status(200).json({ configured: true, reconnect: true });
-      const syms = Array.from(new Set(String(req.query.symbols || '').toUpperCase().split(',').map((x) => x.trim()).filter((x) => /^[A-Z]{1,5}([./][A-Z])?$/.test(x)))).slice(0, 50);
+      const syms = Array.from(new Set(String(req.query.symbols || '').toUpperCase().split(',').map((x) => x.trim()).filter((x) => /^[A-Z]{1,5}([./][A-Z])?$/.test(x)))).slice(0, 100);
       if (!syms.length) return res.status(400).json({ error: 'no valid symbols' });
       let at = atCache.get(u.id);
       if (!at || at.exp < Date.now() + 60000) {
