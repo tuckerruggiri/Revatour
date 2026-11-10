@@ -463,7 +463,7 @@
     ev.preventDefault(); var f = ev.target.id;
     if (f === "dywf") { await addBoard($("dyws").value, $("dywn").value.trim()); $("dyws").value = ""; $("dywn").value = ""; $("dyws").focus(); return; }
     if (ev.target.dataset && ev.target.dataset.dyswap != null) {
-      var sy = ev.target.querySelector("input").value.toUpperCase().replace(/[^A-Z.]/g, ""); if (!sy) return;
+      var sy = ev.target.querySelector("input").value.toUpperCase().replace(/[^A-Z0-9.]/g, ""); if (!sy) return;
       var o = swapsGet(); o[ev.target.dataset.dyswap] = sy; swapsSet(o); D.tkey = ""; paintTiles(); return;
     }
     if (f === "dyaf") {

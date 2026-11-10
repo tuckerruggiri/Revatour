@@ -37,7 +37,9 @@
     });
     return loading;
   }
-  function clean(sym) { return String(sym || "").toUpperCase().replace(/[^A-Z0-9.\-:]/g, "").slice(0, 20); }
+  /* Yields and indexes use different codes on TradingView, and some Yahoo-style names (TNX, ^VIX) show "This symbol doesn't exist" in the free embed. */
+  var ALIAS = { TNX: "TVC:US10Y", "10Y": "TVC:US10Y", US10Y: "TVC:US10Y", "10YR": "TVC:US10Y", TYX: "TVC:US30Y", "30Y": "TVC:US30Y", US30Y: "TVC:US30Y", FVX: "TVC:US05Y", "5Y": "TVC:US05Y", US05Y: "TVC:US05Y", IRX: "TVC:US03MY", "2Y": "TVC:US02Y", US02Y: "TVC:US02Y", VIX: "CBOE:VIX", DXY: "TVC:DXY", DX: "TVC:DXY", SPX: "SP:SPX", NDX: "NASDAQ:NDX", DJI: "DJ:DJI", RUT: "TVC:RUT", GOLD: "TVC:GOLD", OIL: "TVC:USOIL", WTI: "TVC:USOIL", BTC: "BITSTAMP:BTCUSD", ETH: "BITSTAMP:ETHUSD" };
+  function clean(sym) { var c = String(sym || "").toUpperCase().replace(/[^A-Z0-9.\-:]/g, "").slice(0, 20); return ALIAS[c] || c; }
   function draw(root, sym, interval, isOpen) {
     root = root || box; sym = sym || cur; interval = interval || iv;
     var mini = root.classList && root.classList.contains("sc-mini"), body = root.querySelector(".sc-body"), cid = "sc-tv-" + (++seq);
