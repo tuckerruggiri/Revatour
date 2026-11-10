@@ -3,51 +3,55 @@
  "tape": [
   {
    "l": "Dow",
-   "v": "51,523",
-   "d": -3.44
+   "v": "51,286",
+   "d": -0.46
   },
   {
    "l": "S&P 500",
-   "v": "7,354",
-   "d": -4.36
+   "v": "7,377",
+   "d": 0.31
   },
   {
    "l": "Nasdaq",
-   "v": "24,315",
-   "d": -5.52
+   "v": "24,579",
+   "d": 1.09
   },
   {
    "l": "Gold",
-   "v": "$4,098",
-   "d": 0.61
+   "v": "$4,075",
+   "d": -0.94
   },
   {
    "l": "WTI oil",
-   "v": "$90.52",
-   "d": 2.7
+   "v": "$90.83",
+   "d": 0.34
   },
   {
    "l": "10-yr yield",
-   "v": "4.84%"
+   "v": "4.86%"
   }
  ],
- "tapeSrc": "https://cappnotes.substack.com/p/closing-look-thursday-november-5",
+ "tapeSrc": "https://finance.yahoo.com/markets/live/stock-market-today-friday-november-6-dow-sp-500-nasdaq-jobs-report-earnings-135953863.html",
  "events": [
   {
-   "d": "2026-11-06",
-   "l": "Jobs report"
-  },
-  {
    "d": "2026-11-09",
-   "l": "CEG, RKLB earnings"
+   "l": "CEG, RKLB, OXY earnings"
   },
   {
    "d": "2026-11-10",
-   "l": "CPI"
+   "l": "CPI, CoreWeave earnings"
+  },
+  {
+   "d": "2026-11-11",
+   "l": "Veterans Day, bond market closed"
   },
   {
    "d": "2026-11-12",
-   "l": "NBIS earnings"
+   "l": "Nebius, Cisco, Applied Materials earnings"
+  },
+  {
+   "d": "2026-11-13",
+   "l": "PPI"
   }
  ],
  "picks": [
@@ -222,33 +226,59 @@
    "srcN": "Quiver Quant, Nov 4; Stock Titan, Nov 5"
   },
   {
-   "kind": "day",
-   "t": "NET",
-   "n": "Cloudflare",
-   "theme": "Earnings gap up",
-   "chg": 17,
-   "cat": "Q3 beat, raised outlook (Nov 5)",
-   "setup": "Beat and raise on a day the Nasdaq fell 5.5%",
+   "kind": "radar",
+   "t": "LKQ",
+   "n": "LKQ Corp",
+   "theme": "Cluster insider buying",
+   "px": 20.03,
+   "pxN": "Price cited Nov 6 (DividendChannel)",
+   "cat": "No date set",
+   "setup": "Three executives bought in about a week",
+   "stage": 1,
+   "stageN": "Insider cluster only; no volume, trend or valuation data was read.",
    "v": {
-    "news": 1,
-    "gap": 1,
+    "inst": -1,
+    "ins": 1,
     "vol": -1,
-    "iv": -1,
-    "liq": -1
+    "base": -1,
+    "cat": -1
    },
-   "why": "EPS was $0.38 vs $0.34 expected and revenue $782.5M vs $736.8M. The company raised its full-year outlook. Shares were up about 17% after hours.",
-   "risk": "After-hours moves can fade at the open, and the market just had its worst day since April 2025. Price and volume were not in the source.",
-   "src": "https://cappnotes.substack.com/p/closing-look-thursday-november-5",
-   "srcN": "CappNotes, Nov 5"
+   "why": "Three LKQ insiders bought 41,595 shares for $792,615 between Oct 30 and Nov 4, an average of about $19.06 a share. The headline cites a $20.03 price and a roughly 6% dividend yield.",
+   "risk": "Only the article's summary was readable (the body was behind a sign-up wall), so names and per-person amounts are unverified. The buys are small against the company's size.",
+   "src": "https://www.dividendchannel.com/article/202611/lkq-insider-buying-three-executives-purchase-nearly-793-000-in-shares-LKQ11062026cluster.htm/",
+   "srcN": "DividendChannel, about Nov 6"
+  },
+  {
+   "kind": "radar",
+   "t": "BXMT",
+   "n": "Blackstone Mortgage Trust",
+   "theme": "CEO open-market buy",
+   "cat": "No date set",
+   "setup": "CEO bought 90,000 shares on Nov 4",
+   "stage": 1,
+   "stageN": "Filing lead only: no price, volume or valuation data was verified.",
+   "v": {
+    "inst": -1,
+    "ins": 1,
+    "vol": -1,
+    "base": -1,
+    "cat": -1
+   },
+   "why": "Quiver's Nov 6 list shows CEO Timothy Steven Johnson bought 90,000 shares on Nov 4 for an estimated $1,035,351 (about $11.50 a share, derived from total over shares).",
+   "risk": "Quiver gives estimates only and no reason for the buy. There is no price trend or fundamentals data here, so treat it as a lead to research.",
+   "src": "https://www.quiverquant.com/news/Insider+Stock+Purchases%3A+November+06%2C+2026",
+   "srcN": "Quiver Quant, Nov 6"
   },
   {
    "kind": "day",
-   "t": "ABNB",
-   "n": "Airbnb",
-   "theme": "Earnings gap up",
-   "chg": 12.1,
-   "cat": "Q3 beat, Q4 guide above Street (Nov 5)",
-   "setup": "Beat, higher revenue guide, premarket pop",
+   "t": "CEG",
+   "n": "Constellation Energy",
+   "theme": "Earnings beat, raised guide",
+   "px": 249.95,
+   "pxN": "Nov 6 close (Alpha Vantage)",
+   "chg": 4.3,
+   "cat": "Q3 beat, 2026 guide raised (Nov 9)",
+   "setup": "Beat and raise, up over 4% premarket",
    "v": {
     "news": 1,
     "gap": 1,
@@ -256,39 +286,41 @@
     "iv": -1,
     "liq": -1
    },
-   "why": "EPS was $3.16 vs $2.85 expected and revenue $4.87B vs $4.75B. The Q4 revenue guide was above estimates and 2026 revenue growth guidance was raised. Shares were up about 12.1% premarket Nov 6.",
-   "risk": "Premarket gains can reverse at the open, and the jobs report at 8:30 ET can move everything. No volume data in the source.",
-   "src": "https://finance.yahoo.com/technology/ai/articles/nasdaq-futures-rise-steep-ai-094400237.html",
-   "srcN": "Yahoo Finance (Motley Fool), Nov 6; CappNotes, Nov 5"
+   "why": "Adjusted EPS was $5.06 vs $3.89 expected and revenue $9.55B vs $9.35B. 2026 adjusted EPS guidance is $12.50-$12.80 vs $12.22 expected. It is buying a 609 MW Rhode Island plant from Shell for $715M and has a 690 MW Amazon deal.",
+   "risk": "Premarket gains can fade at the open, and the group sold off hard on Nov 5 on data-center regulation fears. Options had implied about an 8% move.",
+   "src": "https://www.investing.com/news/earnings/constellation-shares-up-4-in-premarket-trade-on-q3-earnings-beat-higher-outlook-5011526",
+   "srcN": "Investing.com, Nov 9"
   },
   {
    "kind": "day",
-   "t": "TEAM",
-   "n": "Atlassian",
-   "theme": "Earnings gap down",
-   "chg": -15.6,
-   "cat": "Fiscal Q1 report, cautious cloud outlook (Nov 5)",
-   "setup": "Beat, but a cautious cloud subscription outlook",
+   "t": "NVDA",
+   "n": "Nvidia",
+   "theme": "Board probe of CEO",
+   "px": 186.64,
+   "pxN": "Nov 6 close (Alpha Vantage)",
+   "chg": -4,
+   "cat": "Board investigation of CEO Jensen Huang (reported Nov 9)",
+   "setup": "Down more than 4% premarket on the probe",
    "v": {
     "news": 1,
     "gap": 1,
     "vol": -1,
     "iv": -1,
-    "liq": -1
+    "liq": 1
    },
-   "why": "Atlassian beat estimates but guided cautiously for cloud subscriptions. Shares were down about 16% after hours and 15.6% premarket on Nov 6.",
-   "risk": "Gap-downs can extend or bounce, and software names are swinging with the AI selloff. The source gives no price or volume.",
-   "src": "https://finance.yahoo.com/technology/ai/articles/nasdaq-futures-rise-steep-ai-094400237.html",
-   "srcN": "Yahoo Finance (Motley Fool), Nov 6; CappNotes, Nov 5"
+   "why": "Nvidia's board is investigating whether Huang was a target of a foreign intelligence effort after a report of a relationship with a Chinese businesswoman. Huang said he was unfaithful and took full responsibility; Nvidia says it has no reason to believe secrets were compromised.",
+   "risk": "Details come from media reports and are not independently verified; headlines can reverse the move quickly. The stock had already fallen 9.3% on Nov 5.",
+   "src": "https://www.investing.com/news/stock-market-news/premarket-movers-nvidia-slides-on-huang-probe-nvr-extends-rally-5011241",
+   "srcN": "Investing.com, Nov 9; CoinCentral, Nov 9"
   },
   {
    "kind": "day",
-   "t": "DKNG",
-   "n": "DraftKings",
-   "theme": "Earnings gap down",
-   "chg": -18,
-   "cat": "Q3 miss, cut guidance (Nov 5)",
-   "setup": "Miss and a lower full-year revenue guide",
+   "t": "NVR",
+   "n": "NVR Inc",
+   "theme": "Homebuilders rally on election result",
+   "chg": 26,
+   "cat": "Democratic control of Congress (Nov 9)",
+   "setup": "Up more than 26% premarket",
    "v": {
     "news": 1,
     "gap": 1,
@@ -296,20 +328,60 @@
     "iv": -1,
     "liq": -1
    },
-   "why": "DraftKings missed estimates and cut its full-year revenue guidance. Shares were down about 18% after hours.",
-   "risk": "The source gives only the move, with no price, volume or detail on the miss. After-hours quotes differ from the open.",
-   "src": "https://cappnotes.substack.com/p/closing-look-thursday-november-5",
-   "srcN": "CappNotes, Nov 5"
+   "why": "Homebuilders rallied after Democrats won the Senate and House. UBS says Democratic control could improve the odds of lower tariffs on building materials.",
+   "risk": "A move this large on a political read can retrace, and mortgage rates are still above 7%. No volume or price level was in the source.",
+   "src": "https://www.investing.com/news/stock-market-news/premarket-movers-nvidia-slides-on-huang-probe-nvr-extends-rally-5011241",
+   "srcN": "Investing.com, Nov 9"
+  },
+  {
+   "kind": "day",
+   "t": "ARGX",
+   "n": "argenx",
+   "theme": "Acquisition",
+   "chg": 2.2,
+   "cat": "Agrees to buy Unnatural Products (Nov 9)",
+   "setup": "Up 2.2% premarket on a deal",
+   "v": {
+    "news": 1,
+    "gap": 1,
+    "vol": -1,
+    "iv": -1,
+    "liq": -1
+   },
+   "why": "argenx agreed to acquire Unnatural Products for up to about $1.15B, including $550M upfront.",
+   "risk": "The premarket move is small and deal terms can include milestone payments that may never be paid. No price or volume was in the source.",
+   "src": "https://www.investing.com/news/stock-market-news/premarket-movers-nvidia-slides-on-huang-probe-nvr-extends-rally-5011241",
+   "srcN": "Investing.com, Nov 9"
+  },
+  {
+   "kind": "day",
+   "t": "SAP",
+   "n": "SAP",
+   "theme": "Analyst upgrade",
+   "chg": 3,
+   "cat": "JPMorgan upgrade to Overweight (Nov 9)",
+   "setup": "Up about 3% on an upgrade",
+   "v": {
+    "news": 1,
+    "gap": 1,
+    "vol": -1,
+    "iv": -1,
+    "liq": -1
+   },
+   "why": "SAP rose about 3% after JPMorgan upgraded it to Overweight from Neutral.",
+   "risk": "An upgrade-driven move can fade, and the article gave no price, volume or target. The software group has been volatile.",
+   "src": "https://www.investing.com/news/stock-market-news/premarket-movers-nvidia-slides-on-huang-probe-nvr-extends-rally-5011241",
+   "srcN": "Investing.com, Nov 9"
   },
   {
    "kind": "swing",
    "t": "RKLB",
    "n": "Rocket Lab",
    "theme": "Space, earnings",
-   "px": 45.99,
-   "pxN": "Nov 5 close (Motley Fool)",
-   "chg": -12.18,
-   "hi": 151.0,
+   "px": 53.07,
+   "pxN": "Nov 6 close (Alpha Vantage)",
+   "chg": 15.39,
+   "hi": 151,
    "lo": 37.57,
    "hiN": "52-wk range $37.57 - $151.00",
    "cat": "Earnings Mon Nov 9 after close",
@@ -322,33 +394,50 @@
     "mom": -1,
     "thm": 1
    },
-   "why": "Closed Nov 5 at $45.99 (-12.18%), about 70% under its record close of $150.23. Consensus is about -$0.02 EPS on $256.51M revenue; Q3 gross margin is guided to 35-37%.",
-   "risk": "The Neutron rocket slipped to 2027 and the stock trades near 30x sales. Earnings can gap it either way.",
-   "src": "https://www.fool.com/investing/2026/11/05/rocket-lab-stock-has-lost-about-70-from-its-record-is-it-finally-a-buy/",
-   "srcN": "Motley Fool, Nov 5; Earnings Whispers"
+   "why": "Closed Nov 6 at $53.07 (+15.4%) after falling 12.2% on Nov 5, still far below its record close of $150.23. Options imply about a 15.4% move on the Nov 9 report (EarningsWatcher, Nov 6); consensus was about -$0.02 EPS on $256.51M revenue.",
+   "risk": "The Neutron rocket slipped to 2027 and the stock trades near 30x sales. Earnings can gap it either way, and it already bounced 15% going in.",
+   "src": "https://earnings-watcher.com/earnings-this-week",
+   "srcN": "EarningsWatcher, Nov 6; Motley Fool, Nov 5"
   },
   {
    "kind": "swing",
-   "t": "CEG",
-   "n": "Constellation Energy",
-   "theme": "AI power pullback",
-   "px": 245.72,
-   "pxN": "Nov 4 close (Alpha Vantage)",
-   "chg": -6.7,
-   "cat": "Earnings Mon Nov 9 before open",
-   "catDate": "2026-11-09",
-   "setup": "Data-center selloff into earnings",
+   "t": "CRWV",
+   "n": "CoreWeave",
+   "theme": "AI cloud, earnings",
+   "cat": "Earnings Tue Nov 10 after close",
+   "catDate": "2026-11-10",
+   "setup": "Earnings after a sharp AI selloff",
    "v": {
     "cat": 1,
-    "low": 1,
+    "low": -1,
     "sel": 1,
     "mom": -1,
     "thm": 1
    },
-   "why": "Fell as much as 8% on Nov 4 with no company news as Democrats won Congress. It traded at 21x forward earnings vs a three-year average of 26x, and the Google and Amazon contracts remain in place. (Price and details are from Nov 4; no Nov 5 update was found.) (Price and details are from Nov 4; no Nov 5 update was found.)",
-   "risk": "Earnings depend on new data-center contracts, and state moratoria talk could weigh on the whole group. Management has promised a second look at its $11.50-$12.50 2026 guidance.",
-   "src": "https://www.tikr.com/blog/constellation-energy-sinks-8-vistra-down-14-as-democrats-midterm-sweep-hits-ai-power-stocks",
-   "srcN": "TIKR, Nov 4 + Alpha Vantage"
+   "why": "Reports after the close Nov 10 (call 5 pm ET). Consensus revenue is about $3.5B (+159% y/y); EPS estimates conflict (about -$1.17 to -$1.55). Options imply about a 21.2% move; the stock fell 9.9% on Nov 4.",
+   "risk": "AI data-center names are the center of the Nov 5 regulation scare, and the implied move is large. Sources disagree on the EPS consensus.",
+   "src": "https://hamzareddani.substack.com/p/weekly-market-prep-midterm-malaise",
+   "srcN": "Hamza Reddani, Nov 9; EarningsWatcher, Nov 6"
+  },
+  {
+   "kind": "swing",
+   "t": "AMAT",
+   "n": "Applied Materials",
+   "theme": "Chip equipment, earnings",
+   "cat": "Earnings Thu Nov 12 after close",
+   "catDate": "2026-11-12",
+   "setup": "Earnings after a chip-group washout",
+   "v": {
+    "cat": 1,
+    "low": -1,
+    "sel": 1,
+    "mom": -1,
+    "thm": 1
+   },
+   "why": "Reports after the close Nov 12; EPS consensus is about $4.06-$4.13 and the market is watching for a Q1 revenue guide above $7.65B. Options imply about a 10.4% move.",
+   "risk": "Chip equipment is tied to the same AI-capex fears that hit semis on Nov 5, and the guide matters more than the quarter.",
+   "src": "https://hamzareddani.substack.com/p/weekly-market-prep-midterm-malaise",
+   "srcN": "Hamza Reddani, Nov 9; EarningsWatcher, Nov 6"
   },
   {
    "kind": "swing",
@@ -381,7 +470,7 @@
    "t": "LRCX",
    "n": "Lam Research",
    "theme": "Chip equipment pullback",
-   "chg": -16.36,
+   "chg": 8.23,
    "cat": "$25B buyback approved",
    "setup": "Sharp drop in a strong theme, then a buyback",
    "v": {
@@ -391,10 +480,10 @@
     "mom": -1,
     "thm": 1
    },
-   "why": "Fell 16.36% on Nov 5 in the chip selloff. The board approved a $25B buyback and the shares firmed after hours.",
+   "why": "Lam Research rose 8.23% on Nov 6 after announcing a $25B buyback, as chips bounced after Thursday's drop (the semiconductor index fell more than 12% on Nov 5). A catalyst date was not found.",
    "risk": "The buyback has no stated timetable and the whole chip group is moving together. No price or valuation data in the source.",
-   "src": "https://cappnotes.substack.com/p/closing-look-thursday-november-5",
-   "srcN": "CappNotes, Nov 5"
+   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-6-2026",
+   "srcN": "Stock Titan, Nov 6"
   },
   {
    "kind": "swing",
@@ -428,7 +517,7 @@
    "theme": "Obesity drugs",
    "px": 1395.18,
    "pxN": "Nov 5, 12:07 pm ET (Motley Fool)",
-   "hi": 1453.0,
+   "hi": 1453,
    "lo": 850.51,
    "hiN": "52-wk range $850.51 - $1,453.00",
    "cat": "2026 revenue guidance raised to $91-92B",
@@ -502,7 +591,7 @@
    "px": 1530.28,
    "pxN": "Nov 5 (Motley Fool)",
    "chg": -12.05,
-   "hi": 2342.0,
+   "hi": 2342,
    "lo": 1469.01,
    "hiN": "52-wk range $1,469.01 - $2,342.00",
    "cat": "Q2 sales +50%",
@@ -560,7 +649,7 @@
     "dil": -1
    },
    "why": "Q3 revenue was $1,022M (+12%) with a net loss of $0.23 per share vs $0.12 a year ago. The Q4 guide calls for at least 40% revenue growth and an adjusted EBITDA loss of $70M-$85M. Alpha Vantage shows a $1.79 close on 43.1M shares.",
-   "risk": "The per-share loss widened from a year ago, cash and share count were not checked, and mortgage rates are still above 7%.",
+   "risk": "The per-share loss widened from a year ago, cash and share count were not checked, and mortgage rates are still above 7%. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
    "src": "https://www.sec.gov/Archives/edgar/data/0001801169/000180116926000027/q32026formxex991earningsre.htm",
    "srcN": "Opendoor 8-K exhibit, Nov 5; Alpha Vantage, Nov 5"
   },
@@ -585,7 +674,7 @@
     "dil": -1
    },
    "why": "An 8-K says the FDA approved the preservative-free ketamine ANDA on Oct 30, ahead of the Nov 10 GDUFA goal date. Alpha Vantage shows a $2.27 close on 832,743 shares.",
-   "risk": "The dated catalyst is gone, so the stock now trades on follow-through. Cash and share count were not checked.",
+   "risk": "The dated catalyst is gone, so the stock now trades on follow-through. Cash and share count were not checked. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
    "src": "https://www.sec.gov/Archives/edgar/data/0001719406/000143774926034284/nrxp20261030_8k.htm",
    "srcN": "NRx 8-K, Oct 30; Alpha Vantage, Nov 5"
   },
@@ -609,7 +698,7 @@
     "dil": 0
    },
    "why": "Curis jumped as much as 142% premarket on Nov 4 after a routine proxy filing, closed at $1.11, then fell to $0.85 on Nov 5 (volume 11.9M).",
-   "risk": "Cash was about $5.6M against a quarterly loss near $8.6M, so it will probably need to raise money. A study example of a trap.",
+   "risk": "Cash was about $5.6M against a quarterly loss near $8.6M, so it will probably need to raise money. A study example of a trap. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
    "src": "https://www.timothysykes.com/news/curis-inc-cris-news-2026_11_04/",
    "srcN": "Timothy Sykes, Nov 4; Alpha Vantage, Nov 5"
   },
@@ -634,7 +723,7 @@
     "dil": 0
    },
    "why": "Nasdaq issued a delisting determination on Oct 27 after 30 straight days under $1. Three reverse splits (a cumulative 1-for-2,000) leave no compliance period, and authorized shares rose from 350M to 850M on Oct 30.",
-   "risk": "Whether the company filed for a hearing is unconfirmed, so suspension remains possible. A study example of a trap.",
+   "risk": "Whether the company filed for a hearing is unconfirmed, so suspension remains possible. A study example of a trap. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
    "src": "https://www.sec.gov/Archives/edgar/data/0001826011/000143774926034210/para20261030_8k.htm",
    "srcN": "Company 8-K, Oct 30; Alpha Vantage, Nov 5"
   },
@@ -661,7 +750,7 @@
    "soc": "Not checked.",
    "opt": "Not stated.",
    "ins": "Not stated.",
-   "risk": "The release gives no cash balance or runway, and says the redemption may shorten runway. A 181% one-day move in a sub-$1 name often fades.",
+   "risk": "The release gives no cash balance or runway, and says the redemption may shorten runway. A 181% one-day move in a sub-$1 name often fades. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
    "src": "https://finviz.com/news/417213/lakewood-amedex-biotherapeutics-announces-completion-of-series-c-convertible-preferred-stock-redemption",
    "srcN": "Company press release, Nov 5; price from screener"
   },
@@ -688,7 +777,7 @@
    "soc": "Not checked.",
    "opt": "Not stated.",
    "ins": "Not stated.",
-   "risk": "A spike with no stated reason is the classic pump-and-fade pattern. Treat it as a study example, not a setup.",
+   "risk": "A spike with no stated reason is the classic pump-and-fade pattern. Treat it as a study example, not a setup. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
    "src": "https://www.marketbeat.com/",
    "srcN": "Screener data, Nov 5"
   },
@@ -715,7 +804,7 @@
    "soc": "Not checked.",
    "opt": "Not stated.",
    "ins": "Not stated.",
-   "risk": "Reverse splits usually reset the price and then it keeps falling. This is the trap most sub-$1 buyers fall into.",
+   "risk": "Reverse splits usually reset the price and then it keeps falling. This is the trap most sub-$1 buyers fall into. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
    "src": "https://www.marketbeat.com/",
    "srcN": "Screener and filings summaries, Nov 5"
   },
@@ -742,7 +831,7 @@
    "soc": "Stocktwits sentiment was elevated on the day.",
    "opt": "Not stated.",
    "ins": "Not stated.",
-   "risk": "Going-concern language plus repeated reverse splits point to ongoing dilution.",
+   "risk": "Going-concern language plus repeated reverse splits point to ongoing dilution. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
    "src": "https://stocktwits.com/",
    "srcN": "Stocktwits coverage, Nov 5"
   }
