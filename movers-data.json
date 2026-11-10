@@ -1,5 +1,5 @@
 {
- "asof": "Nov 9, 2026",
+ "asof": "Nov 10, 2026",
  "tape": [
   {
    "l": "Dow",
@@ -311,7 +311,8 @@
    "why": "Nvidia's board is investigating whether Huang was a target of a foreign intelligence effort after a report of a relationship with a Chinese businesswoman. Huang said he was unfaithful and took full responsibility; Nvidia says it has no reason to believe secrets were compromised.",
    "risk": "Details come from media reports and are not independently verified; headlines can reverse the move quickly. The stock had already fallen 9.3% on Nov 5.",
    "src": "https://www.investing.com/news/stock-market-news/premarket-movers-nvidia-slides-on-huang-probe-nvr-extends-rally-5011241",
-   "srcN": "Investing.com, Nov 9; CoinCentral, Nov 9"
+   "srcN": "Investing.com, Nov 9; CoinCentral, Nov 9",
+   "soc": "Stocktwits retail sentiment was 'extremely bullish' for the week of Nov 2-6 even as the stock fell 8.8%; AltIndex's Nov 10 list shows about 15,400 Stocktwits mentions, up 54% in a day."
   },
   {
    "kind": "day",
@@ -508,7 +509,8 @@
    "why": "Fell 17.46% to $656.39 on Nov 5, about 48% under its 52-week high. Chip stocks bounced 5% to 8.3% premarket Nov 6 (Yahoo).",
    "risk": "Memory is cyclical, the Nov 6 bounce may not hold, and policy fears around data centers are unresolved.",
    "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-5-2026",
-   "srcN": "Stock Titan, Nov 5; Yahoo Finance, Nov 6"
+   "srcN": "Stock Titan, Nov 5; Yahoo Finance, Nov 6",
+   "soc": "One of the most-discussed Stocktwits tickers on AltIndex's Nov 10 list, with about 12,200 mentions."
   },
   {
    "kind": "invest",
@@ -834,6 +836,284 @@
    "risk": "Going-concern language plus repeated reverse splits point to ongoing dilution. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
    "src": "https://stocktwits.com/",
    "srcN": "Stocktwits coverage, Nov 5"
+  },
+  {
+   "kind": "day",
+   "t": "AMD",
+   "n": "Advanced Micro Devices",
+   "theme": "Upgrade plus Nvidia headline fallout",
+   "px": 508.58,
+   "pxN": "Nov 9 close",
+   "chg": 13,
+   "cat": "Oppenheimer upgrade; Google Cloud TPU host-CPU win (Nov 9)",
+   "setup": "Upgrade-driven breakout on its best day in six months",
+   "v": {
+    "news": 1,
+    "gap": -1,
+    "vol": -1,
+    "iv": -1,
+    "liq": 1
+   },
+   "why": "AMD rose 13% to $508.58, its best session in six months. Oppenheimer upgraded it to Outperform with a $600 target, its EPYC chips will host Google Cloud's TPU 8tx, and its CEO raised the 2027 revenue growth outlook to above 80%. Nvidia fell 4% the same day on a board probe into its CEO.",
+   "soc": "Stocktwits retail sentiment moved to 'extremely bullish' from 'bullish', with message volume up 277% in 24 hours (Stocktwits, Nov 10).",
+   "risk": "Part of the move came from Nvidia's trouble, which can reverse. Michael Burry said he would not trade this rally and stays bearish on chip stocks.",
+   "src": "https://stocktwits.com/news-articles/markets/equity/amd-stock-michael-burry-wont-touch-nvidia-headline-trade/cNGu40nR97l",
+   "srcN": "Stocktwits, Nov 10"
+  },
+  {
+   "kind": "day",
+   "t": "HIMS",
+   "n": "Hims & Hers Health",
+   "theme": "Earnings drop, retail dip-buying",
+   "px": 22.94,
+   "pxN": "Nov 9 close",
+   "chg": -12,
+   "cat": "Weak Q3 results (Nov 9); Peptides+ program ahead",
+   "setup": "Earnings gap down with heavy retail chatter",
+   "v": {
+    "news": 1,
+    "gap": -1,
+    "vol": -1,
+    "iv": -1,
+    "liq": -1
+   },
+   "why": "HIMS fell 12% to $22.94, its worst session in over three months, then slipped nearly 4% more overnight. Subscribers fell about 100,000 from the prior quarter to 2.8 million. Retail traders are betting the upcoming Peptides+ program and a new board member can revive it.",
+   "soc": "Stocktwits sentiment jumped to 'extremely bullish' from neutral, with message volume up 8,509% in 24 hours (Stocktwits, Nov 10).",
+   "risk": "Retail enthusiasm after a sharp earnings drop can fade; the stock is down 29% year to date and fell on shrinking subscribers.",
+   "src": "https://stocktwits.com/news-articles/markets/equity/hims-stock-retail-peptides-comeback-stanford-neuroscientist-joins-board/cNGuJgJR97n",
+   "srcN": "Stocktwits, Nov 10"
+  },
+  {
+   "kind": "day",
+   "t": "TLS",
+   "n": "Telos Corporation",
+   "theme": "Big gainer, cause unconfirmed",
+   "px": 7.17,
+   "pxN": "Nov 9 (StockAnalysis gainers)",
+   "chg": 48.76,
+   "cat": "Q3 results were scheduled for Nov 9",
+   "setup": "Large one-day gain on 4.1M shares",
+   "v": {
+    "news": -1,
+    "gap": -1,
+    "vol": -1,
+    "iv": -1,
+    "liq": -1
+   },
+   "why": "Telos rose 48.8% to $7.17 on 4.1 million shares and has a $527M market cap. The company had announced it would report third-quarter results on Nov 9. I did not find an article confirming what drove the move.",
+   "risk": "Without a confirmed reason, a 49% jump can reverse quickly. Check the earnings release before trusting it.",
+   "src": "https://stockanalysis.com/markets/gainers/",
+   "srcN": "StockAnalysis gainers, Nov 9"
+  },
+  {
+   "kind": "swing",
+   "t": "MRNA",
+   "n": "Moderna",
+   "theme": "Profit turn, analyst upgrades",
+   "chg": 5,
+   "cat": "First profitable quarter in two years; Piper Sandler and Goldman raised targets (Nov 9)",
+   "setup": "Near five-year high after a profit turn",
+   "v": {
+    "cat": 1,
+    "low": -1,
+    "sel": -1,
+    "mom": 1,
+    "thm": -1
+   },
+   "why": "Moderna posted its first profitable quarter in two years with revenue up 29%, and investors liked its experimental skin cancer vaccine with Merck. It reached about $280.80, a near five-year high, and closed up about 5% on Nov 9.",
+   "soc": "Stocktwits retail sentiment was 'bullish' (Stocktwits, Nov 9).",
+   "risk": "It is already near a five-year high, so a pullback is possible, and the skin cancer vaccine is still experimental.",
+   "src": "https://stocktwits.com/news-articles/markets/equity/why-did-u-mrna-abnb-stocks-surge-to-52-week-highs-today/cNGudeWR97K",
+   "srcN": "Stocktwits, Nov 9"
+  },
+  {
+   "kind": "swing",
+   "t": "SLS",
+   "n": "SELLAS Life Sciences",
+   "theme": "Binary Phase 3 readout",
+   "chg": 2,
+   "cat": "REGAL trial hit its 80th event; topline results expected Q4",
+   "setup": "Binary trial readout ahead; two straight up days",
+   "v": {
+    "cat": 1,
+    "low": -1,
+    "sel": -1,
+    "mom": 1,
+    "thm": -1
+   },
+   "why": "The Phase 3 REGAL trial of Galinpepimut-S reached its 80th event, which triggers the final analysis, with topline results expected in the fourth quarter. The stock rose nearly 2% on Monday and is up about 128% year to date. Analysts expect no revenue and a loss of $0.05 per share.",
+   "soc": "Stocktwits sentiment slipped to 'neutral' from 'bullish', with message volume up 193% in 24 hours (Stocktwits, Nov 10).",
+   "risk": "A failed trial could drop the stock sharply. The company has no revenue and an operating loss near $10M a quarter.",
+   "src": "https://stocktwits.com/news-articles/markets/equity/sls-stock-retail-regal-wait-almost-over-what-wall-street-expects-earnings/cNGuE32R971",
+   "srcN": "Stocktwits, Nov 10"
+  },
+  {
+   "kind": "penny",
+   "t": "FISN",
+   "n": "Deep Fission",
+   "theme": "Big gainer, cause unconfirmed",
+   "px": 2.83,
+   "pxN": "Nov 9 (StockAnalysis gainers)",
+   "chg": 52.97,
+   "cat": "No news found for the move",
+   "setup": "Spike with no sourced reason",
+   "stage": 3,
+   "stageN": "Spike already ran; cause unconfirmed.",
+   "v": {
+    "news": -1,
+    "vol": -1,
+    "list": -1,
+    "cash": -1,
+    "dil": -1
+   },
+   "why": "Deep Fission rose 52.97% to $2.83 on 6.3 million shares with a market cap of about $167M. It is a Nasdaq-listed company developing an underground nuclear reactor for AI data centers. I did not find an article explaining the move, which is a common pattern before these spikes fade.",
+   "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
+   "src": "https://stockanalysis.com/markets/gainers/",
+   "srcN": "StockAnalysis gainers, Nov 9"
+  },
+  {
+   "kind": "penny",
+   "t": "TVRD",
+   "n": "Tvardi Therapeutics",
+   "theme": "Big gainer, cause unconfirmed",
+   "px": 1.41,
+   "pxN": "Nov 9 (StockAnalysis gainers)",
+   "chg": 47.21,
+   "cat": "No news found for the move",
+   "setup": "Spike with no sourced reason",
+   "stage": 3,
+   "stageN": "Spike already ran; cause unconfirmed.",
+   "v": {
+    "news": -1,
+    "vol": -1,
+    "list": -1,
+    "cash": -1,
+    "dil": -1
+   },
+   "why": "Tvardi Therapeutics rose 47.21% to $1.41 on 4.6 million shares with a market cap of about $19M. I did not find an article explaining the move, which is a common pattern before these spikes fade.",
+   "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
+   "src": "https://stockanalysis.com/markets/gainers/",
+   "srcN": "StockAnalysis gainers, Nov 9"
+  },
+  {
+   "kind": "penny",
+   "t": "NCPL",
+   "n": "Netcapital",
+   "theme": "Big gainer, cause unconfirmed",
+   "px": 1.82,
+   "pxN": "Nov 9 (StockAnalysis gainers)",
+   "chg": 44.44,
+   "cat": "No news found for the move",
+   "setup": "Spike with no sourced reason",
+   "stage": 3,
+   "stageN": "Spike already ran; cause unconfirmed.",
+   "v": {
+    "news": -1,
+    "vol": -1,
+    "list": -1,
+    "cash": -1,
+    "dil": -1
+   },
+   "why": "Netcapital rose 44.44% to $1.82 on 12.3 million shares with a market cap of about $14M. I did not find an article explaining the move, which is a common pattern before these spikes fade.",
+   "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
+   "src": "https://stockanalysis.com/markets/gainers/",
+   "srcN": "StockAnalysis gainers, Nov 9"
+  },
+  {
+   "kind": "micro",
+   "t": "GPUS",
+   "n": "Hyperscale Data",
+   "theme": "Big gainer, cause unconfirmed",
+   "px": 0.19,
+   "pxN": "Nov 9 (StockAnalysis gainers)",
+   "chg": 32.61,
+   "cat": "No news found for the move",
+   "setup": "Spike with no sourced reason",
+   "stage": 3,
+   "stageN": "Spike already ran; cause unconfirmed.",
+   "v": {
+    "news": -1,
+    "vol": -1,
+    "buzz": -1,
+    "buy": -1,
+    "dil": -1
+   },
+   "why": "Hyperscale Data rose 32.61% to $0.19 on 130.6 million shares with a market cap of about $32M. I did not find an article explaining the move, which is a common pattern before these spikes fade.",
+   "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
+   "src": "https://stockanalysis.com/markets/gainers/",
+   "srcN": "StockAnalysis gainers, Nov 9"
+  },
+  {
+   "kind": "micro",
+   "t": "XHLD",
+   "n": "TEN Holdings",
+   "theme": "Big gainer, cause unconfirmed",
+   "px": 0.87,
+   "pxN": "Nov 9 (StockAnalysis gainers)",
+   "chg": 49.48,
+   "cat": "No news found for the move",
+   "setup": "Spike with no sourced reason",
+   "stage": 3,
+   "stageN": "Spike already ran; cause unconfirmed.",
+   "v": {
+    "news": -1,
+    "vol": -1,
+    "buzz": -1,
+    "buy": -1,
+    "dil": -1
+   },
+   "why": "TEN Holdings rose 49.48% to $0.87 on 68.3 million shares with a market cap of about $10M. I did not find an article explaining the move, which is a common pattern before these spikes fade.",
+   "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
+   "src": "https://stockanalysis.com/markets/gainers/",
+   "srcN": "StockAnalysis gainers, Nov 9"
+  },
+  {
+   "kind": "micro",
+   "t": "ESLA",
+   "n": "Estrella Immunopharma",
+   "theme": "Big gainer, cause unconfirmed",
+   "px": 0.514,
+   "pxN": "Nov 9 (StockAnalysis gainers)",
+   "chg": 36.93,
+   "cat": "No news found for the move",
+   "setup": "Spike with no sourced reason",
+   "stage": 3,
+   "stageN": "Spike already ran; cause unconfirmed.",
+   "v": {
+    "news": -1,
+    "vol": -1,
+    "buzz": -1,
+    "buy": -1,
+    "dil": -1
+   },
+   "why": "Estrella Immunopharma rose 36.93% to $0.514 on 6.6 million shares with a market cap of about $22M. I did not find an article explaining the move, which is a common pattern before these spikes fade.",
+   "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
+   "src": "https://stockanalysis.com/markets/gainers/",
+   "srcN": "StockAnalysis gainers, Nov 9"
+  },
+  {
+   "kind": "micro",
+   "t": "AKBA",
+   "n": "Akebia Therapeutics",
+   "theme": "Big gainer, cause unconfirmed",
+   "px": 0.533,
+   "pxN": "Nov 9 (StockAnalysis gainers)",
+   "chg": 32.77,
+   "cat": "No news found for the move",
+   "setup": "Spike with no sourced reason",
+   "stage": 3,
+   "stageN": "Spike already ran; cause unconfirmed.",
+   "v": {
+    "news": -1,
+    "vol": -1,
+    "buzz": -1,
+    "buy": -1,
+    "dil": -1
+   },
+   "why": "Akebia Therapeutics rose 32.77% to $0.533 on 16.9 million shares with a market cap of about $148M. I did not find an article explaining the move, which is a common pattern before these spikes fade.",
+   "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
+   "src": "https://stockanalysis.com/markets/gainers/",
+   "srcN": "StockAnalysis gainers, Nov 9"
   }
  ]
 }
