@@ -184,7 +184,7 @@ module.exports = async (req, res) => {
         catch (e) { if (e.status === 400 || e.status === 401) return res.status(200).json({ configured: true, reconnect: true }); throw e; }
       }
       const IDX = new Set(['TNX', 'TYX', 'FVX', 'IRX', 'VIX', 'SPX', 'DJI', 'COMPX']), wire = (x) => (IDX.has(x) ? '$' + x : x); // Schwab writes index symbols with a leading $
-      const r = await fetch(MARKET + '/quotes?' + new URLSearchParams({ symbols: syms.map(wire).join(','), fields: 'quote' }).toString(), { headers: { Authorization: 'Bearer ' + at.token, Accept: 'application/json' } });
+      const r = await fetch(MARKET + '/quotes?' + new URLSearchParams({ symbols: syms.map(wire).join(','), fields: 'quote,reference' }).toString(), { headers: { Authorization: 'Bearer ' + at.token, Accept: 'application/json' } });
       if (r.status === 401) atCache.delete(u.id);
       if (!r.ok) return res.status(200).json({ configured: true, noMarket: true, status: r.status });
       const j = await r.json();
@@ -195,7 +195,7 @@ module.exports = async (req, res) => {
         const p = isFinite(last) && last > 0 ? last : mark; if (!isFinite(p) || p <= 0) return;
         const m = isFinite(mark) && mark > 0 ? mark : p;
         const dp = isFinite(close) && close > 0 ? (m - close) / close * 100 : Number(q.netPercentChange);
-        out[s] = { p, m, d: isFinite(close) && close > 0 ? m - close : Number(q.netChange), dp: isFinite(dp) ? dp : null, pc: isFinite(close) ? close : null, o: isFinite(Number(q.openPrice)) && Number(q.openPrice) > 0 ? Number(q.openPrice) : null, w52h: isFinite(Number(q['52WeekHigh'])) ? Number(q['52WeekHigh']) : null, w52l: isFinite(Number(q['52WeekLow'])) ? Number(q['52WeekLow']) : null, h: isFinite(Number(q.highPrice)) && Number(q.highPrice) > 0 ? Number(q.highPrice) : null, l: isFinite(Number(q.lowPrice)) && Number(q.lowPrice) > 0 ? Number(q.lowPrice) : null, v: isFinite(Number(q.totalVolume)) ? Number(q.totalVolume) : null, t: Number(q.quoteTime) || null };
+        out[s] = { n: (j[wire(s)].reference && j[wire(s)].reference.description) || undefined, p, m, d: isFinite(close) && close > 0 ? m - close : Number(q.netChange), dp: isFinite(dp) ? dp : null, pc: isFinite(close) ? close : null, o: isFinite(Number(q.openPrice)) && Number(q.openPrice) > 0 ? Number(q.openPrice) : null, w52h: isFinite(Number(q['52WeekHigh'])) ? Number(q['52WeekHigh']) : null, w52l: isFinite(Number(q['52WeekLow'])) ? Number(q['52WeekLow']) : null, h: isFinite(Number(q.highPrice)) && Number(q.highPrice) > 0 ? Number(q.highPrice) : null, l: isFinite(Number(q.lowPrice)) && Number(q.lowPrice) > 0 ? Number(q.lowPrice) : null, v: isFinite(Number(q.totalVolume)) ? Number(q.totalVolume) : null, t: Number(q.quoteTime) || null };
       });
       res.setHeader('Cache-Control', 'private, max-age=5');
       return res.status(200).json({ configured: true, source: 'schwab', ts: Date.now(), quotes: out });
