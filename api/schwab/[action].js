@@ -1,5 +1,5 @@
 // api/schwab/[action].js — connect a Schwab account (Trader API) and pull executed trades.
-// Routes: /api/schwab/start  /callback  /save  /status  /trades  /quotes  /disconnect
+// Routes: /api/schwab/start  /callback  /save  /status  /trades  /quotes  /chain  /disconnect
 // Vercel env vars: SCHWAB_APP_KEY, SCHWAB_APP_SECRET, SUPABASE_URL, SUPABASE_ANON_KEY
 // Optional: SCHWAB_REDIRECT_URI (must match the callback URL registered with Schwab; default below)
 // The refresh token is encrypted with a key derived from SCHWAB_APP_SECRET and stored in the user's own row (ss_broker, RLS).
@@ -198,6 +198,31 @@ module.exports = async (req, res) => {
       });
       res.setHeader('Cache-Control', 'private, max-age=5');
       return res.status(200).json({ configured: true, source: 'schwab', ts: Date.now(), quotes: out });
+    }
+    if (action === 'chain') { // option chain for the Options school page (needs the Market Data product on the Schwab app)
+      if (!c || daysLeft <= 0) return res.status(200).json({ configured: true, reconnect: true });
+      const sym = String(req.query.symbol || '').toUpperCase().trim();
+      if (!/^[A-Z]{1,5}$/.test(sym)) return res.status(400).json({ error: 'bad symbol' });
+      let at = atCache.get(u.id);
+      if (!at || at.exp < Date.now() + 60000) {
+        try { const tk = await tokenCall({ grant_type: 'refresh_token', refresh_token: c.rt }); at = { token: tk.access_token, exp: Date.now() + (Number(tk.expires_in) || 1800) * 1000 }; atCache.set(u.id, at); }
+        catch (e) { if (e.status === 400 || e.status === 401) return res.status(200).json({ configured: true, reconnect: true }); throw e; }
+      }
+      const qs = new URLSearchParams({ symbol: sym, contractType: 'ALL', strikeCount: '40', includeUnderlyingQuote: 'true', range: 'ALL' });
+      const r = await fetch(MARKET + '/chains?' + qs.toString(), { headers: { Authorization: 'Bearer ' + at.token, Accept: 'application/json' } });
+      if (r.status === 401) atCache.delete(u.id);
+      if (!r.ok) return res.status(200).json({ configured: true, noMarket: true, status: r.status });
+      const j = await r.json();
+      const num = (x) => { x = Number(x); return isFinite(x) ? x : null; };
+      const side = (map) => Object.keys(map || {}).slice(0, 8).map((k) => {
+        const rows = [];
+        Object.keys(map[k]).forEach((st) => { const o = map[k][st][0]; if (!o) return;
+          rows.push({ k: Number(st), b: num(o.bid), a: num(o.ask), l: num(o.last), v: num(o.totalVolume), oi: num(o.openInterest), iv: num(o.volatility), d: num(o.delta), g: num(o.gamma), t: num(o.theta), vg: num(o.vega) }); });
+        rows.sort((x, y) => x.k - y.k);
+        return { exp: k.split(':')[0], dte: Number(k.split(':')[1]), rows };
+      });
+      res.setHeader('Cache-Control', 'private, max-age=10');
+      return res.status(200).json({ configured: true, source: 'schwab', ts: Date.now(), sym, price: num(j.underlyingPrice) || (j.underlying && num(j.underlying.last)), iv: num(j.volatility), calls: side(j.callExpDateMap), puts: side(j.putExpDateMap) });
     }
     return res.status(404).json({ error: 'unknown' });
   } catch (e) {
