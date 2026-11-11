@@ -19,6 +19,7 @@
     '.dy-bias{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:2px 12px 8px}.dy-bias .bs{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px 8px;border-radius:12px;border:2px solid var(--line);background:var(--panel);color:var(--mute);cursor:pointer;font:inherit;transition:transform .12s,background .15s,color .15s,border-color .15s}.dy-bias .bs svg{width:54px;height:34px}.dy-bias .bs b{font-size:.92rem;color:var(--ink)}.dy-bias .bs small{font-size:.68rem;opacity:.8}.dy-bias .bs:hover{transform:translateY(-2px)}.dy-bias .bs.bull{color:var(--gain)}.dy-bias .bs.bear{color:var(--loss)}.dy-bias .bs.off{opacity:.45}.dy-bias .bs.on{color:#fff;transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.22)}.dy-bias .bs.on b{color:#fff}.dy-bias .bs.bull.on{background:#16a05b;border-color:#16a05b}.dy-bias .bs.bear.on{background:#d83a3a;border-color:#d83a3a}.dy-bias .bs.chop.on{background:#6b7280;border-color:#6b7280}' +
     '#dybm{padding:0 12px}.dy-card .bm{margin:2px 0 4px}.bm .bt{position:relative;height:10px;border-radius:99px;background:linear-gradient(90deg,#d83a3a,#9aa0aa 50%,#16a05b)}.bm .bt i{position:absolute;top:-4px;width:6px;height:18px;margin-left:-3px;border-radius:3px;background:var(--ink);box-shadow:0 0 0 2px var(--panel);transition:left .4s}.bm .bl{display:flex;justify-content:space-between;font-size:.66rem;color:var(--mute);margin-top:5px}.bsay{font-size:.8rem;font-weight:600;padding:2px 0 8px}.bsay.ok{color:var(--gain)}.bsay.no{color:var(--loss)}' +
     '.dy-rule{padding:0 12px 12px;display:flex;flex-direction:column;gap:4px}.dy-rule label{font:700 .64rem "Instrument Sans",sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}.dy-rule input{font-size:.95rem;font-weight:600;padding:8px 10px;border-radius:9px}' +
+    '.dy-shbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:2px 12px 10px}.dy-shbar select{min-width:220px}.dy-shbar input{width:150px}.dy-shg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;padding:0 12px 12px}.dy-sh{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}.dy-sh img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;background:#000}.dy-sh .c{display:flex;align-items:center;gap:6px;padding:6px 8px}.dy-sh .c select{flex:1;min-width:0;font-size:.74rem;padding:3px 4px}.dy-sh .c b{font-size:.8rem}#dyshots.drag{outline:2px dashed var(--accent);outline-offset:-4px}' +
     '.dy-fm{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 8px;flex:none}.dy-fm input{flex:1 1 60px}.dy-fm .s{flex:none}.dy-fm .s{width:64px;flex:none;text-transform:uppercase}.dy-fm .b{flex:none}.dy-fm .n{flex:3 1 90px}' +
     '.dy-r{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);font-size:.82rem}.dy-r:last-child{border-bottom:0}.dy-sym{padding:2px 7px!important;border:0;border-radius:6px;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--ink);font-weight:700;font-size:.78rem;cursor:pointer}.dy-sym:hover{background:color-mix(in srgb,var(--accent) 28%,transparent)}.dy-nt{flex:1;min-width:0;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dy-q{font-variant-numeric:tabular-nums;font-size:.76rem;white-space:nowrap}.dy-q b{font-weight:700}.dy-em{padding:10px 2px;color:var(--mute);font-size:.8rem}' +
     '.dy-al{padding:6px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);font-size:.8rem}.dy-al:last-child{border-bottom:0}.dy-al .t{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.dy-al .t .dy-q{font-size:.7rem;color:var(--gain)}.dy-al .lv{overflow-wrap:anywhere}.dy-al .lv{color:var(--mute);margin:2px 0 0;line-height:1.35}.dy-sd{font-size:.66rem;font-weight:700;padding:1px 6px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}.dy-sd.long{background:color-mix(in srgb,var(--gain) 18%,transparent);color:var(--gain)}.dy-sd.short{background:color-mix(in srgb,var(--loss) 18%,transparent);color:var(--loss)}.dy-al select{padding:2px 4px;font-size:.7rem;margin-left:auto;max-width:112px}' +
@@ -90,13 +91,14 @@
       '</div><div class="dy-col c"><div class="dy-card" style="flex:1">' +
       '<div class="dy-tabs" id="dytabs"></div>' +
       '<div class="dy-tab" id="dytb-trades"></div><div class="dy-tab" id="dytb-feed"></div><div class="dy-tab" id="dytb-news"></div></div></div></div>' +
+      '<div class="dy-card" id="dyshots" style="flex:none"></div>' +
       '<div class="dy-card" id="dytlc" style="flex:none;min-height:0"><div class="dy-h"><span class="tt">Watchlist charts</span><span class="dy-q" style="text-transform:none;letter-spacing:0;font-weight:500">The first 6 stocks in this day&#39;s Watchlist. AI reads each chart in its own time frame</span><span class="dy-sp"></span><button type="button" class="b pri" data-dyact="readall">Read all with AI</button></div><div class="dy-tl" id="dytgrid"></div><div class="dy-q" style="padding:0 12px 10px;text-transform:none;letter-spacing:0">Scenarios from the candles on screen, not predictions or advice. Candle data is a free feed and can be delayed. Draw your own levels before you trade.</div></div>' +
       '<button type="button" class="dy-car" id="dycar" aria-label="Jump to the watchlist charts" title="Jump to the watchlist charts"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>' +
       '<div class="dy-mod" id="dymod" hidden><div class="dy-mb" id="dymb" role="dialog" aria-modal="true" aria-label="Detailed AI read"></div></div>';
     D.sym = "SPY"; D.charts = "";
     paintAll(); paintChart();
   }
-  function paintAll() { paintBar(); paintWatch(); paintTiles(); paintAlerts(); paintBias(); paintTabs(); paintTrades(); paintFeed(); paintNews(); paintQuotes(); }
+  function paintAll() { paintBar(); paintWatch(); paintTiles(); paintAlerts(); paintBias(); paintTabs(); paintTrades(); paintShots(); paintFeed(); paintNews(); paintQuotes(); }
 
   /* ---------- top bar ---------- */
   function stats() {
@@ -328,6 +330,38 @@
     el.innerHTML = '<div class="bm"><div class="bt"><i style="left:' + pos + '%"></i></div><div class="bl"><span>-2%</span><span>SPY today ' + (dp >= 0 ? "+" : "") + f2(dp) + '%</span><span>+2%</span></div></div><div class="bsay ' + cls + '">' + (cls === "ok" ? "&#10003; " : cls === "no" ? "&#10007; " : "") + esc(say) + '</div>';
   }
 
+  /* ---------- trade screenshots: upload fast, pick the strategy ---------- */
+  function shotLabel(tk, st) { return (tk ? "$" + tk : "") + (tk && st ? " \u00B7 " : "") + (st || "") || "Trade screenshot"; }
+  function paintShots() {
+    var el = $("dyshots"); if (!el) return; var e = cur() || {}, L = (e.imgs || []).filter(function (m) { return m.sh; }), names = (A.strats && A.strats()) || [];
+    var keepS = $("dysstr") ? $("dysstr").value : (D.lastStrat || ""), keepT = $("dyssym") ? $("dyssym").value : "";
+    function opts(cur) { var h = '<option value="">No strategy yet</option>' + names.map(function (n) { return '<option value="' + esc(n) + '"' + (n === cur ? " selected" : "") + '>' + esc(n) + '</option>'; }).join(""); if (cur && names.indexOf(cur) < 0) h += '<option value="' + esc(cur) + '" selected>' + esc(cur) + '</option>'; return h; }
+    el.innerHTML = '<div class="dy-h"><span class="tt">Trade screenshots</span><span class="dy-q" style="text-transform:none;letter-spacing:0;font-weight:500">Pick the strategy, then add the picture. They go in what you publish.</span></div>' +
+      '<div class="dy-shbar"><select id="dysstr" aria-label="Strategy">' + opts(keepS) + '</select><input id="dyssym" placeholder="Ticker (optional)" maxlength="6" autocomplete="off" style="text-transform:uppercase" value="' + esc(keepT) + '">' +
+      '<button type="button" class="b pri" data-dyact="shotpick">&#128247; Add screenshots</button><span class="dy-q" style="text-transform:none;letter-spacing:0">or paste or drop pictures here</span><input type="file" id="dyshfile" accept="image/*" multiple hidden></div>' +
+      (names.length ? '' : '<div class="dy-q" style="padding:0 12px 8px;text-transform:none;letter-spacing:0">No strategies yet. Add them in the Scorecard page and they show up in this list.</div>') +
+      (L.length ? '<div class="dy-shg">' + L.map(function (m) {
+        var u = A.imgUrl(m), ix = e.imgs.indexOf(m);
+        return '<div class="dy-sh"><a href="' + esc(u || "#") + '" target="_blank" rel="noopener"><img alt="' + esc(m.cap || "Trade screenshot") + '" src="' + esc(u || "") + '"></a><div class="c"><b>' + esc(m.tk ? "$" + m.tk : "Trade") + '</b><select data-dyshst="' + ix + '" aria-label="Strategy">' + opts(m.st || "") + '</select><button type="button" class="ib" data-dyshdel="' + ix + '" aria-label="Delete screenshot">&times;</button></div></div>';
+      }).join("") + '</div>' : '<div class="dy-em" style="padding:0 12px 12px">Nothing yet. Add a chart of a trade and tag its strategy.</div>');
+  }
+  async function addShots(files) {
+    var st = ($("dysstr") || {}).value || "", tk = (($("dyssym") || {}).value || "").toUpperCase().replace(/[^A-Z.]/g, ""), n = 0; D.lastStrat = st;
+    for (var i = 0; i < files.length; i++) {
+      var f = files[i]; if (!/^image\//.test(f.type)) continue;
+      try {
+        var pk = await packImg(await A.shrink(f, 1100)); if (!pk) { A.toast("Could not save that picture"); continue; }
+        await mutate(function (e) {
+          e.imgs = e.imgs || []; if (e.imgs.length >= 24) e.imgs.shift();
+          var m = Object.assign({ cap: shotLabel(tk, st), tid: "", sl: 0, sh: 1, st: st, tk: tk }, pk);
+          var tr = tk ? (e.trades || []).filter(function (t) { return String(t.t).toUpperCase() === tk; })[0] : null;
+          if (tr) { if (!tr.id) tr.id = A.newId(); m.ti = tr.id; if (st && !tr.u) tr.u = st; }
+          e.imgs.push(m);
+        }); n++;
+      } catch (e2) { A.toast("Could not read that image"); }
+    }
+    if (n) { paintShots(); paintTrades(); A.toast(n === 1 ? "Screenshot added" : n + " screenshots added"); }
+  }
   /* ---------- quick plan ---------- */
   function riskDefault() { var r = A.risk(); return r && r.bal > 0 && r.tpd > 0 ? Math.round(r.bal * (r.dpct || 1) / 100 / r.tpd) : ""; }
   function paintPlan() {
@@ -455,6 +489,8 @@
     if (d.dytab) { setTab(d.dytab); return; }
     if (d.dynw) { D.news.tab = d.dynw; paintNews(); loadNews(); return; }
     if (d.dyts) { D.tside = d.dyts; paintTrades(); return; }
+    if (act === "shotpick") { $("dyshfile").click(); return; }
+    if (d.dyshdel != null) { confirmBtn(b, "Sure?", async function () { await mutate(function (e2) { e2.imgs.splice(+d.dyshdel, 1); }); paintShots(); paintTrades(); }); return; }
     if (d.dybias) { var nb = (cur() || {}).bias === d.dybias ? "" : d.dybias; await mutate(function (e2) { e2.bias = nb; }); paintBias(); return; }
     if (d.dyps) { D.pside = d.dyps; paintPlan(); return; }
     var act = d.dyact;
@@ -523,6 +559,9 @@
   root.addEventListener("input", function (ev) { var id = ev.target.id; if (/^dp(e|s|t|r)$/.test(id)) calcPlan(); });
   root.addEventListener("change", async function (ev) {
     var t = ev.target;
+    if (t.id === "dyshfile") { var fl = [].slice.call(t.files); t.value = ""; await addShots(fl); return; }
+    if (t.id === "dysstr") { D.lastStrat = t.value; return; }
+    if (t.dataset && t.dataset.dyshst != null) { var si = +t.dataset.dyshst, sv = t.value; await mutate(function (e2) { var m = (e2.imgs || [])[si]; if (!m) return; m.st = sv; m.cap = shotLabel(m.tk, sv); var tr = m.ti ? (e2.trades || []).filter(function (x) { return x.id === m.ti; })[0] : null; if (tr) tr.u = sv; }); paintTrades(); return; }
     if (t.id === "dyrule") { var rv = t.value.trim(); await mutate(function (e2) { e2.rule = rv; }); return; }
     if (t.dataset && t.dataset.dyalst) { var AL = A.al(); AL.list.forEach(function (a) { if (a.id === t.dataset.dyalst) a.status = t.value; }); await A.alSave(); return; }
     if (t.id === "dyffile") { await addPend(t.files); t.value = ""; return; }
@@ -538,10 +577,10 @@
   document.addEventListener("paste", function (ev) {
     if (root.hidden || !ev.clipboardData) return; var tg = ev.target, files = [];
     [].forEach.call(ev.clipboardData.items || [], function (it) { if (it.kind === "file" && /^image\//.test(it.type)) { var f = it.getAsFile(); if (f) files.push(f); } });
-    if (!files.length) return; ev.preventDefault(); addPend(files);
+    if (!files.length) return; ev.preventDefault(); if (tg && tg.closest && tg.closest("#dyshots")) addShots(files); else addPend(files);
   });
   root.addEventListener("dragover", function (ev) { if (ev.dataTransfer && [].indexOf.call(ev.dataTransfer.types || [], "Files") > -1) ev.preventDefault(); });
-  root.addEventListener("drop", function (ev) { if (ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files.length) { ev.preventDefault(); addPend(ev.dataTransfer.files); } });
+  root.addEventListener("drop", function (ev) { if (ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files.length) { ev.preventDefault(); if (ev.target.closest && ev.target.closest("#dyshots")) addShots(ev.dataTransfer.files); else addPend(ev.dataTransfer.files); } });
 
   /* ---------- real-time clock: New York time, seconds, flashes before the next candle ---------- */
   var clkFmt = null;
