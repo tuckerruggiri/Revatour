@@ -16,6 +16,9 @@
     '.dy-clk small{display:inline-flex;gap:8px;font-variant-numeric:tabular-nums}.dy-clk small span{min-width:3.6em}.dy-clk small .nx{color:var(--loss);font-weight:700}.dy-clk b{font-size:.95rem;letter-spacing:.02em;min-width:5.6em;display:inline-block}.dy-clk{transition:background .15s,border-color .15s}.dy-clk.hot{border-color:var(--loss);animation:dyfl 1s infinite}.dy-clk.hot.fast{animation-duration:.4s}@keyframes dyfl{0%,100%{background:var(--panel)}50%{background:color-mix(in srgb,var(--loss) 38%,var(--panel))}}' +
     '.dy-sp{flex:1}.dy-les{flex:1 1 120px;min-width:110px;max-width:300px}.dy-grid{flex:none;height:max(700px,calc(100vh - 110px));display:grid;grid-template-columns:350px minmax(0,1fr) 330px;gap:10px}.dy-col{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}' +
     '.dy-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden}.dy-h{display:flex;align-items:center;gap:8px;padding:8px 12px 6px;font:700 .68rem "Instrument Sans",sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);flex:none}.dy-h .dy-sp{flex:1}.dy-h .tt{color:var(--ink);letter-spacing:.06em}.dy-bd{padding:2px 12px 10px;overflow:auto;min-height:0;flex:1}.dy-bd.np{padding:0}' +
+    '.dy-bias{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:2px 12px 8px}.dy-bias .bs{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px 8px;border-radius:12px;border:2px solid var(--line);background:var(--panel);color:var(--mute);cursor:pointer;font:inherit;transition:transform .12s,background .15s,color .15s,border-color .15s}.dy-bias .bs svg{width:54px;height:34px}.dy-bias .bs b{font-size:.92rem;color:var(--ink)}.dy-bias .bs small{font-size:.68rem;opacity:.8}.dy-bias .bs:hover{transform:translateY(-2px)}.dy-bias .bs.bull{color:var(--gain)}.dy-bias .bs.bear{color:var(--loss)}.dy-bias .bs.off{opacity:.45}.dy-bias .bs.on{color:#fff;transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.22)}.dy-bias .bs.on b{color:#fff}.dy-bias .bs.bull.on{background:#16a05b;border-color:#16a05b}.dy-bias .bs.bear.on{background:#d83a3a;border-color:#d83a3a}.dy-bias .bs.chop.on{background:#6b7280;border-color:#6b7280}' +
+    '#dybm{padding:0 12px}.dy-card .bm{margin:2px 0 4px}.bm .bt{position:relative;height:10px;border-radius:99px;background:linear-gradient(90deg,#d83a3a,#9aa0aa 50%,#16a05b)}.bm .bt i{position:absolute;top:-4px;width:6px;height:18px;margin-left:-3px;border-radius:3px;background:var(--ink);box-shadow:0 0 0 2px var(--panel);transition:left .4s}.bm .bl{display:flex;justify-content:space-between;font-size:.66rem;color:var(--mute);margin-top:5px}.bsay{font-size:.8rem;font-weight:600;padding:2px 0 8px}.bsay.ok{color:var(--gain)}.bsay.no{color:var(--loss)}' +
+    '.dy-rule{padding:0 12px 12px;display:flex;flex-direction:column;gap:4px}.dy-rule label{font:700 .64rem "Instrument Sans",sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}.dy-rule input{font-size:.95rem;font-weight:600;padding:8px 10px;border-radius:9px}' +
     '.dy-fm{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 8px;flex:none}.dy-fm input{flex:1 1 60px}.dy-fm .s{flex:none}.dy-fm .s{width:64px;flex:none;text-transform:uppercase}.dy-fm .b{flex:none}.dy-fm .n{flex:3 1 90px}' +
     '.dy-r{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);font-size:.82rem}.dy-r:last-child{border-bottom:0}.dy-sym{padding:2px 7px!important;border:0;border-radius:6px;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--ink);font-weight:700;font-size:.78rem;cursor:pointer}.dy-sym:hover{background:color-mix(in srgb,var(--accent) 28%,transparent)}.dy-nt{flex:1;min-width:0;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dy-q{font-variant-numeric:tabular-nums;font-size:.76rem;white-space:nowrap}.dy-q b{font-weight:700}.dy-em{padding:10px 2px;color:var(--mute);font-size:.8rem}' +
     '.dy-al{padding:6px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);font-size:.8rem}.dy-al:last-child{border-bottom:0}.dy-al .t{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.dy-al .t .dy-q{font-size:.7rem;color:var(--gain)}.dy-al .lv{overflow-wrap:anywhere}.dy-al .lv{color:var(--mute);margin:2px 0 0;line-height:1.35}.dy-sd{font-size:.66rem;font-weight:700;padding:1px 6px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}.dy-sd.long{background:color-mix(in srgb,var(--gain) 18%,transparent);color:var(--gain)}.dy-sd.short{background:color-mix(in srgb,var(--loss) 18%,transparent);color:var(--loss)}.dy-al select{padding:2px 4px;font-size:.7rem;margin-left:auto;max-width:112px}' +
@@ -93,7 +96,7 @@
     D.sym = "SPY"; D.charts = "";
     paintAll(); paintChart();
   }
-  function paintAll() { paintBar(); paintWatch(); paintTiles(); paintAlerts(); paintPlan(); paintTabs(); paintTrades(); paintFeed(); paintNews(); paintQuotes(); }
+  function paintAll() { paintBar(); paintWatch(); paintTiles(); paintAlerts(); paintBias(); paintTabs(); paintTrades(); paintFeed(); paintNews(); paintQuotes(); }
 
   /* ---------- top bar ---------- */
   function stats() {
@@ -297,6 +300,32 @@
       var q = D.q[el.getAttribute("data-q")]; if (!q || q.p == null) { el.textContent = ""; return; }
       var up = (q.dp || 0) >= 0; el.innerHTML = '<b>' + f2(q.p) + '</b> <span class="' + (up ? "gain" : "loss") + '">' + (up ? "+" : "") + f2(q.dp) + '%</span>';
     });
+    if (typeof paintBiasMeter === "function") paintBiasMeter();
+  }
+
+  /* ---------- daily bias ---------- */
+  var BIAS = [
+    ["bull", "Up day", "Green, trending up", '<svg viewBox="0 0 64 40" aria-hidden="true"><path d="M3 34 L16 24 L24 29 L38 14 L46 19 L60 5" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M50 5 H60 V15" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>'],
+    ["bear", "Down day", "Red, trending down", '<svg viewBox="0 0 64 40" aria-hidden="true"><path d="M3 6 L16 16 L24 11 L38 26 L46 21 L60 35" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M50 35 H60 V25" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>'],
+    ["chop", "Choppy", "Sideways, no trend", '<svg viewBox="0 0 64 40" aria-hidden="true"><path d="M3 22 L12 12 L22 28 L32 12 L42 28 L52 14 L61 22" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>']
+  ];
+  function paintBias() {
+    var el = $("dyplan"); if (!el) return; var e = cur() || {}, b = e.bias || "";
+    el.innerHTML = '<div class="dy-h"><span class="tt">SPY daily bias</span><span class="dy-sp"></span><span class="dy-q" data-q="SPY" style="text-transform:none;letter-spacing:0"></span></div>' +
+      '<div class="dy-bias">' + BIAS.map(function (x) { return '<button type="button" class="bs ' + x[0] + (b === x[0] ? " on" : b ? " off" : "") + '" data-dybias="' + x[0] + '" aria-pressed="' + (b === x[0]) + '">' + x[3] + '<b>' + x[1] + '</b><small>' + x[2] + '</small></button>'; }).join("") + '</div>' +
+      '<div id="dybm"></div>' +
+      '<div class="dy-rule"><label for="dyrule">My one rule today</label><input id="dyrule" maxlength="80" placeholder="e.g. Wait for the retest. No chasing." value="' + esc(e.rule || "") + '" autocomplete="off"></div>';
+    paintQuotes();
+  }
+  function paintBiasMeter() {
+    var el = $("dybm"); if (!el) return; var b = (cur() || {}).bias || "", q = D.q.SPY;
+    if (!isToday() || !q || q.dp == null) { el.innerHTML = ""; return; }
+    var dp = q.dp, pos = Math.max(0, Math.min(100, 50 + dp * 25)), say, cls = "";
+    if (!b) say = "Pick your bias. I will check it against SPY live.";
+    else if (b === "bull") { say = dp > 0.15 ? "SPY is up. Your bull call is working" : dp < -0.15 ? "SPY is down. Your call is off right now" : "SPY is flat. Not trending up yet"; cls = dp > 0.15 ? "ok" : dp < -0.15 ? "no" : ""; }
+    else if (b === "bear") { say = dp < -0.15 ? "SPY is down. Your bear call is working" : dp > 0.15 ? "SPY is up. Your call is off right now" : "SPY is flat. Not trending down yet"; cls = dp < -0.15 ? "ok" : dp > 0.15 ? "no" : ""; }
+    else { say = Math.abs(dp) <= 0.3 ? "SPY is in a tight range. Chop is playing out" : "SPY is moving more than chop. Be careful"; cls = Math.abs(dp) <= 0.3 ? "ok" : "no"; }
+    el.innerHTML = '<div class="bm"><div class="bt"><i style="left:' + pos + '%"></i></div><div class="bl"><span>-2%</span><span>SPY today ' + (dp >= 0 ? "+" : "") + f2(dp) + '%</span><span>+2%</span></div></div><div class="bsay ' + cls + '">' + (cls === "ok" ? "&#10003; " : cls === "no" ? "&#10007; " : "") + esc(say) + '</div>';
   }
 
   /* ---------- quick plan ---------- */
@@ -426,6 +455,7 @@
     if (d.dytab) { setTab(d.dytab); return; }
     if (d.dynw) { D.news.tab = d.dynw; paintNews(); loadNews(); return; }
     if (d.dyts) { D.tside = d.dyts; paintTrades(); return; }
+    if (d.dybias) { var nb = (cur() || {}).bias === d.dybias ? "" : d.dybias; await mutate(function (e2) { e2.bias = nb; }); paintBias(); return; }
     if (d.dyps) { D.pside = d.dyps; paintPlan(); return; }
     var act = d.dyact;
     if (act === "prev") return open(addDays(D.date, -1)); if (act === "next") return open(addDays(D.date, 1)); if (act === "today") return open(today());
@@ -493,6 +523,7 @@
   root.addEventListener("input", function (ev) { var id = ev.target.id; if (/^dp(e|s|t|r)$/.test(id)) calcPlan(); });
   root.addEventListener("change", async function (ev) {
     var t = ev.target;
+    if (t.id === "dyrule") { var rv = t.value.trim(); await mutate(function (e2) { e2.rule = rv; }); return; }
     if (t.dataset && t.dataset.dyalst) { var AL = A.al(); AL.list.forEach(function (a) { if (a.id === t.dataset.dyalst) a.status = t.value; }); await A.alSave(); return; }
     if (t.id === "dyffile") { await addPend(t.files); t.value = ""; return; }
     if (t.id === "dytfile") {
