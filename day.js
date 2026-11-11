@@ -102,14 +102,13 @@
     return { n: t.length, net: net, w: w, l: l };
   }
   function paintBar() {
-    var e = cur() || {}, s = stats(), m = mkt(), gr = e.grade || "";
+    var e = cur() || {}, s = stats(), m = mkt();
     $("dybar").innerHTML = '<div class="dy-dt"><button type="button" class="ib" data-dyact="prev" aria-label="Previous day">&lsaquo;</button><h1>' + esc(A.dayLabel(D.date)) + '</h1><button type="button" class="ib" data-dyact="next" aria-label="Next day">&rsaquo;</button>' + (isToday() ? '' : '<button type="button" class="b" data-dyact="today">Today</button>') + '</div>' +
       (isToday() ? '<span class="dy-chip ' + m.c + '"><i></i>' + m.s + ' <small>' + esc(m.t) + '</small></span>' : '') +
       '<span class="dy-chip dy-clk" id="dyclk" title="New York time. Countdowns to the next 1, 2, 5 and 15 minute candles. The box flashes in the last 10 seconds before each new minute; a countdown turns red when its candle is 10 seconds away."><b id="dyct">--:--:--</b><small id="dycn"></small></span>' +
       '<span class="dy-chip">SPY <b data-q="SPY"></b></span>' +
       '<span class="dy-chip">Day P&amp;L <b class="' + (s.net >= 0 ? "gain" : "loss") + '">' + (s.n ? A.sgn(s.net) : "$0.00") + '</b> <small>' + s.n + (s.n === 1 ? ' trade · ' : ' trades · ') + s.w + 'W ' + s.l + 'L</small></span>' +
       '<span class="dy-sp"></span>' +
-      '<select id="dygr" aria-label="Grade your day"><option value="">Grade</option>' + ["A", "B", "C", "D", "F"].map(function (g) { return '<option' + (gr === g ? " selected" : "") + '>' + g + '</option>'; }).join("") + '</select>' +
       '<button type="button" class="b" data-rec="1" title="Record your screen. Saves a video to your Downloads">&#9679; Record screen</button><span class="hint" data-rectxt="1" style="margin:0;font-size:.74rem"></span>' +
       '<button type="button" class="b" data-dyact="gen" title="Posts and write-ups generated for this day">Generated</button><button type="button" class="b" data-dyact="cal">Calendar</button>';
     paintQuotes(); tickClock(); if (window.StockRec) window.StockRec.sync();
@@ -487,7 +486,6 @@
   root.addEventListener("input", function (ev) { var id = ev.target.id; if (/^dp(e|s|t|r)$/.test(id)) calcPlan(); });
   root.addEventListener("change", async function (ev) {
     var t = ev.target;
-    if (t.id === "dygr") { await mutate(function (e) { e.grade = t.value; }); return; }
     if (t.dataset && t.dataset.dyalst) { var AL = A.al(); AL.list.forEach(function (a) { if (a.id === t.dataset.dyalst) a.status = t.value; }); await A.alSave(); return; }
     if (t.id === "dyffile") { await addPend(t.files); t.value = ""; return; }
     if (t.id === "dytfile") {
