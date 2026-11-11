@@ -44,7 +44,7 @@
         a.href = URL.createObjectURL(blob); a.download = nm; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 60000);
         saved.push(nm + " (" + (blob.size / 1048576).toFixed(1) + " MB)"); item.chunks = [];
       }
-      if (!live()) say(saved.length ? "Saved to your Downloads: " + saved.join(", ") + ". In Studio, Videos, press Choose from Downloads." : "Nothing was recorded."); else paint();
+      if (!live()) { if (saved.length) { say("Saved " + saved.length + (saved.length === 1 ? " video" : " videos") + " to your Downloads."); showSaved(saved.slice()); } else say("Nothing was recorded."); } else paint();
     };
     item.stream.getVideoTracks()[0].addEventListener("ended", function () { try { if (item.mr.state !== "inactive") item.mr.stop(); } catch (e) {} });
     item.mr.start(1000); paint(); startTick();
@@ -80,6 +80,26 @@
     if (a === "x") { closePanel(true); return; }
     if (a === "add") { var st = await pick(false); if (st) { chosen.push(st); if (target && chosen.length >= target) startAll(); else drawPanel(); } return; }
     if (a === "go") startAll();
+  });
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function showSaved(list) {
+    var old = document.getElementById("recdone"); if (old) old.remove();
+    var d = document.createElement("div"); d.id = "recdone"; d.setAttribute("role", "status");
+    d.style.cssText = "position:fixed;left:50%;top:22px;transform:translateX(-50%);z-index:210;width:min(560px,94vw);box-sizing:border-box;background:var(--panel,#fff);color:var(--ink,#111);border:2px solid var(--gain,#1a9d5a);border-radius:16px;padding:18px 20px;box-shadow:0 18px 60px rgba(0,0,0,.45);font:500 15px/1.45 'Instrument Sans',system-ui,sans-serif";
+    var bs = "padding:9px 16px;border-radius:10px;border:1px solid var(--line,#ccc);background:var(--panel,#fff);color:var(--ink,#111);font:600 14px 'Instrument Sans',system-ui,sans-serif;cursor:pointer";
+    d.innerHTML = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--gain,#1a9d5a);color:#fff;align-items:center;justify-content:center;font-size:18px;font-weight:800">&#10003;</span><b style="font-size:1.1rem">Recording saved to your Downloads</b></div>' +
+      '<ul style="margin:0 0 10px;padding-left:22px">' + list.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" +
+      '<div style="color:var(--mute,#666);margin-bottom:14px">Next: open <b>Studio</b>, find <b>Videos</b>, and press <b>Choose from Downloads</b> (or drag the files onto the Videos box).</div>' +
+      '<div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" data-rd="go" style="' + bs + ';background:var(--accent,#2a6df4);border-color:var(--accent,#2a6df4);color:#fff">Go to Studio Videos</button><button type="button" data-rd="x" style="' + bs + '">Close</button></div>';
+    document.body.appendChild(d);
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-rd]"); if (!b) return;
+    var d = document.getElementById("recdone"); if (d) d.remove();
+    if (b.getAttribute("data-rd") === "go") {
+      var nav = document.getElementById("navstudio"); if (nav) nav.click();
+      setTimeout(function () { var v = document.getElementById("videos"); if (v) { v.scrollIntoView({ block: "center", behavior: "smooth" }); v.focus({ preventScroll: true }); v.style.outline = "3px solid var(--accent,#2a6df4)"; setTimeout(function () { v.style.outline = ""; }, 2500); } }, 350);
+    }
   });
   function stopAll() { S.forEach(function (x) { try { if (x.mr.state !== "inactive") x.mr.stop(); } catch (e) {} }); }
   document.addEventListener("click", function (e) {
