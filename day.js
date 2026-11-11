@@ -79,7 +79,7 @@
     D.built = true; D.pend = [];
     root.innerHTML = '<div class="dy-bar" id="dybar"></div>' +
       '<div class="dy-grid"><div class="dy-col a">' +
-      '<div class="dy-card" style="flex:1"><div class="dy-h"><span class="tt">Watchlist</span><span class="dy-sp"></span><button type="button" class="b" data-dyact="wlimp" title="Add everything from your main watchlist">+ From my list</button></div><form class="dy-fm" id="dywf"><input class="s" id="dyws" placeholder="Ticker" maxlength="6" autocomplete="off"><input class="n" id="dywn" placeholder="Why / levels" autocomplete="off"><button class="b pri" type="submit">Add</button></form><div class="dy-bd" id="dywl"></div></div>' +
+      '<div class="dy-card" style="flex:1"><div class="dy-h"><span class="tt">Watchlist</span><span class="dy-sp"></span><button type="button" class="b" data-dyact="wlimp" title="Add everything from your main watchlist">+ From my list</button><button type="button" class="b pri" data-dyact="wlpub" title="Post this watchlist to your wall">Publish</button></div><form class="dy-fm" id="dywf"><input class="s" id="dyws" placeholder="Ticker" maxlength="6" autocomplete="off"><input class="n" id="dywn" placeholder="Why / levels" autocomplete="off"><button class="b pri" type="submit">Add</button></form><div class="dy-bd" id="dywl"></div></div>' +
       '<div class="dy-card" style="flex:1.25"><div class="dy-h"><span class="tt">Alerts</span><span class="dy-sp"></span><span id="dyalc"></span></div><form class="dy-fm" id="dyaf"><input class="s" id="dyas" placeholder="Ticker" maxlength="6" autocomplete="off"><input class="n" id="dyat" placeholder="short below 248.8, target 246.5, stop 249.2" autocomplete="off"><button class="b pri" type="submit">Alert</button></form><div class="dy-bd" id="dyal"></div></div>' +
       '</div><div class="dy-col b">' +
       '<div class="dy-card ch sm"><div class="dy-h"><span class="tt">SPY</span><span class="dy-q" data-q="SPY" style="text-transform:none;letter-spacing:0"></span></div><div class="dy-cw" id="dycw"></div></div>' +
@@ -131,6 +131,10 @@
   }
 
   /* ---------- alerts ---------- */
+  async function autoPost(a) {
+    try { await A.alPost("\uD83D\uDD14 $" + a.sym + " " + A.alFmt(a)); a.posted = Date.now(); await A.alSave(); A.toast("Alert posted to your wall"); }
+    catch (e) { A.toast("Alert saved, but it could not post to your wall"); }
+  }
   function dayAlerts() {
     var a = new Date(D.date + "T00:00:00").getTime(), b = a + 86400000;
     return A.al().list.filter(function (x) { return x.ts >= a && x.ts < b; });
@@ -140,7 +144,7 @@
     $("dyalc").textContent = L.length ? L.length + (L.length === 1 ? " alert" : " alerts") : "";
     el.innerHTML = L.length ? L.map(function (a) {
       var f = A.alFmt(a).replace(/^(SHORT|LONG)\s?/, "");
-      return '<div class="dy-al" data-alid="' + a.id + '"><div class="t"><button type="button" class="dy-sym" data-dysym="' + esc(a.sym) + '">$' + esc(a.sym) + '</button><span class="dy-sd ' + (a.side === "short" ? "short" : "long") + '">' + (a.side === "short" ? "Short" : "Long") + '</span><span class="dy-q" data-q="' + esc(a.sym) + '"></span><select data-dyalst="' + a.id + '" aria-label="Alert status">' + A.alSt.map(function (s) { return '<option value="' + s[0] + '"' + (a.status === s[0] ? " selected" : "") + '>' + s[1] + '</option>'; }).join("") + '</select><button type="button" class="ib" data-dyaldel="' + a.id + '" aria-label="Delete alert">&times;</button></div><div class="lv">' + esc(f) + ' · ' + esc(A.alAgo(a.ts)) + '</div></div>';
+      return '<div class="dy-al" data-alid="' + a.id + '"><div class="t"><button type="button" class="dy-sym" data-dysym="' + esc(a.sym) + '">$' + esc(a.sym) + '</button><span class="dy-sd ' + (a.side === "short" ? "short" : "long") + '">' + (a.side === "short" ? "Short" : "Long") + '</span><span class="dy-q" data-q="' + esc(a.sym) + '"></span><span class="dy-q">' + (a.posted ? "&#10003; Posted" : "") + '</span><select data-dyalst="' + a.id + '" aria-label="Alert status">' + A.alSt.map(function (s) { return '<option value="' + s[0] + '"' + (a.status === s[0] ? " selected" : "") + '>' + s[1] + '</option>'; }).join("") + '</select><button type="button" class="ib" data-dyaldel="' + a.id + '" aria-label="Delete alert">&times;</button></div><div class="lv">' + esc(f) + ' · ' + esc(A.alAgo(a.ts)) + '</div></div>';
     }).join("") : '<div class="dy-em">Type it like you\'d say it. Alerts for ' + (isToday() ? "today" : "this day") + ' land here.</div>';
     paintQuotes();
   }
@@ -430,6 +434,9 @@
     if (act === "gen") { var e = cur(); if (e && (e.outputs || []).length) A.openEntry(D.date); else A.toast("Nothing generated for this day yet. Use Studio to create posts from your trades."); return; }
     if (act === "fullplan") return A.plan();
     if (act === "nwref") { D.news.w = null; D.news.m = null; paintNews(); loadNews(); return; }
+    if (act === "wlpub") { var it2 = board(); if (!it2.length) { A.toast("Add a stock first"); return; } b.disabled = true;
+      try { await A.alPost("\uD83D\uDDD3 Watchlist \u00B7 " + A.dayLabel(D.date) + "\n" + it2.map(function (i) { return "$" + i.sym + (i.note ? " \u2014 " + i.note : ""); }).join("\n")); var bd2 = A.al().board[D.date]; bd2.pub = Date.now(); await A.alSave(); A.toast("Watchlist posted to your wall"); }
+      catch (e4) { A.toast("Could not post to your wall"); } b.disabled = false; return; }
     if (act === "wlimp") { var L = window.StockWatch ? window.StockWatch.list() : []; if (!L.length) { A.toast("Your main watchlist is empty"); return; } var AL = A.al(), bd = AL.board[D.date] || (AL.board[D.date] = { items: [] }); L.slice(0, 25).forEach(function (s) { if (!bd.items.some(function (i) { return i.sym === s; })) bd.items.push({ sym: s, note: "" }); }); await A.alSave(); paintWatch(); paintTiles(); loadQ(); return; }
     if (d.dywrm != null) { var AL2 = A.al(), b2 = AL2.board[D.date]; if (b2) { b2.items.splice(+d.dywrm, 1); await A.alSave(); paintWatch(); } return; }
     if (d.dyaldel) { var AL3 = A.al(); AL3.list = AL3.list.filter(function (x) { return x.id !== d.dyaldel; }); await A.alSave(); paintAlerts(); return; }
@@ -437,7 +444,7 @@
     if (d.dypdel) { await mutate(function (e2) { e2.dplans = (e2.dplans || []).filter(function (p) { return p.id !== d.dypdel; }); }); paintPlan(); return; }
     if (d.dypalert) { var pl = ((cur() || {}).dplans || []).filter(function (p) { return p.id === d.dypalert; })[0]; if (!pl) return; var AL4 = A.al();
       AL4.list.unshift({ id: "a" + Date.now().toString(36) + Math.floor(Math.random() * 1e3), ts: isToday() ? Date.now() : new Date(D.date + "T12:00:00").getTime(), sym: pl.sym, side: pl.side, trig: pl.e, tw: null, t1: pl.t || null, stop: pl.s, rr: pl.rr || null, raw: pl.sym + " " + pl.side + " entry " + pl.e + " stop " + pl.s + (pl.t ? " target " + pl.t : ""), status: "watching", posted: 0 });
-      await A.alSave(); paintAlerts(); A.toast("Alert created from your plan"); return; }
+      await A.alSave(); await autoPost(AL4.list[0]); paintAlerts(); return; }
     if (d.dyplog) { var pl2 = ((cur() || {}).dplans || []).filter(function (p) { return p.id === d.dyplog; })[0]; if (!pl2) return; D.tside = pl2.side; setTab("trades"); paintTrades(); $("dtsym").value = pl2.sym; $("dtq").value = pl2.sh || ""; $("dte").value = pl2.e; $("dtq").focus(); return; }
     if (d.dytdel != null) { confirmBtn(b, "Sure?", async function () { await mutate(function (e2) { e2.trades.splice(+d.dytdel, 1); }); paintTrades(); paintBar(); }); return; }
     if (d.dytpic != null) { D.tpic = +d.dytpic; $("dytfile").click(); return; }
@@ -468,7 +475,7 @@
     if (f === "dyaf") {
       var p = A.alParse($("dyat").value, $("dyas").value); if (!p.raw) return; if (!p.sym) { A.toast("Add a ticker"); return; }
       var AL = A.al(); AL.list.unshift({ id: "a" + Date.now().toString(36) + Math.floor(Math.random() * 1e3), ts: isToday() ? Date.now() : new Date(D.date + "T12:00:00").getTime(), sym: p.sym, side: p.side, trig: p.trig, tw: p.tw, t1: p.t1, stop: p.stop, rr: p.rr, raw: p.raw, status: "watching", posted: 0 });
-      await A.alSave(); $("dyat").value = ""; $("dyas").value = ""; paintAlerts(); loadQ(); return;
+      await A.alSave(); await autoPost(AL.list[0]); $("dyat").value = ""; $("dyas").value = ""; paintAlerts(); loadQ(); return;
     }
     if (f === "dypf") {
       var sym = ($("dpsym").value || "").toUpperCase().replace(/[^A-Z.]/g, ""), c = planCalc(); if (!sym) { A.toast("Add the ticker"); return; } if (!c) { A.toast("Add entry and stop"); return; } if (!c.ok) { A.toast("Stop is on the wrong side of entry"); return; }

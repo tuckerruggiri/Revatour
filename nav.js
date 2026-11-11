@@ -49,7 +49,7 @@
   function svg(k, cls) { return '<svg class="' + (cls == null ? "ni" : cls) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (P[k] || P.list) + '</svg>'; }
 
   var ITEMS = {
-    navhome: ["list", "Watchlist"], navday: ["cal", "Trading day"], navals: ["bell", "Alerts"], navplan: ["target", "Trade Plan"], navfut: ["candles", "Futures"], navopt: ["layers", "Options school"],
+    navhome: ["list", "Watchlist"], navday: ["cal", "Trading day"], navplan: ["target", "Trade Plan"], navfut: ["candles", "Futures"], navopt: ["layers", "Options school"],
     navmov: ["zap", "Parabolic movers"], navpulse: ["pulse", "Market pulse"], navnews: ["news", "News"], navzone: ["layers", "Zones"],
     navinv: ["pie", "Investments"], navrl: ["ladder", "Risk Ladder"],
     navstudio: ["book", "Studio"], navsc: ["award", "Scorecard"], navlab: ["flask", "Setup Lab"], navprac: ["play", "Practice charts"], navcoach: ["spark", "AI Coach"],
@@ -63,7 +63,7 @@
   PICK.push("clock", "folder", "cal");
   var YOU = ["navprofile", "navpub", "navnotif", "navgd", "navset"];
   var DEF = [
-    ["Trading day", "#e8782a", "zap", ["navday", "navhome", "navals", "navplan", "navfut", "navmov"]],
+    ["Trading day", "#e8782a", "zap", ["navday", "navhome", "navplan", "navfut", "navmov"]],
     ["Investing", "#1f9d55", "pie", ["navinv", "navrl", "navopt", "navhome"]],
     ["Research", "#2b7de0", "search", ["navpulse", "navnews", "navzone", "navmov"]],
     ["Review & practice", "#8b4fe0", "book", ["navstudio", "navsc", "navlab", "navprac", "navcoach"]],
