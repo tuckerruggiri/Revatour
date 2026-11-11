@@ -23,9 +23,12 @@
   function say(m) { msg = m; paint(); }
   function elapsed() { var s = Math.floor((Date.now() - t0) / 1000); return Math.floor(s / 60) + ":" + ("0" + s % 60).slice(-2); }
   function startTick() { if (tick) return; tick = setInterval(function () { if (!live()) { clearInterval(tick); tick = null; return; } say("Recording " + nlive() + (nlive() === 1 ? " screen " : " screens ") + elapsed()); }, 500); }
+  var blocked = false;
   async function pick(audio) {
+    blocked = false;
     if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) { toast("Screen recording is not supported in this browser"); return null; }
-    try { return await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 30 }, audio: !!audio }); } catch (e) { toast("Recording cancelled"); return null; }
+    try { return await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 30 }, audio: !!audio }); }
+    catch (e) { blocked = /activation|gesture/i.test(String(e && e.message)); if (!blocked) toast("Recording cancelled"); return null; }
   }
   function begin(stream, first) {
     var n = S.length + 1;
@@ -49,29 +52,41 @@
   async function add() { var st = await pick(!live()); if (st) begin(st, !live()); }
 
   /* Ctrl/Cmd + click: choose several screens first, then start them all together. The browser only lets a page pick one screen per prompt, so a small panel keeps the picker one click away. */
-  var panel = null, chosen = [];
-  function closePanel(stopStreams) { if (stopStreams) chosen.forEach(function (s) { s.getTracks().forEach(function (t) { t.stop(); }); }); chosen = []; if (panel) { panel.remove(); panel = null; } }
+  var panel = null, chosen = [], target = 0;
+  function closePanel(stopStreams) { if (stopStreams) chosen.forEach(function (s) { s.getTracks().forEach(function (t) { t.stop(); }); }); chosen = []; target = 0; if (panel) { panel.remove(); panel = null; } }
+  function startAll() { var list = chosen.slice(); chosen = []; target = 0; if (panel) { panel.remove(); panel = null; } list.forEach(function (s, i) { begin(s, i === 0); }); }
   function drawPanel() {
     if (!panel) { panel = document.createElement("div"); panel.id = "recpanel"; panel.style.cssText = "position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:200;background:#11151c;color:#fff;border:1px solid #2b303b;border-radius:14px;padding:14px 16px;box-shadow:0 12px 40px rgba(0,0,0,.5);font:600 14px Instrument Sans,system-ui,sans-serif;display:flex;gap:10px;align-items:center;flex-wrap:wrap;max-width:94vw"; document.body.appendChild(panel); }
     var bs = "padding:7px 14px;border-radius:9px;border:1px solid #3a4150;background:#1c212b;color:#fff;font:inherit;cursor:pointer";
-    panel.innerHTML = '<span>' + chosen.length + (chosen.length === 1 ? " screen chosen" : " screens chosen") + '</span><button type="button" data-rp="add" style="' + bs + '">+ Pick another screen</button><button type="button" data-rp="go" style="' + bs + ';background:#d64545;border-color:#d64545">&#9679; Start recording ' + chosen.length + '</button><button type="button" data-rp="x" style="' + bs + '">Cancel</button>';
+    panel.innerHTML = '<span>' + chosen.length + (target ? " of " + target : "") + (chosen.length === 1 && !target ? " screen chosen" : " screens chosen") + '</span><button type="button" data-rp="add" style="' + bs + '">+ Pick ' + (target ? "screen " + (chosen.length + 1) + " of " + target : "another screen") + '</button>' + (target ? "" : '<button type="button" data-rp="go" style="' + bs + ';background:#d64545;border-color:#d64545">&#9679; Start recording ' + chosen.length + '</button>') + '<button type="button" data-rp="x" style="' + bs + '">Cancel</button>';
   }
-  async function multi() {
-    var st = await pick(true); if (!st) return; chosen = [st]; drawPanel();
+  /* Choose several screens in one go. Hold Ctrl (Cmd) while clicking Record, or use "Record 2 screens".
+     The page asks for the next screen straight after you choose one. If the browser refuses a second prompt without a new click,
+     a small panel takes over (one click per extra screen). Every screen starts recording at the same instant once the last one is chosen. */
+  async function multi(n) {
+    var st = await pick(true); if (!st) return; chosen = [st]; target = n || 0;
+    for (;;) {
+      if (target && chosen.length >= target) { startAll(); return; }
+      var nx = await pick(false);
+      if (nx) { chosen.push(nx); continue; }
+      if (blocked) { drawPanel(); return; }
+      if (target) { closePanel(true); return; }
+      startAll(); return; /* open-ended: you cancelled the picker, so start what you have */
+    }
   }
   document.addEventListener("click", async function (e) {
     var b = e.target.closest && e.target.closest("[data-rp]"); if (!b) return;
     var a = b.getAttribute("data-rp");
     if (a === "x") { closePanel(true); return; }
-    if (a === "add") { var st = await pick(false); if (st) { chosen.push(st); drawPanel(); } return; }
-    if (a === "go") { var list = chosen.slice(); chosen = []; closePanel(false); list.forEach(function (s, i) { begin(s, i === 0); }); }
+    if (a === "add") { var st = await pick(false); if (st) { chosen.push(st); if (target && chosen.length >= target) startAll(); else drawPanel(); } return; }
+    if (a === "go") startAll();
   });
   function stopAll() { S.forEach(function (x) { try { if (x.mr.state !== "inactive") x.mr.stop(); } catch (e) {} }); }
   document.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("[data-rec],[data-recadd]"); if (!b) return;
-    if (b.hasAttribute("data-recadd")) { add(); return; }
+    if (b.hasAttribute("data-recadd")) { if (live()) add(); else multi(2); return; }
     if (live()) { stopAll(); return; }
-    if (e.ctrlKey || e.metaKey) multi(); else add();
+    if (e.ctrlKey || e.metaKey) multi(0); else add();
   });
   window.StockRec = { sync: paint, live: live };
   if (document.readyState !== "loading") paint(); else document.addEventListener("DOMContentLoaded", paint);
