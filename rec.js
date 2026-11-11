@@ -20,6 +20,10 @@
       if (!nx || !nx.hasAttribute("data-recmenu")) { nx = document.createElement("button"); nx.type = "button"; nx.setAttribute("data-recmenu", "1"); nx.className = b.className.replace(/\brec\b/, "").trim(); nx.style.cssText = b.style.cssText; nx.setAttribute("aria-haspopup", "menu"); b.parentNode.insertBefore(nx, b.nextSibling); }
       nx.classList.remove("rec"); nx.innerHTML = "&#9662;"; nx.title = "More ways to record: several screens, an area, several areas"; nx.setAttribute("aria-label", "More recording options");
     });
+    var fr = document.getElementById("recframe");
+    if (on && !fr) { fr = document.createElement("div"); fr.id = "recframe"; fr.style.cssText = "position:fixed;inset:0;z-index:240;pointer-events:none;border:4px solid #e5282b;box-sizing:border-box;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)"; fr.innerHTML = '<span style="position:absolute;top:8px;right:12px;background:#e5282b;color:#fff;font:700 12px/1 sans-serif;padding:5px 9px;border-radius:999px">&#9679; REC</span>'; document.body.appendChild(fr); }
+    if (!on && fr) fr.remove();
+    var tt = document.title.replace(/^\u{1F534} /u, ""); document.title = on ? "\u{1F534} " + tt : tt;
     [].forEach.call(document.querySelectorAll("[data-rectxt]"), function (t) { t.textContent = msg; });
   }
   function say(m) { msg = m; paint(); }
