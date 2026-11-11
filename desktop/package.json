@@ -16,9 +16,28 @@
   "build": {
     "appId": "com.revatour.desktop",
     "productName": "Revatour",
-    "files": ["main.js", "preload.js", "mini.html", "package.json"],
-    "mac": { "category": "public.app-category.finance", "target": ["dmg"] },
-    "win": { "target": ["nsis"] },
-    "nsis": { "oneClick": true, "perMachine": false }
+    "files": [
+      "main.js",
+      "preload.js",
+      "mini.html",
+      "picker.html",
+      "picker-preload.js",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.finance",
+      "target": [
+        "dmg"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false
+    }
   }
 }
