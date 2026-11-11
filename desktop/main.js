@@ -3,7 +3,7 @@ const { app, BrowserWindow, ipcMain, Menu, shell, session, desktopCapturer, scre
 const path = require("path");
 const fs = require("fs");
 
-const HOME = "https://www.revatour.com/";
+const HOME = process.env.REVATOUR_URL || "https://www.revatour.com/";
 const MINI = { width: 340, height: 92 };
 let mini = null, full = null, quitting = false;
 const prefFile = () => path.join(app.getPath("userData"), "prefs.json");
@@ -34,6 +34,18 @@ function createFull() {
     webPreferences: { preload: path.join(__dirname, "preload.js"), contextIsolation: true, nodeIntegration: false }
   });
   full.loadURL(HOME);
+  full.webContents.setVisualZoomLevelLimits(1, 1);
+  full.webContents.on("did-finish-load", () => { if (full) full.webContents.setZoomLevel(prefs().zoom || 0); });
+  // Ctrl + (plus), Ctrl - (minus), Ctrl 0 (reset), and Ctrl + mouse wheel
+  full.webContents.on("before-input-event", (e, input) => {
+    if (input.type !== "keyDown" || !(input.control || input.meta)) return;
+    const k = input.key;
+    if (k === "=" || k === "+" || k === "Add") { zoomBy(0.5); e.preventDefault(); }
+    else if (k === "-" || k === "_" || k === "Subtract") { zoomBy(-0.5); e.preventDefault(); }
+    else if (k === "0") { setZoom(0); e.preventDefault(); }
+    else if (k.toLowerCase() === "m") { shrink(); e.preventDefault(); }
+  });
+  full.webContents.on("zoom-changed", (e, dir) => zoomBy(dir === "in" ? 0.5 : -0.5));
   full.once("ready-to-show", () => full && full.show());
   full.on("resize", () => { if (!full.isMaximized()) { const b = full.getBounds(); savePrefs({ full: { width: b.width, height: b.height } }); } });
   full.on("close", (e) => { if (!quitting) { e.preventDefault(); shrink(); } });
@@ -44,6 +56,12 @@ function createFull() {
     return { action: "deny" };
   });
 }
+function setZoom(z) {
+  z = Math.max(-5, Math.min(3, Math.round(z * 2) / 2));
+  if (full) full.webContents.setZoomLevel(z);
+  savePrefs({ zoom: z });
+}
+function zoomBy(d) { setZoom(((full && full.webContents.getZoomLevel()) || 0) + d); }
 function expand() {
   if (!full) createFull(); else { full.show(); full.focus(); }
   if (mini) mini.hide();
@@ -56,6 +74,9 @@ function menu() {
   const p = prefs(), onTop = p.onTop !== false;
   Menu.buildFromTemplate([
     { label: "Open Revatour", click: expand },
+    { label: "Zoom in (Ctrl +)", click: () => zoomBy(0.5) },
+    { label: "Zoom out (Ctrl -)", click: () => zoomBy(-0.5) },
+    { label: "Reset zoom (Ctrl 0)", click: () => setZoom(0) },
     { label: "Always on top", type: "checkbox", checked: onTop, click: (i) => { savePrefs({ onTop: i.checked }); if (mini) mini.setAlwaysOnTop(i.checked, "screen-saver"); } },
     { label: "Opacity", submenu: [100, 85, 70, 50].map((v) => ({ label: v + "%", type: "radio", checked: (p.opacity || 100) === v, click: () => { savePrefs({ opacity: v }); if (mini) mini.setOpacity(v / 100); } })) },
     { type: "separator" },
