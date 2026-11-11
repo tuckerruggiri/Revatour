@@ -90,7 +90,7 @@
     d.innerHTML = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--gain,#1a9d5a);color:#fff;align-items:center;justify-content:center;font-size:18px;font-weight:800">&#10003;</span><b style="font-size:1.1rem">Recording saved to your Downloads</b></div>' +
       '<ul style="margin:0 0 10px;padding-left:22px">' + list.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" +
       '<div style="color:var(--mute,#666);margin-bottom:14px">Next: open <b>Studio</b>, find <b>Videos</b>, and press <b>Choose from Downloads</b> (or drag the files onto the Videos box).</div>' +
-      '<div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" data-rd="go" style="' + bs + ';background:var(--accent,#2a6df4);border-color:var(--accent,#2a6df4);color:#fff">Go to Studio Videos</button><button type="button" data-rd="x" style="' + bs + '">Close</button></div>';
+      '<div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" data-rd="go" style="' + bs + ';background:var(--ink,#111);border-color:var(--ink,#111);color:var(--bg,#fff)">Go to Studio Videos</button><button type="button" data-rd="x" style="' + bs + '">Close</button></div>';
     document.body.appendChild(d);
   }
   document.addEventListener("click", function (e) {
