@@ -822,7 +822,9 @@ function galHTML(){if(!imgs.length)return "";
    '<dl class="tc-meta">'+(t.e!=null?'<div><dt>Entry</dt><dd>'+px(t.e)+'</dd></div>':'')+(t.x!=null?'<div><dt>Exit</dt><dd>'+px(t.x)+'</dd></div>':'')+(t.q?'<div><dt>Size</dt><dd>'+t.q+' shares</dd></div>':'')+(time?'<div class="wide"><dt>Time</dt><dd>'+time+'</dd></div>':'')+'</dl>'+cap+'</figcaption></figure>'}).join("")+'</div>'}
 function ytId(u){var m=/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/.exec(u||"");return m?m[1]:""}
 function isFileVid(u){return /\/storage\/v1\/object\/public\/images\/|\.(mp4|webm|mov|m4v)(\?|$)|^blob:/i.test(u||"")}
-function vidList(raw){return String(raw==null?($("videos")?$("videos").value:""):raw).split("\n").map(function(l){var p=l.split("|");return {t:(p[0]||"").trim(),u:(p.slice(1).join("|")||"").trim()}}).filter(function(x){return /^(https?:|blob:)/i.test(x.u)})}
+function vidFromMd(t){var out=[],re=/\[([^\]]*)\]\(\s*(https?:\/\/[^)\s]*\/storage\/v1\/object\/public\/images\/[^)\s]*)\s*\)/g,m;while((m=re.exec(String(t||""))))out.push(m[1].replace(/[|\n]/g," ")+" | "+m[2]);return out.join("\n")}
+function vidList(raw){var seen={};return String(raw==null?($("videos")?$("videos").value:""):raw).split("\n").map(function(l){var p=l.split("|");return {t:(p[0]||"").trim(),u:(p.slice(1).join("|")||"").trim()}}).filter(function(x){if(!/^(https?:|blob:)/i.test(x.u)||seen[x.u])return false;seen[x.u]=1;return true})}
+function vidAll(text,raw){return (raw==null?($("videos")?$("videos").value:""):raw)+"\n"+vidFromMd(text)}
 function vidHTML(raw){var L=vidList(raw),out="";
  L.forEach(function(v){var u=v.u,yt=ytId(u),th;
   if(yt)th='<img alt="" src="https://img.youtube.com/vi/'+yt+'/hqdefault.jpg">';
@@ -830,8 +832,8 @@ function vidHTML(raw){var L=vidList(raw),out="";
   else th='<div class="vt-ph"></div>';
   out+='<a class="vthumb" href="'+esc(u)+'" target="_blank" rel="noopener" data-vurl="'+esc(u)+'" aria-label="Play '+esc(v.t||"video")+'"><span class="vt-pic">'+th+'<span class="vt-play"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></span><span class="vt-cap">'+esc(v.t||"Video")+'</span></a>'});
  return out?'<h2>Videos</h2><div class="vgal">'+out+'</div>':""}
-function stripVid(text,raw){if(vidList(raw).length)text=text.replace(/^#{1,3}\s*(my\s+)?(recorded\s+)?(videos?|recordings?|watch)\s*:?\s*$/gim,"");vidList(raw).forEach(function(v){var u=v.u;text=text.split("\n").filter(function(l){if(l.indexOf(u)<0)return true;var rest=l.split(u).join("").replace(/\[[^\]]*\]\(\s*\)/g,"").replace(/[\s\-*:|()\[\]>•]/g,"");return rest.length>70}).map(function(l){return l.indexOf(u)<0?l:l.replace(/\[([^\]]*)\]\(\s*[^)]*\)/g,function(m,x){return m.indexOf(u)>-1?x:m}).split(u).join("")}).join("\n")});return text}
-function compose(text,fm,vraw){var f=fm||$("fmt").value,html;
+function stripVid(text,raw){if(vidList(raw).length)text=text.replace(/^#{1,3}\s*(my\s+)?(recorded\s+)?(videos?|recordings?|watch)\s*:?\s*$/gim,"");vidList(raw).forEach(function(v){var u=v.u;text=text.split("\n").filter(function(l){if(l.indexOf(u)<0)return true;var rest=l.split(u).join("").replace(/\[[^\]]*\]\(\s*\)/g,"").replace(/[\s\-*:|()\[\]>•]/g,"");return rest.length>70}).map(function(l){return l.indexOf(u)<0?l:l.replace(/\[([^\]]*)\]\(\s*[^)]*\)/g,function(m,x){return m.indexOf(u)>-1?x:m}).split(u).join("")}).join("\n")});text=text.split("\n").filter(function(l){if(!/\/storage\/v1\/object\/public\/images\//.test(l))return true;var rest=l.replace(/\[[^\]]*\]\([^)]*\)/g,"").replace(/https?:\/\/\S+/g,"").replace(/[\s\-*:|()\[\]>•]/g,"");return rest.length>70}).join("\n");return text}
+function compose(text,fm,vraw){var f=fm||$("fmt").value,html;vraw=vidAll(text,vraw);
  if(f!=="ig")text=stripVid(text,vraw);
  if(f==="ig"&&/^\s*COVER_/m.test(text))return '<p class="hint">Designing your carousel...</p>';
  html=md(text);
@@ -1025,7 +1027,7 @@ function renderEntry(date){var ent=entries[date];if(!ent){showStudio();return}
   '<div class="row" style="margin:0 0 16px"><button id="eopen" type="button">Open in Studio</button><button id="eadd" type="button">Add picture</button><input id="efile" type="file" accept="image/*" multiple hidden><button id="edel" type="button">Delete this page</button></div>'+top.s;
  if(!outs.length)h+='<p class="hint">Nothing generated for this day yet. Open it in Studio and press Generate.</p>';
  outs.slice().reverse().forEach(function(o,k){var i=outs.length-1-k;
-  h+='<details class="saved"'+(k===0?' open':'')+'><summary>'+esc(FMTNAME[o.fmt]||o.fmt||"Piece")+', '+esc(new Date(o.ts).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}))+'</summary><div class="out">'+md(stripVid(o.md,ent.videos||""))+vidHTML(ent.videos||"")+'</div><div class="row"><button type="button" data-a="copy" data-i="'+i+'">Copy text</button><button type="button" data-a="md" data-i="'+i+'">Download .md</button><button type="button" data-a="html" data-i="'+i+'">Download .html</button><button type="button" data-a="del" data-i="'+i+'">Delete this piece</button></div></details>'});
+  h+='<details class="saved"'+(k===0?' open':'')+'><summary>'+esc(FMTNAME[o.fmt]||o.fmt||"Piece")+', '+esc(new Date(o.ts).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}))+'</summary><div class="out">'+md(stripVid(o.md,vidAll(o.md,ent.videos||"")))+vidHTML(vidAll(o.md,ent.videos||""))+'</div><div class="row"><button type="button" data-a="copy" data-i="'+i+'">Copy text</button><button type="button" data-a="md" data-i="'+i+'">Download .md</button><button type="button" data-a="html" data-i="'+i+'">Download .html</button><button type="button" data-a="del" data-i="'+i+'">Delete this piece</button></div></details>'});
  el.innerHTML=h+top.g;renderSide();window.scrollTo(0,0)}
 function openInStudio(ent){setTrades(clone(ent.trades||[]));
  imgs=entImgs(ent).map(function(m,i){return {id:"o"+i,src:m.src,aid:m.aid,cap:m.cap,tid:m.tid,sl:m.sl?1:0}});
