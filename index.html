@@ -244,7 +244,8 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .tdlh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}.tdpull{padding:3px 10px;font-size:.78rem;font-weight:600;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer}.tdpull:hover{border-color:var(--accent)}
 .tdpull.rec{background:#d64545;border-color:#d64545;color:#fff}.tdpull[disabled]{opacity:.6;cursor:wait}
 .vidprev{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.vidprev figure{margin:0;width:150px}.vidprev video{width:150px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--line);background:#000}.vidprev figcaption{font-size:.74rem;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#videos.drop{outline:2px dashed var(--accent);outline-offset:2px}
-.vgal{display:flex;flex-wrap:wrap;gap:12px;margin:8px 0 16px}.vthumb{position:relative;display:block;width:260px;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;border:1px solid var(--line);text-decoration:none;cursor:zoom-in}.vthumb video,.vthumb img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}.vt-ph{display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#fff;font-weight:700}.vt-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;padding-left:3px;box-sizing:border-box}.vthumb:hover .vt-play{background:var(--accent)}.vt-cap{position:absolute;left:0;right:0;bottom:0;padding:18px 10px 8px;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff;font-size:.8rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.vlb{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;padding:24px}.vlb video,.vlb iframe{width:min(1200px,94vw);max-height:88vh;aspect-ratio:16/9;border:0;border-radius:12px;background:#000}.vlb .x{position:absolute;top:14px;right:18px;background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:50%;width:40px;height:40px;font-size:18px;cursor:pointer}
+.vgal{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin:10px 0 20px}.vthumb{display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;cursor:zoom-in}.vt-pic{position:relative;display:block;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0d1016;box-shadow:0 1px 2px rgba(0,0,0,.12),0 8px 24px rgba(0,0,0,.16);transition:transform .18s,box-shadow .18s}.vthumb:hover .vt-pic{transform:translateY(-2px);box-shadow:0 2px 4px rgba(0,0,0,.14),0 14px 32px rgba(0,0,0,.22)}.vt-pic video,.vt-pic img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}.vt-ph{width:100%;height:100%}.vt-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.92);color:#111;display:flex;align-items:center;justify-content:center;padding-left:3px;box-sizing:border-box;box-shadow:0 4px 16px rgba(0,0,0,.35);transition:transform .15s}.vthumb:hover .vt-play{transform:translate(-50%,-50%) scale(1.08)}.vt-cap{font-size:.9rem;font-weight:600;line-height:1.3;color:var(--ink);padding:0 2px}
+.vlb{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;padding:24px}.vlb video,.vlb iframe{width:min(1200px,94vw);max-height:88vh;aspect-ratio:16/9;border:0;border-radius:12px;background:#000}.vlb .x{position:absolute;top:14px;right:18px;background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:50%;width:40px;height:40px;font-size:18px;cursor:pointer}
 /* add-to-watchlist everywhere */
 .sc-wl{display:inline-flex;align-items:center;justify-content:center;gap:5px;width:20px;height:20px;margin-left:4px;padding:0;vertical-align:middle;border:1px solid var(--line);border-radius:99px;background:var(--panel);color:var(--mute);font:700 .72rem/1 inherit;cursor:pointer;white-space:nowrap;opacity:0;transition:opacity .12s,background .12s,color .12s}
 .sc-wl svg{width:11px;height:11px}.sc-wl[data-lbl]{width:auto;height:26px;padding:0 11px 0 8px;margin-left:8px;opacity:1;font-size:.78rem}.sc-wl[data-lbl] svg{width:12px;height:12px}
@@ -735,6 +736,7 @@ function prompt(){
   var sk=Object.keys(s.st);if(sk.length)P.push("BY SETUP:\n"+sk.map(function(k){return k+": "+s.st[k].n+" trades, "+money(s.st[k].p)}).join("\n"))}
  else P.push("RECORD: no trades uploaded. Do not state any performance figures.");
  [["strat","STRATEGIES AND RULES"],["ideas","IDEAS AND THESES"],["alerts","PAST ALERTS"],["watch","WATCHLIST"],["videos","VIDEOS (title | link)"],["lessons","LESSONS FROM LOSERS"]].forEach(function(p){var t=v(p[0]);var k=p[0]==="watch"?"watch":p[0]==="alerts"?"alerts":"";if(k){var ex=tdMerge(p[0],k).add;if(ex.length)t=(t?t+"\n":"")+ex.join("\n")}if(t)P.push(p[1]+":\n"+t.slice(0,4000))});
+ if(vidList().length)P.push("VIDEOS: the page shows each video as a picture thumbnail that opens when clicked, automatically, below your writing. Do NOT write any video links or URLs, and do not list the videos. You may say 'watch the videos below'.");
  if(imgs.length)P.push("CHARTS: the page will show "+imgs.length+" trade chart screenshot(s) below your writing. You may say 'see the charts below' but do not describe what they show.");
  if($("fmt").value==="ig")P.push(igTradeBlock());
  P.push("TASK: "+FMT[$("fmt").value]);return P.join("\n\n")}
@@ -762,6 +764,7 @@ var OUTRULES=[
  ".tpt .ax{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--line)}.tpv{font-variant-numeric:tabular-nums;font-size:.8rem;text-align:right;white-space:nowrap;font-weight:600}.tpv.g{color:var(--gain)}.tpv.r{color:var(--loss)}",
  ".tpn i{background:var(--loss);border-radius:4px 0 0 4px}.tpp i{background:var(--gain);border-radius:0 4px 4px 0}",
  ".gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:12px 0}",
+ ".vgal{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin:10px 0 20px}.vthumb{display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit}.vt-pic{position:relative;display:block;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0d1016;box-shadow:0 8px 24px rgba(0,0,0,.16)}.vt-pic video,.vt-pic img{width:100%;height:100%;object-fit:cover;display:block}.vt-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.92);color:#111;display:flex;align-items:center;justify-content:center;padding-left:3px;box-sizing:border-box}.vt-cap{font-size:.9rem;font-weight:600}",
  ".tc{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}",
  ".tc img{display:block;width:100%;height:auto;border-bottom:1px solid var(--line)}",
  ".tc figcaption{padding:14px 16px 16px;display:flex;flex-direction:column;gap:12px}",
@@ -819,21 +822,23 @@ function galHTML(){if(!imgs.length)return "";
    '<dl class="tc-meta">'+(t.e!=null?'<div><dt>Entry</dt><dd>'+px(t.e)+'</dd></div>':'')+(t.x!=null?'<div><dt>Exit</dt><dd>'+px(t.x)+'</dd></div>':'')+(t.q?'<div><dt>Size</dt><dd>'+t.q+' shares</dd></div>':'')+(time?'<div class="wide"><dt>Time</dt><dd>'+time+'</dd></div>':'')+'</dl>'+cap+'</figcaption></figure>'}).join("")+'</div>'}
 function ytId(u){var m=/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/.exec(u||"");return m?m[1]:""}
 function isFileVid(u){return /\/storage\/v1\/object\/public\/images\/|\.(mp4|webm|mov|m4v)(\?|$)|^blob:/i.test(u||"")}
-function vidHTML(){var L=$("videos")?$("videos").value.split("\n"):[],out="";
- L.forEach(function(l){var p=l.split("|"),t=(p[0]||"").trim(),u=(p.slice(1).join("|")||"").trim();if(!/^(https?:|blob:)/i.test(u))return;
-  var yt=ytId(u),th;
+function vidList(raw){return String(raw==null?($("videos")?$("videos").value:""):raw).split("\n").map(function(l){var p=l.split("|");return {t:(p[0]||"").trim(),u:(p.slice(1).join("|")||"").trim()}}).filter(function(x){return /^(https?:|blob:)/i.test(x.u)})}
+function vidHTML(raw){var L=vidList(raw),out="";
+ L.forEach(function(v){var u=v.u,yt=ytId(u),th;
   if(yt)th='<img alt="" src="https://img.youtube.com/vi/'+yt+'/hqdefault.jpg">';
   else if(isFileVid(u))th='<video muted playsinline preload="metadata" src="'+esc(u)+'#t=0.5"></video>';
-  else th='<div class="vt-ph">Video</div>';
-  out+='<a class="vthumb" href="'+esc(u)+'" target="_blank" rel="noopener" data-vurl="'+esc(u)+'" title="Click to enlarge">'+th+'<span class="vt-play">&#9654;</span><span class="vt-cap">'+esc(t||"Video")+'</span></a>'});
+  else th='<div class="vt-ph"></div>';
+  out+='<a class="vthumb" href="'+esc(u)+'" target="_blank" rel="noopener" data-vurl="'+esc(u)+'" aria-label="Play '+esc(v.t||"video")+'"><span class="vt-pic">'+th+'<span class="vt-play"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></span><span class="vt-cap">'+esc(v.t||"Video")+'</span></a>'});
  return out?'<h2>Videos</h2><div class="vgal">'+out+'</div>':""}
-function compose(text,fm){var f=fm||$("fmt").value,html;
+function stripVid(text,raw){if(vidList(raw).length)text=text.replace(/^#{1,3}\s*(my\s+)?(recorded\s+)?(videos?|recordings?|watch)\s*:?\s*$/gim,"");vidList(raw).forEach(function(v){var u=v.u;text=text.split("\n").filter(function(l){if(l.indexOf(u)<0)return true;var rest=l.split(u).join("").replace(/\[[^\]]*\]\(\s*\)/g,"").replace(/[\s\-*:|()\[\]>•]/g,"");return rest.length>70}).map(function(l){return l.indexOf(u)<0?l:l.replace(/\[([^\]]*)\]\(\s*[^)]*\)/g,function(m,x){return m.indexOf(u)>-1?x:m}).split(u).join("")}).join("\n")});return text}
+function compose(text,fm,vraw){var f=fm||$("fmt").value,html;
+ if(f!=="ig")text=stripVid(text,vraw);
  if(f==="ig"&&/^\s*COVER_/m.test(text))return '<p class="hint">Designing your carousel...</p>';
  html=md(text);
  if(f==="page"||f==="news"){var sh=statsHTML(),m=/<h[1-3]>[^<]*track record[^<]*<\/h[1-3]>/i.exec(html);
   if(sh)html=m?html.slice(0,m.index+m[0].length)+sh+html.slice(m.index+m[0].length):sh+html}
  if(f==="page"||f==="blog"||f==="news")html+=galHTML();
- if(f!=="ig")html+=vidHTML();
+ if(f!=="ig")html+=vidHTML(vraw);
  return html}
 function refreshOut(){if(lastMd)$("out").innerHTML=compose(lastMd)}
 function saveImgs(){refreshOut();try{localStorage.setItem(KEYI,JSON.stringify(imgs))}catch(e){toast("Charts are too big to keep after you close this page")}}
@@ -962,6 +967,7 @@ async function saveEntry(out){
  var s=stats(),date=s.n?isoOf(s.last):todayISO();if(!/^\d{4}-\d{2}-\d{2}$/.test(date))date=todayISO();
  var ent=entries[date]?clone(entries[date]):{date:date,trades:[],imgs:[],outputs:[]};
  if(trades.length)ent.trades=trades.map(function(t){return {t:t.t,s:t.s,q:t.q,e:t.e,x:t.x,d:t.d||"",tm:t.tm||"",ot:t.ot||"",u:t.u||"",n:t.n||"",p:t.p}});
+ if($("videos")&&$("videos").value.trim())ent.videos=$("videos").value.slice(0,3000);
  var skipped=0;
  if(imgs.length){var r=await imgRecords();ent.imgs=r.list;skipped=r.skipped}
  if(out){ent.outputs=ent.outputs||[];ent.outputs.push({id:Date.now().toString(36),fmt:out.fmt,voice:out.voice,md:out.md,ts:Date.now()});ent.outputs=ent.outputs.slice(-12)}
@@ -1019,7 +1025,7 @@ function renderEntry(date){var ent=entries[date];if(!ent){showStudio();return}
   '<div class="row" style="margin:0 0 16px"><button id="eopen" type="button">Open in Studio</button><button id="eadd" type="button">Add picture</button><input id="efile" type="file" accept="image/*" multiple hidden><button id="edel" type="button">Delete this page</button></div>'+top.s;
  if(!outs.length)h+='<p class="hint">Nothing generated for this day yet. Open it in Studio and press Generate.</p>';
  outs.slice().reverse().forEach(function(o,k){var i=outs.length-1-k;
-  h+='<details class="saved"'+(k===0?' open':'')+'><summary>'+esc(FMTNAME[o.fmt]||o.fmt||"Piece")+', '+esc(new Date(o.ts).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}))+'</summary><div class="out">'+md(o.md)+'</div><div class="row"><button type="button" data-a="copy" data-i="'+i+'">Copy text</button><button type="button" data-a="md" data-i="'+i+'">Download .md</button><button type="button" data-a="html" data-i="'+i+'">Download .html</button><button type="button" data-a="del" data-i="'+i+'">Delete this piece</button></div></details>'});
+  h+='<details class="saved"'+(k===0?' open':'')+'><summary>'+esc(FMTNAME[o.fmt]||o.fmt||"Piece")+', '+esc(new Date(o.ts).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}))+'</summary><div class="out">'+md(stripVid(o.md,ent.videos||""))+vidHTML(ent.videos||"")+'</div><div class="row"><button type="button" data-a="copy" data-i="'+i+'">Copy text</button><button type="button" data-a="md" data-i="'+i+'">Download .md</button><button type="button" data-a="html" data-i="'+i+'">Download .html</button><button type="button" data-a="del" data-i="'+i+'">Delete this piece</button></div></details>'});
  el.innerHTML=h+top.g;renderSide();window.scrollTo(0,0)}
 function openInStudio(ent){setTrades(clone(ent.trades||[]));
  imgs=entImgs(ent).map(function(m,i){return {id:"o"+i,src:m.src,aid:m.aid,cap:m.cap,tid:m.tid,sl:m.sl?1:0}});
@@ -1050,7 +1056,7 @@ $("entry").addEventListener("click",async function(ev){
  var a=b.dataset.a,i=+b.dataset.i,o=(ent.outputs||[])[i];if(!a||!o)return;
  if(a==="copy"){try{navigator.clipboard.writeText(o.md).then(function(){toast("Copied")},function(){toast("Copy blocked by browser")})}catch(e){toast("Copy blocked by browser")}}
  else if(a==="md")save("stockspot-"+curDate+"-"+o.fmt+".md",o.md);
- else if(a==="html"){var arr=await inlineImgs(entImgs(ent));var body=withCtx(ent,arr,function(){return compose(o.md,o.fmt)});save("stockspot-"+curDate+"-"+o.fmt+".html",pageShell(body,dayLabel(curDate)+" | Stockspot"))}
+ else if(a==="html"){var arr=await inlineImgs(entImgs(ent));var body=withCtx(ent,arr,function(){return compose(o.md,o.fmt,ent.videos||"")});save("stockspot-"+curDate+"-"+o.fmt+".html",pageShell(body,dayLabel(curDate)+" | Stockspot"))}
  else if(a==="del"){confirmTwice(b,"Click again to delete",async function(){var n=clone(ent);n.outputs.splice(i,1);n.updated=Date.now();try{await putEntry(n);renderEntry(curDate)}catch(e){toast("Could not delete")}})}});
 /* Pages (notes, setups, strategies, PNL) */
 var pages={},curPage="",addChanFor="",openCats=(function(){try{return JSON.parse(localStorage.getItem("ss-open")||"{}")}catch(e){return {}}})(),pend=[],feedPosts=[],PKEY="stockspot-pages-v1";
