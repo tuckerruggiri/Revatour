@@ -1,0 +1,24 @@
+{
+  "name": "revatour-desktop",
+  "productName": "Revatour",
+  "version": "1.0.0",
+  "description": "Revatour desktop: a pinned mini clock that opens the full app",
+  "main": "main.js",
+  "author": "Revatour",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.revatour.desktop",
+    "productName": "Revatour",
+    "files": ["main.js", "preload.js", "mini.html", "package.json"],
+    "mac": { "category": "public.app-category.finance", "target": ["dmg"] },
+    "win": { "target": ["nsis"] },
+    "nsis": { "oneClick": true, "perMachine": false }
+  }
+}

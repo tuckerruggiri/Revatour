@@ -116,7 +116,7 @@
       '<span class="dy-chip">Day P&amp;L <b class="' + (s.net >= 0 ? "gain" : "loss") + '">' + (s.n ? A.sgn(s.net) : "$0.00") + '</b> <small>' + s.n + (s.n === 1 ? ' trade · ' : ' trades · ') + s.w + 'W ' + s.l + 'L</small></span>' +
       '<span class="dy-sp"></span>' +
       '<button type="button" class="b" data-rec="1" title="Record your screen. Saves a video to your Downloads">&#9679; Record screen</button><span class="hint" data-rectxt="1" style="margin:0;font-size:.74rem"></span>' +
-      '<button type="button" class="b" data-dyact="gen" title="Posts and write-ups generated for this day">Generated</button><button type="button" class="b" data-dyact="cal">Calendar</button>';
+      (window.revatourDesktop ? '<button type="button" class="b" data-dyact="shrink" title="Back to the small pinned clock">&#9719; Shrink to clock</button>' : '') + '<button type="button" class="b" data-dyact="gen" title="Posts and write-ups generated for this day">Generated</button><button type="button" class="b" data-dyact="cal">Calendar</button>';
     paintQuotes(); tickClock(); if (window.StockRec) window.StockRec.sync();
   }
 
@@ -497,6 +497,7 @@
     if (d.dytab) { setTab(d.dytab); return; }
     if (d.dynw) { D.news.tab = d.dynw; paintNews(); loadNews(); return; }
     if (d.dyts) { D.tside = d.dyts; paintTrades(); return; }
+    if (act === "shrink") { if (window.revatourDesktop) window.revatourDesktop.shrink(); return; }
     if (act === "shotpick") { $("dyshfile").click(); return; }
     if (d.dyshdel != null) { confirmBtn(b, "Sure?", async function () { await mutate(function (e2) { e2.imgs.splice(+d.dyshdel, 1); }); paintShots(); paintTrades(); }); return; }
     if (d.dybias) { var nb = (cur() || {}).bias === d.dybias ? "" : d.dybias; await mutate(function (e2) { e2.bias = nb; }); paintBias(); return; }
