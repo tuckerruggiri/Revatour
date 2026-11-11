@@ -1,45 +1,45 @@
 {
- "asof": "Nov 10, 2026 (premarket)",
- "headline": "Stocks surged Monday (S&P 500 +2.35%, best day since April), and now all eyes are on October CPI at 8:30 ET, with December hike odds above 80% and Waller floating 50bp if core is hot.",
- "regime": "Hiking regime with a sharp relief rally: the Fed raised rates in September, December hike odds are 82% (CME FedWatch via Hawksmoor), the 10-year is about 4.88%, and the VIX is near 20 after 28 on Nov 5. A hot core CPI would test the rebound.",
+ "asof": "Nov 11, 2026 (premarket)",
+ "headline": "A hot October CPI (headline +0.4%, core +0.3%) pushed the 10-year to about 5% and a December Fed hike to about 99% odds; stocks fell Tuesday, but futures are up Wednesday on CoreWeave's beat.",
+ "regime": "Hiking regime: the Fed funds target is 3.75-4.00%, December hike odds are about 99% (CME FedWatch via Investing.com), the 10-year is about 4.99% and the VIX about 19.5-20 (readings vary by source). Goldman sees a second hike in December and a third in March.",
  "lean": [
   {
    "h": "Today",
    "sub": "day trades",
    "s": -5,
-   "t": "Event-driven, CPI first",
-   "why": "S&P futures are flat (+0.06%) and Nasdaq-100 futures -0.24% after Monday's 2.35% gain. CPI is at 8:30 ET, the 10-year auction at 1 pm and CoreWeave after the close."
+   "t": "Rebound attempt against 5% yields",
+   "why": "Nasdaq futures were up 0.5-1.6% depending on the source after CoreWeave, but the 10-year is about 4.99% and the bond market is closed for Veterans Day."
   },
   {
    "h": "Next 2-4 weeks",
    "sub": "swing trades",
-   "s": 0,
-   "t": "Neutral, event-heavy",
-   "why": "PPI (Nov 13), Nvidia earnings (Nov 17) and the Dec 8-9 FOMC are ahead; hike odds above 80% keep yields in focus."
+   "s": -10,
+   "t": "Cautious, data and earnings heavy",
+   "why": "PPI (Nov 13), Nvidia (Nov 17), FOMC minutes (Nov 18), PCE (Nov 25) and the Dec 8-9 FOMC are ahead with a hike priced in."
   },
   {
    "h": "6-12 months",
    "sub": "investing",
-   "s": 15,
-   "t": "Constructive, policy and rate risk",
-   "why": "The Nasdaq was still about 11% below its Oct 6 record on Friday; a hiking Fed and data-center regulation worries are real risks."
+   "s": 10,
+   "t": "Constructive, rate risk high",
+   "why": "AI demand data is strong (CoreWeave backlog about $132.5B, TSMC October revenue +60%), but a 5% 10-year and a hiking Fed pressure valuations."
   }
  ],
  "rates": [
   {
    "l": "Fed funds target",
    "v": "3.75-4.00%",
-   "n": "Held Oct 28; next meeting Dec 8-9 (older reading, no new decision)"
+   "n": "Per Deutsche Bank via Investing.com, Nov 10; next FOMC Dec 8-9"
   },
   {
    "l": "Dec hike odds",
-   "v": "~82%",
-   "n": "CME FedWatch 82.2% (Hawksmoor, Nov 10); 'over 80%' per Yahoo"
+   "v": "~99%",
+   "n": "CME FedWatch via Investing.com, Nov 10 afternoon; about 11% for 50bp (other sources 10-15%)"
   },
   {
    "l": "10-year yield",
-   "v": "4.88%",
-   "n": "About 4.88% Monday close (Yahoo); 4.864%-4.884% early Tuesday"
+   "v": "4.99%",
+   "n": "Nov 10 close (Saxo); touched 5.00-5.02%; 4.996% in Asia Nov 11 (Reuters)"
   },
   {
    "l": "30-yr mortgage",
@@ -48,23 +48,23 @@
   },
   {
    "l": "Dollar index",
-   "v": "~101.7",
-   "n": "101.72 early Tuesday (Hawksmoor)"
+   "v": "~102.3",
+   "n": "102.29 on Nov 11 (Reuters via Yahoo); 102.45 per another page; +0.5% Tuesday"
   },
   {
    "l": "Gold",
-   "v": "~$4,074",
-   "n": "$4,138 Monday close (Yahoo); about $4,074 early Tuesday"
+   "v": "~$4,031",
+   "n": "Spot, late Nov 10 (-2.6%); $4,030-$4,055 on Nov 11"
   },
   {
    "l": "WTI oil",
-   "v": "~$85.2",
-   "n": "Dec contract $85.23, -1.87% early Tuesday (Yahoo); Brent $90.23"
+   "v": "$86.04",
+   "n": "Dec settlement Nov 10 (-0.93%), lowest since Aug 31; Brent $91.49"
   },
   {
    "l": "VIX",
-   "v": "~19.9",
-   "n": "19.94 early Tuesday (Hawksmoor; Monday close not labeled); 28.18 on Nov 5"
+   "v": "~19.5-20",
+   "n": "20.02 (Yahoo, Nov 10 page) and 19.46 (Reuters, Nov 11); close not verified"
   }
  ],
  "sectors": [
@@ -72,21 +72,21 @@
    "s": "Clean energy",
    "etf": "ICLN TAN",
    "d": [
-    1,
+    0,
     1,
     0
    ],
-   "why": "(Nov 9 read.) First Solar fell about 5% Monday as oil dropped; all sectors rose in the broad rally."
+   "why": "(Nov 9 read, not updated.) First Solar fell about 5% Monday as oil dropped; higher yields are a headwind for rate-sensitive builders."
   },
   {
    "s": "Health insurers and hospitals",
    "etf": "IHF XLV",
    "d": [
-    -1,
+    0,
     0,
     1
    ],
-   "why": "(Nov 5-9 read.) Moderna closed Nov 9 at $269.00 (+5.83%) on its first profitable quarter in two years; Ionis fell about 21% on a guidance cut."
+   "why": "(Nov 5-9 read.) Moderna closed Nov 9 at $269.00 on its first profitable quarter in two years; an analyst on TheStreet pointed to rotation toward healthcare and financials Nov 10; Hims & Hers fell 16.6%."
   },
   {
    "s": "Defense",
@@ -96,37 +96,37 @@
     0,
     0
    ],
-   "why": "(Nov 4 read, not updated.) Lockheed -7%, L3Harris -6%; Boeing plans about 5% staff cuts (TheStreet, Nov 9). Industrials led Monday, up 4.59%."
+   "why": "(Nov 4 read, not updated.) Lockheed -7%, L3Harris -6%; industrials slipped 0.08% on Nov 10."
   },
   {
    "s": "AI chips and data centers",
    "etf": "SMH XLK",
    "d": [
-    0,
+    -1,
     0,
     1
    ],
-   "why": "AMD +13.26% to $508.58, Broadcom +8.78% and Micron +6.25% to $733.15 on Monday; Nvidia -4.27% to $178.67 on its CEO probe. Nvidia reports Nov 17."
+   "why": "Technology fell 1.13% on Nov 10 (the only sector down more than 1%) and Nvidia fell 5.47% to $168.89; premarket Nov 11 CoreWeave jumped about 13% and TSMC rose about 5%."
   },
   {
    "s": "Banks",
    "etf": "XLF KRE",
    "d": [
-    -1,
+    1,
     1,
     1
    ],
-   "why": "(Nov 9 read.) A hiking Fed helps margins but raises credit worries; no new bank-specific news found today."
+   "why": "Financials led Nov 10, up 0.49% (TheStreet); a hiking Fed helps margins but raises credit worries. No bank-specific news was found."
   },
   {
    "s": "Homebuilders and mortgage",
    "etf": "ITB XHB",
    "d": [
-    1,
+    -1,
     -1,
     0
    ],
-   "why": "(Nov 9 read.) The 10-year near 4.88% and a 7.18% mortgage rate remain headwinds; CPI and the next mortgage survey (Nov 12) are the tests."
+   "why": "The 10-year at about 4.99% pushes mortgage rates back up from 7.18%; Thursday's Freddie Mac survey is the test."
   },
   {
    "s": "Gold and miners",
@@ -136,7 +136,7 @@
     0,
     1
    ],
-   "why": "Gold rose 1.74% to $4,138 Monday and was about $4,074 early Tuesday; the CPI print and hike odds are the swing factors."
+   "why": "Gold fell 2.6% to about $4,032 and silver 3.55%; McEwen fell 16.5%."
   },
   {
    "s": "Energy",
@@ -146,37 +146,37 @@
     0,
     0
    ],
-   "why": "WTI is about $85 (-2%) and Brent $90 early Tuesday, about 23% below Brent's Oct 30 high of $118, as Trump says new Iran strikes are unlikely; the blockade continues."
+   "why": "Energy rose 0.41% on Nov 10 even as WTI settled at $86.04, the lowest since Aug 31; Iran talks drive crude."
   },
   {
    "s": "Small caps",
    "etf": "IWM",
    "d": [
-    0,
+    -1,
     0,
     1
    ],
-   "why": "The Russell 2000 rose 3.15% to 2,840.81 on Monday (TheStreet); hike odds above 80% are a headwind for borrowers."
+   "why": "The Russell 2000 opened +3.15% but closed -0.68% at 2,821.38; a 5% 10-year hurts borrowers."
   },
   {
    "s": "Musk and Trump-linked",
    "etf": "TSLA DJT",
    "d": [
-    -1,
+    0,
     0,
     0
    ],
-   "why": "(Nov 9 read.) Tesla rose about 5% Monday on robotaxi expansion (Yahoo)."
+   "why": "(Nov 9 read, not updated.) Tesla rose about 5% Monday on robotaxi expansion (Yahoo)."
   },
   {
    "s": "Utilities and power",
    "etf": "XLU CEG VST",
    "d": [
-    1,
+    0,
     0,
     1
    ],
-   "why": "Constellation closed Nov 9 at $276.09 (+10.46%) after a Q3 beat and a raised outlook; NRG rose 10.45% on a $4B plant sale."
+   "why": "Utilities fell 0.23% on Nov 10; Constellation closed Nov 9 at $276.09 after a Q3 beat; GE Vernova and Vertiv rose premarket on JPMorgan notes."
   },
   {
    "s": "Private prisons",
@@ -191,23 +191,60 @@
  ],
  "news": [
   {
-   "id": "waller",
-   "cat": "fed",
-   "head": "Fed's Waller leans to a 25bp December hike, would consider 50bp if CPI is hot",
+   "id": "cpi",
+   "cat": "economy",
+   "head": "October CPI runs hot: headline +0.4%, core +0.3%",
    "when": "Nov 10",
-   "src": "https://finance.yahoo.com/markets/live/stock-market-today-tuesday-november-10-dow-sp-500-nasdaq-inflation-data-cpi-090627830.html",
-   "srcN": "Yahoo Finance live blog, Nov 10; Hawksmoor Capital, Nov 10",
-   "mean": "Gov. Waller (speaking in London) said a 25bp hike is his lean for December but that 50bp 'should be considered' if core CPI is around 0.3% or higher. FedWatch odds of a December hike are over 80% (82.2% per Hawksmoor).",
+   "src": "https://finance.yahoo.com/economy/article/not-great-october-cpi-inflation-data-comes-in-hotter-than-expected-as-food-and-rent-costs-spike-142323507.html",
+   "srcN": "Yahoo Finance, Nov 10; Tickmill, Nov 11",
+   "mean": "Headline CPI rose 0.4% vs 0.3% expected and core 0.3% vs 0.2% (September headline was +0.6%). Rents rose 0.2%, food 0.5% and energy 0.7%. A year-over-year figure was not published because October 2025 prices were not collected during the shutdown.",
    "react": [
     [
      "Fed hike odds",
      -1,
-     "Over 80%"
+     "December hike seen as nearly locked"
     ],
     [
      "10-yr yield",
      -1,
-     "Hot CPI plus a 50bp talk raises the risk of a higher yield"
+     "Up about 11-12bp toward 5%"
+    ],
+    [
+     "Growth stocks",
+     -1,
+     "Hurt by higher yields"
+    ],
+    [
+     "Gold",
+     -1,
+     "Pressured by yields and dollar"
+    ]
+   ],
+   "hist": "Rule of thumb: a core print above consensus during a hiking cycle tends to push yields up and hurt long-duration stocks the same day.",
+   "histN": "",
+   "histU": "",
+   "today": "Stay small into PPI on Nov 13; yields near 5% are the pressure point.",
+   "later": "Investors tend to watch core inflation trend (core path 0.3, 0.3, 0.3 over Aug-Oct per Stocktitan) and the Dec 8-9 FOMC.",
+   "conf": 3
+  },
+  {
+   "id": "waller",
+   "cat": "fed",
+   "head": "Fed's Waller backs a December hike, would consider 50bp; Logan sees two more",
+   "when": "Nov 10",
+   "src": "https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-nov-10-2026",
+   "srcN": "TheStreet, Nov 10; Saxo, Nov 11",
+   "mean": "Governor Waller supports at least 25bp in December and would consider 50bp if core CPI was 0.3% or higher. Dallas Fed's Logan said two more hikes are needed. Goldman expects a December and a March hike, peaking at 4.25-4.5% (Saxo).",
+   "react": [
+    [
+     "Fed hike odds",
+     -1,
+     "About 99% for December (CME FedWatch via Investing.com)"
+    ],
+    [
+     "2-yr yield",
+     -1,
+     "Largest one-day rise in 19 months"
     ],
     [
      "Banks",
@@ -215,344 +252,322 @@
      "Margin help vs credit worries"
     ]
    ],
-   "hist": "Rule of thumb: a Fed official floating a bigger move before a data print raises the stakes of that print.",
+   "hist": "Rule of thumb: officials floating a bigger move right after a hot print raise the odds that markets price a steeper path.",
    "histN": "",
    "histU": "",
-   "today": "Waller's remarks and the 8:30 ET CPI are the two catalysts; stay small into the data.",
-   "later": "A hiking cycle is a rate-and-valuation story; investors tend to watch core inflation and the Dec 8-9 meeting.",
+   "today": "Fed speakers keep yields in focus; Veterans Day thins bond trading today.",
+   "later": "A hiking cycle is a rate-and-valuation story; investors tend to watch the Dec 8-9 meeting and Nov 18 minutes.",
    "conf": 3
   },
   {
-   "id": "cpi",
-   "cat": "economy",
-   "head": "October CPI at 8:30 ET: consensus +0.3% headline, +0.2% core",
+   "id": "tenyr",
+   "cat": "fed",
+   "head": "10-year Treasury yield back near 5%",
    "when": "Nov 10",
-   "src": "https://hawksmoorcapital.substack.com/p/daily-standup-nov-10",
-   "srcN": "Hawksmoor Capital, Nov 10",
-   "mean": "Consensus is +0.3% headline and +0.2% core month over month; September was +0.6% and +0.3%. There is no year-over-year figure because October 2025 data were not collected during the shutdown.",
+   "src": "https://www.investing.com/news/economy-news/us-treasury-yields-surge-as-hot-cpi-revives-fed-tightening-bets-93CH-5016707",
+   "srcN": "Investing.com, Nov 10; Saxo, Nov 11",
+   "mean": "The 10-year closed about 4.99% (touching 5.00-5.02% intraday) and the 2-year about 4.73%, up roughly 17-18bp. Treasury cash markets are closed Nov 11 for Veterans Day.",
    "react": [
     [
-     "10-yr yield",
-     0,
-     "Direction depends on core vs +0.2%"
+     "Homebuilders",
+     -1,
+     "Mortgage-rate pressure"
     ],
     [
-     "Stocks",
-     0,
-     "Rallied 2.35% Monday into the print"
+     "Small caps",
+     -1,
+     "Hurt by higher borrowing costs"
     ],
     [
-     "Dollar",
-     0,
-     "Hike odds already above 80%"
+     "Gold",
+     -1,
+     "Higher real yields"
     ]
    ],
-   "hist": "Rule of thumb: markets rarely move on in-line prints; the surprise in core matters more than the headline.",
+   "hist": "Rule of thumb: a 10-year yield at or above 5% has tended to weigh on housing, small caps and unprofitable growth first.",
    "histN": "",
    "histU": "",
-   "today": "S&P futures were flat (+0.06%) and Nasdaq-100 futures -0.24% before the print.",
-   "later": "One print rarely changes the long-term view; the trend over several months does.",
-   "conf": 3
+   "today": "Watch whether 5% holds when bond trading is thin today.",
+   "later": "Investors tend to compare equity valuations with a 5% risk-free rate.",
+   "conf": 2
   },
   {
-   "id": "rally",
+   "id": "nvda",
    "cat": "stocks",
-   "head": "Stocks surge Monday: S&P 500 +2.35%, Nasdaq +2.74%, Russell 2000 +3.15%",
-   "when": "Nov 9",
-   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-9-2026",
-   "srcN": "Stocktitan, Nov 9; Yahoo Finance, Nov 9",
-   "mean": "The S&P 500 had its best day since Apr 8 (SPY +2.37%, QQQ +3.54%, IWM +3.23%), the Dow rose 1,104 points to about 52,390, and 75% of stocks rose with industrials leading. Drivers named include a drop in oil after Trump said new Iran strikes were unlikely, a chip rebound and Citi moving US stocks and global tech to neutral.",
+   "head": "Nvidia falls 5.47% to $168.89 as board probes CEO reports",
+   "when": "Nov 10",
+   "src": "https://abc7news.com/story/nvidia-stock-falls-company-opens-probe-ceo-jensen-huang-alleged-affair-chinese-spy/20026775/",
+   "srcN": "ABC7 (AP), Nov 9; HeyGoTrade, Nov 11",
+   "mean": "Independent directors hired Wachtell Lipton to investigate reports about CEO Jensen Huang. The stock fell 4.27% on Nov 9 and 5.47% on Nov 10 to $168.89 on 429.3M shares, about 2.8% above its 52-week low. It rose about 3.5% premarket Nov 11 and reports Nov 17.",
    "react": [
     [
-     "SPY",
-     1,
-     "+2.37%"
+     "NVDA",
+     -1,
+     "Two-day slide, bounce premarket"
     ],
     [
-     "QQQ",
-     1,
-     "+3.54%"
+     "Semiconductors",
+     -1,
+     "Tech was the weakest sector Nov 10"
     ],
     [
-     "IWM",
-     1,
-     "+3.23%"
+     "Nasdaq",
+     -1,
+     "Index fell 0.74%"
     ]
    ],
-   "hist": "Rule of thumb: after a 4.4% one-day drop on Nov 5, sharp rebounds can retrace; the hike-odds backdrop has not changed.",
+   "hist": "Rule of thumb: headline-driven drops into earnings can reverse quickly or extend; the earnings call is the next test.",
    "histN": "",
    "histU": "",
-   "today": "Watch whether the bounce holds after CPI.",
-   "later": "The Nasdaq was about 11% below its Oct 6 record on Friday (Yahoo); a bounce does not remove the rate and regulation risks.",
-   "conf": 3
+   "today": "Premarket bounce vs the $164.27 low; Nov 17 earnings are the next catalyst.",
+   "later": "Investors tend to separate the probe from AI demand data in the Nov 17 report.",
+   "conf": 2
   },
   {
    "id": "oil",
    "cat": "commodities",
-   "head": "Oil falls: WTI about $85, Brent $90, as Trump says new Iran strikes unlikely",
+   "head": "Oil settles at lowest since Aug 31 as Iran tensions ease",
    "when": "Nov 10",
-   "src": "https://hawksmoorcapital.substack.com/p/daily-standup-nov-10",
-   "srcN": "Hawksmoor Capital, Nov 10; TheStreet and Stocktitan, Nov 9",
-   "mean": "WTI was $84.99 (-2.1%) and Brent $90.23 (-2.5%) early Tuesday, about 23% below Brent's Oct 30 high of $118. Trump said military action 'doesn't seem to be a very necessary thing' while the naval blockade continues; Waller said Hormuz insurance and ship transfers add $20-30 a barrel.",
+   "src": "https://www.khaleejtimes.com/business/oil-falls-almost-5-as-trump-signals-restraint-on-iran",
+   "srcN": "Khaleej Times, Nov 9; Eurasia Business News, Nov 11",
+   "mean": "WTI (Dec) settled at $86.04 (-0.93%) and Brent (Jan) at $91.49 (-1.17%), both the lowest settlements since Aug 31. Trump said new Iran attacks are unlikely while talks progress; Brent fell 4.65% on Nov 9. AAA gasoline fell below $4 for the first time since July (Stocktitan).",
    "react": [
-    [
-     "Energy XLE",
-     -1,
-     "Lower crude"
-    ],
     [
      "Airlines",
      1,
-     "Lower fuel"
+     "Lower fuel costs"
     ],
     [
-     "First Solar",
-     -1,
-     "Fell about 5% Monday on lower oil"
+     "Energy stocks",
+     0,
+     "Energy sector still rose 0.41% Nov 10"
+    ],
+    [
+     "Inflation",
+     1,
+     "Eases headline pressure if it holds"
     ]
    ],
-   "hist": "Rule of thumb: oil headlines about Iran can reverse within hours.",
+   "hist": "Rule of thumb: falling crude helps fuel-heavy industries and headline inflation with a lag; Hormuz shipping risk can reverse it quickly.",
    "histN": "",
    "histU": "",
-   "today": "Crude is headline-driven; the blockade is unresolved.",
-   "later": "Lower oil eases the inflation worry, but Iran news can reverse it.",
+   "today": "Brent rebounded to about $91.6-92.2 on Nov 11 after an overnight dip.",
+   "later": "Investors tend to watch Iran talks and shipping risk near Hormuz.",
    "conf": 2
-  },
-  {
-   "id": "chips",
-   "cat": "stocks",
-   "head": "Chips rebound: AMD +13.3%, Broadcom +8.8%; Nvidia -4.3% on the CEO probe",
-   "when": "Nov 9",
-   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-9-2026",
-   "srcN": "Stocktitan, Nov 9; Alpha Vantage close",
-   "mean": "AMD closed at $508.58 (+13.26%) after an Oppenheimer upgrade, Broadcom rose 8.78%, and Taiwan's main index rose 4.94%. Nvidia fell 4.27% to $178.67 after its board opened an investigation involving CEO Jensen Huang; Nvidia reports Nov 17.",
-   "react": [
-    [
-     "AMD",
-     1,
-     "+13.26%"
-    ],
-    [
-     "AVGO",
-     1,
-     "+8.78%"
-    ],
-    [
-     "NVDA",
-     -1,
-     "-4.27% on the board probe"
-    ]
-   ],
-   "hist": "Rule of thumb: mega-cap governance headlines can move the whole Nasdaq-100; facts are still emerging.",
-   "histN": "",
-   "histU": "",
-   "today": "Nvidia is up about 1.3% premarket (Hawksmoor); watch for probe updates.",
-   "later": "Chips remain volatile; Nvidia's Nov 17 report is the next fundamental test.",
-   "conf": 3
-  },
-  {
-   "id": "ceg",
-   "cat": "stocks",
-   "head": "Constellation Energy +10.5% on a Q3 beat and raised 2026 guidance",
-   "when": "Nov 9",
-   "src": "https://finance.yahoo.com/markets/stocks/articles/stock-market-today-nov-9-222339218.html",
-   "srcN": "Yahoo Finance, Nov 9; Alpha Vantage close",
-   "mean": "Constellation closed at $276.09 (+10.46%) after adjusted EPS of $5.06 vs about $3.90 expected and a raised full-year outlook.",
-   "react": [
-    [
-     "CEG",
-     1,
-     "+10.46%"
-    ],
-    [
-     "VST NRG",
-     1,
-     "Power group read-through; NRG +10.45% on a $4B plant sale"
-    ]
-   ],
-   "hist": "Rule of thumb: power and nuclear names trade on data-center demand and regulation headlines.",
-   "histN": "",
-   "histU": "",
-   "today": "Strong one-day moves can fade; watch follow-through.",
-   "later": "AI power demand vs possible data-center limits is the theme.",
-   "conf": 3
-  },
-  {
-   "id": "earn",
-   "cat": "stocks",
-   "head": "Earnings movers: Telos +48.8%, Delcath +35.8%, Ionis -21%; Rocket Lab down after hours",
-   "when": "Nov 9",
-   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-9-2026",
-   "srcN": "Stocktitan, Nov 9",
-   "mean": "Telos rose 48.76% on a raised 2026 forecast, Delcath 35.77% on Q3 revenue of $35.1M, Ionis fell about 21% after cutting its 2026 Tryngolza sales forecast to about $50M. After hours Rocket Lab fell 6.66% despite record $268M revenue, and Trade Desk rose as much as 26% before fading.",
-   "react": [
-    [
-     "TLS DCTH",
-     1,
-     "Earnings gaps"
-    ],
-    [
-     "IONS",
-     -1,
-     "Guidance cut"
-    ],
-    [
-     "RKLB",
-     -1,
-     "Down after hours"
-    ]
-   ],
-   "hist": "Rule of thumb: earnings gaps often fade within days when guidance details are thin.",
-   "histN": "",
-   "histU": "",
-   "today": "After-hours moves can reverse by the open.",
-   "later": "Judge results over several quarters, not one gap.",
-   "conf": 2
-  },
-  {
-   "id": "ten",
-   "cat": "fed",
-   "head": "10-year yield about 4.88%; $42B 10-year auction at 1 pm; bond market shut Wednesday",
-   "when": "Nov 10",
-   "src": "https://hawksmoorcapital.substack.com/p/daily-standup-nov-10",
-   "srcN": "Hawksmoor Capital, Nov 10",
-   "mean": "The 10-year yield was 4.884% early Tuesday (4.864% on Yahoo's blog). A $42B 10-year note auction is at 1 pm ET, the 30-year auction is Thursday and the bond market is closed Wednesday for Veterans Day.",
-   "react": [
-    [
-     "10-yr yield",
-     0,
-     "Near 4.88%"
-    ],
-    [
-     "Homebuilders",
-     0,
-     "Rate-sensitive"
-    ],
-    [
-     "Dollar",
-     0,
-     "About 101.7"
-    ]
-   ],
-   "hist": "Rule of thumb: weak auction demand can push yields up even without data surprises.",
-   "histN": "",
-   "histU": "",
-   "today": "Auction results land at 1 pm ET, after CPI.",
-   "later": "Yields near 4.9% keep mortgage rates high.",
-   "conf": 2
-  },
-  {
-   "id": "mort",
-   "cat": "housing",
-   "head": "30-year mortgage rate 7.18%, third straight weekly decline; next survey Thursday",
-   "when": "Nov 5",
-   "src": "https://www.wcax.com/2026/11/05/average-us-30-year-mortgage-rate-falls-718-this-week-its-third-straight-decline/",
-   "srcN": "AP via WCAX, Nov 5",
-   "mean": "Freddie Mac's 30-year rate was 7.18% vs 7.24% the prior week and 6.22% a year ago; the 15-year was 6.57%. The next survey is due Thursday Nov 12.",
-   "react": [
-    [
-     "ITB XHB",
-     0,
-     "Rate-sensitive"
-    ],
-    [
-     "Mortgage lenders",
-     0,
-     "Little change"
-    ]
-   ],
-   "hist": "Rule of thumb: mortgage rates follow the 10-year yield with a short lag.",
-   "histN": "",
-   "histU": "",
-   "today": "No data until Thursday.",
-   "later": "With the 10-year near 4.9%, a sustained drop in mortgage rates needs lower yields.",
-   "conf": 3
   },
   {
    "id": "gold",
    "cat": "commodities",
-   "head": "Gold $4,138 Monday (+1.74%), about $4,074 early Tuesday",
+   "head": "Gold drops 2.6% to about $4,032 on yields and the dollar",
    "when": "Nov 10",
-   "src": "https://hawksmoorcapital.substack.com/p/daily-standup-nov-10",
-   "srcN": "Yahoo Finance, Nov 9; Hawksmoor Capital, Nov 10",
-   "mean": "Gold rose 1.74% to $4,138.25 Monday, then traded near $4,074 (-1.6%) early Tuesday as the dollar index held about 101.7.",
+   "src": "https://eurasiabusinessnews.com/2026/11/11/stock-market-today-dow-jones-nasdaq-sp-500-fall-on-november-10-2026-oil-and-gold-retreat/",
+   "srcN": "Eurasia Business News, Nov 11; Stocktitan, Nov 10",
+   "mean": "Spot gold fell about 2.6% to roughly $4,032 and silver 3.55% to about $51.41 as yields and the dollar rose. McEwen Mining fell 16.5% (Stocktitan).",
    "react": [
     [
-     "GLD",
-     0,
-     "Volatile around CPI"
+     "Gold",
+     -1,
+     "Hurt by higher yields"
     ],
     [
-     "GDX",
-     0,
-     "Follows gold"
+     "Miners",
+     -1,
+     "McEwen -16.5%"
+    ],
+    [
+     "Dollar",
+     1,
+     "Index gained 0.5% Tuesday"
     ]
    ],
-   "hist": "Rule of thumb: gold tends to weaken when real yields and hike odds rise.",
+   "hist": "Rule of thumb: gold tends to weaken when real yields and the dollar rise together.",
    "histN": "",
    "histU": "",
-   "today": "A hot CPI is the main downside risk.",
-   "later": "Gold is a hedge, not a yield asset, with rates high.",
+   "today": "Gold readings vary by source ($4,030-$4,055 on Nov 11).",
+   "later": "Investors tend to watch the 10-year yield and hike odds as gold's drivers.",
    "conf": 2
+  },
+  {
+   "id": "coreweave",
+   "cat": "stocks",
+   "head": "CoreWeave beats and raises; shares jump premarket",
+   "when": "Nov 11",
+   "src": "https://247wallst.com/cards/coreweave-q3-2026-earnings-crwv-01m73msrkgrgan75a5t7tb9fmz",
+   "srcN": "24/7 Wall St., Nov 11; Stocktwits, Nov 11",
+   "mean": "Q3 revenue was $3.66B (+168%) vs $3.54B expected, EPS -$1.27 vs -$1.55, and 2026 revenue guidance is $13.0-13.3B. Backlog is about $132.5B and total debt $46.9B. Premarket gains were quoted at 11-17%; Nasdaq futures rose.",
+   "react": [
+    [
+     "CRWV",
+     1,
+     "Beat and raise"
+    ],
+    [
+     "Nebius",
+     1,
+     "Up about 11% overnight in sympathy"
+    ],
+    [
+     "Nasdaq",
+     1,
+     "Futures up premarket"
+    ]
+   ],
+   "hist": "Rule of thumb: an AI-infrastructure beat often lifts peers the same day; debt burdens are the recurring caveat.",
+   "histN": "",
+   "histU": "",
+   "today": "Premarket gains can fade at the open; Nebius reports Nov 12.",
+   "later": "Investors tend to weigh backlog growth against $46.9B of debt.",
+   "conf": 3
+  },
+  {
+   "id": "anthropic",
+   "cat": "stocks",
+   "head": "Anthropic IPO range set at $70-78; chip makers among buyers",
+   "when": "Nov 10",
+   "src": "https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-nov-10-2026",
+   "srcN": "TheStreet, Nov 10; Stocktwits, Nov 11",
+   "mean": "The range is $70-78 for 825M shares, with a $26B private placement that includes buyers such as Nvidia, AMD, Google and Microsoft. TSMC's board approved up to $500M of Anthropic stock. The listing date is reported as next Thursday (Nov 19) but is not independently confirmed, and TheStreet flags inconsistencies in the proceeds figures.",
+   "react": [
+    [
+     "TSMC",
+     1,
+     "Rose about 5% premarket"
+    ],
+    [
+     "AI chips",
+     1,
+     "Strategic buyers named"
+    ],
+    [
+     "AI sentiment",
+     1,
+     "Analysts call it a core driver of the AI trade"
+    ]
+   ],
+   "hist": "Rule of thumb: large IPOs can pull money from other growth names around the pricing date.",
+   "histN": "",
+   "histU": "",
+   "today": "Details are still being reported; treat figures as preliminary.",
+   "later": "Investors tend to watch how the IPO prices against the $70-78 range.",
+   "conf": 1
   },
   {
    "id": "jobs",
    "cat": "economy",
-   "head": "October payrolls +165k vs about 65k expected; unemployment 4.1%",
+   "head": "October payrolls +165,000 vs 59,000 expected",
    "when": "Nov 6",
-   "src": "https://www.schwab.com/learn/story/stock-market-update-open",
-   "srcN": "Schwab, Nov 6; Yahoo Finance, Nov 6",
-   "mean": "Payrolls rose 165,000 (consensus cited at 59k-70k), unemployment was 4.1% vs 4.2% expected, and wages rose 0.4% m/m vs 0.3%. August and September were revised up by a combined 84,000, and the three-month average is 137,000.",
+   "src": "https://www.wbtv.com/2026/11/06/us-adds-165000-jobs-october-hiring-rebounds/?outputType=amp",
+   "srcN": "WBTV (AP), Nov 6",
+   "mean": "Payrolls rose 165,000 vs 59,000 expected, unemployment fell to 4.1% from 4.2%, and average hourly earnings rose 3.1% y/y.",
    "react": [
     [
-     "KRE XLF",
-     0,
-     "Mixed: margins up, growth outlook better"
+     "Fed hike odds",
+     -1,
+     "Adds to the case for a hike"
     ],
     [
-     "ITB",
+     "10-yr yield",
      -1,
-     "Higher yields"
+     "Higher"
     ],
     [
-     "GLD",
-     -1,
-     "Gold fell 0.94% as the dollar rose"
+     "Cyclicals",
+     1,
+     "Stronger economy"
     ]
    ],
-   "hist": "Rule of thumb: strong jobs data in a hiking regime lifts rate expectations, which usually helps the dollar and pressures gold and housing.",
+   "hist": "Rule of thumb: strong jobs during a hiking cycle tends to support the hawkish case and the dollar.",
    "histN": "",
    "histU": "",
-   "today": "The data is old news by Monday; focus has shifted to CPI.",
-   "later": "The Fed has raised once this cycle, and another hike is now the market's base case; investors weigh rate risk in rate-sensitive holdings.",
+   "today": "Old news today; it is the backdrop for the CPI reaction.",
+   "later": "Investors tend to watch labor data alongside core inflation.",
    "conf": 3
   },
   {
-   "id": "policy",
-   "cat": "politics",
-   "head": "Democrats win Congress; AI data-center rules and tariff relief are the market's two read-throughs",
-   "when": "Nov 6-9",
-   "src": "https://finance.yahoo.com/markets/live/stock-market-today-friday-november-6-dow-sp-500-nasdaq-jobs-report-earnings-135953863.html",
-   "srcN": "Yahoo Finance, Nov 6; Investing.com, Nov 9",
-   "mean": "Investors fear rules on AI data centers; Goldman estimates about 45% of planned US data-center capacity faces possible restrictions (Yahoo). On the other side, homebuilders rallied (NVR up more than 26% premarket) because UBS says Democratic control could improve the odds of lower tariffs on building materials.",
+   "id": "mortgage",
+   "cat": "housing",
+   "head": "Mortgage rate fell to 7.18% in the Nov 5 survey, third straight decline",
+   "when": "Nov 5",
+   "src": "https://www.wcax.com/2026/11/05/average-us-30-year-mortgage-rate-falls-718-this-week-its-third-straight-decline/",
+   "srcN": "WCAX (AP), Nov 5",
+   "mean": "Freddie Mac's 30-year rate was 7.18% (prior week 7.24%, a year ago 6.22%) and the 15-year 6.57%. The 10-year has since risen to about 4.99%, so the Nov 12 survey could reverse the decline.",
    "react": [
     [
-     "VRT CEG VST",
+     "Homebuilders",
      -1,
-     "Data-center power exposure"
+     "Higher yields since the survey"
     ],
     [
-     "NVR DHI LEN",
-     1,
-     "Tariff-relief read"
+     "Mortgage lenders",
+     0,
+     "Mixed"
     ]
    ],
-   "hist": "Rule of thumb: policy surprises are often priced fast, then re-priced as the details emerge.",
+   "hist": "Rule of thumb: mortgage rates tend to follow the 10-year yield with a short lag.",
    "histN": "",
    "histU": "",
-   "today": "State-level data-center headlines can move the group in minutes.",
-   "later": "Divided government usually slows big new laws; permits and power rules are the practical risk.",
+   "today": "Watch Thursday's Freddie Mac release.",
+   "later": "Housing is rate-sensitive; investors tend to watch the 10-year yield.",
    "conf": 2
+  },
+  {
+   "id": "earnings",
+   "cat": "stocks",
+   "head": "Earnings movers: AAON +19%, ZipRecruiter +54%, Hims -17%, Groupon -23%",
+   "when": "Nov 10",
+   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-10-2026",
+   "srcN": "Stocktitan, Nov 10",
+   "mean": "AAON rose 19.3% (Q3 sales +84.1%), PepGen 92.9%, and ZipRecruiter 53.6%. Hims & Hers fell 16.6% on a lower EBITDA outlook, Digital Turbine 35.8% and Groupon 23%.",
+   "react": [
+    [
+     "AAON",
+     1,
+     "Data-center cooling demand"
+    ],
+    [
+     "Hims & Hers",
+     -1,
+     "Outlook cut"
+    ],
+    [
+     "Small caps",
+     0,
+     "Russell opened +3.15% but closed -0.68%"
+    ]
+   ],
+   "hist": "Rule of thumb: big single-day earnings gaps are often followed by high volatility.",
+   "histN": "",
+   "histU": "",
+   "today": "Gap-and-fade is common; manage size.",
+   "later": "Investors tend to read guidance changes, not only the quarter.",
+   "conf": 2
+  },
+  {
+   "id": "costco",
+   "cat": "stocks",
+   "head": "Costco declares a $30 special dividend",
+   "when": "Nov 10",
+   "src": "https://www.sec.gov/Archives/edgar/data/0000909832/000090983226000134/costex9918-k111026.htm",
+   "srcN": "Costco 8-K exhibit, Nov 10; Stocktitan, Nov 10",
+   "mean": "The special dividend is $30 per share, about $13.3B in total, with a Nov 24 record date and Dec 4 payment. The stock rose 1.58% after hours (Stocktitan).",
+   "react": [
+    [
+     "COST",
+     1,
+     "Cash return to holders"
+    ],
+    [
+     "Retailers",
+     0,
+     "No read-through stated"
+    ]
+   ],
+   "hist": "Rule of thumb: a special dividend usually lowers the share price by about the payout on the ex-date.",
+   "histN": "",
+   "histU": "",
+   "today": "Record date Nov 24; the price adjusts on the ex-date.",
+   "later": "Taxes on special dividends differ from ordinary ones; investors tend to check them.",
+   "conf": 3
   }
  ],
  "cats": [
@@ -591,52 +606,57 @@
  ],
  "calendar": [
   {
-   "d": "2026-11-10",
-   "t": "October CPI (8:30 ET); 10-year auction (1 pm); Waller speaks; CoreWeave after the close",
-   "usual": "Consensus headline +0.3%, core +0.2%; core matters most for December's hike. CoreWeave consensus EPS -$1.53 on $3.54B revenue."
-  },
-  {
    "d": "2026-11-11",
-   "t": "Veterans Day: bond market closed, stocks open",
-   "usual": "Thin Treasury trading; no major US data."
+   "t": "Veterans Day: bond market closed, stocks open; MBA mortgage applications; OPEC monthly report",
+   "usual": "Thin Treasury trading; the 10-year is near 5%."
   },
   {
    "d": "2026-11-12",
-   "t": "Freddie Mac mortgage rates; 30-year auction; Nebius, Cisco, Applied Materials earnings",
-   "usual": "AI infrastructure read-through; the last survey was 7.18%."
+   "t": "Nebius (before open); Cisco and Applied Materials (after close); jobless claims; Freddie Mac mortgage rates",
+   "usual": "AI infrastructure read-through; the last mortgage survey was 7.18%."
   },
   {
    "d": "2026-11-13",
-   "t": "October PPI (8:30 ET)",
+   "t": "October PPI (8:30 ET; some sources say Nov 14)",
    "usual": "Follows CPI; can move yields if it surprises."
   },
   {
-   "d": "2026-11-16",
-   "t": "Buyback window reopens (week of Nov 16)",
-   "usual": "Corporate buybacks often support stocks after blackout periods end."
+   "d": "2026-11-17",
+   "t": "Retail sales; Home Depot and Disney (before open); Nvidia earnings (after close, call 5 pm ET)",
+   "usual": "Nvidia sets the tone for AI chips and the Nasdaq-100."
   },
   {
-   "d": "2026-11-17",
-   "t": "Nvidia earnings",
-   "usual": "Sets the tone for AI chips and the Nasdaq-100."
+   "d": "2026-11-18",
+   "t": "FOMC minutes; Target, Lowe's and TJX earnings; US-China summit reported Nov 18-19",
+   "usual": "Minutes can move hike-path expectations."
+  },
+  {
+   "d": "2026-11-19",
+   "t": "Walmart earnings; Anthropic listing reported for 'next Thursday' (unconfirmed)",
+   "usual": "Walmart is a read on the consumer."
+  },
+  {
+   "d": "2026-11-25",
+   "t": "PCE inflation and Q3 GDP second estimate",
+   "usual": "The Fed's preferred inflation gauge, two weeks before the FOMC."
   }
  ],
  "scen": {
-  "title": "What if today's CPI is...",
+  "title": "What if Friday's PPI is... (consensus not found this run)",
   "opts": [
    {
     "k": "hot",
-    "l": "Hot (core +0.3% or more)",
+    "l": "Hot (above expectations)",
     "out": [
      [
       "10-year yield",
       -1,
-      "Likely up, toward or over 5%"
+      "Likely holds or rises above 5%"
      ],
      [
       "Dec hike odds",
       -1,
-      "Up toward a lock"
+      "Stay near a lock; 50bp odds rise"
      ],
      [
       "Stocks",
@@ -662,12 +682,12 @@
    },
    {
     "k": "mid",
-    "l": "In line (core +0.2%)",
+    "l": "In line",
     "out": [
      [
       "10-year yield",
       0,
-      "Little change"
+      "Little change near 5%"
      ],
      [
       "Dec hike odds",
@@ -677,7 +697,7 @@
      [
       "Stocks",
       1,
-      "Relief; focus moves to Nebius and Cisco"
+      "Relief; focus moves to Nvidia on Nov 17"
      ],
      [
       "Homebuilders",
@@ -692,13 +712,13 @@
      [
       "Gold",
       0,
-      "Holds near $4,075"
+      "Holds near $4,030"
      ]
     ]
    },
    {
     "k": "cold",
-    "l": "Cold (core +0.1% or less)",
+    "l": "Cold (below expectations)",
     "out": [
      [
       "10-year yield",
@@ -708,7 +728,7 @@
      [
       "Dec hike odds",
       1,
-      "Falls meaningfully"
+      "50bp odds fall"
      ],
      [
       "Stocks",
