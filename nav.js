@@ -212,8 +212,8 @@
     if (pgSec) { pgSec.classList.toggle("c", !!coll.__pages); pgSec.querySelector(".nsh").setAttribute("aria-expanded", String(!coll.__pages)); if (layout.pg === "top") { main.appendChild(pgSec); secEls.push(pgSec); } }
     list.forEach(function (g) {
       var d = document.createElement("div"); shown.push(g.id);
-      d.className = "ns" + (coll[g.id] ? " c" : ""); d.setAttribute("data-sid", g.id); d.style.setProperty("--sc", g.c);
-      d.innerHTML = '<button type="button" class="nsh" aria-expanded="' + (!coll[g.id]) + '">' + groupIcon(g) + '<span>' + esc(g.n) + '</span>' + svg("chev", "nsc") + '</button><div class="nsb"><div class="nsi"></div></div>';
+      var shut = coll[g.id] === undefined ? g.id === "__rec" : !!coll[g.id]; /* Recent starts closed so it never pops open on its own */ d.className = "ns" + (shut ? " c" : ""); d.setAttribute("data-sid", g.id); d.style.setProperty("--sc", g.c);
+      d.innerHTML = '<button type="button" class="nsh" aria-expanded="' + (!shut) + '">' + groupIcon(g) + '<span>' + esc(g.n) + '</span>' + svg("chev", "nsc") + '</button><div class="nsb"><div class="nsi"></div></div>';
       var body = d.querySelector(".nsi");
       g.ids.forEach(function (id) {
         var b = $(id); if (!b) return;
@@ -221,7 +221,7 @@
       });
       main.appendChild(d); secEls.push(d);
       d.querySelector(".nsh").addEventListener("click", function () {
-        var c = d.classList.toggle("c"); this.setAttribute("aria-expanded", String(!c)); coll[g.id] = c; lsSet(CKEY, coll);
+        var c = d.classList.toggle("c"); this.setAttribute("aria-expanded", String(!c)); coll[g.id] = c; var fresh = lsGet(CKEY, {}); fresh[g.id] = c; lsSet(CKEY, fresh); /* write into the saved state, not this render's stale copy, so the Pages section keeps its own open/closed choice */
       });
     });
     if (pgSec && layout.pg !== "top") { main.appendChild(pgSec); secEls.push(pgSec); }
