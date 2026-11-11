@@ -15,11 +15,10 @@
       b.classList.toggle("rec", on);
       b.innerHTML = on ? "&#9632; Stop all (" + nlive() + ")" : "&#9679; Record screen"; b.title = on ? "Stop every screen" : "Click to record one screen. Hold Ctrl (Cmd on Mac) while clicking to choose several screens first";
       var nx = b.nextElementSibling;
-      if (!nx || !nx.hasAttribute("data-recadd")) { nx = document.createElement("button"); nx.type = "button"; nx.setAttribute("data-recadd", "1"); nx.className = b.className.replace(/\brec\b/, "").trim(); nx.style.cssText = b.style.cssText; nx.title = "Record another screen or window at the same time"; nx.innerHTML = "&#43; Add another screen"; b.parentNode.insertBefore(nx, b.nextSibling); }
-      nx.hidden = false; nx.innerHTML = on ? "&#43; Add another screen" : "&#43; Record 2 screens"; nx.title = "Record another screen or window at the same time. Each one saves as its own video.";
-      var ar = nx.nextElementSibling;
-      if (!ar || !ar.hasAttribute("data-recarea")) { ar = document.createElement("button"); ar.type = "button"; ar.setAttribute("data-recarea", "1"); ar.className = nx.className; ar.style.cssText = nx.style.cssText; nx.parentNode.insertBefore(ar, nx.nextSibling); }
-      ar.innerHTML = "&#9635; Record an area"; ar.title = "Pick a screen, then drag a box over just the part you want to record";
+      while (nx && (nx.hasAttribute("data-recadd") || nx.hasAttribute("data-recarea"))) { var d = nx; nx = nx.nextElementSibling; d.remove(); }
+      nx = b.nextElementSibling;
+      if (!nx || !nx.hasAttribute("data-recmenu")) { nx = document.createElement("button"); nx.type = "button"; nx.setAttribute("data-recmenu", "1"); nx.className = b.className.replace(/\brec\b/, "").trim(); nx.style.cssText = b.style.cssText; nx.setAttribute("aria-haspopup", "menu"); b.parentNode.insertBefore(nx, b.nextSibling); }
+      nx.classList.remove("rec"); nx.innerHTML = "&#9662;"; nx.title = "More ways to record: several screens, an area, several areas"; nx.setAttribute("aria-label", "More recording options");
     });
     [].forEach.call(document.querySelectorAll("[data-rectxt]"), function (t) { t.textContent = msg; });
   }
@@ -53,25 +52,32 @@
     (orig || stream).getVideoTracks()[0].addEventListener("ended", function () { try { if (item.mr.state !== "inactive") item.mr.stop(); } catch (e) {} });
     item.mr.start(1000); paint(); startTick();
   }
-  async function add() { var st = await pick(!live()); if (st) begin(st, !live()); }
+  async function getOne(audio) {
+    if (mode === "area") return prepArea(audio);
+    var st = await pick(audio); return st ? { s: st, orig: null, kind: "screen" } : null;
+  }
+  async function add() { var first = !live(), it = await getOne(first); if (it) begin(it.s, first, it.orig, it.kind); }
 
   /* Ctrl/Cmd + click: choose several screens first, then start them all together. The browser only lets a page pick one screen per prompt, so a small panel keeps the picker one click away. */
   var panel = null, chosen = [], target = 0;
-  function closePanel(stopStreams) { if (stopStreams) chosen.forEach(function (s) { s.getTracks().forEach(function (t) { t.stop(); }); }); chosen = []; target = 0; if (panel) { panel.remove(); panel = null; } }
-  function startAll() { var list = chosen.slice(); chosen = []; target = 0; if (panel) { panel.remove(); panel = null; } list.forEach(function (s, i) { begin(s, i === 0); }); }
+  var mode = "screen";
+  function stopItem(it) { it.s.getTracks().forEach(function (t) { t.stop(); }); if (it.orig) it.orig.getTracks().forEach(function (t) { t.stop(); }); }
+  function closePanel(stopStreams) { if (stopStreams) chosen.forEach(stopItem); chosen = []; target = 0; if (panel) { panel.remove(); panel = null; } }
+  function startAll() { var list = chosen.slice(); chosen = []; target = 0; if (panel) { panel.remove(); panel = null; } list.forEach(function (it, i) { begin(it.s, i === 0, it.orig, it.kind); }); }
   function drawPanel() {
     if (!panel) { panel = document.createElement("div"); panel.id = "recpanel"; panel.style.cssText = "position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:200;background:#11151c;color:#fff;border:1px solid #2b303b;border-radius:14px;padding:14px 16px;box-shadow:0 12px 40px rgba(0,0,0,.5);font:600 14px Instrument Sans,system-ui,sans-serif;display:flex;gap:10px;align-items:center;flex-wrap:wrap;max-width:94vw"; document.body.appendChild(panel); }
     var bs = "padding:7px 14px;border-radius:9px;border:1px solid #3a4150;background:#1c212b;color:#fff;font:inherit;cursor:pointer";
-    panel.innerHTML = '<span>' + chosen.length + (target ? " of " + target : "") + (chosen.length === 1 && !target ? " screen chosen" : " screens chosen") + '</span><button type="button" data-rp="add" style="' + bs + '">+ Pick ' + (target ? "screen " + (chosen.length + 1) + " of " + target : "another screen") + '</button>' + (target ? "" : '<button type="button" data-rp="go" style="' + bs + ';background:#d64545;border-color:#d64545">&#9679; Start recording ' + chosen.length + '</button>') + '<button type="button" data-rp="x" style="' + bs + '">Cancel</button>';
+    panel.innerHTML = '<span>' + chosen.length + (target ? " of " + target : "") + (chosen.length === 1 && !target ? (mode === "area" ? " area chosen" : " screen chosen") : (mode === "area" ? " areas chosen" : " screens chosen")) + '</span><button type="button" data-rp="add" style="' + bs + '">+ Pick ' + (target ? "screen " + (chosen.length + 1) + " of " + target : "another screen") + '</button>' + (target ? "" : '<button type="button" data-rp="go" style="' + bs + ';background:#d64545;border-color:#d64545">&#9679; Start recording ' + chosen.length + '</button>') + '<button type="button" data-rp="x" style="' + bs + '">Cancel</button>';
   }
   /* Choose several screens in one go. Hold Ctrl (Cmd) while clicking Record, or use "Record 2 screens".
      The page asks for the next screen straight after you choose one. If the browser refuses a second prompt without a new click,
      a small panel takes over (one click per extra screen). Every screen starts recording at the same instant once the last one is chosen. */
-  async function multi(n) {
-    var st = await pick(true); if (!st) return; chosen = [st]; target = n || 0;
+  async function multi(n, m) {
+    mode = m || "screen";
+    var st = await getOne(true); if (!st) return; chosen = [st]; target = n || 0;
     for (;;) {
       if (target && chosen.length >= target) { startAll(); return; }
-      var nx = await pick(false);
+      var nx = await getOne(false);
       if (nx) { chosen.push(nx); continue; }
       if (blocked) { drawPanel(); return; }
       if (target) { closePanel(true); return; }
@@ -82,7 +88,7 @@
     var b = e.target.closest && e.target.closest("[data-rp]"); if (!b) return;
     var a = b.getAttribute("data-rp");
     if (a === "x") { closePanel(true); return; }
-    if (a === "add") { var st = await pick(false); if (st) { chosen.push(st); if (target && chosen.length >= target) startAll(); else drawPanel(); } return; }
+    if (a === "add") { var st = await getOne(false); if (st) { chosen.push(st); if (target && chosen.length >= target) startAll(); else drawPanel(); } return; }
     if (a === "go") startAll();
   });
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
@@ -145,24 +151,47 @@
     var out = new MediaStream([gen]); st.getAudioTracks().forEach(function (a) { out.addTrack(a); });
     return out;
   }
-  async function addArea() {
-    if (!areaOk()) { toast("Recording an area needs Chrome or Edge"); return; }
-    var first = !live(), st = await pick(first); if (!st) return;
+  async function prepArea(audio) {
+    if (!areaOk()) { toast("Recording an area needs Chrome or Edge"); return null; }
+    var st = await pick(audio); if (!st) return null;
     var vt = st.getVideoTracks()[0], v = document.createElement("video"); v.muted = true; v.playsInline = true; v.srcObject = new MediaStream([vt]);
     try { await v.play(); await new Promise(function (ok) { if (v.videoWidth) ok(); else v.onloadedmetadata = ok; }); await new Promise(function (ok) { setTimeout(ok, 250); }); } catch (e) {}
-    var W = v.videoWidth, H = v.videoHeight; if (!W || !H) { st.getTracks().forEach(function (t) { t.stop(); }); toast("Could not read that screen"); return; }
+    var W = v.videoWidth, H = v.videoHeight; if (!W || !H) { st.getTracks().forEach(function (t) { t.stop(); }); toast("Could not read that screen"); return null; }
     var cv = document.createElement("canvas"); cv.width = W; cv.height = H; cv.getContext("2d").drawImage(v, 0, 0, W, H); v.srcObject = null;
     var rc = await selectRect(cv, W, H);
-    if (!rc) { st.getTracks().forEach(function (t) { t.stop(); }); return; }
-    begin(cropStream(st, rc, W, H), first, st, "area");
+    if (!rc) { st.getTracks().forEach(function (t) { t.stop(); }); return null; }
+    return { s: cropStream(st, rc, W, H), orig: st, kind: "area" };
   }
+  function addArea() { mode = "area"; return add(); }
+
+  /* The little menu next to the Record button */
+  var menu = null;
+  function closeMenu() { if (menu) { menu.remove(); menu = null; } }
+  function openMenu(btn) {
+    closeMenu(); var on = live(), r = btn.getBoundingClientRect();
+    var items = on ? [["addscreen", "&#43; Add another screen"], ["addarea", "&#9635; Add another area"], ["stop", "&#9632; Stop all"]]
+      : [["screen1", "&#9679; Record a screen"], ["screen2", "&#9679;&#9679; Record 2 screens"], ["area1", "&#9635; Record an area"], ["area2", "&#9635;&#9635; Record 2 areas"]];
+    menu = document.createElement("div"); menu.id = "recmenu"; menu.setAttribute("role", "menu");
+    menu.style.cssText = "position:fixed;z-index:220;top:" + (r.bottom + 6) + "px;left:" + Math.max(8, Math.min(r.left, window.innerWidth - 230)) + "px;min-width:210px;background:var(--panel,#fff);color:var(--ink,#111);border:1px solid var(--line,#ccc);border-radius:12px;padding:6px;box-shadow:0 12px 36px rgba(0,0,0,.35);font:600 14px 'Instrument Sans',system-ui,sans-serif";
+    menu.innerHTML = items.map(function (i) { return '<button type="button" role="menuitem" data-rm="' + i[0] + '" style="display:block;width:100%;text-align:left;padding:10px 12px;border:0;border-radius:8px;background:transparent;color:inherit;font:inherit;cursor:pointer">' + i[1] + "</button>"; }).join("") +
+      '<div style="padding:6px 12px 4px;font:500 12px sans-serif;opacity:.65">Each screen or area saves as its own video.</div>';
+    [].forEach.call(menu.querySelectorAll("button"), function (x) { x.onmouseenter = function () { x.style.background = "color-mix(in srgb,currentColor 10%,transparent)"; }; x.onmouseleave = function () { x.style.background = "transparent"; }; });
+    document.body.appendChild(menu);
+  }
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeMenu(); });
   function stopAll() { S.forEach(function (x) { try { if (x.mr.state !== "inactive") x.mr.stop(); } catch (e) {} }); }
   document.addEventListener("click", function (e) {
-    var b = e.target.closest && e.target.closest("[data-rec],[data-recadd],[data-recarea]"); if (!b) return;
-    if (b.hasAttribute("data-recarea")) { addArea(); return; }
-    if (b.hasAttribute("data-recadd")) { if (live()) add(); else multi(2); return; }
+    var m = e.target.closest && e.target.closest("[data-rm]");
+    if (m) { var k = m.getAttribute("data-rm"); closeMenu();
+      if (k === "stop") stopAll(); else if (k === "addscreen") { mode = "screen"; add(); } else if (k === "addarea") addArea();
+      else if (k === "screen1") { mode = "screen"; add(); } else if (k === "screen2") multi(2, "screen"); else if (k === "area1") addArea(); else if (k === "area2") multi(2, "area");
+      return; }
+    var c = e.target.closest && e.target.closest("[data-recmenu]");
+    if (c) { if (menu) closeMenu(); else openMenu(c); return; }
+    if (menu && !(e.target.closest && e.target.closest("#recmenu"))) closeMenu();
+    var b = e.target.closest && e.target.closest("[data-rec]"); if (!b) return;
     if (live()) { stopAll(); return; }
-    if (e.ctrlKey || e.metaKey) multi(0); else add();
+    if (e.ctrlKey || e.metaKey) multi(0, "screen"); else { mode = "screen"; add(); }
   });
   window.StockRec = { sync: paint, live: live };
   if (document.readyState !== "loading") paint(); else document.addEventListener("DOMContentLoaded", paint);
