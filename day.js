@@ -109,7 +109,6 @@
       '<span class="dy-chip">SPY <b data-q="SPY"></b></span>' +
       '<span class="dy-chip">Day P&amp;L <b class="' + (s.net >= 0 ? "gain" : "loss") + '">' + (s.n ? A.sgn(s.net) : "$0.00") + '</b> <small>' + s.n + (s.n === 1 ? ' trade · ' : ' trades · ') + s.w + 'W ' + s.l + 'L</small></span>' +
       '<span class="dy-sp"></span>' +
-      '<input class="dy-les" id="dyles" maxlength="160" placeholder="One-line lesson from today…" value="' + esc(e.lesson || "") + '" aria-label="Lesson from today">' +
       '<select id="dygr" aria-label="Grade your day"><option value="">Grade</option>' + ["A", "B", "C", "D", "F"].map(function (g) { return '<option' + (gr === g ? " selected" : "") + '>' + g + '</option>'; }).join("") + '</select>' +
       '<button type="button" class="b" data-rec="1" title="Record your screen. Saves a video to your Downloads">&#9679; Record screen</button><span class="hint" data-rectxt="1" style="margin:0;font-size:.74rem"></span>' +
       '<button type="button" class="b" data-dyact="gen" title="Posts and write-ups generated for this day">Generated</button><button type="button" class="b" data-dyact="cal">Calendar</button>';
@@ -489,7 +488,6 @@
   root.addEventListener("change", async function (ev) {
     var t = ev.target;
     if (t.id === "dygr") { await mutate(function (e) { e.grade = t.value; }); return; }
-    if (t.id === "dyles") { await mutate(function (e) { e.lesson = t.value.trim().slice(0, 160); }); A.toast("Lesson saved"); return; }
     if (t.dataset && t.dataset.dyalst) { var AL = A.al(); AL.list.forEach(function (a) { if (a.id === t.dataset.dyalst) a.status = t.value; }); await A.alSave(); return; }
     if (t.id === "dyffile") { await addPend(t.files); t.value = ""; return; }
     if (t.id === "dytfile") {
@@ -529,7 +527,7 @@
     D.timers.push(setInterval(function () { if (root.hidden) return stop(); if (!document.hidden) loadQ(); }, 20000));
     D.timers.push(setInterval(function () { if (root.hidden) return stop(); if (!document.hidden && D.tab === "news" && isToday()) { D.news.w = D.news.tab === "watch" ? null : D.news.w; loadNews(); } }, 60000));
   }
-  function paintBarClock() { if (!document.activeElement || document.activeElement.id !== "dyles") paintBar(); }
+  function paintBarClock() { paintBar(); }
   async function open(date) {
     D.date = /^\d{4}-\d{2}-\d{2}$/.test(date || "") ? date : (D.date || today());
     A.hide(); root.hidden = false; $("navday").classList.add("on"); window.scrollTo(0, 0);
