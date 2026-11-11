@@ -185,6 +185,15 @@ module.exports = async (req, res) => {
   if (!items.length) return res.status(400).json({ error: 'no valid charts' });
 
 
+  if (body && body.bars) { // raw candles for the Zones practice page
+    const it = items[0]; if (!it) return res.status(400).json({ error: 'no valid chart' });
+    try {
+      const [interval, range] = IV[it.iv] || IV['15'], d = await yahoo(it.sym, interval, it.iv === 'D' ? '6mo' : range);
+      const B = d.bars.slice(-110).map((b) => [b.t, r2(b.o), r2(b.h), r2(b.l), r2(b.c), b.v]);
+      return res.status(200).json({ bars: { sym: it.sym, iv: it.iv, bars: B } });
+    } catch (e) { return res.status(200).json({ bars: { sym: it.sym, iv: it.iv, error: 'No candle data (' + String(e.message || 'failed') + ')' } }); }
+  }
+
   if (body && body.brief) {
     const sym = String(body.sym || (items[0] && items[0].sym) || '').toUpperCase(); if (!/^[A-Z]{1,5}([.-][A-Z])?$/.test(sym)) return res.status(400).json({ error: 'bad symbol' });
     const str2 = (x, n) => String(x || '').slice(0, n);

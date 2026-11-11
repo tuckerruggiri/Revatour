@@ -314,7 +314,7 @@
     else move(e.altKey && from !== "__tray" ? "cp" : "mv", id2, to, from, before);
   });
   var clickedSid = null;
-  side.addEventListener("click", function (e) { var n = e.target.closest && e.target.closest(".nav"), sec = n && n.closest(".ns"); clickedSid = sec ? sec.getAttribute("data-sid") : null; }, true);
+  side.addEventListener("click", function (e) { if (!e.isTrusted) return; /* ignore the page's own forwarded clicks (a link shown in two sections forwards to its first copy) */ var n = e.target.closest && e.target.closest(".nav"), sec = n && n.closest(".ns"); clickedSid = sec ? sec.getAttribute("data-sid") : null; }, true);
   side.addEventListener("click", function (e) {
     if (editing) return; var b = e.target.closest(".nav"); if (!b) return; var id = b.getAttribute("data-for") || b.id;
     if (ITEMS[id]) { pushRecent(id); setTimeout(function () { if (!editing && !document.querySelector(".nsh:focus")) render(); }, 350); }
@@ -326,11 +326,11 @@
     var on = side.querySelector(".nav.on[data-ni]"), id = on && on.id;
     [].forEach.call(main.querySelectorAll(".pxy"), function (p) { p.classList.toggle("on", !!id && p.getAttribute("data-for") === id); });
     var changed = id !== lastOn; lastOn = id;
-    /* only open the section you clicked in (or the first one holding the page when it was opened some other way), never every section that lists it */
+    /* only open the section you physically clicked in. Never open any other section, even one that also lists this page. */
     var opened = false, want = clickedSid;
     secEls.forEach(function (d) {
       var has = !!(d.querySelector(".nav.on")); d.classList.toggle("has-on", has);
-      if (has && changed && d.classList.contains("c") && !opened && (want ? d.getAttribute("data-sid") === want : true)) { opened = true; d.classList.remove("c"); d.querySelector(".nsh").setAttribute("aria-expanded", "true"); }
+      if (has && changed && d.classList.contains("c") && !opened && want && d.getAttribute("data-sid") === want) { opened = true; d.classList.remove("c"); d.querySelector(".nsh").setAttribute("aria-expanded", "true"); }
     });
     if (changed) clickedSid = null;
   }

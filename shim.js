@@ -229,6 +229,9 @@
     brief: async function (sym, desc, opts) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
       var r = await fetch('/api/read', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify({ items: [{ sym: sym, iv: 'D' }], brief: true, sym: sym, desc: desc || '', opts: opts || null }) });
       var j = await r.json().catch(function () { return {}; }); if (!r.ok) { var e = new Error(j.error || 'failed'); e.code = r.status; throw e; } return j; },
+    zoneBars: async function (sym, iv) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
+      var r = await fetch('/api/read', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify({ items: [{ sym: sym, iv: iv }], bars: true }) });
+      var j = await r.json().catch(function () { return {}; }); if (!r.ok) { var e = new Error(j.error || 'failed'); e.code = r.status; throw e; } return j; },
     schwab: async function (action, q, body) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
       var url = '/api/schwab/' + action + (q ? '?' + new URLSearchParams(q).toString() : '');
       var r = await fetch(url, { method: body ? 'POST' : 'GET', headers: Object.assign({ Authorization: 'Bearer ' + tok }, body ? { 'Content-Type': 'application/json' } : {}), body: body ? JSON.stringify(body) : undefined });

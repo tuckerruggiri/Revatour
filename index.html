@@ -2443,9 +2443,25 @@ function znHtml(){
  znExHtml()+'<p class="hint">Educational only, not financial advice. Zones show where price has reacted before; they do not guarantee it will react again.</p>';
  if(ZN.bigSvg)h+='<div class="srt-lb" id="znov"><button type="button" class="srt-lbx" data-znclose="1" aria-label="Close picture">\u2715</button><div class="zn-bs">'+ZN.bigSvg+'</div></div>';
  else if(ZN.big)h+='<div class="srt-lb" id="znov"><button type="button" class="srt-lbx" data-znclose="1" aria-label="Close picture">\u2715</button><div class="srt-lbm"><img alt="Example" src="'+esc(ZN.big)+'"></div></div>';
- return h}
-function znRender(){var y=window.scrollY;$("zonev").innerHTML=znHtml();window.scrollTo(0,y)}
-function showZones(){hideViews();$("navzone").classList.add("on");$("zonev").hidden=false;$("zonev").innerHTML=znHtml();window.scrollTo(0,0);znLoad().then(function(){if(!$("zonev").hidden)znRender()})}
+ return znTabs(h)}
+var ZTABS=[["learn","Learn"],["draw","How to draw it"],["fvg","FVG & IFVG"],["ex","Examples"],["practice","Practice"],["more","Learn more"],["mine","My examples"]];
+function znTabs(h){var Z=window.ZoneKit;if(Z&&Z.init)Z.init(znChart);var tail="",i=h.indexOf('<div class="srt-lb" id="znov">');if(i>-1){tail=h.slice(i);h=h.slice(0,i)}
+ var hi=h.indexOf('<p class="hint">Educational only'),hint="";if(hi>-1){hint=h.slice(hi);h=h.slice(0,hi)}
+ var parts=h.split('<div class="pl-card" id="'),head=parts.shift(),C={};parts.forEach(function(p){var id=p.slice(0,p.indexOf('"'));C[id]='<div class="pl-card" id="'+p});
+ head=head.replace(/<div class="zn-jump">[\s\S]*?<\/div>/,"");
+ var ZT=ZN.tab||"learn",bar='<div class="zk-tabs">'+ZTABS.map(function(t){return '<button type="button" data-zntab="'+t[0]+'" class="'+(t[0]===ZT?"on":"")+'">'+t[1]+'</button>'}).join("")+'</div>',body="";
+ var g=function(){return [].slice.call(arguments).map(function(k){return C[k]||""}).join("")};
+ if(ZT==="learn")body=g("zn1","zn2","zn3","zn5");
+ else if(ZT==="draw")body=g("znwhere")+(Z?Z.partsHtml()+Z.tfHtml():"")+g("zn4");
+ else if(ZT==="fvg")body=Z?Z.fvgHtml():"";
+ else if(ZT==="ex")body=g("znegs")+(Z?Z.moreEgs():"");
+ else if(ZT==="practice")body=Z?'<div class="pl-card"><h2>Practice</h2><p class="zn-p">Drills build a new random chart every time, so you can do as many as you want. Live charts load real recent candles for any ticker so you can draw your own boxes and compare them with the rules.</p>'+Z.practiceHost+'</div>':"";
+ else if(ZT==="more")body=(Z?Z.moreHtml():"")+g("zn6","zn7");
+ else body=g("zn8");
+ return head+bar+body.replace(/<h2>\d+\.\s*/g,"<h2>")+hint+tail}
+function znMount(){var el=$("znpr");if(el&&window.ZoneKit)ZoneKit.mount(el)}
+function znRender(){var y=window.scrollY;$("zonev").innerHTML=znHtml();znMount();window.scrollTo(0,y)}
+function showZones(){hideViews();$("navzone").classList.add("on");$("zonev").hidden=false;$("zonev").innerHTML=znHtml();znMount();window.scrollTo(0,0);znLoad().then(function(){if(!$("zonev").hidden)znRender()})}
 $("navzone").addEventListener("click",showZones);
 function showFutures(){hideViews();$("navfut").classList.add("on");$("futv").hidden=false;if(window.FuturesPage)window.FuturesPage.mount($("futv"));else $("futv").textContent="The Futures page could not load. Refresh the page.";window.scrollTo(0,0)}
 $("navfut").addEventListener("click",showFutures);
@@ -2460,6 +2476,7 @@ $("navpulse").addEventListener("click",showPulse);
 $("zonev").addEventListener("change",function(e){var t=e.target,k=t.getAttribute&&t.getAttribute("data-zck");if(k!=null){ZN.ck[k]=t.checked;znRender();return}if(t.id==="znpg"){ZN.pg=t.value;ZN.show=36;znRender();return}if(t.id==="zncat")ZN.cat=t.value});
 $("zonev").addEventListener("input",function(e){if(e.target.id==="znnote")ZN.note=e.target.value});
 $("zonev").addEventListener("click",async function(e){var t=e.target,b;
+ var zt=t.closest&&t.closest("[data-zntab]");if(zt){ZN.tab=zt.getAttribute("data-zntab");znRender();window.scrollTo(0,0);return}
  var a=t.closest&&t.closest("a[href^='#zn']");if(a){e.preventDefault();var el=document.getElementById(a.getAttribute("href").slice(1));if(el)el.scrollIntoView({behavior:"smooth",block:"start"});return}
  if(t.closest("[data-znclose]")||t.id==="znov"){ZN.big="";ZN.bigSvg="";znRender();return}
  var sv=t.closest&&t.closest(".zn-fig svg");if(sv&&!ZN.bigSvg){ZN.bigSvg=sv.outerHTML;znRender();return}
@@ -3366,6 +3383,7 @@ restore();loadImgs();showStats();renderImgs();initStore();
 <script src="pulse.js"></script>
 <script src="day.js"></script>
 <script src="pnlchart.js"></script>
+<script src="zones.js"></script>
 <script src="nav.js"></script>
 </body>
 </html>
