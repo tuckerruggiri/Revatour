@@ -135,7 +135,7 @@
 
   /* ---------- alerts ---------- */
   async function autoPost(a) {
-    try { await A.alPost("\uD83D\uDD14 $" + a.sym + " " + A.alFmt(a)); a.posted = Date.now(); await A.alSave(); A.toast("Alert posted to your wall"); }
+    try { await A.alPost("\uD83D\uDD14 $" + a.sym + " " + (a.raw || A.alFmt(a))); a.posted = Date.now(); await A.alSave(); A.toast("Alert posted to your wall"); }
     catch (e) { A.toast("Alert saved, but it could not post to your wall"); }
   }
   function dayAlerts() {
@@ -146,7 +146,7 @@
     var L = dayAlerts(), el = $("dyal"); if (!el) return;
     $("dyalc").textContent = L.length ? L.length + (L.length === 1 ? " alert" : " alerts") : "";
     el.innerHTML = L.length ? L.map(function (a) {
-      var f = A.alFmt(a).replace(/^(SHORT|LONG)\s?/, "");
+      var f = a.raw || A.alFmt(a).replace(/^(SHORT|LONG)\s?/, "");
       return '<div class="dy-al" data-alid="' + a.id + '"><div class="t"><button type="button" class="dy-sym" data-dysym="' + esc(a.sym) + '">$' + esc(a.sym) + '</button><span class="dy-sd ' + (a.side === "short" ? "short" : "long") + '">' + (a.side === "short" ? "Short" : "Long") + '</span><span class="dy-q" data-q="' + esc(a.sym) + '"></span><span class="dy-q">' + (a.posted ? "&#10003; Posted" : "") + '</span><select data-dyalst="' + a.id + '" aria-label="Alert status">' + A.alSt.map(function (s) { return '<option value="' + s[0] + '"' + (a.status === s[0] ? " selected" : "") + '>' + s[1] + '</option>'; }).join("") + '</select><button type="button" class="ib" data-dyaldel="' + a.id + '" aria-label="Delete alert">&times;</button></div><div class="lv">' + esc(f) + ' · ' + esc(A.alAgo(a.ts)) + '</div></div>';
     }).join("") : '<div class="dy-em">Type it like you\'d say it. Alerts for ' + (isToday() ? "today" : "this day") + ' land here.</div>';
     paintQuotes();
