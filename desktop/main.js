@@ -85,13 +85,29 @@ function menu() {
 }
 
 app.whenReady().then(() => {
-  // Screen recording: let the site's Record button pick a screen or window
+  // Screen recording: show our own picker (pictures of every screen and window), then record the one picked
   session.defaultSession.setDisplayMediaRequestHandler((request, callback) => {
-    desktopCapturer.getSources({ types: ["screen", "window"] }).then((sources) => {
+    desktopCapturer.getSources({ types: ["screen", "window"], thumbnailSize: { width: 360, height: 220 }, fetchWindowIcons: false }).then((sources) => {
       if (!sources.length) return callback({});
-      const m = Menu.buildFromTemplate(sources.slice(0, 20).map((s) => ({ label: s.name, click: () => callback({ video: s }) })).concat([{ type: "separator" }, { label: "Cancel", click: () => callback({}) }]));
-      m.on("menu-will-close", () => setTimeout(() => {}, 0));
-      m.popup();
+      let done = false;
+      const finish = (id) => {
+        if (done) return; done = true;
+        const s = id && sources.filter((x) => x.id === id)[0];
+        if (!s) return callback({});
+        callback(request.audioRequested && process.platform === "win32" ? { video: s, audio: "loopback" } : { video: s });
+      };
+      const parent = (full && full.isVisible() && full) || (mini && mini.isVisible() && mini) || undefined;
+      const pk = new BrowserWindow({
+        width: 860, height: 600, parent, modal: !!parent, title: "Pick what to record", backgroundColor: "#0e1117", autoHideMenuBar: true, minimizable: false, maximizable: false,
+        webPreferences: { preload: path.join(__dirname, "picker-preload.js"), contextIsolation: true, nodeIntegration: false }
+      });
+      pk.setMenuBarVisibility(false);
+      const list = sources.map((s) => ({ id: s.id, name: s.name, screen: /^screen:/.test(s.id), thumb: s.thumbnail && !s.thumbnail.isEmpty() ? s.thumbnail.toDataURL() : "" }));
+      const onList = (e) => { if (e.sender === pk.webContents) e.returnValue = list; };
+      const onChoose = (e, id) => { if (e.sender === pk.webContents) { finish(id); pk.close(); } };
+      ipcMain.on("rv-pick-list", onList); ipcMain.on("rv-pick-choose", onChoose);
+      pk.on("closed", () => { ipcMain.removeListener("rv-pick-list", onList); ipcMain.removeListener("rv-pick-choose", onChoose); finish(null); });
+      pk.loadFile(path.join(__dirname, "picker.html"));
     }).catch(() => callback({}));
   });
   ipcMain.on("rv-expand", expand);

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Pick what to record</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data:">
+<style>
+  :root{color-scheme:dark}*{box-sizing:border-box}
+  body{margin:0;background:#0e1117;color:#fff;font-family:system-ui,"Segoe UI",sans-serif;display:flex;flex-direction:column;height:100vh}
+  h1{font-size:18px;margin:0;padding:16px 20px 4px}p{margin:0;padding:0 20px 10px;color:#8b95a7;font-size:13px}
+  h2{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#7d889b;margin:14px 20px 8px}
+  #wrap{flex:1;overflow:auto;padding:0 14px 14px}
+  .g{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;padding:0 6px}
+  button.c{border:2px solid #232a36;background:#151a23;border-radius:12px;padding:8px;color:#fff;cursor:pointer;text-align:left;font:inherit}
+  button.c:hover,button.c:focus{border-color:#4f8cff;outline:none;background:#1a2230}
+  button.c img{display:block;width:100%;aspect-ratio:16/10;object-fit:contain;background:#000;border-radius:8px}
+  button.c b{display:block;margin-top:8px;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #bar{padding:12px 20px;border-top:1px solid #232a36;text-align:right}
+  #bar button{padding:9px 18px;border-radius:10px;border:1px solid #3a4150;background:#1c212b;color:#fff;font:inherit;cursor:pointer}
+</style></head><body>
+<h1>What do you want to record?</h1><p>Click a screen or a window.</p>
+<div id="wrap"><h2>Screens</h2><div class="g" id="s"></div><h2>Windows</h2><div class="g" id="w"></div></div>
+<div id="bar"><button id="x">Cancel</button></div>
+<script>
+  var L=window.picker.list();
+  function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+  ["s","w"].forEach(function(k){document.getElementById(k).innerHTML=L.filter(function(i){return (k==="s")===i.screen}).map(function(i){
+    return '<button class="c" data-id="'+esc(i.id)+'">'+(i.thumb?'<img alt="" src="'+i.thumb+'">':'<img alt="">')+'<b>'+esc(i.name)+'</b></button>'}).join("")||'<p>None found</p>'});
+  document.addEventListener("click",function(e){var b=e.target.closest("button.c");if(b)window.picker.choose(b.getAttribute("data-id"))});
+  document.getElementById("x").onclick=function(){window.picker.choose(null)};
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")window.picker.choose(null)});
+</script></body></html>
