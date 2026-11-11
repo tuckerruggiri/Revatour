@@ -243,6 +243,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 @media(max-width:700px){#home.wrap,#newsv.wrap{padding-left:14px;padding-right:14px}.hm-top h1{font-size:1.8rem}}
 .tdlh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}.tdpull{padding:3px 10px;font-size:.78rem;font-weight:600;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer}.tdpull:hover{border-color:var(--accent)}
 .tdpull.rec{background:#d64545;border-color:#d64545;color:#fff}.tdpull[disabled]{opacity:.6;cursor:wait}
+.vidprev{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.vidprev figure{margin:0;width:150px}.vidprev video{width:150px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--line);background:#000}.vidprev figcaption{font-size:.74rem;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#videos.drop{outline:2px dashed var(--accent);outline-offset:2px}
 /* add-to-watchlist everywhere */
 .sc-wl{display:inline-flex;align-items:center;justify-content:center;gap:5px;width:20px;height:20px;margin-left:4px;padding:0;vertical-align:middle;border:1px solid var(--line);border-radius:99px;background:var(--panel);color:var(--mute);font:700 .72rem/1 inherit;cursor:pointer;white-space:nowrap;opacity:0;transition:opacity .12s,background .12s,color .12s}
 .sc-wl svg{width:11px;height:11px}.sc-wl[data-lbl]{width:auto;height:26px;padding:0 11px 0 8px;margin-left:8px;opacity:1;font-size:.78rem}.sc-wl[data-lbl] svg{width:12px;height:12px}
@@ -503,7 +504,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <div class="wrap" id="studio" hidden>
   <h1>Stockspot Studio</h1>
   <p class="sub">Upload your trades and your material. Get a guru page, blog post, social posts, newsletter or book chapter written from your real record.</p>
-  <div class="row" id="recbar" style="margin:0 0 14px;align-items:center"><button type="button" id="recbtn" class="tdpull" style="padding:7px 14px;font-size:.88rem">&#9679; Record screen</button><span class="hint" id="rectxt" style="margin:0">Record your trades as you take them. Saves a video file to your computer.</span></div>
+  <div class="row" id="recbar" style="margin:0 0 14px;align-items:center"><button type="button" id="recbtn" data-rec="1" class="tdpull" style="padding:7px 14px;font-size:.88rem">&#9679; Record screen</button><span class="hint" data-rectxt="1" style="margin:0">Record your trades as you take them. Saves a video file to your Downloads.</span></div>
 
   <section>
     <h2>Step 1: Upload your trades</h2>
@@ -537,7 +538,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
       <label><span class="tdlh">Ideas and theses<button type="button" class="tdpull" id="tdideas">Pull ideas (AI)</button></span><textarea id="ideas" placeholder="Current market views, trade ideas"></textarea></label>
       <label><span class="tdlh">Alerts you sent<button type="button" class="tdpull" data-tdpull="alerts">Pull alerts</button></span><textarea id="alerts" placeholder="Paste past alerts, one per line"></textarea></label>
       <label><span class="tdlh">Watchlist<button type="button" class="tdpull" data-tdpull="watch">Pull watchlist</button></span><textarea id="watch" placeholder="Tickers and why you're watching them"></textarea></label>
-      <label>Videos (title | link, one per line)<textarea id="videos" placeholder="Earnings breakdown | https://..."></textarea></label>
+      <label id="vidlabel"><span class="tdlh">Videos (title | link, one per line)<button type="button" class="tdpull" id="vidpick">Choose from Downloads</button></span><textarea id="videos" placeholder="Earnings breakdown | https://...  (or drag a video file here)"></textarea><input type="file" id="vidfile" accept="video/*" multiple hidden><span class="hint" id="vidmsg" style="display:block;margin:4px 0 0"></span><div id="vidprev" class="vidprev"></div></label>
       <label>Lessons from your losers<textarea id="lessons" placeholder="What your worst trades taught you"></textarea></label>
     </div>
     <h3 style="margin:20px 0 4px;font-size:1.05rem">Trade charts</h3>
@@ -2179,23 +2180,26 @@ $("tdideas").addEventListener("click",async function(){var b=this;
   el.value=(el.value.trim()?el.value.trim()+"\n\n":"")+head+"\n"+text;persist();toast(sample?"Pulled ideas with AI reasons":"Pulled ideas (AI not available, showing data)")
  }catch(e){toast("Could not pull ideas")}finally{b.disabled=false;b.textContent=old}});
 
-/* Studio: screen recorder */
-(function(){var mr=null,chunks=[],tick=null,t0=0,stream=null;
- function stop(){try{if(mr&&mr.state!=="inactive")mr.stop()}catch(e){}}
- $("recbtn").addEventListener("click",async function(){var b=this,tx=$("rectxt");
-  if(mr&&mr.state==="recording"){stop();return}
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getDisplayMedia){toast("Screen recording is not supported in this browser");return}
-  try{stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:30},audio:true})}catch(e){toast("Recording cancelled");return}
-  var mt=["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"].filter(function(t){return window.MediaRecorder&&MediaRecorder.isTypeSupported(t)})[0]||"";
-  chunks=[];mr=new MediaRecorder(stream,mt?{mimeType:mt}:undefined);
-  mr.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};
-  mr.onstop=function(){clearInterval(tick);stream.getTracks().forEach(function(t){t.stop()});b.classList.remove("rec");b.innerHTML="&#9679; Record screen";
-   if(!chunks.length){tx.textContent="Nothing was recorded.";return}
-   var blob=new Blob(chunks,{type:mr.mimeType||"video/webm"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="trades-"+todayISO()+".webm";document.body.appendChild(a);a.click();a.remove();
-   setTimeout(function(){URL.revokeObjectURL(a.href)},60000);tx.textContent="Saved "+a.download+" to your downloads ("+(blob.size/1048576).toFixed(1)+" MB).";chunks=[]};
-  stream.getVideoTracks()[0].addEventListener("ended",stop);
-  mr.start(1000);t0=Date.now();b.classList.add("rec");b.innerHTML="&#9632; Stop recording";
-  tick=setInterval(function(){var s=Math.floor((Date.now()-t0)/1000);tx.textContent="Recording "+Math.floor(s/60)+":"+("0"+s%60).slice(-2)+". Press Stop when you are done."},500)})})();
+/* Studio: videos (choose from Downloads, drag in, upload and show) */
+function vidLines(){return $("videos").value.split("\n").map(function(l){var p=l.split("|");return {t:(p[0]||"").trim(),u:(p.slice(1).join("|")||"").trim()}}).filter(function(x){return x.u})}
+function vidPaint(){var h="";vidLines().forEach(function(v){if(/\/storage\/v1\/object\/public\/images\/|\.(mp4|webm|mov|m4v)(\?|$)|^blob:/i.test(v.u))h+='<figure><video controls preload="metadata" src="'+esc(v.u)+'"></video><figcaption title="'+esc(v.t)+'">'+esc(v.t||"Video")+'</figcaption></figure>'});$("vidprev").innerHTML=h}
+async function vidAdd(files){files=[].slice.call(files||[]).filter(function(f){return /^video\//.test(f.type)||/\.(mp4|webm|mov|m4v)$/i.test(f.name)});
+ if(!files.length){toast("Drop a video file (mp4, webm or mov)");return}
+ var msg=$("vidmsg");
+ for(var i=0;i<files.length;i++){var f=files[i],title=f.name.replace(/\.[^.]+$/,"").replace(/[|\n]/g," ").slice(0,80),url="";
+  if(f.size>50*1024*1024){toast(f.name+" is over 50 MB. Upload it to YouTube and paste the link instead.");continue}
+  if(store.db&&store.assets){msg.textContent="Uploading "+f.name+"...";try{var r=await store.assets.upload(f,{type:f.type||"video/mp4"});url=blobUrl(r.id)}catch(e){msg.textContent="";toast("Could not upload "+f.name);continue}}
+  else{url=URL.createObjectURL(f);toast("Offline preview only: this video link will not work after you close the page")}
+  var el=$("videos");el.value=(el.value.trim()?el.value.trim()+"\n":"")+title+" | "+url;persist();vidPaint()}
+ msg.textContent=""}
+$("vidpick").addEventListener("click",async function(){
+ if(window.showOpenFilePicker){try{var hs=await window.showOpenFilePicker({multiple:true,startIn:"downloads",types:[{description:"Videos",accept:{"video/*":[".webm",".mp4",".mov",".m4v"]}}]});var fs=[];for(var i=0;i<hs.length;i++)fs.push(await hs[i].getFile());await vidAdd(fs)}catch(e){if(e&&e.name!=="AbortError")$("vidfile").click()}return}
+ $("vidfile").click()});
+$("vidfile").addEventListener("change",function(){vidAdd(this.files);this.value=""});
+["dragenter","dragover"].forEach(function(n){$("vidlabel").addEventListener(n,function(e){if(e.dataTransfer&&[].some.call(e.dataTransfer.types||[],function(t){return t==="Files"})){e.preventDefault();$("videos").classList.add("drop")}})});
+["dragleave","drop"].forEach(function(n){$("vidlabel").addEventListener(n,function(){$("videos").classList.remove("drop")})});
+$("vidlabel").addEventListener("drop",function(e){if(e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files.length){e.preventDefault();e.stopPropagation();vidAdd(e.dataTransfer.files)}});
+$("videos").addEventListener("input",vidPaint);vidPaint();
 /* Studio: tag the trades you just loaded */
 function scStudio(){var el=$("sttag");if(!el)return;if(!trades.length){el.innerHTML="";return}
  var names=scNames(trades),open=el.querySelector("details")&&el.querySelector("details").open;
@@ -3438,6 +3442,7 @@ restore();loadImgs();showStats();renderImgs();initStore();
 <script src="chart.js"></script>
 <script src="movers.js"></script>
 <script src="pulse.js"></script>
+<script src="rec.js"></script>
 <script src="day.js"></script>
 <script src="pnlchart.js"></script>
 <script src="zones.js"></script>

@@ -111,8 +111,9 @@
       '<span class="dy-sp"></span>' +
       '<input class="dy-les" id="dyles" maxlength="160" placeholder="One-line lesson from today…" value="' + esc(e.lesson || "") + '" aria-label="Lesson from today">' +
       '<select id="dygr" aria-label="Grade your day"><option value="">Grade</option>' + ["A", "B", "C", "D", "F"].map(function (g) { return '<option' + (gr === g ? " selected" : "") + '>' + g + '</option>'; }).join("") + '</select>' +
+      '<button type="button" class="b" data-rec="1" title="Record your screen. Saves a video to your Downloads">&#9679; Record screen</button><span class="hint" data-rectxt="1" style="margin:0;font-size:.74rem"></span>' +
       '<button type="button" class="b" data-dyact="gen" title="Posts and write-ups generated for this day">Generated</button><button type="button" class="b" data-dyact="cal">Calendar</button>';
-    paintQuotes(); tickClock();
+    paintQuotes(); tickClock(); if (window.StockRec) window.StockRec.sync();
   }
 
   /* ---------- watchlist ---------- */
