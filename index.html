@@ -3491,7 +3491,7 @@ $("igwrap").addEventListener("click",async function(ev){var b=ev.target.closest&
   b.disabled=false;b.textContent=old}});
 $("igwrap").addEventListener("change",function(ev){if(ev.target.id==="igpal")igShow()});
 
-window.StockDay={alPost:function(t){return alPost(t)},entries:function(){return entries},put:function(e){return putEntry(e)},store:function(){return store},todayISO:todayISO,dayLabel:dayLabel,toast:toast,money:money,sgn:sgn,esc:esc,S:S,shrink:shrink,dataToBlob:dataToBlob,imgUrl:imgUrl,newId:newId,
+window.StockDay={alPost:function(t){return alPost(t)},strats:function(){try{return scNames(scSaved())}catch(e){return []}},entries:function(){return entries},put:function(e){return putEntry(e)},store:function(){return store},todayISO:todayISO,dayLabel:dayLabel,toast:toast,money:money,sgn:sgn,esc:esc,S:S,shrink:shrink,dataToBlob:dataToBlob,imgUrl:imgUrl,newId:newId,
  al:function(){return AL},alLoad:alLoad,alSave:alSave,alParse:alParse,alFmt:alFmt,alAgo:alAgo,alStat:alStat,alSt:AL_ST,risk:function(){try{rkInit()}catch(e){}return rk||{}},
  openEntry:function(d){renderEntry(d)},calendar:showPublishes,renderSide:renderSide,hide:hideViews,plan:showPlan,studio:showStudio,wlSync:function(){return wlLoad()},
  onShow:function(){}};
