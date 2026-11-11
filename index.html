@@ -241,6 +241,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .al-chips{gap:8px;margin-bottom:12px}.al-chips .al-sym{border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:5px 12px;font-weight:700;cursor:pointer}
 .al-row{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));align-items:start}.al-row .al-card{min-width:0;overflow:hidden}
 @media(max-width:700px){#home.wrap,#newsv.wrap{padding-left:14px;padding-right:14px}.hm-top h1{font-size:1.8rem}}
+.tdlh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}.tdpull{padding:3px 10px;font-size:.78rem;font-weight:600;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer}.tdpull:hover{border-color:var(--accent)}
 /* add-to-watchlist everywhere */
 .sc-wl{display:inline-flex;align-items:center;justify-content:center;gap:5px;width:20px;height:20px;margin-left:4px;padding:0;vertical-align:middle;border:1px solid var(--line);border-radius:99px;background:var(--panel);color:var(--mute);font:700 .72rem/1 inherit;cursor:pointer;white-space:nowrap;opacity:0;transition:opacity .12s,background .12s,color .12s}
 .sc-wl svg{width:11px;height:11px}.sc-wl[data-lbl]{width:auto;height:26px;padding:0 11px 0 8px;margin-left:8px;opacity:1;font-size:.78rem}.sc-wl[data-lbl] svg{width:12px;height:12px}
@@ -532,8 +533,8 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
     <div class="grid" style="margin-top:12px">
       <label>Strategies and rules<textarea id="strat" placeholder="How you find setups, size positions, and cut losers"></textarea></label>
       <label>Ideas and theses<textarea id="ideas" placeholder="Current market views, trade ideas"></textarea></label>
-      <label>Alerts you sent<textarea id="alerts" placeholder="Paste past alerts, one per line"></textarea></label>
-      <label>Watchlist<textarea id="watch" placeholder="Tickers and why you're watching them"></textarea></label>
+      <label><span class="tdlh">Alerts you sent<button type="button" class="tdpull" data-tdpull="alerts">Pull alerts</button></span><textarea id="alerts" placeholder="Paste past alerts, one per line"></textarea></label>
+      <label><span class="tdlh">Watchlist<button type="button" class="tdpull" data-tdpull="watch">Pull watchlist</button></span><textarea id="watch" placeholder="Tickers and why you're watching them"></textarea></label>
       <label>Videos (title | link, one per line)<textarea id="videos" placeholder="Earnings breakdown | https://..."></textarea></label>
       <label>Lessons from your losers<textarea id="lessons" placeholder="What your worst trades taught you"></textarea></label>
     </div>
@@ -709,6 +710,17 @@ var FMT={
  news:"Write one newsletter issue: subject line, short intro, a recap of the record so far, one trade breakdown, a watchlist note if provided, and a closing line. Use markdown.",
  book:"Write a book title, a subtitle, a chapter-by-chapter outline of 8 to 10 chapters, and then the full text of chapter 1 (about 900 words) built from the trader's real experience."};
 function fmtTrade(t){return t.t+" "+t.s+(t.d?" closed "+whenOf(t):"")+" P&L "+money(t.p)+(t.u?" ["+t.u+"]":"")+(t.n?" - "+t.n:"")}
+function tdDay(){var s=stats(),d=s.n?isoOf(s.last):todayISO();return /^\d{4}-\d{2}-\d{2}$/.test(d)?d:todayISO()}
+function tdLines(kind){var d=tdDay(),out=[];if(!AL||!AL.loaded)return out;
+ if(kind==="watch"){var b=AL.board[d];((b&&b.items)||[]).forEach(function(i){out.push("$"+i.sym+(i.note?" - "+i.note:""))})}
+ else{var a0=new Date(d+"T00:00:00").getTime(),b0=a0+86400000;(AL.list||[]).filter(function(x){return x.ts>=a0&&x.ts<b0}).forEach(function(a){out.push("$"+a.sym+" "+alFmt(a)+(a.note?" - "+a.note:"")+" ("+alStat(a.status||"watching")+")")})}
+ return out}
+function tdMerge(id,kind){var el=$(id),have=el.value,add=tdLines(kind).filter(function(l){return have.indexOf(l)<0});return {el:el,add:add}}
+document.addEventListener("click",async function(ev){var b=ev.target.closest&&ev.target.closest("[data-tdpull]");if(!b)return;var kind=b.dataset.tdpull,id=kind==="watch"?"watch":"alerts";
+ try{await alLoad()}catch(e){}
+ var m=tdMerge(id,kind);if(!tdLines(kind).length){toast("Nothing on the Trading Day "+(kind==="watch"?"watchlist":"alerts")+" for "+tdDay());return}
+ if(!m.add.length){toast("Already pulled");return}
+ m.el.value=(m.el.value.trim()?m.el.value.trim()+"\n":"")+m.add.join("\n");persist();toast("Pulled "+m.add.length+" from Trading Day")});
 function prompt(){
  var s=stats(),v=function(i){return $(i).value.trim()},P=[];
  P.push("You write publishing material for an independent stock trader, using only the data below.");
@@ -718,7 +730,7 @@ function prompt(){
   P.push("BEST TRADES:\n"+s.best.map(fmtTrade).join("\n"));P.push("WORST TRADES:\n"+s.worst.map(fmtTrade).join("\n"));
   var sk=Object.keys(s.st);if(sk.length)P.push("BY SETUP:\n"+sk.map(function(k){return k+": "+s.st[k].n+" trades, "+money(s.st[k].p)}).join("\n"))}
  else P.push("RECORD: no trades uploaded. Do not state any performance figures.");
- [["strat","STRATEGIES AND RULES"],["ideas","IDEAS AND THESES"],["alerts","PAST ALERTS"],["watch","WATCHLIST"],["videos","VIDEOS (title | link)"],["lessons","LESSONS FROM LOSERS"]].forEach(function(p){if(v(p[0]))P.push(p[1]+":\n"+v(p[0]).slice(0,4000))});
+ [["strat","STRATEGIES AND RULES"],["ideas","IDEAS AND THESES"],["alerts","PAST ALERTS"],["watch","WATCHLIST"],["videos","VIDEOS (title | link)"],["lessons","LESSONS FROM LOSERS"]].forEach(function(p){var t=v(p[0]);var k=p[0]==="watch"?"watch":p[0]==="alerts"?"alerts":"";if(k){var ex=tdMerge(p[0],k).add;if(ex.length)t=(t?t+"\n":"")+ex.join("\n")}if(t)P.push(p[1]+":\n"+t.slice(0,4000))});
  if(imgs.length)P.push("CHARTS: the page will show "+imgs.length+" trade chart screenshot(s) below your writing. You may say 'see the charts below' but do not describe what they show.");
  if($("fmt").value==="ig")P.push(igTradeBlock());
  P.push("TASK: "+FMT[$("fmt").value]);return P.join("\n\n")}
@@ -984,7 +996,7 @@ function renderSide(){
  if(!ds.length){var p2=document.createElement("p");p2.className="side-empty";p2.textContent="Nothing saved yet. Generate something or save a day and it appears here.";box.appendChild(p2);return}
  ds.forEach(function(d){box.appendChild(navRow(dayLabel(d),(entries[d].outputs||[]).length||"",d===curDate&&!$("entry").hidden,function(){renderEntry(d)},
   async function(){try{await delEntry(d)}catch(e){toast("Could not delete")}},"Delete "+dayLabel(d)))})}
-function showStudio(){$("home").hidden=true;$("navhome").classList.remove("on");$("studio").hidden=false;$("entry").hidden=true;$("pagev").hidden=true;curDate="";curPage="";$("navstudio").classList.add("on");renderSide()}
+function showStudio(){try{alLoad()}catch(e){}$("home").hidden=true;$("navhome").classList.remove("on");$("studio").hidden=false;$("entry").hidden=true;$("pagev").hidden=true;curDate="";curPage="";$("navstudio").classList.add("on");renderSide()}
 function renderEntry(date){var ent=entries[date];if(!ent){showStudio();return}
  curDate=date;curPage="";$("home").hidden=true;$("navhome").classList.remove("on");$("pagev").hidden=true;$("studio").hidden=true;var el=$("entry");el.hidden=false;$("navstudio").classList.remove("on");
  var outs=ent.outputs||[],top=withCtx(ent,entImgs(ent),function(){return {s:statsHTML(),g:galHTML()}});
