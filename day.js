@@ -20,6 +20,7 @@
     '#dybm{padding:0 12px}.dy-card .bm{margin:2px 0 4px}.bm .bt{position:relative;height:10px;border-radius:99px;background:linear-gradient(90deg,#d83a3a,#9aa0aa 50%,#16a05b)}.bm .bt i{position:absolute;top:-4px;width:6px;height:18px;margin-left:-3px;border-radius:3px;background:var(--ink);box-shadow:0 0 0 2px var(--panel);transition:left .4s}.bm .bl{display:flex;justify-content:space-between;font-size:.66rem;color:var(--mute);margin-top:5px}.bsay{font-size:.8rem;font-weight:600;padding:2px 0 8px}.bsay.ok{color:var(--gain)}.bsay.no{color:var(--loss)}' +
     '.dy-rule{padding:0 12px 12px;display:flex;flex-direction:column;gap:4px}.dy-rule label{font:700 .64rem "Instrument Sans",sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}.dy-rule input{font-size:.95rem;font-weight:600;padding:8px 10px;border-radius:9px}' +
     '.dy-shbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:2px 12px 10px}.dy-shbar select{min-width:220px}.dy-shbar input{width:150px}.dy-shg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;padding:0 12px 12px}.dy-sh{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}.dy-sh img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;background:#000}.dy-sh .c{display:flex;align-items:center;gap:6px;padding:6px 8px}.dy-sh .c select{flex:1;min-width:0;font-size:.74rem;padding:3px 4px}.dy-sh .c b{font-size:.8rem}#dyshots.drag{outline:2px dashed var(--accent);outline-offset:-4px}' +
+    '.dy-wr{display:grid;grid-template-columns:minmax(0,1.1fr) 1fr 1fr 1fr 22px;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);font-size:.82rem;font-variant-numeric:tabular-nums}.dy-wr:last-child{border-bottom:0}.dy-wr.hd{font:700 .62rem "Instrument Sans",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);padding:0 0 4px;position:sticky;top:0;background:var(--panel)}.dy-wr.hd span:not(:first-child),.dy-wr .px,.dy-wr .pc,.dy-wr .vl{text-align:right}.dy-wr .px{font-weight:700}.dy-wr .pc{font-weight:700}.dy-wr .vl{color:var(--mute)}' +
     '.dy-fm{display:flex;flex-wrap:wrap;gap:6px;padding:0 12px 8px;flex:none}.dy-fm input{flex:1 1 60px}.dy-fm .s{flex:none}.dy-fm .s{width:64px;flex:none;text-transform:uppercase}.dy-fm .b{flex:none}.dy-fm .n{flex:3 1 90px}' +
     '.dy-r{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);font-size:.82rem}.dy-r:last-child{border-bottom:0}.dy-sym{padding:2px 7px!important;border:0;border-radius:6px;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--ink);font-weight:700;font-size:.78rem;cursor:pointer}.dy-sym:hover{background:color-mix(in srgb,var(--accent) 28%,transparent)}.dy-nt{flex:1;min-width:0;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dy-q{font-variant-numeric:tabular-nums;font-size:.76rem;white-space:nowrap}.dy-q b{font-weight:700}.dy-em{padding:10px 2px;color:var(--mute);font-size:.8rem}' +
     '.dy-al{padding:6px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);font-size:.8rem}.dy-al:last-child{border-bottom:0}.dy-al .t{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.dy-al .t .dy-q{font-size:.7rem;color:var(--gain)}.dy-al .lv{overflow-wrap:anywhere}.dy-al .lv{color:var(--mute);margin:2px 0 0;line-height:1.35}.dy-sd{font-size:.66rem;font-weight:700;padding:1px 6px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}.dy-sd.long{background:color-mix(in srgb,var(--gain) 18%,transparent);color:var(--gain)}.dy-sd.short{background:color-mix(in srgb,var(--loss) 18%,transparent);color:var(--loss)}.dy-al select{padding:2px 4px;font-size:.7rem;margin-left:auto;max-width:112px}' +
@@ -122,9 +123,9 @@
   /* ---------- watchlist ---------- */
   function paintWatch() {
     var it = board(), el = $("dywl"); if (!el) return;
-    el.innerHTML = it.length ? it.map(function (i, k) {
-      return '<div class="dy-r"><button type="button" class="dy-sym" data-dysym="' + esc(i.sym) + '">$' + esc(i.sym) + '</button><span class="dy-q" data-q="' + esc(i.sym) + '"></span><span class="dy-nt" title="' + esc(i.note || "") + '">' + esc(i.note || "") + '</span><button type="button" class="ib" data-dywrm="' + k + '" aria-label="Remove ' + esc(i.sym) + '">&times;</button></div>';
-    }).join("") : '<div class="dy-em">Build the day\'s list. One line per stock, or pull in your main watchlist.</div>';
+    el.innerHTML = it.length ? '<div class="dy-wr hd"><span>Stock</span><span>Last</span><span>% chg</span><span>Volume</span><span></span></div>' + it.map(function (i, k) {
+      return '<div class="dy-wr"><button type="button" class="dy-sym" data-dysym="' + esc(i.sym) + '" title="' + esc(i.note || "") + '">$' + esc(i.sym) + '</button><span class="px" data-wp="' + esc(i.sym) + '">-</span><span class="pc" data-wc="' + esc(i.sym) + '">-</span><span class="vl" data-wv="' + esc(i.sym) + '">-</span><button type="button" class="ib" data-dywrm="' + k + '" aria-label="Remove ' + esc(i.sym) + '">&times;</button></div>';
+    }).join("") : '<div class="dy-em">Build the day\'s list. Type a ticker above, or pull in your main watchlist.</div>';
     paintQuotes(); paintChips();
   }
   async function addBoard(sym, note) {
@@ -297,10 +298,17 @@
     if (miss.length && So.quotes) { try { var Q = await So.quotes(miss); Object.keys(Q.quotes || {}).forEach(function (k) { got[k] = Q.quotes[k]; }); } catch (e) {} }
     Object.keys(got).forEach(function (k) { D.q[k] = got[k]; }); paintQuotes();
   }
+  function vol(v) { v = Number(v); if (!isFinite(v)) return "-"; return v >= 1e9 ? (v / 1e9).toFixed(2) + "B" : v >= 1e6 ? (v / 1e6).toFixed(v >= 1e7 ? 1 : 2) + "M" : v >= 1e3 ? Math.round(v / 1e3) + "K" : String(Math.round(v)); }
   function paintQuotes() {
     [].forEach.call(root.querySelectorAll("[data-q]"), function (el) {
       var q = D.q[el.getAttribute("data-q")]; if (!q || q.p == null) { el.textContent = ""; return; }
       var up = (q.dp || 0) >= 0; el.innerHTML = '<b>' + f2(q.p) + '</b> <span class="' + (up ? "gain" : "loss") + '">' + (up ? "+" : "") + f2(q.dp) + '%</span>';
+    });
+    [].forEach.call(root.querySelectorAll("[data-wp],[data-wc],[data-wv]"), function (el) {
+      var q = D.q[el.getAttribute("data-wp") || el.getAttribute("data-wc") || el.getAttribute("data-wv")];
+      if (el.hasAttribute("data-wp")) el.textContent = q && q.p != null ? f2(q.p) : "-";
+      else if (el.hasAttribute("data-wc")) { if (q && q.dp != null) { var up = q.dp >= 0; el.textContent = (up ? "+" : "") + f2(q.dp) + "%"; el.className = "pc " + (up ? "gain" : "loss"); } else { el.textContent = "-"; el.className = "pc"; } }
+      else el.textContent = q && q.v != null ? vol(q.v) : "-";
     });
     if (typeof paintBiasMeter === "function") paintBiasMeter();
   }
