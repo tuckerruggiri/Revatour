@@ -242,6 +242,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .al-row{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));align-items:start}.al-row .al-card{min-width:0;overflow:hidden}
 @media(max-width:700px){#home.wrap,#newsv.wrap{padding-left:14px;padding-right:14px}.hm-top h1{font-size:1.8rem}}
 .tdlh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}.tdpull{padding:3px 10px;font-size:.78rem;font-weight:600;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer}.tdpull:hover{border-color:var(--accent)}
+.tdpull.rec{background:#d64545;border-color:#d64545;color:#fff}.tdpull[disabled]{opacity:.6;cursor:wait}
 /* add-to-watchlist everywhere */
 .sc-wl{display:inline-flex;align-items:center;justify-content:center;gap:5px;width:20px;height:20px;margin-left:4px;padding:0;vertical-align:middle;border:1px solid var(--line);border-radius:99px;background:var(--panel);color:var(--mute);font:700 .72rem/1 inherit;cursor:pointer;white-space:nowrap;opacity:0;transition:opacity .12s,background .12s,color .12s}
 .sc-wl svg{width:11px;height:11px}.sc-wl[data-lbl]{width:auto;height:26px;padding:0 11px 0 8px;margin-left:8px;opacity:1;font-size:.78rem}.sc-wl[data-lbl] svg{width:12px;height:12px}
@@ -502,6 +503,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <div class="wrap" id="studio" hidden>
   <h1>Stockspot Studio</h1>
   <p class="sub">Upload your trades and your material. Get a guru page, blog post, social posts, newsletter or book chapter written from your real record.</p>
+  <div class="row" id="recbar" style="margin:0 0 14px;align-items:center"><button type="button" id="recbtn" class="tdpull" style="padding:7px 14px;font-size:.88rem">&#9679; Record screen</button><span class="hint" id="rectxt" style="margin:0">Record your trades as you take them. Saves a video file to your computer.</span></div>
 
   <section>
     <h2>Step 1: Upload your trades</h2>
@@ -532,7 +534,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
     </div>
     <div class="grid" style="margin-top:12px">
       <label>Strategies and rules<textarea id="strat" placeholder="How you find setups, size positions, and cut losers"></textarea></label>
-      <label>Ideas and theses<textarea id="ideas" placeholder="Current market views, trade ideas"></textarea></label>
+      <label><span class="tdlh">Ideas and theses<button type="button" class="tdpull" id="tdideas">Pull ideas (AI)</button></span><textarea id="ideas" placeholder="Current market views, trade ideas"></textarea></label>
       <label><span class="tdlh">Alerts you sent<button type="button" class="tdpull" data-tdpull="alerts">Pull alerts</button></span><textarea id="alerts" placeholder="Paste past alerts, one per line"></textarea></label>
       <label><span class="tdlh">Watchlist<button type="button" class="tdpull" data-tdpull="watch">Pull watchlist</button></span><textarea id="watch" placeholder="Tickers and why you're watching them"></textarea></label>
       <label>Videos (title | link, one per line)<textarea id="videos" placeholder="Earnings breakdown | https://..."></textarea></label>
@@ -2148,6 +2150,52 @@ document.addEventListener("click",async function(ev){var t=ev.target;if(!t||!t.c
  else if(b.id==="scbulkgo"){var v=$("scbulk").value,km={};scSaved().filter(scInRange).filter(function(x){return SC.show==="all"||!x.u}).forEach(function(x){km[scKey(x)]=v});b.disabled=true;if(await scSetTags(km))toast("Tagged "+Object.keys(km).length+" trades");renderScore()}});
 document.addEventListener("change",async function(ev){var t=ev.target;if(!t||!t.dataset||t.dataset.sctag==null)return;var km={};km[t.dataset.sctag]=t.value;t.disabled=true;await scSetTags(km);renderScore()});
 document.addEventListener("keydown",function(ev){if(ev.key==="Enter"&&ev.target&&ev.target.id==="scnew"){ev.preventDefault();scAddStrat(ev.target.value)}});
+
+/* Studio: pull ideas (AI says why each stock made the list) */
+function fmtV(v){return v==null?"?":v>=1e6?(v/1e6).toFixed(1)+"M":v>=1e3?Math.round(v/1e3)+"K":String(Math.round(v))}
+async function tdQuotes(syms){var So=S(),got={};if(!So)return got;
+ if(So.schwab){try{var r=await So.schwab("quotes",{symbols:syms.join(",")});if(r&&r.quotes)got=r.quotes}catch(e){}}
+ var miss=syms.filter(function(x){return!got[x]});
+ if(miss.length&&So.quotes){try{var Q=await So.quotes(miss);Object.keys(Q.quotes||{}).forEach(function(k){got[k]=Q.quotes[k]})}catch(e){}}
+ return got}
+function tdFacts(sym,note,q){var f=["$"+sym];if(q&&q.p!=null){f.push("price "+q.p.toFixed(2));if(q.dp!=null)f.push((q.dp>=0?"+":"")+q.dp.toFixed(1)+"% vs prior close");
+  if(q.o&&q.pc)f.push("opened "+((q.o-q.pc)/q.pc*100>=0?"+":"")+((q.o-q.pc)/q.pc*100).toFixed(1)+"% gap");
+  if(q.v!=null){f.push("volume "+fmtV(q.v));if(q.av)f.push((q.v/q.av).toFixed(1)+"x avg daily volume")}}
+ if(note)f.push("my note: "+note);return f.join(", ")}
+$("tdideas").addEventListener("click",async function(){var b=this;
+ try{await alLoad()}catch(e){}
+ var d=tdDay(),bd=AL.board[d],items=(bd&&bd.items)||[];
+ if(!items.length){toast("Add stocks to the Trading Day watchlist first");return}
+ b.disabled=true;var old=b.textContent;b.textContent="Thinking...";
+ try{var syms=items.map(function(i){return i.sym}),Q=await tdQuotes(syms);
+  var facts=items.map(function(i){return tdFacts(i.sym,i.note,Q[i.sym])});
+  var sample=null;try{sample=await claude.use("sample")}catch(e){}
+  var text="";
+  if(sample){var P="You help an independent day trader write down why each stock made today's watchlist. Stocks he picks are usually high volume in the premarket and gapped up on a catalyst. For each stock below write ONE line, max 25 words: '$SYM: reason'. Use only the data given (gap, volume vs average, price move, his note). If volume or gap data is missing say so briefly. Do not invent news, catalysts or prices. No hype, no financial advice. Output only the lines.\n\n"+facts.join("\n");
+   await sample(P,{cache:false,modelTier:"default",onText:function(u){text=u.text}})}
+  else text=facts.join("\n");
+  text=text.trim();if(!text){toast("Nothing came back");return}
+  var el=$("ideas"),head="Why I picked these ("+d+"):";
+  el.value=(el.value.trim()?el.value.trim()+"\n\n":"")+head+"\n"+text;persist();toast(sample?"Pulled ideas with AI reasons":"Pulled ideas (AI not available, showing data)")
+ }catch(e){toast("Could not pull ideas")}finally{b.disabled=false;b.textContent=old}});
+
+/* Studio: screen recorder */
+(function(){var mr=null,chunks=[],tick=null,t0=0,stream=null;
+ function stop(){try{if(mr&&mr.state!=="inactive")mr.stop()}catch(e){}}
+ $("recbtn").addEventListener("click",async function(){var b=this,tx=$("rectxt");
+  if(mr&&mr.state==="recording"){stop();return}
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getDisplayMedia){toast("Screen recording is not supported in this browser");return}
+  try{stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:30},audio:true})}catch(e){toast("Recording cancelled");return}
+  var mt=["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"].filter(function(t){return window.MediaRecorder&&MediaRecorder.isTypeSupported(t)})[0]||"";
+  chunks=[];mr=new MediaRecorder(stream,mt?{mimeType:mt}:undefined);
+  mr.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};
+  mr.onstop=function(){clearInterval(tick);stream.getTracks().forEach(function(t){t.stop()});b.classList.remove("rec");b.innerHTML="&#9679; Record screen";
+   if(!chunks.length){tx.textContent="Nothing was recorded.";return}
+   var blob=new Blob(chunks,{type:mr.mimeType||"video/webm"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="trades-"+todayISO()+".webm";document.body.appendChild(a);a.click();a.remove();
+   setTimeout(function(){URL.revokeObjectURL(a.href)},60000);tx.textContent="Saved "+a.download+" to your downloads ("+(blob.size/1048576).toFixed(1)+" MB).";chunks=[]};
+  stream.getVideoTracks()[0].addEventListener("ended",stop);
+  mr.start(1000);t0=Date.now();b.classList.add("rec");b.innerHTML="&#9632; Stop recording";
+  tick=setInterval(function(){var s=Math.floor((Date.now()-t0)/1000);tx.textContent="Recording "+Math.floor(s/60)+":"+("0"+s%60).slice(-2)+". Press Stop when you are done."},500)})})();
 /* Studio: tag the trades you just loaded */
 function scStudio(){var el=$("sttag");if(!el)return;if(!trades.length){el.innerHTML="";return}
  var names=scNames(trades),open=el.querySelector("details")&&el.querySelector("details").open;
