@@ -70,6 +70,7 @@
     '#movv .mv-dots{display:flex;gap:5px;flex-wrap:wrap}#movv .mv-dot{display:inline-flex;align-items:center;gap:4px;font-size:11px;border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--mute)}#movv .mv-dot.y{background:var(--gain);border-color:var(--gain);color:#fff}#movv .mv-dot.n{border-color:var(--loss);color:var(--loss)}' +
     '#movv .mv-bar{position:relative;height:10px;border-radius:6px;background:var(--line)}#movv .mv-bar i{position:absolute;top:-4px;width:4px;height:18px;border-radius:2px;background:var(--ink)}' +
     '#movv .mv-bl{display:flex;justify-content:space-between;font-size:11px;color:var(--mute);margin-top:4px}' +
+    '#movv .mv-dd{border:1px solid var(--line);border-radius:12px;padding:9px 11px;display:flex;flex-direction:column;gap:6px;background:color-mix(in srgb,var(--ink) 3%,transparent)}#movv .mv-dd h4{margin:0;display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;line-height:1;letter-spacing:.09em;text-transform:uppercase;color:var(--mute)}#movv .mv-dd h4 i{font-style:normal;padding:3px 8px;border-radius:99px;font-size:10px;letter-spacing:.04em;color:#fff;background:#6b7280}#movv .mv-dd h4 i.clean{background:#16a05b}#movv .mv-dd h4 i.watch{background:#d98b13}#movv .mv-dd h4 i.red{background:#d83a3a}#movv .mv-dd ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px}#movv .mv-dd li{font-size:13px;line-height:1.4}#movv .mv-dd li b{font-weight:700}#movv .mv-dd li a{color:var(--accent,#2563eb);text-decoration:none;white-space:nowrap}#movv .mv-dd li a:hover{text-decoration:underline}' +
     '#movv .mv-p{margin:0;font-size:14px;line-height:1.45}#movv .mv-p b{font-weight:700}#movv .mv-sig{border-left:3px solid var(--kc);padding-left:8px}#movv .mv-rkp{color:var(--loss)}' +
     '#movv .mv-ft{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;color:var(--mute)}#movv .mv-ft a{color:inherit}' +
     '#movv .mv-nw{font-size:13px;border-top:1px dashed var(--line);padding-top:8px;display:flex;flex-direction:column;gap:6px}#movv .mv-nw a{color:var(--ink)}#movv .mv-nw span{color:var(--mute);font-size:11px}' +
@@ -112,6 +113,14 @@
       '<div class="mv-fx"><span>Hold</span><div>' + K.hold + '</div><span>Goal</span><div>' + K.goal + '</div><span>Look for</span><div>' + K.look + '</div><span>Risk</span><div class="mv-rk">' + rk + '</div></div></button>';
   }
 
+  function ddHtml(p) {
+    var L = Array.isArray(p.dd) ? p.dd.filter(function (x) { return x && x.s; }).slice(0, 6) : []; if (!L.length) return "";
+    var v = /^(clean|watch|red)$/.test(p.ddv) ? p.ddv : "", lab = { clean: "Looks clean", watch: "Read closely", red: "Red flags" }[v] || "Checked";
+    return '<div class="mv-dd"><h4>Filing check <i class="' + v + '">' + lab + '</i></h4><ul>' + L.map(function (x) {
+      var u = /^https:\/\//.test(x.u || "") ? ' <a href="' + esc(x.u) + '" target="_blank" rel="noopener">filing ↗</a>' : "";
+      return '<li><b>' + esc((x.f || "Filing") + (x.d ? " · " + x.d : "")) + ':</b> ' + esc(x.s) + u + '</li>';
+    }).join("") + '</ul></div>';
+  }
   function card(p, i, top) {
     var K = KINDS[p.kind], hasV = p.v || {}, dots = K.crit.map(function (c) { var v = hasV[c[0]]; return '<span class="mv-dot ' + (v === 1 ? "y" : v === 0 ? "n" : "") + '" title="' + esc(c[2] + (v === -1 || v == null ? " (not stated)" : "")) + '">' + (v === 1 ? "✓" : v === 0 ? "✕" : "?") + ' ' + esc(c[1]) + '</span>'; }).join("");
     var sc = score(p), fl = ""; K.crit.forEach(function (c, q) { var v = hasV[c[0]]; fl += '<u class="' + (v === 1 ? "y" : v === -1 || v == null ? "q" : "") + '"></u>'; });
@@ -123,7 +132,7 @@
       '<div><span class="mv-tag">' + esc(p.theme) + '</span><span class="mv-tag mv-cat">' + esc(p.cat) + esc(cd) + '</span></div>' +
       '<div class="mv-heat"><div class="mv-fl" title="Heat: how many of the 5 checks the article supports">' + fl + '</div><span class="mv-sc">' + sc + '/5</span><span class="mv-why">' + esc(p.setup || "") + '</span></div>' +
       (p.stage ? '<div class="mv-stg">' + (K.stg || ["Asleep", "Waking up", "Breaking out", "Already ran"]).map(function (n, q) { return '<span class="' + (q === 3 ? "late " : "") + (p.stage === q + 1 ? "on" : "") + '">' + n + '</span>'; }).join("") + '</div>' + (p.stageN ? '<div class="mv-stgt">' + esc(p.stageN) + '</div>' : "") : "") + '<div class="mv-dots">' + dots + '</div>' + range +
-      '<p class="mv-p"><b>The story:</b> ' + esc(p.why) + '</p>' + (p.soc ? '<p class="mv-p mv-sig"><b>Chat rooms:</b> ' + esc(p.soc) + '</p>' : "") + (p.opt ? '<p class="mv-p mv-sig"><b>Options:</b> ' + esc(p.opt) + '</p>' : "") + (p.ins ? '<p class="mv-p mv-sig"><b>Insiders and funds:</b> ' + esc(p.ins) + '</p>' : "") + '<p class="mv-p mv-rkp"><b>Watch out:</b> ' + esc(p.risk) + '</p>' +
+      '<p class="mv-p"><b>The story:</b> ' + esc(p.why) + '</p>' + (p.soc ? '<p class="mv-p mv-sig"><b>Chat rooms:</b> ' + esc(p.soc) + '</p>' : "") + (p.opt ? '<p class="mv-p mv-sig"><b>Options:</b> ' + esc(p.opt) + '</p>' : "") + (p.ins ? '<p class="mv-p mv-sig"><b>Insiders and funds:</b> ' + esc(p.ins) + '</p>' : "") + ddHtml(p) + '<p class="mv-p mv-rkp"><b>Watch out:</b> ' + esc(p.risk) + '</p>' +
       '<div class="mv-ft"><a href="' + esc(/^https:\/\//.test(p.src) ? p.src : "#") + '" target="_blank" rel="noopener">' + esc(p.srcN) + ' ↗</a><button class="mv-b" type="button" data-mvnews="' + i + '">Latest headlines</button></div><div data-mvnw></div></div>';
   }
 
