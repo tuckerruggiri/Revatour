@@ -3,7 +3,7 @@
    working while you trade in another window). */
 (function () {
   "use strict";
-  var S = [], tick = null, t0 = 0, msg = "", saved = [];
+  var S = [], tick = null, t0 = 0, msg = "", saved = [], stamp = "";
   function iso() { var d = new Date(); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
   function hm() { return new Date().toTimeString().slice(0, 5).replace(":", ""); }
   function toast(m) { var t = document.getElementById("toast"); if (!t) return; t.textContent = m; t.className = "on"; setTimeout(function () { t.className = ""; }, 2400); }
@@ -17,6 +17,9 @@
       var nx = b.nextElementSibling;
       if (!nx || !nx.hasAttribute("data-recadd")) { nx = document.createElement("button"); nx.type = "button"; nx.setAttribute("data-recadd", "1"); nx.className = b.className.replace(/\brec\b/, "").trim(); nx.style.cssText = b.style.cssText; nx.title = "Record another screen or window at the same time"; nx.innerHTML = "&#43; Add another screen"; b.parentNode.insertBefore(nx, b.nextSibling); }
       nx.hidden = false; nx.innerHTML = on ? "&#43; Add another screen" : "&#43; Record 2 screens"; nx.title = "Record another screen or window at the same time. Each one saves as its own video.";
+      var ar = nx.nextElementSibling;
+      if (!ar || !ar.hasAttribute("data-recarea")) { ar = document.createElement("button"); ar.type = "button"; ar.setAttribute("data-recarea", "1"); ar.className = nx.className; ar.style.cssText = nx.style.cssText; nx.parentNode.insertBefore(ar, nx.nextSibling); }
+      ar.innerHTML = "&#9635; Record an area"; ar.title = "Pick a screen, then drag a box over just the part you want to record";
     });
     [].forEach.call(document.querySelectorAll("[data-rectxt]"), function (t) { t.textContent = msg; });
   }
@@ -30,23 +33,24 @@
     try { return await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 30 }, audio: !!audio }); }
     catch (e) { blocked = /activation|gesture/i.test(String(e && e.message)); if (!blocked) toast("Recording cancelled"); return null; }
   }
-  function begin(stream, first) {
+  function begin(stream, first, orig, kind) {
     var n = S.length + 1;
     var mt = ["video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"].filter(function (t) { return window.MediaRecorder && MediaRecorder.isTypeSupported(t); })[0] || "";
-    var item = { n: n, stream: stream, chunks: [], mr: new MediaRecorder(stream, mt ? { mimeType: mt } : undefined) };
-    if (first) { S = []; saved = []; item.n = 1; t0 = Date.now(); }
+    var item = { n: n, kind: kind || "screen", stream: stream, orig: orig || null, chunks: [], mr: new MediaRecorder(stream, mt ? { mimeType: mt } : undefined) };
+    if (first) { S = []; saved = []; item.n = 1; t0 = Date.now(); stamp = iso() + "-" + hm(); }
+    if (!stamp) stamp = iso() + "-" + hm();
     S.push(item);
     item.mr.ondataavailable = function (e) { if (e.data && e.data.size) item.chunks.push(e.data); };
     item.mr.onstop = function () {
-      item.stream.getTracks().forEach(function (t) { t.stop(); });
+      item.stream.getTracks().forEach(function (t) { t.stop(); }); if (item.orig) item.orig.getTracks().forEach(function (t) { t.stop(); });
       if (item.chunks.length) {
-        var blob = new Blob(item.chunks, { type: item.mr.mimeType || "video/webm" }), a = document.createElement("a"), nm = "trades-" + iso() + "-" + hm() + "-screen" + item.n + ".webm";
+        var blob = new Blob(item.chunks, { type: item.mr.mimeType || "video/webm" }), a = document.createElement("a"), nm = "trades-" + stamp + "-" + item.kind + item.n + ".webm";
         a.href = URL.createObjectURL(blob); a.download = nm; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 60000);
         saved.push(nm + " (" + (blob.size / 1048576).toFixed(1) + " MB)"); item.chunks = [];
       }
       if (!live()) { if (saved.length) { say("Saved " + saved.length + (saved.length === 1 ? " video" : " videos") + " to your Downloads."); showSaved(saved.slice()); } else say("Nothing was recorded."); } else paint();
     };
-    item.stream.getVideoTracks()[0].addEventListener("ended", function () { try { if (item.mr.state !== "inactive") item.mr.stop(); } catch (e) {} });
+    (orig || stream).getVideoTracks()[0].addEventListener("ended", function () { try { if (item.mr.state !== "inactive") item.mr.stop(); } catch (e) {} });
     item.mr.start(1000); paint(); startTick();
   }
   async function add() { var st = await pick(!live()); if (st) begin(st, !live()); }
@@ -101,9 +105,61 @@
       setTimeout(function () { var v = document.getElementById("videos"); if (v) { v.scrollIntoView({ block: "center", behavior: "smooth" }); v.focus({ preventScroll: true }); v.style.outline = "3px solid var(--accent,#2a6df4)"; setTimeout(function () { v.style.outline = ""; }, 2500); } }, 350);
     }
   });
+
+  /* Record just a highlighted part of a screen or window (Chrome and Edge). Pick the screen, drag a box over a snapshot of it, and only that box is recorded. */
+  function areaOk() { return !!(window.MediaStreamTrackProcessor && window.MediaStreamTrackGenerator && window.VideoFrame); }
+  function selectRect(cv, w, h) {
+    return new Promise(function (res) {
+      var ov = document.createElement("div"); ov.id = "recarea"; ov.style.cssText = "position:fixed;inset:0;z-index:230;background:rgba(5,7,10,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px;font:600 14px 'Instrument Sans',system-ui,sans-serif;color:#fff";
+      var scale = Math.min((window.innerWidth - 40) / w, (window.innerHeight - 150) / h, 1), dw = Math.round(w * scale), dh = Math.round(h * scale);
+      ov.innerHTML = '<div id="raHint">Drag a box over the part you want to record</div><div id="raBox" style="position:relative;width:' + dw + 'px;height:' + dh + 'px;cursor:crosshair;user-select:none;touch-action:none"></div><div style="display:flex;gap:10px"><button type="button" id="raGo" disabled style="padding:9px 18px;border-radius:10px;border:0;background:#d64545;color:#fff;font:inherit;cursor:pointer;opacity:.5">&#9679; Record this area</button><button type="button" id="raFull" style="padding:9px 18px;border-radius:10px;border:1px solid #3a4150;background:#1c212b;color:#fff;font:inherit;cursor:pointer">Whole screen instead</button><button type="button" id="raX" style="padding:9px 18px;border-radius:10px;border:1px solid #3a4150;background:#1c212b;color:#fff;font:inherit;cursor:pointer">Cancel</button></div>';
+      document.body.appendChild(ov);
+      var host = ov.querySelector("#raBox"), go = ov.querySelector("#raGo"), sel = null, st = null;
+      cv.style.cssText = "width:" + dw + "px;height:" + dh + "px;display:block;border-radius:8px;pointer-events:none"; host.appendChild(cv);
+      var bx = document.createElement("div"); bx.style.cssText = "position:absolute;border:2px dashed #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.62);display:none;pointer-events:none;box-sizing:border-box"; host.appendChild(bx);
+      function pt(e) { var r = host.getBoundingClientRect(); return { x: Math.max(0, Math.min(dw, e.clientX - r.left)), y: Math.max(0, Math.min(dh, e.clientY - r.top)) }; }
+      function draw(a, b) { var x = Math.min(a.x, b.x), y = Math.min(a.y, b.y), ww = Math.abs(a.x - b.x), hh = Math.abs(a.y - b.y); bx.style.cssText += ";display:block;left:" + x + "px;top:" + y + "px;width:" + ww + "px;height:" + hh + "px"; return { x: x, y: y, w: ww, h: hh }; }
+      host.addEventListener("pointerdown", function (e) { st = pt(e); host.setPointerCapture(e.pointerId); sel = null; go.disabled = true; go.style.opacity = ".5"; });
+      host.addEventListener("pointermove", function (e) { if (st) sel = draw(st, pt(e)); });
+      host.addEventListener("pointerup", function (e) { if (!st) return; var r = draw(st, pt(e)); st = null; if (r.w >= 40 && r.h >= 40) { sel = r; go.disabled = false; go.style.opacity = "1"; ov.querySelector("#raHint").textContent = "Press Record this area (or Enter). Drag again to change it."; } else { sel = null; bx.style.display = "none"; } });
+      function done(v) { document.removeEventListener("keydown", kd); ov.remove(); res(v); }
+      var kd = function (e) { if (e.key === "Escape") done(null); else if (e.key === "Enter" && sel) go.click(); };
+      document.addEventListener("keydown", kd);
+      go.onclick = function () { if (sel) done({ x: sel.x / scale, y: sel.y / scale, w: sel.w / scale, h: sel.h / scale }); };
+      ov.querySelector("#raFull").onclick = function () { done({ x: 0, y: 0, w: w, h: h }); };
+      ov.querySelector("#raX").onclick = function () { done(null); };
+    });
+  }
+  function cropStream(st, rc, W, H) {
+    var vt = st.getVideoTracks()[0], proc = new MediaStreamTrackProcessor({ track: vt }), gen = new MediaStreamTrackGenerator({ kind: "video" });
+    var ev = function (n) { n = Math.round(n); return n - (n % 2); };
+    var tf = new TransformStream({ transform: function (frame, ctl) {
+      try {
+        var cw = frame.codedWidth, ch = frame.codedHeight, sx = cw / W, sy = ch / H;
+        var x = ev(rc.x * sx), y = ev(rc.y * sy), w = Math.max(16, ev(Math.min(rc.w * sx, cw - x))), h = Math.max(16, ev(Math.min(rc.h * sy, ch - y)));
+        ctl.enqueue(new VideoFrame(frame, { visibleRect: { x: x, y: y, width: w, height: h }, displayWidth: w, displayHeight: h }));
+      } catch (e) {}
+      frame.close();
+    } });
+    proc.readable.pipeThrough(tf).pipeTo(gen.writable).catch(function () {});
+    var out = new MediaStream([gen]); st.getAudioTracks().forEach(function (a) { out.addTrack(a); });
+    return out;
+  }
+  async function addArea() {
+    if (!areaOk()) { toast("Recording an area needs Chrome or Edge"); return; }
+    var first = !live(), st = await pick(first); if (!st) return;
+    var vt = st.getVideoTracks()[0], v = document.createElement("video"); v.muted = true; v.playsInline = true; v.srcObject = new MediaStream([vt]);
+    try { await v.play(); await new Promise(function (ok) { if (v.videoWidth) ok(); else v.onloadedmetadata = ok; }); await new Promise(function (ok) { setTimeout(ok, 250); }); } catch (e) {}
+    var W = v.videoWidth, H = v.videoHeight; if (!W || !H) { st.getTracks().forEach(function (t) { t.stop(); }); toast("Could not read that screen"); return; }
+    var cv = document.createElement("canvas"); cv.width = W; cv.height = H; cv.getContext("2d").drawImage(v, 0, 0, W, H); v.srcObject = null;
+    var rc = await selectRect(cv, W, H);
+    if (!rc) { st.getTracks().forEach(function (t) { t.stop(); }); return; }
+    begin(cropStream(st, rc, W, H), first, st, "area");
+  }
   function stopAll() { S.forEach(function (x) { try { if (x.mr.state !== "inactive") x.mr.stop(); } catch (e) {} }); }
   document.addEventListener("click", function (e) {
-    var b = e.target.closest && e.target.closest("[data-rec],[data-recadd]"); if (!b) return;
+    var b = e.target.closest && e.target.closest("[data-rec],[data-recadd],[data-recarea]"); if (!b) return;
+    if (b.hasAttribute("data-recarea")) { addArea(); return; }
     if (b.hasAttribute("data-recadd")) { if (live()) add(); else multi(2); return; }
     if (live()) { stopAll(); return; }
     if (e.ctrlKey || e.metaKey) multi(0); else add();
