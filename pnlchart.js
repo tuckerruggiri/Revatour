@@ -27,12 +27,15 @@
     var max = Math.max(3, Math.floor(w / 80)); if (out.length > max) { var k = Math.ceil(out.length / max); out = out.filter(function (_, i) { return i % k === 0; }); }
     return out;
   }
+  function fm2(v) { return (v > 0 ? "+" : "") + (Math.round(v * 100) / 100) + "R"; }
   function mount(host, rows, H) {
     if (!rows.length) { host.innerHTML = ""; return; }
     var pts = rows.map(function (r) { return { t: ms(r.d), r: r }; }), full = [pts[0].t - 3 * DAY, pts[pts.length - 1].t + 3 * DAY];
-    var V = { a: full[0], b: full[1], ymin: null, ymax: null };
-    host.innerHTML = '<div class="pfc-ctl"><label>From<input type="date" data-f="from"></label><label>To<input type="date" data-f="to"></label>' +
-      '<label>Min $ (cumulative)<input type="number" step="any" data-f="ymin" placeholder="auto"></label><label>Max $ (cumulative)<input type="number" step="any" data-f="ymax" placeholder="auto"></label>' +
+    var V = { a: full[0], b: full[1], ymin: null, ymax: null, unit: "$" }, hasR = rows.some(function (r) { return r.R != null; });
+    function cv(r) { return V.unit === "R" ? (r.cumR == null ? 0 : r.cumR) : r.cum; } function dv(r) { return V.unit === "R" ? (r.R == null ? 0 : r.R) : r.pnl; }
+    function fm(v) { return V.unit === "R" ? (v > 0 ? "+" : "") + (Math.round(v * 100) / 100) + "R" : H.money(v).replace(/\.00$/, ""); } function fs(v) { return V.unit === "R" ? fm(v) : H.sgn(v); }
+    host.innerHTML = '<div class="pfc-ctl">' + (hasR ? '<div class="pfc-b" style="margin-right:6px"><button type="button" data-u="$" class="on">Dollars</button><button type="button" data-u="R">R multiples</button></div>' : '') + '<label>From<input type="date" data-f="from"></label><label>To<input type="date" data-f="to"></label>' +
+      '<label>Min (cumulative)<input type="number" step="any" data-f="ymin" placeholder="auto"></label><label>Max (cumulative)<input type="number" step="any" data-f="ymax" placeholder="auto"></label>' +
       '<div class="pfc-b"><button type="button" data-z="30">1M</button><button type="button" data-z="90">3M</button><button type="button" data-z="180">6M</button><button type="button" data-z="0" class="on">All</button></div></div>' +
       '<p class="pfc-hint">Scroll over a chart to zoom, drag to move left or right, hover for the day. Double-click to reset.</p>' +
       '<div class="pfc-ttl">Cumulative P&amp;L ($) by date</div><div class="pfc-box" data-c="cum"></div><div class="pfc-ttl">Daily P&amp;L ($) by date</div><div class="pfc-box" data-c="day"></div>';
@@ -43,24 +46,24 @@
       ["cum", "day"].forEach(function (k) {
         var box = boxes[k], W = Math.max(320, box.clientWidth - 16 || 800), Ht = k === "cum" ? 300 : 210, L = 74, R = 16, T = 12, B = 46, pw = W - L - R, ph = Ht - T - B;
         var vis = pts.filter(function (p) { return p.t >= V.a - DAY && p.t <= V.b + DAY; }), vals;
-        if (k === "cum") { vals = vis.map(function (p) { return p.r.cum; }).concat([0]); if (vis.length && vis[0] !== pts[0]) { var pi = pts.indexOf(vis[0]); if (pi > 0) vals.push(pts[pi - 1].r.cum); } }
-        else vals = vis.map(function (p) { return p.r.pnl; }).concat([0]);
+        if (k === "cum") { vals = vis.map(function (p) { return cv(p.r); }).concat([0]); if (vis.length && vis[0] !== pts[0]) { var pi = pts.indexOf(vis[0]); if (pi > 0) vals.push(cv(pts[pi - 1].r)); } }
+        else vals = vis.map(function (p) { return dv(p.r); }).concat([0]);
         var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals), pad = (hi - lo || 1) * 0.1; lo -= pad; hi += pad;
         if (k === "cum") { if (V.ymin != null) lo = V.ymin; if (V.ymax != null) hi = V.ymax; if (hi <= lo) hi = lo + 1; }
         var X = function (t) { return L + pw * (t - V.a) / (V.b - V.a); }, Y = function (v) { return T + ph * (1 - (v - lo) / (hi - lo)); }, s = "", id = "pfclip" + k;
         s += '<defs><clipPath id="' + id + '"><rect x="' + L + '" y="' + T + '" width="' + pw + '" height="' + ph + '"/></clipPath></defs>';
-        nice(lo, hi, 5).forEach(function (v) { s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(v).toFixed(1) + '" y2="' + Y(v).toFixed(1) + '" stroke="var(--line)" ' + (v === 0 ? 'stroke-width="1.5"' : 'stroke-dasharray="3 4"') + '/><text x="' + (L - 8) + '" y="' + (Y(v) + 4).toFixed(1) + '" text-anchor="end" font-size="12" fill="var(--mute)">' + esc(H.money(v).replace(/\.00$/, "")) + '</text>'; });
+        nice(lo, hi, 5).forEach(function (v) { s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(v).toFixed(1) + '" y2="' + Y(v).toFixed(1) + '" stroke="var(--line)" ' + (v === 0 ? 'stroke-width="1.5"' : 'stroke-dasharray="3 4"') + '/><text x="' + (L - 8) + '" y="' + (Y(v) + 4).toFixed(1) + '" text-anchor="end" font-size="12" fill="var(--mute)">' + esc(fm(v)) + '</text>'; });
         xticks(V.a, V.b, pw).forEach(function (tk) { s += '<line x1="' + X(tk[0]).toFixed(1) + '" x2="' + X(tk[0]).toFixed(1) + '" y1="' + T + '" y2="' + (T + ph) + '" stroke="var(--line)" stroke-opacity=".5"/><text x="' + X(tk[0]).toFixed(1) + '" y="' + (T + ph + 16) + '" text-anchor="middle" font-size="12" fill="var(--mute)">' + esc(tk[1]) + '</text>'; });
         s += '<text x="' + (L + pw / 2) + '" y="' + (Ht - 6) + '" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Date</text>' +
-          '<text transform="translate(14 ' + (T + ph / 2) + ') rotate(-90)" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">' + (k === "cum" ? "Cumulative P&amp;L ($)" : "Daily P&amp;L ($)") + '</text>';
+          '<text transform="translate(14 ' + (T + ph / 2) + ') rotate(-90)" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">' + (V.unit === "R" ? (k === "cum" ? "Cumulative result (R)" : "Daily result (R)") : (k === "cum" ? "Cumulative P&amp;L ($)" : "Daily P&amp;L ($)")) + '</text>';
         s += '<g clip-path="url(#' + id + ')">';
         if (k === "cum") {
-          var up = rows[rows.length - 1].cum >= 0, col = "var(--" + (up ? "gain" : "loss") + ")", d = "M" + X(pts[0].t - DAY).toFixed(1) + " " + Y(0).toFixed(1) + pts.map(function (p) { return " L" + X(p.t).toFixed(1) + " " + Y(p.r.cum).toFixed(1); }).join("");
+          var up = cv(rows[rows.length - 1]) >= 0, col = "var(--" + (up ? "gain" : "loss") + ")", d = "M" + X(pts[0].t - DAY).toFixed(1) + " " + Y(0).toFixed(1) + pts.map(function (p) { return " L" + X(p.t).toFixed(1) + " " + Y(cv(p.r)).toFixed(1); }).join("");
           s += '<path d="' + d + ' L' + X(pts[pts.length - 1].t).toFixed(1) + " " + Y(0).toFixed(1) + ' Z" fill="' + col + '" fill-opacity=".08"/><path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="2.5" stroke-linejoin="round"/>';
-          var showDots = vis.length <= 80; if (showDots) pts.forEach(function (p) { s += '<circle cx="' + X(p.t).toFixed(1) + '" cy="' + Y(p.r.cum).toFixed(1) + '" r="3.5" fill="' + col + '"/>'; });
+          var showDots = vis.length <= 80; if (showDots) pts.forEach(function (p) { s += '<circle cx="' + X(p.t).toFixed(1) + '" cy="' + Y(cv(p.r)).toFixed(1) + '" r="3.5" fill="' + col + '"/>'; });
         } else {
           var bw = pw / Math.max(1, (V.b - V.a) / DAY) * 0.8, w = Math.max(2, Math.min(36, bw)), z = Y(0);
-          pts.forEach(function (p) { var y = Math.min(Y(p.r.pnl), z), h = Math.max(1, Math.abs(Y(p.r.pnl) - z)); s += '<rect x="' + (X(p.t) - w / 2).toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + h.toFixed(1) + '" rx="2" fill="var(--' + (p.r.pnl >= 0 ? "gain" : "loss") + ')"/>'; });
+          pts.forEach(function (p) { var y = Math.min(Y(dv(p.r)), z), h = Math.max(1, Math.abs(Y(dv(p.r)) - z)); s += '<rect x="' + (X(p.t) - w / 2).toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + h.toFixed(1) + '" rx="2" fill="var(--' + (dv(p.r) >= 0 ? "gain" : "loss") + ')"/>'; });
         }
         s += '</g><line class="pfc-x" y1="' + T + '" y2="' + (T + ph) + '" stroke="var(--ink)" stroke-opacity=".5" style="display:none"/><circle class="pfc-dot" r="5" fill="var(--panel)" stroke="var(--ink)" stroke-width="2" style="display:none"/>';
         box.innerHTML = '<svg class="pfc" viewBox="0 0 ' + W + " " + Ht + '" role="img" aria-label="' + (k === "cum" ? "Cumulative" : "Daily") + ' P&amp;L chart">' + s + '</svg><div class="pfc-tip"></div>';
@@ -79,8 +82,8 @@
       if (p.x < g.L || p.x > g.L + g.pw) { hide(k); return; }
       pts.forEach(function (q) { var d = Math.abs(q.t - t); if (d < bd) { bd = d; best = q; } }); if (!best) return;
       var r = best.r, X = g.X(best.t), svg = box.querySelector("svg");
-      var ln = svg.querySelector(".pfc-x"), dot = svg.querySelector(".pfc-dot"); ln.setAttribute("x1", X); ln.setAttribute("x2", X); ln.style.display = ""; dot.setAttribute("cx", X); dot.setAttribute("cy", g.Y(k === "cum" ? r.cum : r.pnl)); dot.style.display = "";
-      var tip = tips[k]; tip.innerHTML = "<b>" + esc(H.label(r.d)) + "</b>Day P&amp;L: " + esc(H.sgn(r.pnl)) + (r.pct == null ? "" : " <i>(" + esc(H.pct(r.pct)) + ")</i>") + "<br>Running: " + esc(H.sgn(r.cum)) + (r.cumPct == null ? "" : " <i>(" + esc(H.pct(r.cumPct)) + ")</i>") + "<br><i>" + r.n + (r.n === 1 ? " trade" : " trades") + "</i>"; tip.style.display = "block";
+      var ln = svg.querySelector(".pfc-x"), dot = svg.querySelector(".pfc-dot"); ln.setAttribute("x1", X); ln.setAttribute("x2", X); ln.style.display = ""; dot.setAttribute("cx", X); dot.setAttribute("cy", g.Y(k === "cum" ? cv(r) : dv(r))); dot.style.display = "";
+      var tip = tips[k]; tip.innerHTML = "<b>" + esc(H.label(r.d)) + "</b>Day: " + esc(H.sgn(r.pnl)) + (r.R == null ? "" : " <i>(" + esc(fm2(r.R)) + ")</i>") + (r.pct == null ? "" : " <i>" + esc(H.pct(r.pct)) + "</i>") + "<br>Running: " + esc(H.sgn(r.cum)) + (r.cumR == null ? "" : " <i>(" + esc(fm2(r.cumR)) + ")</i>") + (r.cumPct == null ? "" : " <i>" + esc(H.pct(r.cumPct)) + "</i>") + "<br><i>" + r.n + (r.n === 1 ? " trade" : " trades") + "</i>"; tip.style.display = "block";
       var bx = box.getBoundingClientRect(), left = (X / g.W) * p.r.width + 12; if (left + 170 > bx.width) left -= 190; tip.style.left = Math.max(4, left) + "px"; tip.style.top = "14px";
     }
     function hide(k) { var box = boxes[k], svg = box.querySelector("svg"); if (!svg) return; svg.querySelector(".pfc-x").style.display = "none"; svg.querySelector(".pfc-dot").style.display = "none"; tips[k].style.display = "none"; }
@@ -94,7 +97,7 @@
       box.addEventListener("pointerleave", function () { hide(k); });
       box.addEventListener("dblclick", function () { V.a = full[0]; V.b = full[1]; V.ymin = V.ymax = null; inp.ymin.value = inp.ymax.value = ""; draw(); });
     });
-    host.addEventListener("click", function (ev) { var b = ev.target.closest && ev.target.closest("[data-z]"); if (!b) return; var z = +b.getAttribute("data-z"); if (!z) { V.a = full[0]; V.b = full[1]; } else { V.b = full[1]; V.a = V.b - z * DAY; } clamp(); draw(); });
+    host.addEventListener("click", function (ev) { var ub = ev.target.closest && ev.target.closest("[data-u]"); if (ub) { V.unit = ub.getAttribute("data-u"); V.ymin = V.ymax = null; inp.ymin.value = inp.ymax.value = ""; [].forEach.call(host.querySelectorAll("[data-u]"), function (x) { x.classList.toggle("on", x === ub); }); var tt = host.querySelectorAll(".pfc-ttl"); if (tt.length > 1) { tt[0].textContent = V.unit === "R" ? "Cumulative result (R) by date" : "Cumulative P&L ($) by date"; tt[1].textContent = V.unit === "R" ? "Daily result (R) by date" : "Daily P&L ($) by date"; } draw(); return; } var b = ev.target.closest && ev.target.closest("[data-z]"); if (!b) return; var z = +b.getAttribute("data-z"); if (!z) { V.a = full[0]; V.b = full[1]; } else { V.b = full[1]; V.a = V.b - z * DAY; } clamp(); draw(); });
     host.addEventListener("change", function (ev) {
       var f = ev.target.getAttribute && ev.target.getAttribute("data-f"); if (!f) return; var v = ev.target.value;
       if (f === "from" && v) V.a = Math.min(ms(v) - DAY / 2, V.b - 3 * DAY); else if (f === "to" && v) V.b = Math.max(ms(v) + DAY / 2, V.a + 3 * DAY);
