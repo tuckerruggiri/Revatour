@@ -3,6 +3,7 @@
    Data lives on the same per-day entry Publishes already uses (trades, screenshots) plus feed, plans, grade, lesson. */
 (function () {
   "use strict";
+  window.addEventListener("ss-r1", function () { try { paintBar(); paintTrades(); } catch (e) {} });
   var A = window.StockDay, root = document.getElementById("dayv");
   if (!A || !root) return;
 
@@ -27,7 +28,7 @@
     '.dy-chs{display:flex;flex-wrap:wrap;gap:5px;padding:0 12px 8px;flex:none}.dy-chs .b{padding:3px 9px}.dy-chs form{display:flex;gap:4px;margin-left:auto}.dy-chs form input{width:78px;text-transform:uppercase}.dy-cw{flex:1;min-height:0;display:flex;gap:8px;padding:0 8px 8px}.dy-cw>div{flex:1;min-width:0;min-height:0;display:flex}#dayv .sc-inl{margin:0;flex:1;display:flex;flex-direction:column;min-width:0;border-radius:10px}#dayv .sc-inl .sc-body{height:auto;flex:1;min-height:0}#dayv .sc-inl .sc-hd{padding:5px 10px}.dy-cw .sc-hd b{font-size:.78rem}' +
     '.dy-pf{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:0 12px 6px}.dy-pf input{width:74px}.dy-pf .s{width:66px;text-transform:uppercase}.dy-pc{font-size:.8rem;color:var(--mute);padding:0 12px 6px}.dy-pc b{color:var(--ink)}.dy-pl{padding:0 12px 8px;display:flex;flex-direction:column;gap:5px;max-height:104px;overflow:auto}.dy-pi{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:.78rem;padding:4px 8px;border:1px solid var(--line);border-radius:9px;background:var(--bg)}.dy-pi .sp{flex:1}.dy-pi.taken{border-color:var(--gain)}.dy-pi.skipped{opacity:.55}' +
     '.dy-tabs{display:flex;gap:4px;padding:8px 10px 0;flex:none}.dy-tabs .b{flex:1;border-radius:9px}.dy-tab{display:none;flex-direction:column;min-height:0;flex:1}.dy-tab.on{display:flex}' +
-    '.dy-ts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px 12px 4px}.dy-ts div{border:1px solid var(--line);border-radius:10px;padding:5px 9px;background:var(--bg)}.dy-ts b{display:block;font-size:.98rem;font-variant-numeric:tabular-nums}.dy-ts small{color:var(--mute);font-size:.66rem;text-transform:uppercase;letter-spacing:.06em}' +
+    '.dy-r1{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:2px 12px 6px;font-size:.78rem}.dy-r1 label{display:flex!important;flex-direction:row!important;align-items:center;gap:6px;font-weight:800;width:auto!important;margin:0!important}.dy-r1 input{width:130px!important;flex:none}.dy-r1 small{color:var(--mute)}.dy-ts{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:8px 12px 4px}.dy-ts div{border:1px solid var(--line);border-radius:10px;padding:5px 9px;background:var(--bg)}.dy-ts b{display:block;font-size:.98rem;font-variant-numeric:tabular-nums}.dy-ts small{color:var(--mute);font-size:.66rem;text-transform:uppercase;letter-spacing:.06em}' +
     '.dy-tr{padding:6px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);font-size:.8rem}.dy-tr:last-child{border-bottom:0}.dy-tr .t{display:flex;align-items:center;gap:6px}.dy-tr .m{color:var(--mute);font-size:.74rem;margin-top:2px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}.dy-tr .p{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums}.dy-th{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}.dy-th a{display:block}.dy-th img{height:54px;border-radius:7px;border:1px solid var(--line);display:block}' +
     '.dy-cm{padding:8px 12px;flex:none;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}.dy-cm .r{display:flex;gap:6px;align-items:center}.dy-pv{display:flex;gap:5px;flex-wrap:wrap}.dy-pv span{position:relative}.dy-pv img{height:46px;border-radius:7px;border:1px solid var(--line);display:block}.dy-pv button{position:absolute;top:-5px;right:-5px;width:16px;height:16px;padding:0;border:0;border-radius:50%;background:var(--ink);color:var(--panel);font-size:.65rem;cursor:pointer;line-height:1}' +
     '.dy-ps{padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);font-size:.84rem}.dy-ps:last-child{border-bottom:0}.dy-ps .h{display:flex;gap:6px;align-items:center;color:var(--mute);font-size:.72rem;margin-bottom:2px}.dy-ps p{margin:0;white-space:pre-wrap;word-break:break-word;line-height:1.4}.dy-ps img{max-height:140px;max-width:100%;border-radius:8px;border:1px solid var(--line);margin-top:6px;display:block}' +
@@ -104,7 +105,7 @@
   function stats() {
     var t = (cur() || {}).trades || [], net = 0, w = 0, l = 0;
     t.forEach(function (x) { net += x.p || 0; if (x.open) return; if (x.p > 0) w++; else if (x.p < 0) l++; });
-    return { n: t.length, net: net, w: w, l: l };
+    var u = A.r1For ? A.r1For(D.date) : 0; return { n: t.length, net: net, w: w, l: l, u: u, R: u > 0 ? net / u : null };
   }
   function paintBar() {
     var e = cur() || {}, s = stats(), m = mkt();
@@ -113,6 +114,7 @@
       '<span class="dy-chip dy-clk" id="dyclk" title="New York time. Countdowns to the next 1, 2, 5 and 15 minute candles. The box flashes in the last 10 seconds before each new minute; a countdown turns red when its candle is 10 seconds away."><b id="dyct">--:--:--</b><small id="dycn"></small></span>' +
       '<span class="dy-chip">SPY <b data-q="SPY"></b></span>' +
       '<span class="dy-chip">Day P&amp;L <b class="' + (s.net >= 0 ? "gain" : "loss") + '">' + (s.n ? A.sgn(s.net) : "$0.00") + '</b> <small>' + s.n + (s.n === 1 ? ' trade · ' : ' trades · ') + s.w + 'W ' + s.l + 'L</small></span>' +
+      '<span class="dy-chip" title="R = profit divided by your risk per trade. Set 1R in the Trades tab.">Day R <b class="' + (s.R == null ? '' : s.R >= 0 ? 'gain' : 'loss') + '">' + (s.R == null ? 'set 1R' : A.fmtR(s.R)) + '</b></span>' +
       '<span class="dy-sp"></span>' +
       '<button type="button" class="b" data-rec="1" title="Record your screen. Saves a video to your Downloads">&#9679; Record screen</button><span class="hint" data-rectxt="1" style="margin:0;font-size:.74rem"></span>' +
       '<button type="button" class="b" data-dyact="gen" title="Posts and write-ups generated for this day">Generated</button><button type="button" class="b" data-dyact="cal">Calendar</button>';
@@ -411,7 +413,8 @@
     var best = T.filter(function (t) { return !t.open; }).sort(function (a, b) { return b.p - a.p; })[0];
     var setups = uniq(T.map(function (t) { return t.u; }));
     var keep = {}; ["dtsym", "dtq", "dte", "dtx", "dtu", "dtn"].forEach(function (i) { var x = $(i); if (x) keep[i] = x.value; });
-    el.innerHTML = '<div class="dy-ts"><div><b class="' + (s.net >= 0 ? "gain" : "loss") + '">' + (s.n ? A.sgn(s.net) : "$0.00") + '</b><small>Net P&amp;L</small></div><div><b>' + (s.w + s.l ? Math.round(s.w / (s.w + s.l) * 100) + "%" : "-") + '</b><small>Win rate</small></div><div><b>' + (best ? A.sgn(best.p) : "-") + '</b><small>Best</small></div></div>' +
+    el.innerHTML = '<div class="dy-ts"><div><b class="' + (s.net >= 0 ? "gain" : "loss") + '">' + (s.n ? A.sgn(s.net) : "$0.00") + '</b><small>Net P&amp;L</small></div><div><b>' + (s.w + s.l ? Math.round(s.w / (s.w + s.l) * 100) + "%" : "-") + '</b><small>Win rate</small></div><div><b class="' + (s.R == null ? '' : s.R >= 0 ? 'gain' : 'loss') + '">' + (s.R == null ? '-' : A.fmtR(s.R)) + '</b><small>Day R</small></div><div><b>' + (best ? A.sgn(best.p) : "-") + '</b><small>Best</small></div></div>' +
+      '<div class="dy-r1"><label>1R = $<input id="dyr1" inputmode="decimal" placeholder="your risk per trade" value="' + (s.u > 0 ? Math.round(s.u * 100) / 100 : '') + '" style="width:130px"></label><small>' + (s.u > 0 ? 'R = profit \u00F7 this. Applies to this day.' : 'What did you risk per trade? Enter it to see today in R.') + '</small></div>' +
       '<form class="dy-fm" id="dytf" style="padding-top:4px"><input class="s" id="dtsym" placeholder="Ticker" maxlength="6" autocomplete="off" value="' + esc(keep.dtsym || "") + '"><button type="button" class="b ' + (D.tside === "long" ? "on" : "") + '" data-dyts="long">Long</button><button type="button" class="b ' + (D.tside === "short" ? "on" : "") + '" data-dyts="short">Short</button>' +
       '<input id="dtq" inputmode="decimal" placeholder="Qty" style="width:60px;flex:none" value="' + esc(keep.dtq || "") + '"><input id="dte" inputmode="decimal" placeholder="Entry" style="width:72px;flex:none" value="' + esc(keep.dte || "") + '"><input id="dtx" inputmode="decimal" placeholder="Exit" style="width:72px;flex:none" value="' + esc(keep.dtx || "") + '">' +
       '<input id="dtu" class="n" list="dysetups" placeholder="Setup" value="' + esc(keep.dtu || "") + '"><datalist id="dysetups">' + setups.map(function (u) { return '<option value="' + esc(u) + '">'; }).join("") + '</datalist><input id="dtn" class="n" placeholder="Note" value="' + esc(keep.dtn || "") + '"><button class="b pri" type="submit">Log trade</button></form>' +
@@ -508,7 +511,7 @@
     if (act === "fullplan") return A.plan();
     if (act === "nwref") { D.news.w = null; D.news.m = null; paintNews(); loadNews(); return; }
     if (act === "wlpub") { var it2 = board(); if (!it2.length) { A.toast("Add a stock first"); return; } b.disabled = true;
-      try { await A.alPost("\uD83D\uDDD3 Watchlist \u00B7 " + A.dayLabel(D.date) + "\n" + it2.map(function (i) { return "$" + i.sym + (i.note ? " \u2014 " + i.note : ""); }).join("\n")); var bd2 = A.al().board[D.date]; bd2.pub = Date.now(); await A.alSave(); A.toast("Watchlist posted to your wall"); }
+      try { await A.alPost("\uD83D\uDDD3 Watchlist \u00B7 " + A.dayLabel(D.date) + (stats().n ? "\nDay result: " + A.sgn(stats().net) + (stats().R == null ? "" : " \u00B7 " + A.fmtR(stats().R)) : "") + "\n" + it2.map(function (i) { return "$" + i.sym + (i.note ? " \u2014 " + i.note : ""); }).join("\n")); var bd2 = A.al().board[D.date]; bd2.pub = Date.now(); await A.alSave(); A.toast("Watchlist posted to your wall"); }
       catch (e4) { A.toast("Could not post to your wall"); } b.disabled = false; return; }
     if (act === "wlimp") { var L = window.StockWatch ? window.StockWatch.list() : []; if (!L.length) { A.toast("Your main watchlist is empty"); return; } var AL = A.al(), bd = AL.board[D.date] || (AL.board[D.date] = { items: [] }); L.slice(0, 25).forEach(function (s) { if (!bd.items.some(function (i) { return i.sym === s; })) bd.items.push({ sym: s, note: "" }); }); await A.alSave(); paintWatch(); paintTiles(); loadQ(); return; }
     if (d.dywrm != null) { var AL2 = A.al(), b2 = AL2.board[D.date]; if (b2) { b2.items.splice(+d.dywrm, 1); await A.alSave(); paintWatch(); } return; }
@@ -566,6 +569,7 @@
   root.addEventListener("input", function (ev) { var id = ev.target.id; if (/^dp(e|s|t|r)$/.test(id)) calcPlan(); });
   root.addEventListener("change", async function (ev) {
     var t = ev.target;
+    if (t.id === "dyr1") { var rv1 = num(t.value); if (rv1 != null && rv1 > 0) { await mutate(function (e2) { e2.r1 = rv1; }); A.r1Save(D.date, rv1); } paintBar(); paintTrades(); return; }
     if (t.id === "dyshfile") { var fl = [].slice.call(t.files); t.value = ""; await addShots(fl); return; }
     if (t.id === "dysstr") { D.lastStrat = t.value; return; }
     if (t.dataset && t.dataset.dyshst != null) { var si = +t.dataset.dyshst, sv = t.value; await mutate(function (e2) { var m = (e2.imgs || [])[si]; if (!m) return; m.st = sv; m.cap = shotLabel(m.tk, sv); var tr = m.ti ? (e2.trades || []).filter(function (x) { return x.id === m.ti; })[0] : null; if (tr) tr.u = sv; }); paintTrades(); return; }
