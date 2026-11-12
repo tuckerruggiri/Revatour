@@ -587,7 +587,15 @@ function $(i){return document.getElementById(i)}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function money(v){return (v<0?"-$":"$")+Math.abs(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
 function toast(m){var t=$("toast");t.textContent=m;t.className="on";setTimeout(function(){t.className=""},1600)}
-function persist(){try{var o={trades:trades};ids.forEach(function(i){o[i]=$(i).value});localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
+/* remember strategy tags and notes so a fresh Schwab pull does not wipe them */
+var TAGK="revatour-tagmem";
+function tagEx(t){return [t.t,t.s,t.d,t.tm||"",t.ot||"",t.q,(+t.p).toFixed(4)].join("|")}
+function tagLo(t){return "L|"+[t.t,t.s,t.d,t.ot||""].join("|")}
+function tagMemGet(){try{return JSON.parse(localStorage.getItem(TAGK)||"{}")||{}}catch(e){return {}}}
+function tagMemSave(arr){try{var m=tagMemGet();arr.forEach(function(t){if(!t||typeof t.p!=="number")return;[tagEx(t),tagLo(t)].forEach(function(k){if(t.u||t.n){delete m[k];m[k]={u:t.u||"",n:t.n||""}}else delete m[k]})});var ks=Object.keys(m);if(ks.length>1500)ks.slice(0,ks.length-1500).forEach(function(k){delete m[k]});localStorage.setItem(TAGK,JSON.stringify(m))}catch(e){}}
+function carryTags(arr){var m=tagMemGet(),old={};trades.forEach(function(t){if(t&&(t.u||t.n)){old[tagEx(t)]=t;old[tagLo(t)]=t}});var kept=0;
+ arr.forEach(function(t){if(t.u&&t.n)return;var h=old[tagEx(t)]||old[tagLo(t)]||m[tagEx(t)]||m[tagLo(t)];if(!h)return;var did=false;if(!t.u&&h.u){t.u=h.u;did=true}if(!t.n&&h.n){t.n=h.n;did=true}if(did)kept++});return kept}
+function persist(){try{tagMemSave(trades)}catch(e){}try{var o={trades:trades};ids.forEach(function(i){o[i]=$(i).value});localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
 function restore(){try{var o=JSON.parse(localStorage.getItem(KEY)||"null");if(!o)return;trades=o.trades||[];ids.forEach(function(i){if(o[i])$(i).value=o[i]})}catch(e){}}
 
 /* CSV */
@@ -685,7 +693,7 @@ function showStats(){
  try{scStudio()}catch(e){}
  el.innerHTML='<div class="stat"><b class="'+(s.net>=0?"gain":"loss")+'">'+money(s.net)+'</b><span>Net P&amp;L</span></div><div class="stat"><b>'+Math.round(s.wr*100)+'%</b><span>Win rate</span></div><div class="stat"><b>'+(s.pf===Infinity?"n/a":s.pf.toFixed(2))+'</b><span>Profit factor</span></div><div class="stat"><b class="loss">'+money(-s.dd)+'</b><span>Max drawdown</span></div>'}
 var lastText="";
-$("grouping").addEventListener("change",function(){if(!lastText)return;var r=importCSV(lastText,this.value);if(r.err||!r.n)return;setTrades(r.trades,r.n+" trades");note(r)});
+$("grouping").addEventListener("change",function(){if(!lastText)return;var r=importCSV(lastText,this.value);if(r.err||!r.n)return;carryTags(r.trades);setTrades(r.trades,r.n+" trades");note(r)});
 function note(r){var ts=$("tstatus");
  if(r.tos){ts.textContent+=" Built from individual fills into round-trip trades ("+({exit:"one per exit order",entry:"one per entry",grouped:"grouped until flat"}[r.mode]||"grouped until flat")+"). P&L is before commissions and fees."+(r.skipped?" "+r.skipped+" fills skipped because no matching open was in the file.":"")+(r.openLeft?" "+r.openLeft+" open position(s) not counted.":"")}
  else if(r.skipped)ts.textContent+=" "+r.skipped+" rows skipped (missing symbol or P&L)."}
@@ -695,7 +703,7 @@ $("file").addEventListener("change",function(ev){
  rd.onload=function(){lastText=String(rd.result);var r=importCSV(lastText,$("grouping").value);
   if(r.err){$("tstatus").textContent=r.err;return}
   if(!r.n){$("tstatus").textContent="No trades could be read from this file. Each row needs a symbol plus either a P&L column or entry price, exit price and quantity. Columns found: "+r.hdr;ev.target.value="";return}
-  setTrades(r.trades,r.n+" trades imported");note(r);ev.target.value=""};
+  carryTags(r.trades);setTrades(r.trades,r.n+" trades imported");note(r);ev.target.value=""};
  rd.onerror=function(){$("tstatus").textContent="Could not read that file."};rd.readAsText(f)});
 $("demo").addEventListener("click",function(){
  var s=[["NVDA","Long",20,118.4,126.9,"2026-08-04","Breakout","Held through earnings"],["TSLA","Short",15,248,255.3,"2026-08-12","Fade","Fought the trend"],["AAPL","Long",30,214.2,221.5,"2026-08-21","Pullback",""],["AMD","Long",40,141,136.2,"2026-09-02","Breakout","Stop too tight"],["META","Long",10,590,622,"2026-09-15","Pullback","Scaled in twice"],["SPY","Short",25,560,552.4,"2026-09-30","Fade","Clean rejection"]];
@@ -704,7 +712,7 @@ $("clear").addEventListener("click",function(){setTrades([],"Trades cleared")});
 $("pastego").addEventListener("click",function(){var t=$("paste").value;if(!t.trim()){$("tstatus").textContent="Paste the rows first, including the header row.";return}
  lastText=t;var r=importCSV(t,$("grouping").value);if(r.err){$("tstatus").textContent=r.err;return}
  if(!r.n){$("tstatus").textContent="No trades could be read from the pasted text.";return}
- setTrades(r.trades,r.n+" trades imported");note(r)});
+ carryTags(r.trades);setTrades(r.trades,r.n+" trades imported");note(r)});
 ids.forEach(function(i){$(i).addEventListener("input",persist)});
 
 /* Prompt */
@@ -2690,7 +2698,7 @@ async function sbPull(){var So=S(),msg=$("sbmsg"),b=$("sbpull");if(!So||!So.schw
   if(!r.fills||!r.fills.length){msg.textContent="No executed trades found for that range.";return}
   var res=importTOS(sbRows(r.fills),$("grouping").value);
   if(!res||!res.n){msg.textContent="Found fills but no completed round trips yet (positions may still be open).";return}
-  res.hdr="Schwab";setTrades(res.trades,res.n+" trades pulled from Schwab");msg.textContent="";note(res)
+  res.hdr="Schwab";var kp=carryTags(res.trades);setTrades(res.trades,res.n+" trades pulled from Schwab"+(kp?" ("+kp+" kept their tags)":""));msg.textContent="";note(res)
  }catch(e){msg.textContent="Could not reach Schwab: "+e.message}finally{b.disabled=false}}
 function etDay(back){var p={},f=new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",year:"numeric",month:"2-digit",day:"2-digit"});
  var d=new Date(Date.now()-back*864e5);f.formatToParts(d).forEach(function(x){p[x.type]=x.value});return p.year+"-"+p.month+"-"+p.day}
