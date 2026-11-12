@@ -1,21 +1,21 @@
 {
- "asof": "Nov 11, 2026 (premarket)",
- "headline": "A hot October CPI (headline +0.4%, core +0.3%) pushed the 10-year to about 5% and a December Fed hike to about 99% odds; stocks fell Tuesday, but futures are up Wednesday on CoreWeave's beat.",
- "regime": "Hiking regime: the Fed funds target is 3.75-4.00%, December hike odds are about 99% (CME FedWatch via Investing.com), the 10-year is about 4.99% and the VIX about 19.5-20 (readings vary by source). Goldman sees a second hike in December and a third in March.",
+ "asof": "Nov 12, 2026 (premarket)",
+ "headline": "Stocks rebounded Wednesday (S&P 500 +1.31%, Nasdaq +1.60%) on CoreWeave's beat, but Nvidia fell about 6.5% after hours on a report its board is weighing CEO Jensen Huang's future; the 10-year sits near 5% after a hot CPI.",
+ "regime": "Hiking regime: the Fed funds target is 3.75-4.00% and a December hike is the base case (the only FedWatch figure found this run is 76.3% after the Nov 6 jobs report; no post-CPI reading found). The 10-year is about 5.00% (bonds were closed Nov 11), the VIX about 18.3 and Waller backs a 25bp December hike.",
  "lean": [
   {
    "h": "Today",
    "sub": "day trades",
-   "s": -5,
-   "t": "Rebound attempt against 5% yields",
-   "why": "Nasdaq futures were up 0.5-1.6% depending on the source after CoreWeave, but the 10-year is about 4.99% and the bond market is closed for Veterans Day."
+   "s": -10,
+   "t": "AI-chip leader under a cloud",
+   "why": "Nasdaq-100 futures were about -0.9% and S&P -0.4% early Thursday after Nvidia's after-hours drop; Barr speaks at 10 am ET and Cisco and AMAT report after the close."
   },
   {
    "h": "Next 2-4 weeks",
    "sub": "swing trades",
    "s": -10,
    "t": "Cautious, data and earnings heavy",
-   "why": "PPI (Nov 13), Nvidia (Nov 17), FOMC minutes (Nov 18), PCE (Nov 25) and the Dec 8-9 FOMC are ahead with a hike priced in."
+   "why": "PPI (Nov 13; forecast +0.4% headline, +0.3% core per Continuum Economics), Nvidia earnings (Nov 17), FOMC minutes (Nov 18) and PCE (Nov 25) are ahead with a hike expected."
   },
   {
    "h": "6-12 months",
@@ -33,18 +33,18 @@
   },
   {
    "l": "Dec hike odds",
-   "v": "~99%",
-   "n": "CME FedWatch via Investing.com, Nov 10 afternoon; about 11% for 50bp (other sources 10-15%)"
+   "v": "~76%+",
+   "n": "76.3% per CME FedWatch after the Nov 6 jobs report (Zacks); earlier Investing.com read of ~99% was Nov 10; no newer figure found"
   },
   {
    "l": "10-year yield",
-   "v": "4.99%",
-   "n": "Nov 10 close (Saxo); touched 5.00-5.02%; 4.996% in Asia Nov 11 (Reuters)"
+   "v": "~5.00%",
+   "n": "5.00% Nov 10 (TheStreet); 4.998% on Yahoo's Nov 11 ticker while bonds were closed"
   },
   {
    "l": "30-yr mortgage",
    "v": "7.18%",
-   "n": "Freddie Mac survey of Nov 5 (older; next release Thursday Nov 12)"
+   "n": "Freddie Mac survey of Nov 5 (older); Nov 12 release not found this run"
   },
   {
    "l": "Dollar index",
@@ -54,17 +54,17 @@
   {
    "l": "Gold",
    "v": "~$4,031",
-   "n": "Spot, late Nov 10 (-2.6%); $4,030-$4,055 on Nov 11"
+   "n": "Sources conflict: about $4,038 (TheStreet futures, Nov 11 morning) vs $3,930 (Yahoo ticker); older Nov 10 read ~$4,031"
   },
   {
    "l": "WTI oil",
-   "v": "$86.04",
-   "n": "Dec settlement Nov 10 (-0.93%), lowest since Aug 31; Brent $91.49"
+   "v": "~$86.3",
+   "n": "$86.27 early Nov 12 (TipRanks); Brent about $92.5; US-Iran de-escalation talks"
   },
   {
    "l": "VIX",
-   "v": "~19.5-20",
-   "n": "20.02 (Yahoo, Nov 10 page) and 19.46 (Reuters, Nov 11); close not verified"
+   "v": "~18.3",
+   "n": "18.32 on Yahoo's Nov 11 ticker (time of quote not stated); 25.64 on Nov 6 (Zacks)"
   }
  ],
  "sectors": [
@@ -106,7 +106,7 @@
     0,
     1
    ],
-   "why": "Technology fell 1.13% on Nov 10 (the only sector down more than 1%) and Nvidia fell 5.47% to $168.89; premarket Nov 11 CoreWeave jumped about 13% and TSMC rose about 5%."
+   "why": "Nasdaq +1.60% Nov 11 on CoreWeave (+24.7% to $60.77); Micron, Sandisk and SK Hynix +10% or more; but Nvidia fell about 6.5% after hours on the CEO report (Yahoo, FinWire)."
   },
   {
    "s": "Banks",
@@ -190,6 +190,43 @@
   }
  ],
  "news": [
+  {
+   "id": "nvda-ceo",
+   "cat": "stocks",
+   "head": "Nvidia falls after-hours as board reportedly weighs CEO Huang's future",
+   "when": "Nov 11-12",
+   "src": "https://finwire.io/news/economy-news/nvidia-said-to-preparing-huang-ouster-alibaba-slumps-whats-moving-markets",
+   "srcN": "FinWire/Investing.com, Nov 12; Yahoo Finance, Nov 11",
+   "mean": "Nvidia closed Wednesday at $173.73 (+2.9%) then fell about 6.5% after hours to about $162 on a WSJ report that the board is preparing to oust CEO Jensen Huang, with an independent investigation under way; Baird cut it to Neutral. The stock was down about 14% in November. Other sources cited -7% to -8% after hours.",
+   "react": [
+    [
+     "NVDA",
+     -1,
+     "Governance and key-person risk before Nov 17 earnings"
+    ],
+    [
+     "Nasdaq-100 futures",
+     -1,
+     "About -0.9% early Thursday"
+    ],
+    [
+     "Alibaba",
+     -1,
+     "Fell over 6% in Hong Kong on chip-access scrutiny"
+    ],
+    [
+     "AI chip peers",
+     0,
+     "Mixed; CoreWeave and memory names rallied Wednesday"
+    ]
+   ],
+   "hist": "Rule of thumb: sudden leadership uncertainty at a mega-cap leader tends to widen swings in the stock and its index until the board gives clarity.",
+   "histN": "",
+   "histU": "",
+   "today": "Expect wide NVDA and Nasdaq swings at the open; confirmations or denials from the company would be the catalyst.",
+   "later": "Investors may weigh the Nov 17 earnings report and any board announcement against the AI demand data.",
+   "conf": 2
+  },
   {
    "id": "cpi",
    "cat": "economy",
@@ -392,9 +429,9 @@
    "cat": "stocks",
    "head": "CoreWeave beats and raises; shares jump premarket",
    "when": "Nov 11",
-   "src": "https://247wallst.com/cards/coreweave-q3-2026-earnings-crwv-01m73msrkgrgan75a5t7tb9fmz",
-   "srcN": "24/7 Wall St., Nov 11; Stocktwits, Nov 11",
-   "mean": "Q3 revenue was $3.66B (+168%) vs $3.54B expected, EPS -$1.27 vs -$1.55, and 2026 revenue guidance is $13.0-13.3B. Backlog is about $132.5B and total debt $46.9B. Premarket gains were quoted at 11-17%; Nasdaq futures rose.",
+   "src": "https://thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-nov-11-2026",
+   "srcN": "TheStreet, Nov 11; Yahoo Finance, Nov 11",
+   "mean": "CoreWeave closed Wednesday at $60.77, up 24.7%, after raising its revenue outlook and citing about $9B in customer prepayments; it slipped about 5% after hours. The Nasdaq gained 1.60% and memory and photonics names rose 10% or more.",
    "react": [
     [
      "CRWV",
@@ -606,18 +643,13 @@
  ],
  "calendar": [
   {
-   "d": "2026-11-11",
-   "t": "Veterans Day: bond market closed, stocks open; MBA mortgage applications; OPEC monthly report",
-   "usual": "Thin Treasury trading; the 10-year is near 5%."
-  },
-  {
    "d": "2026-11-12",
-   "t": "Nebius (before open); Cisco and Applied Materials (after close); jobless claims; Freddie Mac mortgage rates",
+   "t": "Nebius (before open); Cisco, Applied Materials and Intuitive Machines (after close); jobless claims; existing home sales; Barr speaks 10 am; Freddie Mac mortgage rates",
    "usual": "AI infrastructure read-through; the last mortgage survey was 7.18%."
   },
   {
    "d": "2026-11-13",
-   "t": "October PPI (8:30 ET; some sources say Nov 14)",
+   "t": "October PPI (8:30 ET; forecast +0.4% headline, +0.3% core per Continuum Economics); Bowman 10:50 am",
    "usual": "Follows CPI; can move yields if it surprises."
   },
   {
@@ -639,10 +671,15 @@
    "d": "2026-11-25",
    "t": "PCE inflation and Q3 GDP second estimate",
    "usual": "The Fed's preferred inflation gauge, two weeks before the FOMC."
+  },
+  {
+   "d": "2026-11-26",
+   "t": "Thanksgiving: US markets closed",
+   "usual": "Thin pre-holiday trading."
   }
  ],
  "scen": {
-  "title": "What if Friday's PPI is... (consensus not found this run)",
+  "title": "What if Friday's PPI is... (forecast +0.4% headline, +0.3% core)",
   "opts": [
    {
     "k": "hot",

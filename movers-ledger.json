@@ -1,9 +1,9 @@
 {
  "started": "2026-11-04",
- "asof": "2026-11-11",
+ "asof": "2026-11-12",
  "bench": "SPY",
- "spyLast": 749.92,
- "spyLastD": "2026-11-10",
+ "spyLast": 759.81,
+ "spyLastD": "2026-11-11",
  "horizon": {
   "day": 1,
   "radar": 10,
@@ -216,8 +216,8 @@
    "entry": 206.69,
    "entryN": "Nov 3 close",
    "spy": 766.81,
-   "last": 168.89,
-   "lastD": "2026-11-10",
+   "last": 173.73,
+   "lastD": "2026-11-11",
    "status": "open"
   },
   {
@@ -264,8 +264,8 @@
    "entry": 141.52,
    "entryN": "Nov 4 price from article",
    "spy": 766.81,
-   "last": 141.52,
-   "lastD": "2026-11-04",
+   "last": 154.69,
+   "lastD": "2026-11-11",
    "status": "open"
   },
   {
@@ -276,8 +276,8 @@
    "entry": 48.42,
    "entryN": "Nov 4 price from article",
    "spy": 766.81,
-   "last": 48.73,
-   "lastD": "2026-11-10",
+   "last": 60.77,
+   "lastD": "2026-11-11",
    "status": "open"
   },
   {
@@ -300,9 +300,12 @@
    "entry": 1.98,
    "entryN": "Nov 4 (+13.8%)",
    "spy": 766.81,
-   "last": 1.41,
-   "lastD": "2026-11-09",
-   "status": "open"
+   "last": 1.365,
+   "lastD": "2026-11-11",
+   "status": "closed",
+   "closed": 1.365,
+   "closedD": "2026-11-11",
+   "spyClosed": 759.81
   },
   {
    "id": "penny-CRIS-20261104",
@@ -312,9 +315,12 @@
    "entry": 1.11,
    "entryN": "Nov 4 (+55.5%)",
    "spy": 766.81,
-   "last": 0.6976,
-   "lastD": "2026-11-09",
-   "status": "open"
+   "last": 0.5915,
+   "lastD": "2026-11-11",
+   "status": "closed",
+   "closed": 0.5915,
+   "closedD": "2026-11-11",
+   "spyClosed": 759.81
   },
   {
    "id": "penny-CHSN-20261104",
@@ -516,8 +522,8 @@
    "entry": 141.52,
    "entryN": "Nov 4 close",
    "spy": 766.81,
-   "last": 141.52,
-   "lastD": "2026-11-04",
+   "last": 154.69,
+   "lastD": "2026-11-11",
    "status": "open"
   },
   {
@@ -732,8 +738,8 @@
    "entry": 0.54,
    "entryN": "Nov 5 close (screener)",
    "spy": 733,
-   "last": 0.418,
-   "lastD": "2026-11-09",
+   "last": 0.395,
+   "lastD": "2026-11-11",
    "status": "open"
   },
   {
@@ -744,8 +750,8 @@
    "entry": 0.377,
    "entryN": "Nov 5 close (screener)",
    "spy": 733,
-   "last": 0.44,
-   "lastD": "2026-11-09",
+   "last": 0.3244,
+   "lastD": "2026-11-11",
    "status": "open"
   },
   {
@@ -756,8 +762,8 @@
    "entry": 0.0424,
    "entryN": "Nov 5 close (screener)",
    "spy": 733,
-   "last": 0.0424,
-   "lastD": "2026-11-05",
+   "last": 0.034,
+   "lastD": "2026-11-11",
    "status": "open"
   },
   {
@@ -768,8 +774,8 @@
    "entry": 0.496,
    "entryN": "Nov 5 close (screener)",
    "spy": 733,
-   "last": 0.3793,
-   "lastD": "2026-11-09",
+   "last": 0.251,
+   "lastD": "2026-11-11",
    "status": "open"
   },
   {
@@ -879,8 +885,8 @@
    "entry": 48.98,
    "entryN": "Nov 9 close (Alpha Vantage / StockAnalysis)",
    "spy": 752.69,
-   "last": 48.73,
-   "lastD": "2026-11-10",
+   "last": 60.77,
+   "lastD": "2026-11-11",
    "status": "open"
   },
   {
@@ -963,8 +969,8 @@
    "entry": 2.83,
    "entryN": "Nov 9 close (Alpha Vantage previous close)",
    "spy": 752.69,
-   "last": 2.12,
-   "lastD": "2026-11-10",
+   "last": 2.07,
+   "lastD": "2026-11-11",
    "status": "open"
   },
   {
@@ -1023,8 +1029,8 @@
    "entry": 0.5139,
    "entryN": "Nov 9 close (Alpha Vantage previous close)",
    "spy": 752.69,
-   "last": 0.7472,
-   "lastD": "2026-11-10",
+   "last": 0.7939,
+   "lastD": "2026-11-11",
    "status": "open"
   },
   {
@@ -1059,9 +1065,12 @@
    "entry": 178.67,
    "entryN": "Nov 9 close (Stocktitan)",
    "spy": 752.69,
-   "last": 168.89,
-   "lastD": "2026-11-10",
-   "status": "open"
+   "last": 173.73,
+   "lastD": "2026-11-11",
+   "status": "closed",
+   "closed": 173.73,
+   "closedD": "2026-11-11",
+   "spyClosed": 759.81
   },
   {
    "id": "day-TTD-20261110",
@@ -1215,7 +1224,7 @@
    "entry": 55.16,
    "entryN": "Nov 11 premarket (MarketScreener)",
    "spy": 749.92,
-   "last": 55.16,
+   "last": 60.77,
    "lastD": "2026-11-11",
    "status": "open"
   },
@@ -1299,7 +1308,7 @@
    "entry": 168.89,
    "entryN": "Nov 10 close",
    "spy": 749.92,
-   "last": 168.89,
+   "last": 173.73,
    "lastD": "2026-11-11",
    "status": "open"
   },
