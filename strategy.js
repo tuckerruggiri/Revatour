@@ -316,5 +316,5 @@
     });
   }
   load();
-  window.BTBuilder = { html: html, bind: bind, _B: B };
+  window.BTBuilder = { html: html, bind: bind, _B: B, add: function (st) { st = norm(st); B.strats.push(st); B.cur = st.id; B.tpl = false; B.step = 0; stale(); save(); return st.id; }, get: function (id) { return B.strats.filter(function (x) { return x.id === id; })[0] || null; } };
 })();

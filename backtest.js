@@ -443,13 +443,14 @@
       '<div class="bt-bar"><button class="bt-b on" data-a="copycode">Copy code</button><button class="bt-b" data-a="dlcode">Download bot.py</button><button class="bt-b" data-a="dlcandles">Download chart as candles.csv</button><button class="bt-b" data-a="rebuild">Rebuild from rules</button></div><pre class="bt-code" id="bt-code">' + esc(S.code) + '</pre>';
   }
   function head() {
-    return '<div class="bt-top"><h1>Backtest Lab</h1><div class="bt-tabs">' + [["log", "1. Trade log"], ["sim", "2. Simulator (SL-1-RV)"], ["build", "3. Build a strategy"], ["code", "4. SL-1-RV bot code"]].map(function (t) { return '<button data-tab="' + t[0] + '" class="' + (S.tab === t[0] ? "on" : "") + '">' + t[1] + '</button>'; }).join("") + '</div></div>';
+    return '<div class="bt-top"><h1>Backtest Lab</h1><div class="bt-tabs">' + [["log", "1. Trade log"], ["sim", "2. Simulator (SL-1-RV)"], ["build", "3. Build a strategy"], ["teach", "4. Teach it by marking"], ["code", "5. SL-1-RV bot code"]].map(function (t) { return '<button data-tab="' + t[0] + '" class="' + (S.tab === t[0] ? "on" : "") + '">' + t[1] + '</button>'; }).join("") + '</div></div>';
   }
   function paint() { var ch = root.querySelector("#bt-chart"); if (ch) { host = ch; ch.innerHTML = chartSvg(); } }
   function render() {
     if (!root) return; var y = window.scrollY, ae = document.activeElement, aid = ae && (ae.id || ae.getAttribute("data-r") || ae.getAttribute("data-f")), pos = ae && ae.selectionStart;
-    root.innerHTML = css() + head() + '<div class="bt-body">' + (S.tab === "log" ? logHtml() : S.tab === "sim" ? simHtml() : S.tab === "build" ? (window.BTBuilder ? window.BTBuilder.html() : "<p>Builder is loading...</p>") : codeHtml()) + '</div>';
+    root.innerHTML = css() + head() + '<div class="bt-body">' + (S.tab === "log" ? logHtml() : S.tab === "sim" ? simHtml() : S.tab === "build" ? (window.BTBuilder ? window.BTBuilder.html() : "<p>Builder is loading...</p>") : S.tab === "teach" ? (window.BTTeach ? window.BTTeach.html() : "<p>Loading...</p>") : codeHtml()) + '</div>';
     if (S.tab === "sim" || S.tab === "build") paint();
+    if (S.tab === "teach" && window.BTTeach) window.BTTeach.after(root);
     if (aid) { var el = root.querySelector('[id="' + aid + '"],[data-r="' + aid + '"],[data-f="' + aid + '"]'); if (el && el.tagName === "INPUT" && el.type !== "checkbox" && el.type !== "range") { el.focus(); try { el.setSelectionRange(pos, pos); } catch (e) { } } }
     window.scrollTo(0, y);
   }
@@ -472,6 +473,7 @@
   /* ---------------- events ---------------- */
   function bind() {
     if (window.BTBuilder) window.BTBuilder.bind(root);
+    if (window.BTTeach) window.BTTeach.bind(root);
     root.addEventListener("click", function (ev) {
       var t = ev.target, b;
       if ((b = t.closest("[data-tab]"))) { S.tab = b.getAttribute("data-tab"); if (S.tab === "code" && !S.code) S.code = botCode(); render(); window.scrollTo(0, 0); return; }
