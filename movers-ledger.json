@@ -1,9 +1,9 @@
 {
  "started": "2026-11-04",
- "asof": "2026-11-12",
+ "asof": "2026-11-13",
  "bench": "SPY",
- "spyLast": 759.81,
- "spyLastD": "2026-11-11",
+ "spyLast": 757.12,
+ "spyLastD": "2026-11-12",
  "horizon": {
   "day": 1,
   "radar": 10,
@@ -276,8 +276,8 @@
    "entry": 48.42,
    "entryN": "Nov 4 price from article",
    "spy": 766.81,
-   "last": 60.77,
-   "lastD": "2026-11-11",
+   "last": 56.6,
+   "lastD": "2026-11-12",
    "status": "open"
   },
   {
@@ -774,8 +774,8 @@
    "entry": 0.496,
    "entryN": "Nov 5 close (screener)",
    "spy": 733,
-   "last": 0.251,
-   "lastD": "2026-11-11",
+   "last": 0.227,
+   "lastD": "2026-11-12",
    "status": "open"
   },
   {
@@ -885,8 +885,8 @@
    "entry": 48.98,
    "entryN": "Nov 9 close (Alpha Vantage / StockAnalysis)",
    "spy": 752.69,
-   "last": 60.77,
-   "lastD": "2026-11-11",
+   "last": 56.6,
+   "lastD": "2026-11-12",
    "status": "open"
   },
   {
@@ -1224,8 +1224,8 @@
    "entry": 55.16,
    "entryN": "Nov 11 premarket (MarketScreener)",
    "spy": 749.92,
-   "last": 60.77,
-   "lastD": "2026-11-11",
+   "last": 56.6,
+   "lastD": "2026-11-12",
    "status": "open"
   },
   {
@@ -1236,8 +1236,8 @@
    "entry": 396.48,
    "entryN": "Last close in source (date not stated)",
    "spy": 749.92,
-   "last": 396.48,
-   "lastD": "2026-11-11",
+   "last": 405.49,
+   "lastD": "2026-11-12",
    "status": "open"
   },
   {
@@ -1332,8 +1332,8 @@
    "entry": 396.48,
    "entryN": "Last close in source (date not stated)",
    "spy": 749.92,
-   "last": 396.48,
-   "lastD": "2026-11-11",
+   "last": 405.49,
+   "lastD": "2026-11-12",
    "status": "open"
   },
   {
