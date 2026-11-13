@@ -26,7 +26,7 @@
 @keyframes plflash{0%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 0 transparent}}.pl-flash{animation:plflash .9s ease-out}
 .pl-lks{display:flex;flex-wrap:wrap;gap:8px}.pl-lk{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:12px;transition:transform .12s}.pl-lk:hover{transform:translateY(-2px)}.pl-lk i{font-style:normal;font-size:1.1rem}.pl-rec{margin:0 0 10px;padding:9px 12px;border:1px dashed var(--line);border-radius:10px;font-size:.92rem}
 @keyframes plconf{0%{transform:translate(0,0) scale(.6);opacity:1}100%{transform:translate(var(--dx),-220px) scale(1.4) rotate(40deg);opacity:0}}.pl-conf{position:fixed;z-index:9999;font-size:22px;pointer-events:none;animation:plconf 1.3s ease-out forwards}
-.cad-pre{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}.cad-pre button{padding:4px 12px;border-radius:99px;font-size:.85rem}.cad-wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start;margin-top:8px}@media(max-width:900px){.cad-wrap{grid-template-columns:minmax(0,1fr)}}.cad-ck{display:flex!important;flex-direction:row!important;align-items:center;gap:8px}.cad-ck input{width:auto!important;flex:none}.cad-svg{width:100%;height:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}.cad-steps{list-style:none;margin:8px 0;padding:0;display:grid;gap:6px}.cad-steps li{display:flex;gap:10px;align-items:flex-start;padding:7px 10px;border:1px solid var(--line);border-radius:10px;opacity:.62;transition:all .2s}.cad-steps li.on{opacity:1;border-color:var(--gain);background:color-mix(in srgb,var(--gain) 9%,transparent)}.cad-steps i{font-style:normal;font-size:1.15rem;line-height:1.3}.cad-steps small{display:block;color:var(--mute);margin-top:1px}.cad-bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}.cad-bar i{display:block;height:100%;background:var(--gain);transition:width .25s}.cad-lock{padding:9px 12px;border-radius:10px;border:1px dashed var(--line);font-size:.95rem}.cad-lock.gain b{color:var(--gain)}.cad-lock.loss b{color:var(--loss)}
+.cad-pre{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}.cad-pre button{padding:4px 12px;border-radius:99px;font-size:.85rem}.cad-wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start;margin-top:8px}@media(max-width:900px){.cad-wrap{grid-template-columns:minmax(0,1fr)}}.cad-ck{display:flex!important;flex-direction:row!important;align-items:center;gap:8px}.cad-ck input{width:auto!important;flex:none}.cad-h{margin:10px 0 6px;font-size:.95rem}.cad-h small{font-weight:400;color:var(--mute)}.cad-eds{display:grid;gap:6px}.cad-ed{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:6px 8px;border:1px solid var(--line);border-radius:10px}.cad-ed .n{width:22px;height:22px;border-radius:50%;background:var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700}.cad-ed label{display:inline-flex!important;flex-direction:row!important;align-items:center;gap:5px;margin:0!important;font-size:.88rem}.cad-ed input[type=number]{width:72px!important;padding:4px 6px;margin:0}.cad-ed select{padding:5px 8px;margin:0;width:auto!important;min-width:190px}.cad-ed .cv{min-width:90px}.cad-ed button{margin-left:auto;padding:2px 10px}.cad-svg{width:100%;height:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}.cad-steps{list-style:none;margin:8px 0;padding:0;display:grid;gap:6px}.cad-steps li{display:flex;gap:10px;align-items:flex-start;padding:7px 10px;border:1px solid var(--line);border-radius:10px;opacity:.62;transition:all .2s}.cad-steps li.on{opacity:1;border-color:var(--gain);background:color-mix(in srgb,var(--gain) 9%,transparent)}.cad-steps i{font-style:normal;font-size:1.15rem;line-height:1.3}.cad-steps small{display:block;color:var(--mute);margin-top:1px}.cad-bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}.cad-bar i{display:block;height:100%;background:var(--gain);transition:width .25s}.cad-lock{padding:9px 12px;border-radius:10px;border:1px dashed var(--line);font-size:.95rem}.cad-lock.gain b{color:var(--gain)}.cad-lock.loss b{color:var(--loss)}
 .dc-su,.imgsu{width:100%;box-sizing:border-box;margin:0 0 6px;padding:6px 8px;font-size:.85rem}.psetup{display:inline-block;margin:0 0 4px;padding:1px 8px;border-radius:99px;background:rgba(47,125,225,.12);font-size:.78rem}
 :root{--bg:#f3f3f3;--panel:#ffffff;--ink:#0a0a0a;--mute:#666666;--line:#d9d9d9;--gain:#0b6b5a;--loss:#b3261e;--accent:#0a0a0a;--accent-ink:#fff;
  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
@@ -1476,63 +1476,77 @@ function plEdit(id){var p=plans.find(function(x){return x.id===id});if(!p)return
  ["hi","lo","rng","entry","stop","t1","t2","t3"].forEach(function(k){if(pl[k]===0||pl[k]==null)pl[k]=""});
  plPend=[];plEditId=id;renderPlan();window.scrollTo(0,0);toast("Editing $"+p.ticker)}
 function plDraft(){try{localStorage.setItem(PLD,JSON.stringify(pl))}catch(e){}}
-/* ===== Stop and entry cadence (Trade Plan) ===== */
+/* ===== Stop and entry cadence (Trade Plan): editable steps ===== */
 var CADK="stockspot-cad-v1",CAD=null;
-function cadDef(){return {off:2,half:0.5,t1:0.7,p1:33,be:true,t2:1.8,p2:33,toff:0,hi:"",lo:"",m:0.2,lc:1.4}}
-function cadLoad(){if(CAD)return;try{CAD=Object.assign(cadDef(),JSON.parse(localStorage.getItem(CADK)||"{}"))}catch(e){CAD=cadDef()}}
+var CADA={mid:{ic:"🛡️",l:"Stop to candle middle",v:null},be:{ic:"🛡️",l:"Stop to breakeven",v:null},lock:{ic:"🔒",l:"Lock in stop at (R)",v:"R"},sell:{ic:"🎯",l:"Sell (%)",v:"%"},trail:{ic:"🏄",l:"Start trailing (cents cushion)",v:"¢"}};
+function cadSteps(a){return a.map(function(x){return {at:x[0],a:x[1],v:x[2]}})}
+function cadDefSteps(){return cadSteps([[0.5,"mid",0],[0.7,"sell",33],[0.7,"be",0],[1.8,"sell",33],[1.8,"trail",0]])}
+function cadDef(){return {off:2,steps:cadDefSteps(),hi:"",lo:"",m:0.2,lc:1.4}}
+function cadLoad(){if(CAD)return;var o={};try{o=JSON.parse(localStorage.getItem(CADK)||"{}")}catch(e){}CAD=Object.assign(cadDef(),o);
+ if(!Array.isArray(o.steps)&&(o.half!=null||o.t1!=null)){var s=[];if(o.half>0)s.push({at:+o.half,a:"mid",v:0});s.push({at:+o.t1||0.7,a:"sell",v:+o.p1||33});if(o.be!==false)s.push({at:+o.t1||0.7,a:"be",v:0});s.push({at:+o.t2||1.8,a:"sell",v:+o.p2||33});s.push({at:+o.t2||1.8,a:"trail",v:+o.toff||0});CAD.steps=s}
+ CAD.steps=CAD.steps.filter(function(x){return CADA[x.a]})}
 function cadSave(){try{localStorage.setItem(CADK,JSON.stringify(CAD))}catch(e){}}
+function cadSort(){CAD.steps=CAD.steps.map(function(x,i){return {s:x,i:i}}).sort(function(a,b){return (+a.s.at||0)-(+b.s.at||0)||a.i-b.i}).map(function(x){return x.s})}
+function cadSellRs(){cadLoad();var r=CAD.steps.filter(function(x){return x.a==="sell"}).map(function(x){return +x.at||0});return [r[0]||1,r[1]||2]}
+function cadF(v){return "$"+v.toFixed(2)}
+function cadMoney(v){return (v<0?"-":"+")+"$"+Math.abs(v).toFixed(2)}
 function cadModel(){cadLoad();var long=pl.side==="long",H=parseFloat(CAD.hi)||parseFloat(pl.hi),L=parseFloat(CAD.lo)||parseFloat(pl.lo),demo=false;
  if(!(H>0&&L>0&&H>L)){H=10.40;L=10.00;demo=true}
  var off=(+CAD.off||0)/100,entry=long?H+off:L-off,stop=long?L:H,D=Math.abs(entry-stop),d=long?1:-1,mid=(H+L)/2;
- var px=function(r){return entry+d*r*D},rOf=function(p){return d*(p-entry)/D};
+ var px=function(r){return entry+d*r*D},rOf=function(p){return d*(p-entry)/D},better=function(a,b){return long?Math.max(a,b):Math.min(a,b)};
  var c=null;try{c=plCalc()}catch(e){}var sh=c&&c.unit>0&&D>0?Math.floor(c.unit/D):0,real=sh>0;if(!real)sh=100;
- var p1=Math.max(0,Math.min(100,+CAD.p1||0)),p2=Math.max(0,Math.min(100-p1,+CAD.p2||0)),s1=Math.floor(sh*p1/100),s2=Math.floor(sh*p2/100);
- var m=+CAD.m,out=m<=-1,halfDone=!out&&m>=CAD.half,t1Done=!out&&m>=CAD.t1,t2Done=!out&&m>=CAD.t2,stopPx=stop;
- if(halfDone)stopPx=mid;if(t1Done&&CAD.be)stopPx=entry;
- if(t2Done){var tr=px(+CAD.lc)-d*(+CAD.toff||0)/100;stopPx=long?Math.max(stopPx,tr):Math.min(stopPx,tr)}
- var left=sh-(t1Done?s1:0)-(t2Done?s2:0),lock=out?-sh*D:(t1Done?s1*CAD.t1*D:0)+(t2Done?s2*CAD.t2*D:0)+left*(stopPx-entry)*d;
- return {long:long,H:H,L:L,demo:demo,real:real,entry:entry,stop:stop,D:D,d:d,mid:mid,px:px,rOf:rOf,sh:sh,s1:s1,s2:s2,s3:sh-s1-s2,p1:p1,p2:p2,p3:100-p1-p2,m:m,out:out,halfDone:halfDone,t1Done:t1Done,t2Done:t2Done,stopPx:stopPx,lock:lock,lockR:D>0?lock/(sh*D):0}}
-function cadMoney(v){return (v<0?"-":"+")+"$"+Math.abs(v).toFixed(2)}
+ var m=+CAD.m,out=m<=-1,stopPx=stop,left=sh,bank=0,trailing=false,toff=0,rows=[];
+ CAD.steps.forEach(function(s){var at=+s.at||0,hit=!out&&m>=at,v=+s.v||0,txt="",sub="",qty=0;
+  if(s.a==="mid"){txt="Pull the stop to the middle of the trigger candle";sub="Stop "+cadF(mid);if(hit)stopPx=better(stopPx,mid)}
+  else if(s.a==="be"){txt="Move the stop to breakeven";sub="Stop "+cadF(entry)+" &middot; worst case is about zero";if(hit)stopPx=better(stopPx,entry)}
+  else if(s.a==="lock"){var lp=px(v);txt="Lock the stop in at +"+v+"R";sub="Stop "+cadF(lp);if(hit)stopPx=better(stopPx,lp)}
+  else if(s.a==="sell"){qty=Math.min(left,Math.floor(sh*v/100));txt="Sell "+v+"% ("+qty+" sh)";sub="Banks "+cadMoney(qty*at*D);if(hit){left-=qty;bank+=qty*at*D}}
+  else{txt="Start trailing: stop follows each candle's close"+(v?" ("+v+"&cent; cushion)":"");sub="No fixed target. A close back through the trail ends it.";if(hit){trailing=true;toff=v}}
+  rows.push({at:at,a:s.a,txt:txt,sub:sub,hit:hit,v:v})});
+ if(trailing){var tr=px(+CAD.lc)-d*toff/100;stopPx=better(stopPx,tr)}
+ var lock=out?-sh*D:bank+left*(stopPx-entry)*d;
+ return {long:long,H:H,L:L,demo:demo,real:real,entry:entry,stop:stop,D:D,d:d,mid:mid,px:px,rOf:rOf,sh:sh,m:m,out:out,stopPx:stopPx,lock:lock,lockR:D>0?lock/(sh*D):0,rows:rows,trailing:trailing,left:left}}
+function cadStepsEd(){return '<div class="cad-eds">'+CAD.steps.map(function(s,i){var A=CADA[s.a];
+ return '<div class="cad-ed"><span class="n">'+(i+1)+'</span><label>At <input data-cds="at" data-i="'+i+'" type="number" step="0.05" min="0" value="'+esc(s.at)+'"> R</label><select data-cds="a" data-i="'+i+'" aria-label="Action">'+Object.keys(CADA).map(function(k){return '<option value="'+k+'"'+(k===s.a?" selected":"")+'>'+CADA[k].ic+" "+esc(CADA[k].l.replace(/ \(.*\)$/,""))+'</option>'}).join("")+'</select>'+
+  (A.v?'<label class="cv">'+(s.a==="sell"?"%":s.a==="lock"?"R":"¢")+' <input data-cds="v" data-i="'+i+'" type="number" step="any" value="'+esc(s.v)+'"></label>':'<span class="cv"></span>')+'<button type="button" data-cdx="'+i+'" aria-label="Remove step" title="Remove step">&times;</button></div>'}).join("")+'</div>'}
 function cadBuild(){var el=$("plcad");if(!el)return;cadLoad();
- var f=function(l,k,ph,step){return '<label class="pl-f">'+l+'<input data-cd="'+k+'" type="number" step="'+(step||"any")+'" inputmode="decimal" placeholder="'+(ph||"")+'" value="'+esc(CAD[k])+'"></label>'};
- el.innerHTML='<h2 style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">Stop &amp; entry cadence <span class="pill">your game plan</span></h2><p class="hint" style="margin:0 0 10px">Drag the rocket to see what you do at every step. Change any number to make it yours. It saves itself.</p>'+
- '<div class="cad-pre"><button type="button" data-cdpre="mine">My cadence</button><button type="button" data-cdpre="tight">Tight &#128274;</button><button type="button" data-cdpre="runner">Runner &#127939;</button></div>'+
- '<div class="pl-grid">'+f("Trigger candle high","hi",pl.hi||"0.00")+f("Trigger candle low","lo",pl.lo||"0.00")+f("Enter this many cents past the trigger","off","2")+f("Move stop to the candle middle at (R)","half","0.5")+'</div>'+
- '<div class="pl-grid">'+f("Target 1 (R)","t1","0.7")+f("Sell at T1 (%)","p1","33")+f("Target 2 (R)","t2","1.8")+f("Sell at T2 (%)","p2","33")+'</div>'+
- '<div class="pl-grid"><label class="pl-f cad-ck"><input type="checkbox" data-cd="be"'+(CAD.be?" checked":"")+'> <span>Stop to breakeven at T1</span></label>'+f("Trail cushion past last close (cents)","toff","0")+'</div>'+
+ var f=function(l,k,ph){return '<label class="pl-f">'+l+'<input data-cd="'+k+'" type="number" step="any" inputmode="decimal" placeholder="'+(ph||"")+'" value="'+esc(CAD[k])+'"></label>'};
+ el.innerHTML='<h2 style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">&#129692; Stop &amp; entry cadence <span class="pill">your game plan</span></h2><p class="hint" style="margin:0 0 10px">Every step is yours: pick when it happens (in R), what happens, and add or remove steps. Drag the rocket to replay it. Saves itself.</p>'+
+ '<div class="cad-pre"><button type="button" data-cdpre="mine">My cadence</button><button type="button" data-cdpre="tight">Tight &#128274;</button><button type="button" data-cdpre="runner">Runner &#127939;</button><button type="button" data-cdpre="early">Trail at 1.5R &#127940;</button></div>'+
+ '<div class="pl-grid">'+f("Trigger candle high","hi",pl.hi||"0.00")+f("Trigger candle low","lo",pl.lo||"0.00")+f("Enter this many cents past the trigger","off","2")+'</div>'+
+ '<h3 class="cad-h">Steps <small>(they run in order of R)</small></h3><div id="cadeds"></div><div class="row" style="margin:6px 0 8px;gap:8px"><button type="button" data-cdadd="1">&#65291; Add step</button></div>'+
  '<div class="pl-grid" style="margin-top:6px"><label class="pl-f" style="margin:0">&#128640; How far has it gone your way? <b id="cadmv"></b><input type="range" data-cd="m" min="-1.2" max="3.2" step="0.05" value="'+CAD.m+'" aria-label="Move the price"></label><label class="pl-f" id="cadlcw" style="margin:0" hidden>Last candle closed at <b id="cadlcv"></b><input type="range" data-cd="lc" min="0" max="3.5" step="0.05" value="'+CAD.lc+'" aria-label="Last candle close"></label></div><div id="cadout"></div>'+
  '<div class="row" style="margin:10px 0 0;gap:8px"><button type="button" class="primary" data-cduse="1">Use this in my trade</button><span class="hint" style="margin:0">Fills entry, stop and targets above and writes your exit plan.</span></div>';
- cadUpdate()}
-function cadUpdate(){var el=$("cadout");if(!el)return;var M=cadModel(),L=M.long,verb=L?"Buy":"Sell short",past=L?"above":"below",ab=L?"below":"above",$f=function(v){return "$"+v.toFixed(2)};
- var rLo=-1.25,rHi=3.3,W=560,Hh=330,yy=function(r){return 14+(rHi-r)/(rHi-rLo)*(Hh-28)},xs=70;
- var lines=[[-1,"Stop "+$f(M.stop),"var(--loss)",""],[0,"Entry "+$f(M.entry),"var(--ink)",""],[CAD.half,"Halfway "+CAD.half+"R","var(--mute)","4 4"],[CAD.t1,"T1 "+CAD.t1+"R "+$f(M.px(CAD.t1)),"var(--gain)",""],[CAD.t2,"T2 "+CAD.t2+"R "+$f(M.px(CAD.t2)),"var(--gain)",""]];
+ $("cadeds").innerHTML=cadStepsEd();cadUpdate()}
+function cadUpdate(){var el=$("cadout");if(!el)return;var M=cadModel(),L=M.long,verb=L?"Buy":"Sell short",past=L?"above":"below";
+ var rLo=-1.25,rHi=Math.max(3.3,CAD.steps.reduce(function(a,x){return Math.max(a,+x.at||0)},0)+.4),W=560,Hh=330,yy=function(r){return 14+(rHi-r)/(rHi-rLo)*(Hh-28)},xs=70;
  var s='<svg viewBox="0 0 '+W+' '+Hh+'" class="cad-svg" role="img" aria-label="Price ladder">';
- lines.forEach(function(l){var y=yy(l[0]);s+='<line x1="'+xs+'" x2="'+(W-130)+'" y1="'+y+'" y2="'+y+'" stroke="'+l[2]+'" stroke-width="1.5"'+(l[3]?' stroke-dasharray="'+l[3]+'"':'')+'/><text x="'+(W-124)+'" y="'+(y+4)+'" font-size="12" fill="var(--ink)">'+esc(l[1])+'</text>'});
+ var ln=function(r,t,c,dash){var y=yy(r);return '<line x1="'+xs+'" x2="'+(W-150)+'" y1="'+y+'" y2="'+y+'" stroke="'+c+'" stroke-width="1.5"'+(dash?' stroke-dasharray="'+dash+'"':'')+'/><text x="'+(W-144)+'" y="'+(y+4)+'" font-size="11" fill="var(--ink)">'+esc(t)+'</text>'};
+ s+=ln(-1,"Stop "+cadF(M.stop),"var(--loss)")+ln(0,"Entry "+cadF(M.entry),"var(--ink)");
+ var seen={};CAD.steps.forEach(function(x){var r=+x.at||0;(seen[r]=seen[r]||[]).push(CADA[x.a].ic)});
+ Object.keys(seen).forEach(function(r){var st=CAD.steps.filter(function(x){return (+x.at||0)===+r}),sl=st.some(function(x){return x.a==="sell"}),c=sl?"var(--gain)":st.some(function(x){return x.a==="trail"})?"#8e44ad":"var(--mute)";s+=ln(+r,seen[r].join("")+" "+(+r)+"R "+cadF(M.px(+r)),c,sl?"":"4 4")});
  var yH=yy(M.rOf(M.H)),yL=yy(M.rOf(M.L)),yM=yy(M.rOf(M.mid));
  s+='<rect x="18" y="'+Math.min(yH,yL)+'" width="26" height="'+Math.abs(yL-yH)+'" rx="3" fill="var(--line)" stroke="var(--mute)"/><line x1="31" x2="31" y1="'+(Math.min(yH,yL)-8)+'" y2="'+(Math.max(yH,yL)+8)+'" stroke="var(--mute)"/><text x="31" y="'+(Math.max(yH,yL)+22)+'" font-size="10" text-anchor="middle" fill="var(--mute)">trigger</text><line x1="18" x2="44" y1="'+yM+'" y2="'+yM+'" stroke="var(--ink)" stroke-dasharray="2 2"/>';
- if(!M.out){var ys=yy(M.rOf(M.stopPx));s+='<line x1="'+xs+'" x2="'+(W-130)+'" y1="'+ys+'" y2="'+ys+'" stroke="var(--loss)" stroke-width="4" opacity=".55"/><text x="'+(xs+4)+'" y="'+(ys-6)+'" font-size="12" font-weight="700" fill="var(--loss)">&#128737; stop now '+$f(M.stopPx)+'</text>'}
- var ym=yy(Math.max(rLo,Math.min(rHi,M.m)));s+='<line x1="'+(xs+170)+'" x2="'+(xs+170)+'" y1="'+yy(0)+'" y2="'+ym+'" stroke="var(--accent)" stroke-width="3" stroke-dasharray="1 6" stroke-linecap="round"/><text x="'+(xs+170)+'" y="'+(ym+8)+'" font-size="26" text-anchor="middle">'+(M.out?"&#128165;":M.t2Done?"&#127937;":"&#128640;")+'</text></svg>';
- var st=function(done,ic,t,sub){return '<li class="'+(done?"on":"")+'"><i>'+(done?"&#9989;":ic)+'</i><div><b>'+t+'</b><small>'+sub+'</small></div></li>'};
- var steps='<ol class="cad-steps">'+
-  st(M.m>=0,"1&#65039;&#8419;",verb+" "+(+CAD.off)+"&cent; "+past+" the trigger candle on the next candle's open","Entry "+$f(M.entry)+" &middot; stop "+$f(M.stop)+" &middot; 1R = "+$f(M.D)+" &middot; "+M.sh+" shares"+(M.real?"":" (demo size: set your balance)"))+
-  st(M.halfDone,"2&#65039;&#8419;","At +"+CAD.half+"R ("+$f(M.px(CAD.half))+") pull the stop to the middle of the trigger candle","Stop "+$f(M.mid)+" &middot; you can only lose a little now")+
-  st(M.t1Done,"3&#65039;&#8419;","T1 at +"+CAD.t1+"R ("+$f(M.px(CAD.t1))+"): sell "+M.p1+"% ("+M.s1+" sh)"+(CAD.be?", stop to breakeven":""),CAD.be?"Free trade: worst case is about zero":"Stop stays at the candle middle")+
-  st(M.t2Done,"4&#65039;&#8419;","T2 at +"+CAD.t2+"R ("+$f(M.px(CAD.t2))+"): sell "+M.p2+"% ("+M.s2+" sh)","Banked "+cadMoney((M.t1Done?M.s1*CAD.t1*M.D:0)+(M.t2Done?M.s2*CAD.t2*M.D:0)))+
-  st(M.t2Done,"5&#65039;&#8419;","T3: ride the last "+M.p3+"% ("+M.s3+" sh). Stop trails "+ab.replace("below","just below").replace("above","just above")+" each candle's close"+((+CAD.toff)?" ("+(+CAD.toff)+"&cent; cushion)":""),"No fixed target. A close back through the trail ends it.")+'</ol>';
- var done=[M.m>=0,M.halfDone,M.t1Done,M.t2Done].filter(Boolean).length;
- $("cadmv").textContent=(M.m>0?"+":"")+(+M.m).toFixed(2)+"R";$("cadlcw").hidden=!M.t2Done;$("cadlcv").textContent=(+CAD.lc).toFixed(2)+"R";
- el.innerHTML='<div class="cad-wrap"><div class="cad-left">'+s+'</div><div class="cad-right">'+
-  '<div class="cad-bar"><i style="width:'+(done*25)+'%"></i></div>'+steps+
-  '<div class="cad-lock '+(M.lock>=0?"gain":"loss")+'">'+(M.out?"&#128165; Stopped out: ":"&#128274; If the stop hits right now: ")+'<b>'+cadMoney(M.lock)+'</b> ('+(M.lockR>=0?"+":"")+M.lockR.toFixed(2)+'R)'+(M.t2Done&&!M.out?" &#127881;":"")+'</div></div></div>'}
-var CADPRE={mine:{off:2,half:0.5,t1:0.7,p1:33,be:true,t2:1.8,p2:33,toff:0},tight:{off:1,half:0.4,t1:0.5,p1:50,be:true,t2:1.2,p2:30,toff:0},runner:{off:2,half:0.7,t1:1,p1:25,be:true,t2:2.5,p2:25,toff:2}};
-$("planv").addEventListener("input",function(ev){var t=ev.target;if(!t||!t.dataset||t.dataset.cd==null)return;var k=t.dataset.cd;
- CAD[k]=t.type==="checkbox"?t.checked:(t.type==="number"||t.type==="range"?(t.value===""?"":parseFloat(t.value)):t.value);cadSave();
- cadUpdate()});
-$("planv").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("[data-cdpre],[data-cduse]");if(!b)return;
- if(b.dataset.cdpre){Object.assign(CAD,CADPRE[b.dataset.cdpre]);cadSave();cadBuild();toast("Loaded "+b.textContent.replace(/[^\w ]/g,"").trim());return}
+ if(!M.out){var ys=yy(M.rOf(M.stopPx));s+='<line x1="'+xs+'" x2="'+(W-150)+'" y1="'+ys+'" y2="'+ys+'" stroke="var(--loss)" stroke-width="4" opacity=".55"/><text x="'+(xs+4)+'" y="'+(ys-6)+'" font-size="12" font-weight="700" fill="var(--loss)">&#128737; stop now '+cadF(M.stopPx)+'</text>'}
+ var ym=yy(Math.max(rLo,Math.min(rHi,M.m)));s+='<line x1="'+(xs+170)+'" x2="'+(xs+170)+'" y1="'+yy(0)+'" y2="'+ym+'" stroke="var(--accent)" stroke-width="3" stroke-dasharray="1 6" stroke-linecap="round"/><text x="'+(xs+170)+'" y="'+(ym+8)+'" font-size="26" text-anchor="middle">'+(M.out?"&#128165;":M.trailing?"&#127937;":"&#128640;")+'</text></svg>';
+ var done=M.rows.filter(function(r){return r.hit}).length;
+ var steps='<ol class="cad-steps"><li class="'+(M.m>=0?"on":"")+'"><i>'+(M.m>=0?"&#9989;":"1&#65039;&#8419;")+'</i><div><b>'+verb+' '+(+CAD.off)+'&cent; '+past+' the trigger candle on the next candle\'s open</b><small>Entry '+cadF(M.entry)+' &middot; stop '+cadF(M.stop)+' &middot; 1R = '+cadF(M.D)+' &middot; '+M.sh+' shares'+(M.real?"":" (demo size: set your balance)")+'</small></div></li>'+
+  M.rows.map(function(r){return '<li class="'+(r.hit?"on":"")+'"><i>'+(r.hit?"&#9989;":CADA[r.a].ic)+'</i><div><b>At +'+r.at+'R ('+cadF(M.px(r.at))+'): '+r.txt+'</b><small>'+r.sub+'</small></div></li>'}).join("")+'</ol>';
+ $("cadmv").textContent=(M.m>0?"+":"")+(+M.m).toFixed(2)+"R";$("cadlcw").hidden=!M.trailing;$("cadlcv").textContent=(+CAD.lc).toFixed(2)+"R";
+ el.innerHTML='<div class="cad-wrap"><div class="cad-left">'+s+'</div><div class="cad-right"><div class="cad-bar"><i style="width:'+(M.rows.length?Math.round(done/M.rows.length*100):0)+'%"></i></div>'+steps+
+  '<div class="cad-lock '+(M.lock>=0?"gain":"loss")+'">'+(M.out?"&#128165; Stopped out: ":"&#128274; If the stop hits right now: ")+'<b>'+cadMoney(M.lock)+'</b> ('+(M.lockR>=0?"+":"")+M.lockR.toFixed(2)+'R)'+(M.trailing&&!M.out?" &#127881;":"")+'</div></div></div>'}
+var CADPRE={mine:{off:2,steps:cadDefSteps()},tight:{off:1,steps:cadSteps([[0.4,"mid",0],[0.5,"sell",50],[0.5,"be",0],[1.2,"sell",30],[1.2,"trail",0]])},runner:{off:2,steps:cadSteps([[0.7,"mid",0],[1,"sell",25],[1,"be",0],[2.5,"sell",25],[2.5,"trail",2]])},early:{off:2,steps:cadSteps([[0.5,"mid",0],[0.7,"sell",33],[0.7,"be",0],[1.5,"trail",0],[1.8,"sell",33]])}};
+$("planv").addEventListener("input",function(ev){var t=ev.target;if(!t||!t.dataset)return;
+ if(t.dataset.cds){var s=CAD.steps[+t.dataset.i];if(!s)return;if(t.dataset.cds==="a"){s.a=t.value;if(!CADA[s.a].v)s.v=0;cadSave();$("cadeds").innerHTML=cadStepsEd();cadUpdate();return}s[t.dataset.cds]=t.value===""?0:parseFloat(t.value);cadSave();cadUpdate();return}
+ if(t.dataset.cd==null)return;CAD[t.dataset.cd]=t.type==="number"||t.type==="range"?(t.value===""?"":parseFloat(t.value)):t.value;cadSave();cadUpdate()});
+$("planv").addEventListener("change",function(ev){var t=ev.target;if(t&&t.dataset&&t.dataset.cds==="at"){cadSort();cadSave();$("cadeds").innerHTML=cadStepsEd();cadUpdate()}});
+$("planv").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("[data-cdpre],[data-cduse],[data-cdadd],[data-cdx]");if(!b)return;
+ if(b.dataset.cdadd){var last=CAD.steps.length?+CAD.steps[CAD.steps.length-1].at||1:1;CAD.steps.push({at:r2(last+0.5),a:"lock",v:0.5});cadSort();cadSave();$("cadeds").innerHTML=cadStepsEd();cadUpdate();toast("Step added. Change it to what you want");return}
+ if(b.dataset.cdx!=null){CAD.steps.splice(+b.dataset.cdx,1);cadSave();$("cadeds").innerHTML=cadStepsEd();cadUpdate();return}
+ if(b.dataset.cdpre){var P=CADPRE[b.dataset.cdpre];CAD.off=P.off;CAD.steps=JSON.parse(JSON.stringify(P.steps));cadSave();cadBuild();toast("Loaded "+b.textContent.replace(/[^\w\. ]/g,"").trim());return}
  var M=cadModel();if(M.demo){toast("Enter the trigger candle high and low first");return}
- var f=function(v){return String(+v.toFixed(2))};pl.mode="manual";pl.entry=f(M.entry);pl.stop=f(M.stop);pl.t1=f(M.px(CAD.t1));pl.t2=f(M.px(CAD.t2));pl.t3="";
- pl.exit=(M.long?"Buy ":"Sell short ")+CAD.off+"c "+(M.long?"above":"below")+" the trigger candle on the next open. At +"+CAD.half+"R move stop to the candle middle ("+f(M.mid)+"). T1 +"+CAD.t1+"R: sell "+M.p1+"%"+(CAD.be?" and move stop to breakeven":"")+". T2 +"+CAD.t2+"R: sell "+M.p2+"%. T3: trail the stop "+(M.long?"below":"above")+" the previous candle's close.";
+ var f=function(v){return String(+v.toFixed(2))},R=cadSellRs();pl.mode="manual";pl.entry=f(M.entry);pl.stop=f(M.stop);pl.t1=f(M.px(R[0]));pl.t2=f(M.px(R[1]));pl.t3="";
+ pl.exit=(M.long?"Buy ":"Sell short ")+CAD.off+"c "+(M.long?"above":"below")+" the trigger candle on the next open. "+M.rows.map(function(r){return "At +"+r.at+"R: "+r.txt.replace(/\s*\(\d+ sh\)/,"").replace(/&cent;/g,"c").replace(/<[^>]+>/g,"")+"."}).join(" ");
  plDraft();renderPlan();toast("Filled into your trade")});
 
 /* ===== Trade Plan banner, links, fun ===== */
@@ -1639,7 +1653,7 @@ function wsMove(ev){if(!WSDrag)return;var d=WSDrag,pos=wsY(ev,d.kind);if(!pos)re
  wsDraw()}
 function wsEnd(){if(!WSDrag)return;WSDrag=null;WSFreeze=null;wsSave();wsDraw()}
 function wsAddAt(_,type){wsLoad();wsPush();var C=wsC(),prev=C.length?C[C.length-1].c:(WS.lines.entry!=null?WS.lines.entry:10);C.push(wsMk(type,prev));WS.sel=C.length-1;wsSave();wsDraw()}
-function wsRR(){var C=wsC();wsPush();var last=C[WS.sel>=0?WS.sel:C.length-1],cad=null;try{cadLoad();cad=CAD}catch(e){}var m1=cad?+cad.t1||1:1,m2=cad?+cad.t2||2:2;
+function wsRR(){var C=wsC();wsPush();var last=C[WS.sel>=0?WS.sel:C.length-1],cad=null;try{cadLoad();cad=CAD}catch(e){}var cr=cad?cadSellRs():[1,2],m1=cr[0],m2=cr[1];
  var long=WS.side==="long",e=last?last.c:10,s=last?(long?last.l:last.h):(long?e-.4:e+.4);if(Math.abs(e-s)<0.02)s=long?e-.2:e+.2;var R=Math.abs(e-s),d=long?1:-1;
  WS.lines={entry:r2(e),stop:r2(s),t1:r2(e+d*m1*R),t2:r2(e+d*m2*R)};WS.ei=WS.sel>=0?WS.sel:Math.max(0,C.length-1);wsSave();wsDraw();toast("Drag the lines to change them")}
 function wsUse(s){var L=s.lines||{};pl.strat=s.name||pl.strat;pl.side=s.side||pl.side;
