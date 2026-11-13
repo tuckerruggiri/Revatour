@@ -148,19 +148,26 @@
     B.cmp = B.strats.length > 1 ? B.strats.map(function (t) { var r = t.id === s.id ? B.res : runOne(t, list); return { id: t.id, name: t.name, side: t.side, sum: r.sum }; }) : null;
     B.code = ""; q.render();
   }
-  function parseCsv(txt, name, pc) {
-    var rows = txt.split(/\r?\n/).map(function (l) { return l.trim(); }).filter(Boolean).map(function (l) { return l.split(/[,\t;]+/).map(function (x) { return x.trim().replace(/^"|"$/g, ""); }); });
-    if (rows.length && isNaN(parseFloat(rows[0][rows[0].length - 1])) ) rows.shift();
-    var out = [], times = [], hasT = rows.length && /^\d{1,2}:\d{2}/.test((rows[0][0] || "").slice(-8)) || (rows.length && /\d{1,2}:\d{2}/.test(rows[0][0] || ""));
-    rows.forEach(function (r) {
-      var o = hasT ? r.slice(1) : r.slice(r.length - 5), tm = null; if (hasT) { var m = /(\d{1,2}):(\d{2})/.exec(r[0]); tm = m ? +m[1] * 60 + +m[2] : null; }
-      var v = o.slice(0, 5).map(parseFloat); if (v.length < 4 || v.slice(0, 4).some(isNaN)) return;
-      if (tm != null && (tm < 570 || tm >= 960)) return; out.push({ o: v[0], h: v[1], l: v[2], c: v[3], v: isNaN(v[4]) ? 0 : v[4], k: "normal" }); times.push(tm);
+  function parseCsv(txt, name, pc0) {
+    var q = ex(), days = [], dayKey = null, lastTm = -1, counter = 0, cells, rows = txt.split(/\r?\n/);
+    rows.forEach(function (line) {
+      cells = line.trim().split(/[,\t;]+/).map(function (x) { return x.trim().replace(/^"|"$/g, ""); }); if (cells.length < 5) return;
+      var k = cells.length; while (k > 0 && cells[k - 1] !== "" && !isNaN(Number(cells[k - 1]))) k--; var nums = cells.slice(k).map(Number);
+      if (nums.length < 4) return; if (nums.length > 5) { k = cells.length - 5; nums = nums.slice(nums.length - 5); }
+      var stamp = cells.slice(0, k).join(" "), tmM = /(\d{1,2}):(\d{2})/.exec(stamp), tm = tmM ? +tmM[1] * 60 + +tmM[2] : null;
+      var dM = /(\d{4})-(\d{1,2})-(\d{1,2})/.exec(stamp), d2 = !dM && /(\d{1,2})\/(\d{1,2})\/(\d{2,4})/.exec(stamp), key = dM ? dM[1] + "-" + ("0" + dM[2]).slice(-2) + "-" + ("0" + dM[3]).slice(-2) : d2 ? (d2[3].length === 2 ? "20" + d2[3] : d2[3]) + "-" + ("0" + d2[1]).slice(-2) + "-" + ("0" + d2[2]).slice(-2) : null;
+      if (!key) { if (tm != null && lastTm >= 0 && tm <= lastTm) counter++; key = "day" + counter; }
+      if (tm != null) { lastTm = tm; if (tm < 570 || tm >= 960) return; }
+      var cur = days.length && days[days.length - 1].key === key ? days[days.length - 1] : null; if (!cur) { cur = { key: key, c: [], t: [] }; days.push(cur); }
+      cur.c.push({ o: nums[0], h: nums[1], l: nums[2], c: nums[3], v: nums.length > 4 ? nums[4] : 0, k: "normal" }); cur.t.push(tm);
     });
-    if (out.length < 5) return null;
-    var tf = times.length > 1 && times[0] != null && times[1] != null ? Math.max(1, times[1] - times[0]) : (ex().S.sim.tf || 2);
-    pc = pc > 0 ? pc : out[0].o;
-    return { name: name || "Real chart " + (ex().S.scenes.length + 1), pc: pc, gap: Math.round((out[0].o / pc - 1) * 1000) / 10, tf: tf, c: out, vw: {}, em: {} };
+    days = days.filter(function (d) { return d.c.length >= 5; }); if (!days.length) return null;
+    var out = [], prev = pc0 > 0 ? pc0 : 0;
+    days.forEach(function (d, n) {
+      var tf = d.t.length > 1 && d.t[0] != null && d.t[1] != null ? Math.max(1, d.t[1] - d.t[0]) : (q.S.sim.tf || 2), pc = prev > 0 ? prev : d.c[0].o, label = /^day/.test(d.key) ? (days.length > 1 ? "day " + (n + 1) : "") : d.key;
+      out.push({ name: ((name || "Real chart") + (label ? " " + label : "")).trim(), pc: Math.round(pc * 100) / 100, gap: Math.round((d.c[0].o / pc - 1) * 1000) / 10, tf: tf, c: d.c, vw: {}, em: {} }); prev = d.c[d.c.length - 1].c;
+    });
+    return out;
   }
   function pct(x) { return Math.round(x * 100) + "%"; }
   function resHtml(s) {
@@ -186,7 +193,7 @@
     var h = '<div class="bt-note"><b>Your strategy in plain English</b><ol class="bb-ol">' + sent.map(function (l) { return '<li>' + esc(l) + '</li>'; }).join("") + '</ol></div>';
     if (!s.trig.conds.length) h += '<div class="bt-note" style="border-left-color:var(--loss)">No signal rules yet, so every candle counts as a signal. Add rules in the Signal step.</div>';
     h += '<div class="bt-bar"><span class="bt-hint">Tests run on: <b>' + (S.sim.c.length ? "your current chart (" + S.sim.c.length + " candles)" : "no current chart") + '</b>, <b>' + S.scenes.length + '</b> saved ' + (S.scenes.length === 1 ? "scene" : "scenes") + '</span><label>and <select data-bpr="1">' + [0, 10, 20, 50, 100].map(function (v) { return '<option value="' + v + '"' + (B.practice === v ? " selected" : "") + '>' + (v ? v + " random practice days" : "no practice days") + '</option>'; }).join("") + '</select></label></div>';
-    h += '<details class="bt-add"' + (B.imp ? " open" : "") + '><summary>Add a real chart (paste candles from your broker or a CSV)</summary><div class="bb-imp"><p class="bb-tip">Paste one day of candles, one per line: <b>time, open, high, low, close, volume</b> (like 09:30,4.52,4.60,4.48,4.55,120000). Only 9:30 to 4:00pm candles are kept. Then it is saved as a scene and included in every test.</p><textarea id="bb-csv" rows="6" placeholder="09:30,4.52,4.60,4.48,4.55,120000&#10;09:32,4.55,4.58,4.50,4.51,80000"></textarea><div class="bt-bar"><input id="bb-csvn" placeholder="Name (e.g. XYZ Oct 3)" style="width:200px"><label>Yesterday\'s close $<input id="bb-csvpc" inputmode="decimal" style="width:80px"></label><button type="button" class="bt-b on" data-bt-act="import">Add chart</button></div></div></details>';
+    h += '<details class="bt-add"' + (B.imp || !S.scenes.length ? " open" : "") + '><summary>Add real charts (paste candles or upload a CSV, one day or many days)</summary><div class="bb-imp"><p class="bb-tip"><b>Many days at once is fine.</b> Put one candle per line: <b>date and time, open, high, low, close, volume</b>. Examples that work:<br><code>2026-10-01 09:30,4.52,4.60,4.48,4.55,120000</code><br><code>2026-10-01,09:30,4.52,4.60,4.48,4.55,120000</code><br><code>10/1/2026 9:30,4.52,4.60,4.48,4.55,120000</code><br>Each date becomes its own chart, and each day\'s "yesterday close" is the day before\'s last close. If your data has no dates, a new day starts whenever the time jumps back (like 15:59 to 09:30). Only 9:30am to 4:00pm candles are kept. Most brokers and TradingView can export a CSV like this, then open it in Notepad, copy everything, and paste it below, or use the upload button.</p><div class="bt-bar"><label>Upload a CSV file <input type="file" id="bb-file" accept=".csv,.txt,text/csv,text/plain"></label></div><textarea id="bb-csv" rows="6" placeholder="2026-10-01 09:30,4.52,4.60,4.48,4.55,120000&#10;2026-10-01 09:32,4.55,4.58,4.50,4.51,80000&#10;..."></textarea><div class="bt-bar"><input id="bb-csvn" placeholder="Name (e.g. XYZ)" style="width:200px"><label>Yesterday\'s close before the first day $ (optional)<input id="bb-csvpc" inputmode="decimal" style="width:80px"></label><button type="button" class="bt-b on" data-bt-act="import">Add charts</button>' + (S.scenes.length ? '<button type="button" class="bt-b" data-bt-act="clearscenes">Delete all ' + S.scenes.length + ' saved scenes</button>' : "") + '</div></div></details>';
     h += '<div class="bt-bar"><button type="button" class="bt-b on" data-bt-act="run">Run test</button><button type="button" class="bt-b" data-bt-act="code">Build bot code</button><span class="bt-hint">Run test also compares all your saved strategies.</span></div>' + resHtml(s) + codeBox(s);
     return card("review", n, "Review and test", "Check the plan, run it on your charts, then turn it into bot code.", h);
   }
@@ -249,10 +256,11 @@
     if (a === "dlcode") { q.download("bot.py", B.code, "text/x-python"); return; }
     if (a === "dlcandles") { q.download("candles.csv", q.exportCandles(), "text/csv"); return; }
     if (a === "import") {
-      var sc = parseCsv(root.querySelector("#bb-csv").value, (root.querySelector("#bb-csvn").value || "").trim(), parseFloat(root.querySelector("#bb-csvpc").value));
-      if (!sc) { q.toast("Could not read those candles. Need time,open,high,low,close,volume on each line."); return; }
-      q.S.scenes.push(sc); q.save(); B.imp = false; stale(); q.toast("Chart added as a scene (" + sc.c.length + " candles)"); q.render();
+      var scs = parseCsv(root.querySelector("#bb-csv").value, (root.querySelector("#bb-csvn").value || "").trim(), parseFloat(root.querySelector("#bb-csvpc").value));
+      if (!scs) { q.toast("Could not read those candles. Each line needs time, open, high, low, close, volume."); return; }
+      scs.forEach(function (sc) { q.S.scenes.push(sc); }); q.save(); B.imp = false; stale(); q.toast(scs.length + (scs.length === 1 ? " chart" : " charts") + " added as scenes"); q.render();
     }
+    if (a === "clearscenes") { if (window.confirm("Delete all " + q.S.scenes.length + " saved scenes?")) { q.S.scenes = []; q.save(); stale(); q.render(); } }
   }
   function bind(r) {
     if (r.__bb) return; r.__bb = 1; root = r;
@@ -265,6 +273,7 @@
       var t = ev.target, s = cur(), p;
       if (t.getAttribute && t.getAttribute("data-bsel")) { B.cur = t.value; B.res = null; ex().S.cres = null; save(); ex().render(); return; }
       if (t.getAttribute && t.getAttribute("data-bpr")) { B.practice = +t.value; B.res = null; save(); ex().render(); return; }
+      if (t.id === "bb-file") { var fl = t.files && t.files[0]; if (fl) { var fr = new FileReader(); fr.onload = function () { var ta = root.querySelector("#bb-csv"); if (ta) ta.value = String(fr.result || ""); var nm = root.querySelector("#bb-csvn"); if (nm && !nm.value) nm.value = fl.name.replace(/\.[^.]+$/, ""); ex().toast("File loaded. Press Add charts."); }; fr.readAsText(fl); } return; }
       if (!s) return;
       if ((p = t.getAttribute("data-bp"))) {
         var ty = t.getAttribute("data-bty"), v = ty === "b" ? t.checked : ty === "n" ? parseFloat(t.value) : t.value;
