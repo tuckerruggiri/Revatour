@@ -19,6 +19,7 @@
 <script src="shim.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+.cad-pre{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}.cad-pre button{padding:4px 12px;border-radius:99px;font-size:.85rem}.cad-wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start;margin-top:8px}@media(max-width:900px){.cad-wrap{grid-template-columns:minmax(0,1fr)}}.cad-ck{display:flex!important;flex-direction:row!important;align-items:center;gap:8px}.cad-ck input{width:auto!important;flex:none}.cad-svg{width:100%;height:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}.cad-steps{list-style:none;margin:8px 0;padding:0;display:grid;gap:6px}.cad-steps li{display:flex;gap:10px;align-items:flex-start;padding:7px 10px;border:1px solid var(--line);border-radius:10px;opacity:.62;transition:all .2s}.cad-steps li.on{opacity:1;border-color:var(--gain);background:color-mix(in srgb,var(--gain) 9%,transparent)}.cad-steps i{font-style:normal;font-size:1.15rem;line-height:1.3}.cad-steps small{display:block;color:var(--mute);margin-top:1px}.cad-bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}.cad-bar i{display:block;height:100%;background:var(--gain);transition:width .25s}.cad-lock{padding:9px 12px;border-radius:10px;border:1px dashed var(--line);font-size:.95rem}.cad-lock.gain b{color:var(--gain)}.cad-lock.loss b{color:var(--loss)}
 .dc-su,.imgsu{width:100%;box-sizing:border-box;margin:0 0 6px;padding:6px 8px;font-size:.85rem}.psetup{display:inline-block;margin:0 0 4px;padding:1px 8px;border-radius:99px;background:rgba(47,125,225,.12);font-size:.78rem}
 :root{--bg:#f3f3f3;--panel:#ffffff;--ink:#0a0a0a;--mute:#666666;--line:#d9d9d9;--gain:#0b6b5a;--loss:#b3261e;--accent:#0a0a0a;--accent-ink:#fff;
  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
@@ -1373,7 +1374,7 @@ function plState(c){var items=plItems(),done=0,miss=[];
  var auto={stop:c.valid,size:c.sh>0,rr:Math.max.apply(null,c.rrs)>=1.5,day:rk.bal>0&&c.rem>0};
  var rows=items.map(function(it){var on=it.auto?!!auto[it.k]:!!pl.chk[it.k];if(on)done++;else miss.push(it.t);return {it:it,on:on}});
  var pct=Math.round(done/items.length*100),g=done===items.length?"A+":pct>=85?"A":pct>=70?"B":"C";return {rows:rows,done:done,total:items.length,miss:miss,pct:pct,grade:g}}
-function plPaint(){if(!$("plck"))return;var c=plCalc(),st=plState(c);
+function plPaint(){if(!$("plck"))return;try{cadUpdate()}catch(e){}var c=plCalc(),st=plState(c);
  var t=function(v,l,cls){return '<div class="pl-t"><b'+(cls?' class="'+cls+'"':'')+'>'+v+'</b><span>'+l+'</span></div>'};
  $("plrt").innerHTML=t(rk.bal>0?money(c.eff):"-","1R"+(c.cutOn?" (cut size)":""))+t(rk.bal>0?money(c.maxLoss):"-","Max loss today","loss")+t(rk.bal>0?money(c.rem):"-","Loss room left",c.rem>0?"":"loss")+t(rk.bal>0?money(c.goal):"-","Daily goal","gain")+t(money(rk.pnl),"P&L today",rk.pnl>=0?"gain":"loss");
  var b="",cls="ok";
@@ -1417,10 +1418,12 @@ function renderPlan(){var el=$("planv");if(!pl){try{pl=JSON.parse(localStorage.g
   '<div class="pl-f" style="margin:0 0 12px">Chart picture<div class="pl-pics" id="plpics"></div><div><button type="button" id="plpic">Add picture</button> <button type="button" id="plpaste">Paste</button><input type="file" id="plfile" accept="image/*" multiple hidden> <span class="hint" style="margin:0">Up to 4, kept small.</span></div><div id="plpbox" class="pl-pbox" contenteditable="true" tabindex="0" spellcheck="false" role="button" aria-label="Paste a picture here">Click here, then press Ctrl+V or right-click and choose Paste</div></div>'+
   '<label class="pl-f">Reason for the trade<textarea data-pf="why" rows="3" maxlength="600" placeholder="Catalyst, level, what the chart is doing, why now">'+esc(pl.why)+'</textarea></label>'+
   '<label class="pl-f">Exit plan<textarea data-pf="exit" rows="2" maxlength="400" placeholder="Where I take profit, how I trail, my time stop">'+esc(pl.exit)+'</textarea></label></section>'+
+
  '<section class="pl-card" aria-label="A+ checklist"><h2 style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">A+ checklist <span id="plcount" class="pill"></span><button type="button" id="plall" style="margin-left:auto;font-size:13px;padding:5px 12px"></button></h2><p class="hint" style="margin:0 0 10px">Tap each one only when it is true. The grayed ones tick themselves from your numbers.</p><div id="plck" class="pl-ck"></div></section></div>'+
  '<aside class="pl-side"><div id="plsum" class="pl-sum" aria-live="polite"></div></aside></div>'+
+ '<section class="pl-card" id="plcad" aria-label="Stop and entry cadence"></section>'+
  '<h2 class="pf-sec">Plan log</h2><div id="plstat"></div><div id="pllog"></div>';
- plPaint();plPics();plLog()}
+ plPaint();plPics();plLog();cadBuild()}
 async function plPasteClip(){
  try{var items=await navigator.clipboard.read(),fs=[];
   for(var i=0;i<items.length;i++){var t=items[i].types.filter(function(x){return /^image\//.test(x)})[0];if(t){var bl=await items[i].getType(t);fs.push(new File([bl],"paste."+t.split("/")[1],{type:t}))}}
@@ -1467,6 +1470,65 @@ function plEdit(id){var p=plans.find(function(x){return x.id===id});if(!p)return
  ["hi","lo","rng","entry","stop","t1","t2","t3"].forEach(function(k){if(pl[k]===0||pl[k]==null)pl[k]=""});
  plPend=[];plEditId=id;renderPlan();window.scrollTo(0,0);toast("Editing $"+p.ticker)}
 function plDraft(){try{localStorage.setItem(PLD,JSON.stringify(pl))}catch(e){}}
+/* ===== Stop and entry cadence (Trade Plan) ===== */
+var CADK="stockspot-cad-v1",CAD=null;
+function cadDef(){return {off:2,half:0.5,t1:0.7,p1:33,be:true,t2:1.8,p2:33,toff:0,hi:"",lo:"",m:0.2,lc:1.4}}
+function cadLoad(){if(CAD)return;try{CAD=Object.assign(cadDef(),JSON.parse(localStorage.getItem(CADK)||"{}"))}catch(e){CAD=cadDef()}}
+function cadSave(){try{localStorage.setItem(CADK,JSON.stringify(CAD))}catch(e){}}
+function cadModel(){cadLoad();var long=pl.side==="long",H=parseFloat(CAD.hi)||parseFloat(pl.hi),L=parseFloat(CAD.lo)||parseFloat(pl.lo),demo=false;
+ if(!(H>0&&L>0&&H>L)){H=10.40;L=10.00;demo=true}
+ var off=(+CAD.off||0)/100,entry=long?H+off:L-off,stop=long?L:H,D=Math.abs(entry-stop),d=long?1:-1,mid=(H+L)/2;
+ var px=function(r){return entry+d*r*D},rOf=function(p){return d*(p-entry)/D};
+ var c=null;try{c=plCalc()}catch(e){}var sh=c&&c.unit>0&&D>0?Math.floor(c.unit/D):0,real=sh>0;if(!real)sh=100;
+ var p1=Math.max(0,Math.min(100,+CAD.p1||0)),p2=Math.max(0,Math.min(100-p1,+CAD.p2||0)),s1=Math.floor(sh*p1/100),s2=Math.floor(sh*p2/100);
+ var m=+CAD.m,out=m<=-1,halfDone=!out&&m>=CAD.half,t1Done=!out&&m>=CAD.t1,t2Done=!out&&m>=CAD.t2,stopPx=stop;
+ if(halfDone)stopPx=mid;if(t1Done&&CAD.be)stopPx=entry;
+ if(t2Done){var tr=px(+CAD.lc)-d*(+CAD.toff||0)/100;stopPx=long?Math.max(stopPx,tr):Math.min(stopPx,tr)}
+ var left=sh-(t1Done?s1:0)-(t2Done?s2:0),lock=out?-sh*D:(t1Done?s1*CAD.t1*D:0)+(t2Done?s2*CAD.t2*D:0)+left*(stopPx-entry)*d;
+ return {long:long,H:H,L:L,demo:demo,real:real,entry:entry,stop:stop,D:D,d:d,mid:mid,px:px,rOf:rOf,sh:sh,s1:s1,s2:s2,s3:sh-s1-s2,p1:p1,p2:p2,p3:100-p1-p2,m:m,out:out,halfDone:halfDone,t1Done:t1Done,t2Done:t2Done,stopPx:stopPx,lock:lock,lockR:D>0?lock/(sh*D):0}}
+function cadMoney(v){return (v<0?"-":"+")+"$"+Math.abs(v).toFixed(2)}
+function cadBuild(){var el=$("plcad");if(!el)return;cadLoad();
+ var f=function(l,k,ph,step){return '<label class="pl-f">'+l+'<input data-cd="'+k+'" type="number" step="'+(step||"any")+'" inputmode="decimal" placeholder="'+(ph||"")+'" value="'+esc(CAD[k])+'"></label>'};
+ el.innerHTML='<h2 style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">Stop &amp; entry cadence <span class="pill">your game plan</span></h2><p class="hint" style="margin:0 0 10px">Drag the rocket to see what you do at every step. Change any number to make it yours. It saves itself.</p>'+
+ '<div class="cad-pre"><button type="button" data-cdpre="mine">My cadence</button><button type="button" data-cdpre="tight">Tight &#128274;</button><button type="button" data-cdpre="runner">Runner &#127939;</button></div>'+
+ '<div class="pl-grid">'+f("Trigger candle high","hi",pl.hi||"0.00")+f("Trigger candle low","lo",pl.lo||"0.00")+f("Enter this many cents past the trigger","off","2")+f("Move stop to the candle middle at (R)","half","0.5")+'</div>'+
+ '<div class="pl-grid">'+f("Target 1 (R)","t1","0.7")+f("Sell at T1 (%)","p1","33")+f("Target 2 (R)","t2","1.8")+f("Sell at T2 (%)","p2","33")+'</div>'+
+ '<div class="pl-grid"><label class="pl-f cad-ck"><input type="checkbox" data-cd="be"'+(CAD.be?" checked":"")+'> <span>Stop to breakeven at T1</span></label>'+f("Trail cushion past last close (cents)","toff","0")+'</div>'+
+ '<div class="pl-grid" style="margin-top:6px"><label class="pl-f" style="margin:0">&#128640; How far has it gone your way? <b id="cadmv"></b><input type="range" data-cd="m" min="-1.2" max="3.2" step="0.05" value="'+CAD.m+'" aria-label="Move the price"></label><label class="pl-f" id="cadlcw" style="margin:0" hidden>Last candle closed at <b id="cadlcv"></b><input type="range" data-cd="lc" min="0" max="3.5" step="0.05" value="'+CAD.lc+'" aria-label="Last candle close"></label></div><div id="cadout"></div>'+
+ '<div class="row" style="margin:10px 0 0;gap:8px"><button type="button" class="primary" data-cduse="1">Use this in my trade</button><span class="hint" style="margin:0">Fills entry, stop and targets above and writes your exit plan.</span></div>';
+ cadUpdate()}
+function cadUpdate(){var el=$("cadout");if(!el)return;var M=cadModel(),L=M.long,verb=L?"Buy":"Sell short",past=L?"above":"below",ab=L?"below":"above",$f=function(v){return "$"+v.toFixed(2)};
+ var rLo=-1.25,rHi=3.3,W=560,Hh=330,yy=function(r){return 14+(rHi-r)/(rHi-rLo)*(Hh-28)},xs=70;
+ var lines=[[-1,"Stop "+$f(M.stop),"var(--loss)",""],[0,"Entry "+$f(M.entry),"var(--ink)",""],[CAD.half,"Halfway "+CAD.half+"R","var(--mute)","4 4"],[CAD.t1,"T1 "+CAD.t1+"R "+$f(M.px(CAD.t1)),"var(--gain)",""],[CAD.t2,"T2 "+CAD.t2+"R "+$f(M.px(CAD.t2)),"var(--gain)",""]];
+ var s='<svg viewBox="0 0 '+W+' '+Hh+'" class="cad-svg" role="img" aria-label="Price ladder">';
+ lines.forEach(function(l){var y=yy(l[0]);s+='<line x1="'+xs+'" x2="'+(W-130)+'" y1="'+y+'" y2="'+y+'" stroke="'+l[2]+'" stroke-width="1.5"'+(l[3]?' stroke-dasharray="'+l[3]+'"':'')+'/><text x="'+(W-124)+'" y="'+(y+4)+'" font-size="12" fill="var(--ink)">'+esc(l[1])+'</text>'});
+ var yH=yy(M.rOf(M.H)),yL=yy(M.rOf(M.L)),yM=yy(M.rOf(M.mid));
+ s+='<rect x="18" y="'+Math.min(yH,yL)+'" width="26" height="'+Math.abs(yL-yH)+'" rx="3" fill="var(--line)" stroke="var(--mute)"/><line x1="31" x2="31" y1="'+(Math.min(yH,yL)-8)+'" y2="'+(Math.max(yH,yL)+8)+'" stroke="var(--mute)"/><text x="31" y="'+(Math.max(yH,yL)+22)+'" font-size="10" text-anchor="middle" fill="var(--mute)">trigger</text><line x1="18" x2="44" y1="'+yM+'" y2="'+yM+'" stroke="var(--ink)" stroke-dasharray="2 2"/>';
+ if(!M.out){var ys=yy(M.rOf(M.stopPx));s+='<line x1="'+xs+'" x2="'+(W-130)+'" y1="'+ys+'" y2="'+ys+'" stroke="var(--loss)" stroke-width="4" opacity=".55"/><text x="'+(xs+4)+'" y="'+(ys-6)+'" font-size="12" font-weight="700" fill="var(--loss)">&#128737; stop now '+$f(M.stopPx)+'</text>'}
+ var ym=yy(Math.max(rLo,Math.min(rHi,M.m)));s+='<line x1="'+(xs+170)+'" x2="'+(xs+170)+'" y1="'+yy(0)+'" y2="'+ym+'" stroke="var(--accent)" stroke-width="3" stroke-dasharray="1 6" stroke-linecap="round"/><text x="'+(xs+170)+'" y="'+(ym+8)+'" font-size="26" text-anchor="middle">'+(M.out?"&#128165;":M.t2Done?"&#127937;":"&#128640;")+'</text></svg>';
+ var st=function(done,ic,t,sub){return '<li class="'+(done?"on":"")+'"><i>'+(done?"&#9989;":ic)+'</i><div><b>'+t+'</b><small>'+sub+'</small></div></li>'};
+ var steps='<ol class="cad-steps">'+
+  st(M.m>=0,"1&#65039;&#8419;",verb+" "+(+CAD.off)+"&cent; "+past+" the trigger candle on the next candle's open","Entry "+$f(M.entry)+" &middot; stop "+$f(M.stop)+" &middot; 1R = "+$f(M.D)+" &middot; "+M.sh+" shares"+(M.real?"":" (demo size: set your balance)"))+
+  st(M.halfDone,"2&#65039;&#8419;","At +"+CAD.half+"R ("+$f(M.px(CAD.half))+") pull the stop to the middle of the trigger candle","Stop "+$f(M.mid)+" &middot; you can only lose a little now")+
+  st(M.t1Done,"3&#65039;&#8419;","T1 at +"+CAD.t1+"R ("+$f(M.px(CAD.t1))+"): sell "+M.p1+"% ("+M.s1+" sh)"+(CAD.be?", stop to breakeven":""),CAD.be?"Free trade: worst case is about zero":"Stop stays at the candle middle")+
+  st(M.t2Done,"4&#65039;&#8419;","T2 at +"+CAD.t2+"R ("+$f(M.px(CAD.t2))+"): sell "+M.p2+"% ("+M.s2+" sh)","Banked "+cadMoney((M.t1Done?M.s1*CAD.t1*M.D:0)+(M.t2Done?M.s2*CAD.t2*M.D:0)))+
+  st(M.t2Done,"5&#65039;&#8419;","T3: ride the last "+M.p3+"% ("+M.s3+" sh). Stop trails "+ab.replace("below","just below").replace("above","just above")+" each candle's close"+((+CAD.toff)?" ("+(+CAD.toff)+"&cent; cushion)":""),"No fixed target. A close back through the trail ends it.")+'</ol>';
+ var done=[M.m>=0,M.halfDone,M.t1Done,M.t2Done].filter(Boolean).length;
+ $("cadmv").textContent=(M.m>0?"+":"")+(+M.m).toFixed(2)+"R";$("cadlcw").hidden=!M.t2Done;$("cadlcv").textContent=(+CAD.lc).toFixed(2)+"R";
+ el.innerHTML='<div class="cad-wrap"><div class="cad-left">'+s+'</div><div class="cad-right">'+
+  '<div class="cad-bar"><i style="width:'+(done*25)+'%"></i></div>'+steps+
+  '<div class="cad-lock '+(M.lock>=0?"gain":"loss")+'">'+(M.out?"&#128165; Stopped out: ":"&#128274; If the stop hits right now: ")+'<b>'+cadMoney(M.lock)+'</b> ('+(M.lockR>=0?"+":"")+M.lockR.toFixed(2)+'R)'+(M.t2Done&&!M.out?" &#127881;":"")+'</div></div></div>'}
+var CADPRE={mine:{off:2,half:0.5,t1:0.7,p1:33,be:true,t2:1.8,p2:33,toff:0},tight:{off:1,half:0.4,t1:0.5,p1:50,be:true,t2:1.2,p2:30,toff:0},runner:{off:2,half:0.7,t1:1,p1:25,be:true,t2:2.5,p2:25,toff:2}};
+$("planv").addEventListener("input",function(ev){var t=ev.target;if(!t||!t.dataset||t.dataset.cd==null)return;var k=t.dataset.cd;
+ CAD[k]=t.type==="checkbox"?t.checked:(t.type==="number"||t.type==="range"?(t.value===""?"":parseFloat(t.value)):t.value);cadSave();
+ cadUpdate()});
+$("planv").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("[data-cdpre],[data-cduse]");if(!b)return;
+ if(b.dataset.cdpre){Object.assign(CAD,CADPRE[b.dataset.cdpre]);cadSave();cadBuild();toast("Loaded "+b.textContent.replace(/[^\w ]/g,"").trim());return}
+ var M=cadModel();if(M.demo){toast("Enter the trigger candle high and low first");return}
+ var f=function(v){return String(+v.toFixed(2))};pl.mode="manual";pl.entry=f(M.entry);pl.stop=f(M.stop);pl.t1=f(M.px(CAD.t1));pl.t2=f(M.px(CAD.t2));pl.t3="";
+ pl.exit=(M.long?"Buy ":"Sell short ")+CAD.off+"c "+(M.long?"above":"below")+" the trigger candle on the next open. At +"+CAD.half+"R move stop to the candle middle ("+f(M.mid)+"). T1 +"+CAD.t1+"R: sell "+M.p1+"%"+(CAD.be?" and move stop to breakeven":"")+". T2 +"+CAD.t2+"R: sell "+M.p2+"%. T3: trail the stop "+(M.long?"below":"above")+" the previous candle's close.";
+ plDraft();renderPlan();toast("Filled into your trade")});
+
 function showPlan(){hideViews();$("navplan").classList.add("on");$("planv").hidden=false;rkInit();renderPlan();loadPlans().then(function(){if(!$("planv").hidden)renderPlan()});window.scrollTo(0,0)}
 $("navplan").addEventListener("click",showPlan);
 $("planv").addEventListener("beforeinput",function(ev){if(ev.target&&ev.target.id==="plpbox"&&ev.inputType!=="insertFromPaste")ev.preventDefault()});
