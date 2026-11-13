@@ -12,10 +12,10 @@
   var rr = function (x) { return x == null || isNaN(x) ? "-" : (x > 0 ? "+" : "") + (Math.round(x * 100) / 100) + "R"; };
 
   /* ---------------- state ---------------- */
-  var DEFRULES = { side: "long", signal: "hammer", vwap: "above", ema: "any", minGap: 0, minVol: 0, entry: "break", stop: "sigLow", stopPct: 1, target: 2, trail: false };
+  var DEFRULES = { tradeShort: true, tradeLong: false, riskDollars: 50, t1SellPct: 80, t1R: 0.7, t2SellPct: 20, t2R: 2, useT3: false, t3R: 3, entryOffset: 0.02, stopMode: "beyond", midStopOffset: 0, stopOffset: 0.02, slippage: 0.03, minRiskPS: 0.10, trigNotBelowPrev: true, maxBounceHH: 1, breakGreenCounts: false, midMoveR: 0.5, beMoveR: 0.7, beLevel: "low", minPrice: 0, minGapPct: 0, maxSetupBars: 6, startTime: 934, endTime: 1548, requireBreak: true, waitAfter: "any", requireHOD: false, swingBars: 20, maxDrops: 2, minBouncePct: 30, trigBelowEMA: true, minTrigATR: 0, cancelOnHigherHigh: true, longMaxBars: 10, requireEMATouch: false, maxBodyPct: 35, insideMaxBodyPct: 80, vwapRule: "room", vwapRoomR: 2, needGreen: true, noGreenNewLow: true, testMode: false, shapes: { inv: true, inside: true, doji: true, spin: true, wick: true, hammer: true } };
   var S = { tab: "log", manual: [], scenes: [], rules: null, sim: null, sel: -1, edit: "", res: null, code: "", f: { strat: "", tk: "", side: "", per: "all" }, vol: 1, kind: "normal", col: "g", drift: 0 };
-  function newSim() { return { pc: 10, gap: 8, size: 0.008, vb: 100000, c: [], vw: {}, em: {} }; }
-  function load() { try { var d = JSON.parse(localStorage.getItem(KEY) || "{}"); S.manual = d.manual || []; S.scenes = d.scenes || []; S.rules = d.rules || null; S.sim = d.sim || null; S.rules = Object.assign({}, DEFRULES, S.rules || {}); if (!S.sim || !S.sim.c) S.sim = newSim(); } catch (e) { S.rules = Object.assign({}, DEFRULES); S.sim = newSim(); } }
+  function newSim() { return { pc: 10, gap: 8, size: 0.008, vb: 100000, tf: 2, c: [], vw: {}, em: {} }; }
+  function load() { try { var d = JSON.parse(localStorage.getItem(KEY) || "{}"); S.manual = d.manual || []; S.scenes = d.scenes || []; S.rules = d.rules && d.rules.riskDollars ? d.rules : null; S.sim = d.sim || null; S.rules = Object.assign({}, DEFRULES, S.rules || {}); S.rules.shapes = Object.assign({}, DEFRULES.shapes, S.rules.shapes || {}); if (!S.sim || !S.sim.c) S.sim = newSim(); } catch (e) { S.rules = Object.assign({}, DEFRULES); S.sim = newSim(); } }
   function save() { try { localStorage.setItem(KEY, JSON.stringify({ manual: S.manual, scenes: S.scenes, rules: S.rules, sim: S.sim })); } catch (e) { } }
   function toast(m) { try { (H.toast || window.alert)(m); } catch (e) { } }
 
@@ -160,6 +160,9 @@
         '<path d="M' + x1 + ' ' + (Y(t.entry) - 1) + 'l-6 11h12z" fill="' + (t.dir > 0 ? "var(--gain)" : "var(--loss)") + '" pointer-events="none" transform="' + (t.dir > 0 ? "" : "rotate(180 " + x1 + " " + (Y(t.entry) + 4) + ")") + '"/><circle cx="' + x2 + '" cy="' + Y(t.exit) + '" r="4.5" fill="' + (win ? "var(--gain)" : "var(--loss)") + '" stroke="var(--panel)" stroke-width="1.5" pointer-events="none"/>' +
         '<text x="' + (x2 + 7) + '" y="' + (Y(t.exit) - 6) + '" class="bt-rt ' + (win ? "gain" : "loss") + '" pointer-events="none">' + rr(t.R) + '</text>';
     });
+    if (S.res && S.res.A) { var AA = S.res.A, seen = {};
+      for (var q = 0; q < AA.n; q++) if (AA.nh[q] && !seen[AA.hi[q]] && AA.hi[q] >= st) { seen[AA.hi[q]] = 1; s += '<text x="' + X(AA.hi[q]) + '" y="' + (Y(AA.H[AA.hi[q]]) - 6) + '" text-anchor="middle" class="bt-tag hi" pointer-events="none">HIGH</text>'; }
+      (S.res.cur || []).forEach(function (t) { if (t.si >= st) s += '<text x="' + X(t.si) + '" y="' + (t.dir < 0 ? Y(S.sim.c[t.si].h) - 6 : Y(S.sim.c[t.si].l) + 14) + '" text-anchor="middle" class="bt-tag trg" pointer-events="none">TRG</text>'; }); }
     // edit handles
     var sc = S.sim.c[S.sel];
     if (S.edit === "vw" || S.edit === "em") { var arr = S.edit === "vw" ? ind.vw : ind.em; vis.forEach(function (x, ii) { var i = st + ii; s += '<circle data-line="' + S.edit + '" data-i="' + i + '" cx="' + X(i) + '" cy="' + Y(arr[i]) + '" r="6" class="bt-hl ' + S.edit + '"/>'; }); }
@@ -195,69 +198,175 @@
   }
   function onUp() { if (!DR) return; DR = null; save(); render(); }
 
-  /* ---------------- strategy engine ---------------- */
-  function shape(c, i, cs, k) {
-    var rng = c.h - c.l, body = Math.abs(c.c - c.o), up = c.h - Math.max(c.o, c.c), lo = Math.min(c.o, c.c) - c.l;
-    if (k === "any") return true; if (rng <= 0) return false;
-    if (k === "doji") return body <= 0.1 * rng;
-    if (k === "hammer") return lo >= 0.55 * rng && up <= 0.15 * rng;
-    if (k === "inv") return up >= 0.55 * rng && lo <= 0.15 * rng;
-    if (k === "inside") return i > 0 && c.h < cs[i - 1].h && c.l > cs[i - 1].l;
-    if (k === "trigger") { var pr = cs.slice(Math.max(0, i - 5), i), ab = pr.length ? pr.reduce(function (a, x) { return a + Math.abs(x.c - x.o); }, 0) / pr.length : 0; return body >= 0.6 * rng && (!pr.length || body >= 1.3 * ab); }
-    if (k === "green") return c.c > c.o; if (k === "red") return c.c < c.o;
-    return true;
-  }
-  function backtest(sc, R, ind) {
-    var cs = sc.c, out = [], n = cs.length, dir = R.side === "short" ? -1 : 1, gap = n ? (cs[0].o / sc.pc - 1) * 100 : 0;
-    if (R.minGap > 0 && gap < R.minGap) return out;
-    for (var s = 0; s < n - 1; s++) {
-      var g = cs[s]; if (!shape(g, s, cs, R.signal)) continue;
-      if (R.vwap === "above" && !(g.c > ind.vw[s])) continue; if (R.vwap === "below" && !(g.c < ind.vw[s])) continue;
-      if (R.ema === "above" && !(g.c > ind.em[s])) continue; if (R.ema === "below" && !(g.c < ind.em[s])) continue;
-      if (R.minVol > 0) { var pr = cs.slice(Math.max(0, s - 5), s); if (pr.length) { var av = pr.reduce(function (a, x) { return a + x.v; }, 0) / pr.length; if (g.v < R.minVol * av) continue; } }
-      var entry, j = s + 1;
-      if (R.entry === "close") entry = g.c;
-      else { var nx = cs[j]; if (dir > 0 ? nx.h < g.h : nx.l > g.l) continue; entry = dir > 0 ? Math.max(g.h, nx.o) : Math.min(g.l, nx.o); }
-      var stop;
-      if (R.stop === "sigLow") stop = dir > 0 ? g.l - 0.01 : g.h + 0.01; else stop = entry * (1 - dir * R.stopPct / 100);
-      var risk = (entry - stop) * dir; if (!(risk > 0)) continue;
-      var tgt = entry + dir * R.target * risk, xi = n - 1, exit = cs[n - 1].c, why = "end";
-      for (var k = j; k < n; k++) {
-        var c = cs[k];
-        if (dir > 0 ? c.l <= stop : c.h >= stop) { xi = k; exit = dir > 0 ? Math.min(stop, c.o) : Math.max(stop, c.o); why = "stop"; break; }
-        if (dir > 0 ? c.h >= tgt : c.l <= tgt) { xi = k; exit = tgt; why = "target"; break; }
-        if (R.trail && (dir > 0 ? c.c < ind.em[k] : c.c > ind.em[k]) && k > j) { xi = k; exit = c.c; why = "9 EMA"; break; }
-      }
-      out.push({ si: s, ei: j, xi: xi, entry: r2(entry), exit: r2(exit), stop: r2(stop), tgt: r2(tgt), dir: dir, R: (exit - entry) * dir / risk, why: why });
-      s = xi;
-    }
-    return out;
-  }
+  /* ---------------- strategy engine (same rules as the SL-1-RV thinkscript, candle by candle) ---------------- */
   function indOf(sc) {
     var c = sc.c, vw = [], em = [], pv = 0, cv = 0, e = 0;
     c.forEach(function (x, i) { var tp = (x.h + x.l + x.c) / 3; pv += tp * x.v; cv += x.v; vw[i] = cv ? pv / cv : x.c; e = i ? e + 0.2 * (x.c - e) : x.c; em[i] = e; });
     for (var k in (sc.vw || {})) if (sc.vw[k] != null && vw[k] != null) vw[k] = sc.vw[k]; for (k in (sc.em || {})) if (sc.em[k] != null && em[k] != null) em[k] = sc.em[k];
     return { vw: vw, em: em };
   }
+  function hm(v) { v = Math.round(v); return Math.floor(v / 100) * 60 + v % 100; }
+  function rhu(x) { return Math.floor(x + 0.5); }
+  function analyze(sc, P, ind) {
+    var c = sc.c, n = c.length, tf = sc.tf || P.tf || 2, O = [], H = [], L = [], C = [], V = [], T = [], i, j;
+    ind = ind || indOf(sc); var vwap = ind.vw, ema = ind.em;
+    for (i = 0; i < n; i++) { O[i] = c[i].o; H[i] = c[i].h; L[i] = c[i].l; C[i] = c[i].c; V[i] = c[i].v; T[i] = 570 + i * tf; }
+    var rng = [], body = [], upw = [], low_w = [], avg = [], S = P.shapes, ss = [], ls = [];
+    for (i = 0; i < n; i++) { rng[i] = H[i] - L[i]; body[i] = Math.abs(C[i] - O[i]); upw[i] = H[i] - Math.max(O[i], C[i]); low_w[i] = Math.min(O[i], C[i]) - L[i]; var a = rng.slice(Math.max(0, i - 19), i + 1); avg[i] = a.reduce(function (x, y) { return x + y; }, 0) / a.length; }
+    for (i = 0; i < n; i++) {
+      var r = rng[i], b = body[i], u = upw[i], w = low_w[i], small = r > 0 && b <= r * P.maxBodyPct / 100;
+      var inv = S.inv && r > 0 && u >= 2 * b && w <= u, ham = S.hammer && r > 0 && w >= 2 * b && u <= w, doji = S.doji && r > 0 && b <= r * 0.10, spin = S.spin && small && u > b && w > b,
+        ins = S.inside && i > 0 && H[i] <= H[i - 1] && L[i] >= L[i - 1] && b <= r * P.insideMaxBodyPct / 100, wick = S.wick && r > 0 && u >= b && u >= w && b <= r * 0.60;
+      ss[i] = !!(inv || doji || spin || ins || wick); ls[i] = !!(ham || doji || spin || ins);
+    }
+    function isHod(j) { if (j === 0) return true; var m = -Infinity; for (var k = 0; k < j; k++) m = Math.max(m, H[k]); return H[j] > m; }
+    function swingOk(i) { var sb = P.swingBars; if (sb <= 0) return true; if (i < 2) return false; var m = -Infinity; for (var k = Math.max(0, i - 1 - sb); k < i - 1; k++) m = Math.max(m, H[k]); return H[i - 1] >= m; }
+    function hhCancel(i, off) {
+      var offH = Math.min(off, 60), brk = 0, k, m;
+      for (k = 1; k < offH; k++) { if (L[i - (offH - k)] < L[i - offH]) { brk = k; break; } }
+      var startM = brk > 0 ? brk + 1 : offH, postMax = 0, green = false;
+      for (m = startM; m < offH; m++) { var jj = i - (offH - m); postMax = Math.max(postMax, H[jj]); if (C[jj] > O[jj]) green = true; }
+      return brk > 0 && green && postMax > 0 && H[i] > postMax;
+    }
+    var msb = P.maxSetupBars, hi = [], nh = [], nhH = [], nhL = [], snh = [], gs = [], bd = [], dc = [], bhh = [], pbl = [], gnl = [];
+    for (i = 0; i < n; i++) { hi[i] = -1; nh[i] = false; nhH[i] = 0; nhL[i] = 0; snh[i] = 999; gs[i] = 0; bd[i] = 0; dc[i] = 0; bhh[i] = 0; pbl[i] = 0; gnl[i] = false; }
+    if (n) { nhH[0] = H[0]; nhL[0] = L[0]; pbl[0] = L[0]; }
+    for (i = 1; i < n; i++) {
+      var brkPrev = L[i] < L[i - 1] && H[i] <= H[i - 1], hod = P.requireHOD ? isHod(i - 1) : swingOk(i), hp = hi[i - 1], cur;
+      if (hp < 0) cur = (brkPrev && hod) ? i - 1 : -1;
+      else {
+        var d = i - hp, dd = Math.min(d, msb + 1), hh = H[i - dd];
+        if (H[i] > hh) cur = -1;
+        else if (P.cancelOnHigherHigh && !ss[i] && hhCancel(i, dd)) cur = -1;
+        else if (d > msb) cur = (brkPrev && hod) ? i - 1 : -1;
+        else if (brkPrev && hod && H[i - 1] > hh) cur = i - 1;
+        else cur = hp;
+      }
+      hi[i] = cur; var isNew = cur >= 0 && cur !== hi[i - 1]; nh[i] = isNew; var isg = C[i] >= O[i];
+      if (isNew) { nhH[i] = H[i - 1]; nhL[i] = L[i - 1]; snh[i] = 1; gs[i] = (P.breakGreenCounts && isg) ? 1 : 0; bd[i] = 1; dc[i] = 0; bhh[i] = 0; pbl[i] = L[i]; }
+      else { nhH[i] = nhH[i - 1]; nhL[i] = nhL[i - 1]; snh[i] = snh[i - 1] + 1; gs[i] = isg ? 1 : gs[i - 1]; bd[i] = L[i] < nhL[i] ? 1 : bd[i - 1]; dc[i] = dc[i - 1] + (L[i] < L[i - 1] ? 1 : 0); bhh[i] = bhh[i - 1] + (H[i] > H[i - 1] ? 1 : 0); pbl[i] = Math.min(pbl[i - 1], L[i]); }
+      gnl[i] = !isNew && C[i] > O[i] && L[i] < pbl[i - 1];
+    }
+    var nlL = [], nlH = [], snl = [], bu = [], ra = [], nl = [];
+    for (i = 0; i < n; i++) { nlL[i] = 0; nlH[i] = 0; snl[i] = 999; bu[i] = 0; ra[i] = 0; nl[i] = false; }
+    if (n) { nlL[0] = L[0]; nlH[0] = H[0]; }
+    for (i = 1; i < n; i++) {
+      var nlw = i >= 2 && L[i] < Math.min(L[i - 1], L[i - 2]); nl[i] = nlw;
+      if (nlw) { nlL[i] = L[i]; nlH[i] = H[i]; snl[i] = 0; bu[i] = 0; ra[i] = 0; }
+      else { nlL[i] = nlL[i - 1]; nlH[i] = nlH[i - 1]; snl[i] = snl[i - 1] + 1; bu[i] = (bu[i - 1] === 0 && H[i] > nlH[i]) ? 1 : bu[i - 1]; ra[i] = (bu[i - 1] === 1 && C[i] < O[i]) ? 1 : ra[i - 1]; }
+    }
+    var gap = n && sc.pc > 0 ? (O[0] / sc.pc - 1) * 100 : 0, sMin = hm(P.startTime), eMin = hm(P.endTime), midStop = P.stopMode === "mid";
+    var goS = [], goL = [], entS = [], entL = [], stpS = [], stpL = [], shS = [], shL = [], q1s = [], q2s = [], q3s = [], q1l = [], q2l = [], q3l = [];
+    var fun = { shape: 0, afterHigh: 0, broke: 0, green: 0, vwap: 0, other: 0, time: 0 };
+    for (i = 0; i < n; i++) {
+      var touched = false; for (j = Math.max(0, i - 5); j <= i; j++) if (L[j] <= ema[j] && H[j] >= ema[j]) touched = true;
+      var pw = P.vwapRule, room = P.vwapRoomR * rng[i];
+      var vokS = pw === "above" ? C[i] > vwap[i] : pw === "below" ? C[i] < vwap[i] : pw === "room" ? (L[i] - vwap[i]) >= room : true;
+      var vokL = pw === "above" ? C[i] > vwap[i] : pw === "below" ? C[i] < vwap[i] : pw === "room" ? (vwap[i] - H[i]) >= room : true;
+      var test = P.testMode, sigS = false, sigL = false, seqS = false, other = false;
+      if (i >= 1) {
+        seqS = hi[i] >= 0 && !nh[i] && snh[i] >= 2 && snh[i] <= msb && H[i] <= nhH[i] && (gs[i] === 1 || !P.needGreen) && (bd[i] === 1 || !P.requireBreak) && !(P.noGreenNewLow && gnl[i]);
+        var dropsOk = P.maxDrops <= 0 || dc[i - 1] <= P.maxDrops, hhOk = P.maxBounceHH <= 0 || bhh[i] <= P.maxBounceHH, notBelow = !P.trigNotBelowPrev || L[i] >= L[i - 1];
+        var bp = nhH[i] - pbl[i] > 0 ? (H[i] - pbl[i]) / (nhH[i] - pbl[i]) * 100 : 0, bounceOk = P.minBouncePct <= 0 || bp >= P.minBouncePct, emaOk = !P.trigBelowEMA || C[i] < ema[i];
+        var sizeOk = P.minTrigATR <= 0 || rng[i] >= P.minTrigATR * avg[i], touchOk = !P.requireEMATouch || touched;
+        other = bounceOk && emaOk && sizeOk && dropsOk && hhOk && notBelow && touchOk;
+        sigS = !!(P.tradeShort && ss[i] && seqS && (test || vokS) && other);
+        var seqL = !nl[i] && ra[i - 1] === 1 && snl[i] <= P.longMaxBars && L[i] > nlL[i];
+        sigL = !!(P.tradeLong && ls[i] && seqL && touchOk && vokL);
+      }
+      var filt = test || (C[i] >= P.minPrice && (P.minGapPct <= 0 || gap >= P.minGapPct)), nxt = T[i] + tf, et = nxt >= sMin && nxt <= eMin;
+      entS[i] = L[i] - P.entryOffset; entL[i] = H[i] + P.entryOffset;
+      stpS[i] = midStop ? (H[i] + L[i]) / 2 + P.midStopOffset : H[i] + P.stopOffset; stpL[i] = midStop ? (H[i] + L[i]) / 2 - P.midStopOffset : L[i] - P.stopOffset;
+      var sl = P.slippage;
+      shS[i] = stpS[i] - entS[i] > 0 ? Math.floor(P.riskDollars / (Math.max(stpS[i] - entS[i], P.minRiskPS) + 2 * sl)) : 0;
+      shL[i] = entL[i] - stpL[i] > 0 ? Math.floor(P.riskDollars / (Math.max(entL[i] - stpL[i], P.minRiskPS) + 2 * sl)) : 0;
+      [[shS, q1s, q2s, q3s], [shL, q1l, q2l, q3l]].forEach(function (g) {
+        var s_ = g[0][i], a1 = Math.min(s_, rhu(s_ * P.t1SellPct / 100)), b1 = P.useT3 ? Math.min(s_ - a1, rhu(s_ * P.t2SellPct / 100)) : s_ - a1, c1 = P.useT3 ? s_ - a1 - b1 : 0;
+        g[1][i] = a1; g[2][i] = b1; g[3][i] = c1;
+      });
+      var gl = sigL && filt && et && shL[i] >= 1, gsr = sigS && filt && et && shS[i] >= 1;
+      goL[i] = !!gl; goS[i] = !!(gsr && !gl);
+      if (i >= 1 && P.tradeShort && ss[i]) {
+        fun.shape++;
+        if (hi[i] >= 0 && snh[i] <= msb && !nh[i] && H[i] < nhH[i]) {
+          fun.afterHigh++;
+          if (bd[i] === 1 || !P.requireBreak) {
+            fun.broke++;
+            if ((gs[i] === 1 || !P.needGreen) && !(P.noGreenNewLow && gnl[i]) && snh[i] >= 2) { fun.green++; if (test || vokS) { fun.vwap++; if (other) { fun.other++; if (filt && et) fun.time++; } } }
+          }
+        }
+      }
+    }
+    return { n: n, O: O, H: H, L: L, C: C, T: T, ema: ema, vwap: vwap, hi: hi, nh: nh, goS: goS, goL: goL, entS: entS, entL: entL, stpS: stpS, stpL: stpL, shS: shS, shL: shL, q: { 1: [q1s, q1l], 2: [q2s, q2l], 3: [q3s, q3l] }, fun: fun, tf: tf };
+  }
+  function track(A, tr, i, P) {
+    var O = A.O, H = A.H, L = A.L, t = tr.T, side = tr.side, tHi = H[t], tLo = L[t], rt = tHi - tLo, slip = P.slippage, m1 = P.t1R, m2 = P.t2R, m3 = P.useT3 ? P.t3R : 0, midR = P.midMoveR, beR = P.beMoveR, mid = P.stopMode === "mid", k;
+    var stop0, lv, best, reached, midT = (tHi + tLo) / 2;
+    if (side > 0) { stop0 = mid ? midT - P.midStopOffset : tLo - P.stopOffset; lv = function (r) { return tHi + r * rt; }; best = 0; for (k = t + 1; k < i; k++) best = Math.max(best, H[k]); reached = function (x) { return best >= x; }; }
+    else { stop0 = mid ? midT + P.midStopOffset : tHi + P.stopOffset; lv = function (r) { return tLo - r * rt; }; best = 999999; for (k = t + 1; k < i; k++) best = Math.min(best, L[k]); reached = function (x) { return best <= x; }; }
+    var L1 = lv(m1), L2 = lv(m2), L3 = lv(m3), LM = lv(midR), LB = lv(beR), r1b = reached(L1), r2b = reached(L2), r3b = m3 > 0 && reached(L3), rmb = midR > 0 && reached(LM), rbb = beR > 0 && reached(LB);
+    var beStop = P.beLevel === "entry" ? tr.ent : (side > 0 ? tHi : tLo), s1, stopNow, hit, touch, px;
+    if (side > 0) { s1 = rmb ? Math.max(stop0, midT) : stop0; stopNow = (rbb || r1b) ? Math.max(s1, beStop) : s1; hit = L[i] <= stopNow; touch = function (x) { return A.H[i] >= x; }; px = Math.min(O[i], stopNow) - slip; }
+    else { s1 = rmb ? Math.min(stop0, midT) : stop0; stopNow = (rbb || r1b) ? Math.min(s1, beStop) : s1; hit = H[i] >= stopNow; touch = function (x) { return A.L[i] <= x; }; px = Math.max(O[i], stopNow) + slip; }
+    var r1 = r1b || (!hit && touch(L1)), r2 = r2b || (!hit && touch(L2)), r3 = r3b || (m3 > 0 && !hit && touch(L3)), last = m3 > 0 ? r3 : r2;
+    return { ex: !!(hit || last), px: px, r1: r1, r2: r2, r3: r3, r1b: r1b, r2b: r2b, r3b: r3b, hit: !!hit, stop: stopNow, L: [L1, L2, L3], t1Seen: r1b, stop0: stop0 };
+  }
+  function backtest(sc, P, ind) {
+    var A = analyze(sc, P, ind), n = A.n, O = A.O, H = A.H, L = A.L, T = A.T, slip = P.slippage, trades = [], pos = null, blockHi = -1, i;
+    for (i = 1; i < n; i++) {
+      var t, side;
+      if (!pos) {
+        t = i - 1;
+        if (A.goL[t] && H[i] >= A.entL[t]) side = 1;
+        else if (A.goS[t] && L[i] <= A.entS[t] && (P.waitAfter === "never" || A.hi[t] !== blockHi)) side = -1;
+        else continue;
+        var ent, qs, qty;
+        if (side > 0) { ent = Math.max(O[i], H[t] + P.entryOffset) + slip; qs = [A.q[1][1][t], A.q[2][1][t], A.q[3][1][t]]; qty = A.shL[t]; }
+        else { ent = Math.min(O[i], L[t] - P.entryOffset) - slip; qs = [A.q[1][0][t], A.q[2][0][t], A.q[3][0][t]]; qty = A.shS[t]; }
+        pos = { T: t, side: side, ent: ent, ei: i, qs: qs, qty: qty };
+        continue;
+      }
+      var eod = T[i] + A.tf >= 956, tr = track(A, pos, i, P);
+      if (!(eod || tr.ex)) continue;
+      side = pos.side; t = pos.T; var rt = H[t] - L[t];
+      var stopPx = eod ? (side < 0 ? O[i] + slip : O[i] - slip) : tr.px, g1 = eod ? tr.r1b : tr.r1, g2 = eod ? tr.r2b : tr.r2, g3 = eod ? tr.r3b : tr.r3;
+      var p = function (r) { return side > 0 ? H[t] + r * rt - slip : L[t] - r * rt + slip; };
+      var parts = [["T1", pos.qs[0], g1, p(P.t1R)], ["T2", pos.qs[1], g2, p(P.t2R)], ["T3", pos.qs[2], g3, p(P.t3R)]], qa = pos.qs[0] + pos.qs[1] + pos.qs[2], exPx = stopPx;
+      if (qa > 0) exPx = parts.reduce(function (a, x) { return a + x[1] * (x[2] ? x[3] : stopPx); }, 0) / qa;
+      var pnl = side * (exPx - pos.ent) * pos.qty, why = eod ? "EOD" : (tr.hit ? "stop" : "all targets");
+      if (why === "stop" && tr.t1Seen) why = "stop after T1";
+      trades.push({ si: t, hi: A.hi[t], ei: pos.ei, xi: i, entry: r2(pos.ent), exit: r2(exPx), stop: r2(tr.stop0), tgt: r2(tr.L[1]), dir: side, shares: pos.qty, pnl: r2(pnl), R: pnl / P.riskDollars, why: why, parts: parts.filter(function (x) { return x[1] > 0 && x[2]; }).map(function (x) { return x[0]; }) });
+      blockHi = (P.waitAfter === "any" || (P.waitAfter === "loss" && !tr.t1Seen)) ? A.hi[t] : -1;
+      pos = null;
+    }
+    if (pos) trades.push({ si: pos.T, hi: A.hi[pos.T], ei: pos.ei, xi: n - 1, entry: r2(pos.ent), exit: r2(pos.ent), stop: r2(pos.side > 0 ? L[pos.T] - P.stopOffset : H[pos.T] + P.stopOffset), tgt: r2(pos.ent), dir: pos.side, shares: pos.qty, pnl: 0, R: 0, why: "still open", open: true, parts: [] });
+    trades.fun = A.fun; trades.A = A; return trades;
+  }
   function runAll() {
-    var R = S.rules, scenes = [{ name: "Current chart", pc: S.sim.pc, c: S.sim.c, vw: S.sim.vw, em: S.sim.em }].concat(S.scenes.map(function (x) { return x; })), all = [], cur = null;
-    scenes.forEach(function (sc, i) { var t = backtest(sc, R, indOf(sc)); if (i === 0) cur = t; t.forEach(function (x) { x.scene = sc.name; all.push(x); }); });
-    var w = all.filter(function (t) { return t.R > 0; }), gw = w.reduce(function (a, t) { return a + t.R; }, 0), gl = all.filter(function (t) { return t.R <= 0; }).reduce(function (a, t) { return a - t.R; }, 0), sum = all.reduce(function (a, t) { return a + t.R; }, 0);
-    S.res = { all: all, cur: cur, n: all.length, wr: all.length ? w.length / all.length : 0, pf: gl > 0 ? gw / gl : (gw > 0 ? Infinity : 0), sumR: sum, exp: all.length ? sum / all.length : 0, scenes: scenes.length };
+    var P = S.rules, scenes = [{ name: "Current chart", pc: S.sim.pc, tf: S.sim.tf, c: S.sim.c, vw: S.sim.vw, em: S.sim.em }].concat(S.scenes), all = [], cur = null, fun = null, curA = null;
+    scenes.forEach(function (sc, i) {
+      var t = backtest(sc, P, indOf(sc)); if (i === 0) { cur = t.slice(); fun = t.fun; curA = t.A; }
+      t.forEach(function (x) { x.scene = sc.name; all.push(x); });
+    });
+    var done = all.filter(function (t) { return !t.open; }), w = done.filter(function (t) { return t.pnl > 0; }), gw = w.reduce(function (a, t) { return a + t.pnl; }, 0), gl = done.filter(function (t) { return t.pnl <= 0; }).reduce(function (a, t) { return a - t.pnl; }, 0);
+    var net = done.reduce(function (a, t) { return a + t.pnl; }, 0), sumR = done.reduce(function (a, t) { return a + t.R; }, 0);
+    S.res = { all: all, cur: cur, n: done.length, wr: done.length ? w.length / done.length : 0, pf: gl > 0 ? gw / gl : (gw > 0 ? Infinity : 0), net: net, sumR: sumR, exp: done.length ? sumR / done.length : 0, scenes: scenes.length, fun: fun, A: curA };
     S.code = ""; render();
   }
+  function r2(x) { return Math.round(x * 100) / 100; }
 
   /* ---------------- bot code ---------------- */
+  var PYTPL = "__HEADER__\nimport csv\nimport json\nimport sys\n\nRULES = json.loads(r'''__RULES__''')\nPREV_CLOSE = __PREV_CLOSE__    # yesterday's close (used for the gap filter)\nTF = __TF__                     # candle size in minutes of your candles.csv\n\n\ndef hhmm_to_min(v):\n    v = int(v)\n    return (v // 100) * 60 + v % 100\n\n\ndef load_candles(path):\n    \"\"\"candles.csv columns: time,open,high,low,close,volume   (time like 09:30, one trading day per file)\"\"\"\n    rows = []\n    with open(path, newline=\"\") as f:\n        for r in csv.DictReader(f):\n            hh, mm = r[\"time\"].strip()[-5:].split(\":\")\n            rows.append({\"t\": int(hh) * 60 + int(mm), \"o\": float(r[\"open\"]), \"h\": float(r[\"high\"]),\n                         \"l\": float(r[\"low\"]), \"c\": float(r[\"close\"]), \"v\": float(r[\"volume\"])})\n    return rows\n\n\ndef analyze(rows, prev_close=None):\n    \"\"\"Every rule of the strategy, candle by candle. Returns the per-candle series the backtest uses.\"\"\"\n    P = RULES\n    prev_close = PREV_CLOSE if prev_close is None else prev_close\n    n = len(rows)\n    O = [r[\"o\"] for r in rows]\n    H = [r[\"h\"] for r in rows]\n    L = [r[\"l\"] for r in rows]\n    C = [r[\"c\"] for r in rows]\n    V = [r[\"v\"] for r in rows]\n    T = [r[\"t\"] for r in rows]\n    S = P[\"shapes\"]\n    tf = TF\n    # indicators\n    ema = []\n    vwap = []\n    pv = cv = e = 0.0\n    for i in range(n):\n        tp = (H[i] + L[i] + C[i]) / 3\n        pv += tp * V[i]\n        cv += V[i]\n        vwap.append(pv / cv if cv else C[i])\n        e = C[i] if i == 0 else e + 0.2 * (C[i] - e)\n        ema.append(e)\n    rng = [H[i] - L[i] for i in range(n)]\n    body = [abs(C[i] - O[i]) for i in range(n)]\n    upw = [H[i] - max(O[i], C[i]) for i in range(n)]\n    low_w = [min(O[i], C[i]) - L[i] for i in range(n)]\n    avg_rng = [sum(rng[max(0, i - 19):i + 1]) / len(rng[max(0, i - 19):i + 1]) for i in range(n)]\n\n    short_shape, long_shape = [], []\n    for i in range(n):\n        r, b, u, w = rng[i], body[i], upw[i], low_w[i]\n        small = r > 0 and b <= r * P[\"maxBodyPct\"] / 100\n        inv = S[\"inv\"] and r > 0 and u >= 2 * b and w <= u\n        ham = S[\"hammer\"] and r > 0 and w >= 2 * b and u <= w\n        doji = S[\"doji\"] and r > 0 and b <= r * 0.10\n        spin = S[\"spin\"] and small and u > b and w > b\n        ins = S[\"inside\"] and i > 0 and H[i] <= H[i - 1] and L[i] >= L[i - 1] and b <= r * P[\"insideMaxBodyPct\"] / 100\n        wick = S[\"wick\"] and r > 0 and u >= b and u >= w and b <= r * 0.60\n        short_shape.append(bool(inv or doji or spin or ins or wick))\n        long_shape.append(bool(ham or doji or spin or ins))\n\n    def is_hod(j):\n        return j == 0 or H[j] > max(H[:j])\n\n    def swing_ok(i):\n        sb = P[\"swingBars\"]\n        if sb <= 0:\n            return True\n        if i < 2:\n            return False\n        return H[i - 1] >= max(H[max(0, i - 1 - sb):i - 1])\n\n    def hh_cancel(i, off):\n        off_h = min(off, 60)\n        brk = 0\n        for k in range(1, off_h):\n            if L[i - (off_h - k)] < L[i - off_h]:\n                brk = k\n                break\n        start_m = brk + 1 if brk > 0 else off_h\n        post_max = 0.0\n        green = False\n        for m in range(start_m, off_h):\n            j = i - (off_h - m)\n            post_max = max(post_max, H[j])\n            if C[j] > O[j]:\n                green = True\n        return brk > 0 and green and post_max > 0 and H[i] > post_max\n\n    msb = P[\"maxSetupBars\"]\n    hi = [-1] * n\n    new_high = [False] * n\n    nh_high = [0.0] * n\n    nh_low = [0.0] * n\n    since_nh = [999] * n\n    green_seen = [0] * n\n    broke_dn = [0] * n\n    drop_count = [0] * n\n    bounce_hh = [0] * n\n    pb_low = [0.0] * n\n    green_new_low = [False] * n\n    nh_high[0], nh_low[0], pb_low[0] = H[0], L[0], L[0]\n    for i in range(1, n):\n        brk_prev = L[i] < L[i - 1] and H[i] <= H[i - 1]\n        hod = is_hod(i - 1) if P[\"requireHOD\"] else swing_ok(i)\n        hp = hi[i - 1]\n        if hp < 0:\n            cur = i - 1 if (brk_prev and hod) else -1\n        else:\n            d = i - hp\n            dd = min(d, msb + 1)\n            hh = H[i - dd]\n            if H[i] > hh:\n                cur = -1\n            elif P[\"cancelOnHigherHigh\"] and not short_shape[i] and hh_cancel(i, dd):\n                cur = -1\n            elif d > msb:\n                cur = i - 1 if (brk_prev and hod) else -1\n            elif brk_prev and hod and H[i - 1] > hh:\n                cur = i - 1\n            else:\n                cur = hp\n        hi[i] = cur\n        nh = cur >= 0 and cur != hi[i - 1]\n        new_high[i] = nh\n        isg = C[i] >= O[i]\n        if nh:\n            nh_high[i], nh_low[i] = H[i - 1], L[i - 1]\n            since_nh[i] = 1\n            green_seen[i] = 1 if (P[\"breakGreenCounts\"] and isg) else 0\n            broke_dn[i] = 1\n            drop_count[i] = 0\n            bounce_hh[i] = 0\n            pb_low[i] = L[i]\n        else:\n            nh_high[i], nh_low[i] = nh_high[i - 1], nh_low[i - 1]\n            since_nh[i] = since_nh[i - 1] + 1\n            green_seen[i] = 1 if isg else green_seen[i - 1]\n            broke_dn[i] = 1 if L[i] < nh_low[i] else broke_dn[i - 1]\n            drop_count[i] = drop_count[i - 1] + (1 if L[i] < L[i - 1] else 0)\n            bounce_hh[i] = bounce_hh[i - 1] + (1 if H[i] > H[i - 1] else 0)\n            pb_low[i] = min(pb_low[i - 1], L[i])\n        green_new_low[i] = (not nh) and C[i] > O[i] and L[i] < pb_low[i - 1]\n\n    # long side bookkeeping\n    nl_low = [0.0] * n\n    nl_high = [0.0] * n\n    since_nl = [999] * n\n    broke_up = [0] * n\n    red_after = [0] * n\n    new_low = [False] * n\n    nl_low[0], nl_high[0] = L[0], H[0]\n    for i in range(1, n):\n        nlw = i >= 2 and L[i] < min(L[i - 1], L[i - 2])\n        new_low[i] = nlw\n        if nlw:\n            nl_low[i], nl_high[i], since_nl[i], broke_up[i], red_after[i] = L[i], H[i], 0, 0, 0\n        else:\n            nl_low[i], nl_high[i] = nl_low[i - 1], nl_high[i - 1]\n            since_nl[i] = since_nl[i - 1] + 1\n            broke_up[i] = 1 if (broke_up[i - 1] == 0 and H[i] > nl_high[i]) else broke_up[i - 1]\n            red_after[i] = 1 if (broke_up[i - 1] == 1 and C[i] < O[i]) else red_after[i - 1]\n\n    gap_pct = (O[0] / prev_close - 1) * 100 if prev_close > 0 and n else 0\n    start_min, end_min = hhmm_to_min(P[\"startTime\"]), hhmm_to_min(P[\"endTime\"])\n    mid_stop = P[\"stopMode\"] == \"mid\"\n    go_s, go_l = [False] * n, [False] * n\n    ent_s, ent_l, stp_s, stp_l = [0.0] * n, [0.0] * n, [0.0] * n, [0.0] * n\n    sh_s, sh_l = [0] * n, [0] * n\n    q1s, q2s, q3s, q1l, q2l, q3l = ([0] * n for _ in range(6))\n    funnel = {\"shape\": 0, \"afterHigh\": 0, \"broke\": 0, \"green\": 0, \"vwap\": 0, \"other\": 0, \"time\": 0}\n    for i in range(n):\n        touched = any(L[j] <= ema[j] and H[j] >= ema[j] for j in range(max(0, i - 5), i + 1))\n        pw = P[\"vwapRule\"]\n        room = P[\"vwapRoomR\"] * rng[i]\n        vok_s = (C[i] > vwap[i]) if pw == \"above\" else (C[i] < vwap[i]) if pw == \"below\" else ((L[i] - vwap[i]) >= room) if pw == \"room\" else True\n        vok_l = (C[i] > vwap[i]) if pw == \"above\" else (C[i] < vwap[i]) if pw == \"below\" else ((vwap[i] - H[i]) >= room) if pw == \"room\" else True\n        test = P[\"testMode\"]\n        if i >= 1:\n            seq_s = (hi[i] >= 0 and not new_high[i] and since_nh[i] >= 2 and since_nh[i] <= msb and H[i] <= nh_high[i]\n                     and (green_seen[i] == 1 or not P[\"needGreen\"]) and (broke_dn[i] == 1 or not P[\"requireBreak\"])\n                     and not (P[\"noGreenNewLow\"] and green_new_low[i]))\n            drops_ok = P[\"maxDrops\"] <= 0 or drop_count[i - 1] <= P[\"maxDrops\"]\n            hh_ok = P[\"maxBounceHH\"] <= 0 or bounce_hh[i] <= P[\"maxBounceHH\"]\n            not_below = (not P[\"trigNotBelowPrev\"]) or L[i] >= L[i - 1]\n            bp = (H[i] - pb_low[i]) / (nh_high[i] - pb_low[i]) * 100 if nh_high[i] - pb_low[i] > 0 else 0\n            bounce_ok = P[\"minBouncePct\"] <= 0 or bp >= P[\"minBouncePct\"]\n            ema_ok = (not P[\"trigBelowEMA\"]) or C[i] < ema[i]\n            size_ok = P[\"minTrigATR\"] <= 0 or rng[i] >= P[\"minTrigATR\"] * avg_rng[i]\n            touch_ok = (not P[\"requireEMATouch\"]) or touched\n            other = bounce_ok and ema_ok and size_ok and drops_ok and hh_ok and not_below and touch_ok\n            short_sig = P[\"tradeShort\"] and short_shape[i] and seq_s and (test or vok_s) and other\n            seq_l = (not new_low[i]) and red_after[i - 1] == 1 and since_nl[i] <= P[\"longMaxBars\"] and L[i] > nl_low[i]\n            long_sig = P[\"tradeLong\"] and long_shape[i] and seq_l and touch_ok and vok_l\n        else:\n            short_sig = long_sig = False\n            seq_s = other = False\n        filters_ok = test or (C[i] >= P[\"minPrice\"] and (P[\"minGapPct\"] <= 0 or gap_pct >= P[\"minGapPct\"]))\n        nxt = T[i] + tf\n        entry_time = nxt >= start_min and nxt <= end_min\n        ent_s[i] = L[i] - P[\"entryOffset\"]\n        ent_l[i] = H[i] + P[\"entryOffset\"]\n        stp_s[i] = (H[i] + L[i]) / 2 + P[\"midStopOffset\"] if mid_stop else H[i] + P[\"stopOffset\"]\n        stp_l[i] = (H[i] + L[i]) / 2 - P[\"midStopOffset\"] if mid_stop else L[i] - P[\"stopOffset\"]\n        sl = P[\"slippage\"]\n        sh_s[i] = int((P[\"riskDollars\"] / (max(stp_s[i] - ent_s[i], P[\"minRiskPS\"]) + 2 * sl)) // 1) if stp_s[i] - ent_s[i] > 0 else 0\n        sh_l[i] = int((P[\"riskDollars\"] / (max(ent_l[i] - stp_l[i], P[\"minRiskPS\"]) + 2 * sl)) // 1) if ent_l[i] - stp_l[i] > 0 else 0\n        for shs, qa, qb, qc in ((sh_s, q1s, q2s, q3s), (sh_l, q1l, q2l, q3l)):\n            s_ = shs[i]\n            a = min(s_, int(round_half_up(s_ * P[\"t1SellPct\"] / 100)))\n            b = min(s_ - a, int(round_half_up(s_ * P[\"t2SellPct\"] / 100))) if P[\"useT3\"] else s_ - a\n            c = s_ - a - b if P[\"useT3\"] else 0\n            qa[i], qb[i], qc[i] = a, b, c\n        gl = long_sig and filters_ok and entry_time and sh_l[i] >= 1\n        gs = short_sig and filters_ok and entry_time and sh_s[i] >= 1\n        go_l[i] = bool(gl)\n        go_s[i] = bool(gs and not gl)\n        if i >= 1 and P[\"tradeShort\"]:\n            if short_shape[i]:\n                funnel[\"shape\"] += 1\n                if hi[i] >= 0 and since_nh[i] <= msb and not new_high[i] and H[i] < nh_high[i]:\n                    funnel[\"afterHigh\"] += 1\n                    if broke_dn[i] == 1 or not P[\"requireBreak\"]:\n                        funnel[\"broke\"] += 1\n                        if (green_seen[i] == 1 or not P[\"needGreen\"]) and not (P[\"noGreenNewLow\"] and green_new_low[i]) and since_nh[i] >= 2:\n                            funnel[\"green\"] += 1\n                            if test or vok_s:\n                                funnel[\"vwap\"] += 1\n                                if other:\n                                    funnel[\"other\"] += 1\n                                    if filters_ok and entry_time:\n                                        funnel[\"time\"] += 1\n    return {\"n\": n, \"O\": O, \"H\": H, \"L\": L, \"C\": C, \"T\": T, \"ema\": ema, \"vwap\": vwap, \"hi\": hi,\n            \"go_s\": go_s, \"go_l\": go_l, \"ent_s\": ent_s, \"ent_l\": ent_l, \"stp_s\": stp_s, \"stp_l\": stp_l,\n            \"sh_s\": sh_s, \"sh_l\": sh_l, \"q\": {1: (q1s, q1l), 2: (q2s, q2l), 3: (q3s, q3l)}, \"funnel\": funnel, \"new_high\": new_high}\n\n\ndef round_half_up(x):\n    import math\n    return math.floor(x + 0.5)\n\n\ndef track(A, tr, i):\n    \"\"\"Where is an open trade on candle i? Mirrors the strategy's exit rules (stop moves, T1, T2, T3).\"\"\"\n    P = RULES\n    O, H, L, C = A[\"O\"], A[\"H\"], A[\"L\"], A[\"C\"]\n    t, side = tr[\"T\"], tr[\"side\"]\n    t_hi, t_lo = H[t], L[t]\n    rng_t = t_hi - t_lo\n    slip = P[\"slippage\"]\n    m1, m2 = P[\"t1R\"], P[\"t2R\"]\n    m3 = P[\"t3R\"] if P[\"useT3\"] else 0\n    mid_r, be_r = P[\"midMoveR\"], P[\"beMoveR\"]\n    mid = P[\"stopMode\"] == \"mid\"\n    if side > 0:\n        stop0 = (t_hi + t_lo) / 2 - P[\"midStopOffset\"] if mid else t_lo - P[\"stopOffset\"]\n        lv = lambda r: t_hi + r * rng_t\n        best = max(H[t + 1:i]) if i > t + 1 else 0\n        reached = lambda lvl: best >= lvl\n    else:\n        stop0 = (t_hi + t_lo) / 2 + P[\"midStopOffset\"] if mid else t_hi + P[\"stopOffset\"]\n        lv = lambda r: t_lo - r * rng_t\n        best = min(L[t + 1:i]) if i > t + 1 else 999999\n        reached = lambda lvl: best <= lvl\n    L1, L2, L3, LM, LB = lv(m1), lv(m2), lv(m3), lv(mid_r), lv(be_r)\n    r1b, r2b = reached(L1), reached(L2)\n    r3b = m3 > 0 and reached(L3)\n    rmb = mid_r > 0 and reached(LM)\n    rbb = be_r > 0 and reached(LB)\n    mid_t = (t_hi + t_lo) / 2\n    be_stop = tr[\"ent\"] if P[\"beLevel\"] == \"entry\" else (t_hi if side > 0 else t_lo)\n    if side > 0:\n        s1 = max(stop0, mid_t) if rmb else stop0\n        stop_now = max(s1, be_stop) if (rbb or r1b) else s1\n        hit = L[i] <= stop_now\n        touch = lambda lvl: H[i] >= lvl\n        px = min(O[i], stop_now) - slip\n    else:\n        s1 = min(stop0, mid_t) if rmb else stop0\n        stop_now = min(s1, be_stop) if (rbb or r1b) else s1\n        hit = H[i] >= stop_now\n        touch = lambda lvl: L[i] <= lvl\n        px = max(O[i], stop_now) + slip\n    r1 = r1b or ((not hit) and touch(L1))\n    r2 = r2b or ((not hit) and touch(L2))\n    r3 = r3b or (m3 > 0 and (not hit) and touch(L3))\n    last_done = r3 if m3 > 0 else r2\n    return {\"ex\": bool(hit or last_done), \"px\": px, \"r1\": r1, \"r2\": r2, \"r3\": r3, \"r1b\": r1b, \"r2b\": r2b, \"r3b\": r3b,\n            \"hit\": bool(hit), \"stop\": stop_now, \"L\": (L1, L2, L3), \"t1_seen\": r1b}\n\n\ndef backtest(rows, prev_close=None, A=None):\n    P = RULES\n    A = A or analyze(rows, prev_close)\n    n = A[\"n\"]\n    O, H, L, C, T = A[\"O\"], A[\"H\"], A[\"L\"], A[\"C\"], A[\"T\"]\n    slip = P[\"slippage\"]\n    trades = []\n    pos = None\n    block_hi = -1\n    for i in range(1, n):\n        if pos is None:\n            t = i - 1\n            if A[\"go_l\"][t] and H[i] >= A[\"ent_l\"][t]:\n                side = 1\n            elif A[\"go_s\"][t] and L[i] <= A[\"ent_s\"][t] and (P[\"waitAfter\"] == \"never\" or A[\"hi\"][t] != block_hi):\n                side = -1\n            else:\n                continue\n            if side > 0:\n                ent = max(O[i], H[t] + P[\"entryOffset\"]) + slip\n                qs = [A[\"q\"][k][1][t] for k in (1, 2, 3)]\n                qty = A[\"sh_l\"][t]\n            else:\n                ent = min(O[i], L[t] - P[\"entryOffset\"]) - slip\n                qs = [A[\"q\"][k][0][t] for k in (1, 2, 3)]\n                qty = A[\"sh_s\"][t]\n            pos = {\"T\": t, \"side\": side, \"ent\": ent, \"ei\": i, \"qs\": qs, \"qty\": qty}\n            continue\n        eod = T[i] + TF >= 956\n        tr = track(A, pos, i)\n        if not (eod or tr[\"ex\"]):\n            continue\n        side, t = pos[\"side\"], pos[\"T\"]\n        rng_t = H[t] - L[t]\n        stop_px = (O[i] + slip if side < 0 else O[i] - slip) if eod else tr[\"px\"]\n        g1 = tr[\"r1b\"] if eod else tr[\"r1\"]\n        g2 = tr[\"r2b\"] if eod else tr[\"r2\"]\n        g3 = tr[\"r3b\"] if eod else tr[\"r3\"]\n        if side > 0:\n            p = lambda r: H[t] + r * rng_t - slip\n        else:\n            p = lambda r: L[t] - r * rng_t + slip\n        q1, q2, q3 = pos[\"qs\"]\n        q_all = q1 + q2 + q3\n        parts = [(\"T1\", q1, g1, p(P[\"t1R\"])), (\"T2\", q2, g2, p(P[\"t2R\"])), (\"T3\", q3, g3, p(P[\"t3R\"]))]\n        if q_all > 0:\n            ex_px = sum(q * (px if g else stop_px) for _, q, g, px in parts) / q_all\n        else:\n            ex_px = stop_px\n        pnl = side * (ex_px - pos[\"ent\"]) * pos[\"qty\"]\n        why = \"EOD\" if eod else (\"stop\" if tr[\"hit\"] else \"all targets\")\n        if why == \"stop\" and tr[\"t1_seen\"]:\n            why = \"stop after T1\"\n        trades.append({\"side\": \"long\" if side > 0 else \"short\", \"trigger_bar\": t, \"entry_bar\": pos[\"ei\"], \"exit_bar\": i,\n                       \"entry\": round(pos[\"ent\"], 2), \"exit\": round(ex_px, 2), \"shares\": pos[\"qty\"],\n                       \"pnl\": round(pnl, 2), \"r\": round(pnl / P[\"riskDollars\"], 2), \"why\": why})\n        if P[\"waitAfter\"] == \"any\" or (P[\"waitAfter\"] == \"loss\" and not tr[\"t1_seen\"]):\n            block_hi = A[\"hi\"][t]\n        else:\n            block_hi = -1\n        pos = None\n    if pos is not None:\n        i = n - 1\n        tr = track(A, pos, i) if i > pos[\"T\"] + 1 else None\n        side, t = pos[\"side\"], pos[\"T\"]\n        rng_t = H[t] - L[t]\n        trades.append({\"side\": \"long\" if side > 0 else \"short\", \"trigger_bar\": t, \"entry_bar\": pos[\"ei\"], \"exit_bar\": None,\n                       \"entry\": round(pos[\"ent\"], 2), \"exit\": None, \"shares\": pos[\"qty\"], \"pnl\": 0.0, \"r\": 0.0, \"why\": \"still open\"})\n    return trades\n\n\ndef live_plan(rows, prev_close=None):\n    \"\"\"Call on each NEW CLOSED candle. If that candle is a signal, returns the order to place on the next candle.\"\"\"\n    P = RULES\n    A = analyze(rows, prev_close)\n    i = A[\"n\"] - 1\n    if i < 1:\n        return None\n    if A[\"go_s\"][i]:\n        side, ent, stp, shares = \"short\", A[\"ent_s\"][i], A[\"stp_s\"][i], A[\"sh_s\"][i]\n        rng_t = A[\"H\"][i] - A[\"L\"][i]\n        targets = [A[\"L\"][i] - r * rng_t for r in (P[\"t1R\"], P[\"t2R\"], P[\"t3R\"] if P[\"useT3\"] else None) if r is not None]\n    elif A[\"go_l\"][i]:\n        side, ent, stp, shares = \"long\", A[\"ent_l\"][i], A[\"stp_l\"][i], A[\"sh_l\"][i]\n        rng_t = A[\"H\"][i] - A[\"L\"][i]\n        targets = [A[\"H\"][i] + r * rng_t for r in (P[\"t1R\"], P[\"t2R\"], P[\"t3R\"] if P[\"useT3\"] else None) if r is not None]\n    else:\n        return None\n    return {\"side\": side, \"entry_if_trades_through\": round(ent, 2), \"stop\": round(stp, 2), \"shares\": shares,\n            \"targets\": [round(x, 2) for x in targets]}\n    # To trade it: send the order with your broker here. Start on a PAPER account.\n\n\ndef main(path):\n    rows = load_candles(path)\n    A = analyze(rows)\n    result = backtest(rows, A=A)\n    done = [t for t in result if t[\"exit_bar\"] is not None]\n    wins = [t for t in done if t[\"pnl\"] > 0]\n    print(\"Funnel (candles passing each rule):\", A[\"funnel\"])\n    print(len(done), \"trades,\", f\"{(len(wins) / len(done) * 100 if done else 0):.0f}% wins,\",\n          \"total P/L $%.2f\" % sum(t[\"pnl\"] for t in done), \", total R %.2f\" % sum(t[\"r\"] for t in done))\n    for t in result:\n        print(t)\n\n\nif __name__ == \"__main__\":\n    main(sys.argv[1] if len(sys.argv) > 1 else \"candles.csv\")\n";
   function botCode() {
-    var R = S.rules, nm = (R.signal === "any" ? "any candle" : { doji: "doji", hammer: "hammer", inv: "inverted hammer", inside: "inside bar", trigger: "trigger candle", green: "green candle", red: "red candle" }[R.signal]);
-    var spec = { name: R.side + " " + nm, side: R.side, signal: { doji: "doji", hammer: "hammer", inv: "inverted_hammer", inside: "inside_bar", trigger: "trigger", green: "green", red: "red", any: "any" }[R.signal], vwap: R.vwap, ema9: R.ema, min_gap_pct: +R.minGap, min_volume_x: +R.minVol, entry: R.entry === "break" ? "break_of_signal" : "signal_close", stop: R.stop === "sigLow" ? "signal_extreme" : "percent", stop_pct: +R.stopPct, target_r: +R.target, exit_on_9ema: !!R.trail };
-    var lg = ""; try { var ls = byStrat(logRows()); if (ls.length) lg = "\n# Your logged results by strategy (from the Trade log):\n" + ls.slice(0, 8).map(function (s) { return "#   " + s.k + ": " + s.n + " trades, " + Math.round(s.wr * 100) + "% wins, avg " + rr(s.avgR); }).join("\n") + "\n"; } catch (e) { }
-    var res = S.res ? "# Backtest in the simulator: " + S.res.n + " trades, " + Math.round(S.res.wr * 100) + "% wins, total " + rr(S.res.sumR) + ", avg " + rr(S.res.exp) + " per trade.\n" : "";
-    return '"""\nBot strategy: ' + spec.name + '\nBuilt in the Revatour Backtest Lab on ' + new Date().toISOString().slice(0, 10) + '.\n' + res + lg.replace(/^\n/, "") + '\nHow to use (Windows):\n  1. Install Python from python.org (tick "Add Python to PATH").\n  2. Open Command Prompt and run:  pip install pandas\n  3. Save your candles as candles.csv with columns: time,open,high,low,close,volume\n  4. Set PREV_CLOSE below to yesterday\'s close, then run:  python bot.py\n"""\nimport json\nimport pandas as pd\n\nRULES = json.loads(r\'\'\'' + JSON.stringify(spec, null, 2) + '\'\'\')\nPREV_CLOSE = ' + f2(S.sim.pc) + '   # yesterday\'s close, used for the gap\nRISK_DOLLARS = ' + (H.r1For ? Math.round(H.r1For(new Date().toISOString().slice(0, 10)) || 100) : 100) + '   # your 1R in dollars\nTICK = 0.01\n\n\ndef add_indicators(df):\n    df = df.copy()\n    tp = (df.high + df.low + df.close) / 3\n    df["vwap"] = (tp * df.volume).cumsum() / df.volume.cumsum()\n    df["ema9"] = df.close.ewm(span=9, adjust=False).mean()\n    return df\n\n\ndef is_signal(df, i):\n    row = df.iloc[i]\n    rng = row.high - row.low\n    body = abs(row.close - row.open)\n    upper = row.high - max(row.open, row.close)\n    lower = min(row.open, row.close) - row.low\n    k = RULES["signal"]\n    if k != "any" and rng <= 0:\n        return False\n    if k == "doji":\n        ok = body <= 0.1 * rng\n    elif k == "hammer":\n        ok = lower >= 0.55 * rng and upper <= 0.15 * rng\n    elif k == "inverted_hammer":\n        ok = upper >= 0.55 * rng and lower <= 0.15 * rng\n    elif k == "inside_bar":\n        ok = i > 0 and row.high < df.high.iloc[i - 1] and row.low > df.low.iloc[i - 1]\n    elif k == "trigger":\n        prior = df.iloc[max(0, i - 5):i]\n        avg_body = (prior.close - prior.open).abs().mean() if len(prior) else 0\n        ok = body >= 0.6 * rng and (len(prior) == 0 or body >= 1.3 * avg_body)\n    elif k == "green":\n        ok = row.close > row.open\n    elif k == "red":\n        ok = row.close < row.open\n    else:\n        ok = True\n    if not ok:\n        return False\n    if RULES["vwap"] == "above" and not row.close > row.vwap:\n        return False\n    if RULES["vwap"] == "below" and not row.close < row.vwap:\n        return False\n    if RULES["ema9"] == "above" and not row.close > row.ema9:\n        return False\n    if RULES["ema9"] == "below" and not row.close < row.ema9:\n        return False\n    if RULES["min_volume_x"] > 0:\n        prior = df.iloc[max(0, i - 5):i]\n        if len(prior) and row.volume < RULES["min_volume_x"] * prior.volume.mean():\n            return False\n    return True\n\n\ndef plan_trade(df, i, entry_price):\n    """Stop and target for a signal on bar i, given the entry price."""\n    d = 1 if RULES["side"] == "long" else -1\n    sig = df.iloc[i]\n    if RULES["stop"] == "signal_extreme":\n        stop = sig.low - TICK if d > 0 else sig.high + TICK\n    else:\n        stop = entry_price * (1 - d * RULES["stop_pct"] / 100)\n    risk = (entry_price - stop) * d\n    if risk <= 0:\n        return None\n    target = entry_price + d * RULES["target_r"] * risk\n    return {"stop": stop, "target": target, "risk": risk, "shares": int(RISK_DOLLARS / risk)}\n\n\ndef backtest(df):\n    df = add_indicators(df).reset_index(drop=True)\n    d = 1 if RULES["side"] == "long" else -1\n    gap = (df.open.iloc[0] / PREV_CLOSE - 1) * 100\n    trades = []\n    if RULES["min_gap_pct"] > 0 and gap < RULES["min_gap_pct"]:\n        return trades\n    s = 0\n    while s < len(df) - 1:\n        if not is_signal(df, s):\n            s += 1\n            continue\n        sig, nxt = df.iloc[s], df.iloc[s + 1]\n        if RULES["entry"] == "signal_close":\n            entry = sig.close\n        else:\n            if (d > 0 and nxt.high < sig.high) or (d < 0 and nxt.low > sig.low):\n                s += 1\n                continue\n            entry = max(sig.high, nxt.open) if d > 0 else min(sig.low, nxt.open)\n        plan = plan_trade(df, s, entry)\n        if plan is None:\n            s += 1\n            continue\n        exit_i, exit_price, why = len(df) - 1, df.close.iloc[-1], "end"\n        for k in range(s + 1, len(df)):\n            bar = df.iloc[k]\n            if (d > 0 and bar.low <= plan["stop"]) or (d < 0 and bar.high >= plan["stop"]):\n                exit_i, why = k, "stop"\n                exit_price = min(plan["stop"], bar.open) if d > 0 else max(plan["stop"], bar.open)\n                break\n            if (d > 0 and bar.high >= plan["target"]) or (d < 0 and bar.low <= plan["target"]):\n                exit_i, exit_price, why = k, plan["target"], "target"\n                break\n            if RULES["exit_on_9ema"] and k > s + 1 and ((d > 0 and bar.close < bar.ema9) or (d < 0 and bar.close > bar.ema9)):\n                exit_i, exit_price, why = k, bar.close, "9 EMA"\n                break\n        r = (exit_price - entry) * d / plan["risk"]\n        trades.append({"signal_bar": int(s), "entry": round(float(entry), 2), "exit": round(float(exit_price), 2), "exit_bar": int(exit_i), "r": round(float(r), 2), "why": why})\n        s = exit_i + 1\n    return trades\n\n\ndef live_signal(df):\n    """Call this on each new closed candle. Returns the plan when the last bar is a signal, else None."""\n    df = add_indicators(df).reset_index(drop=True)\n    i = len(df) - 1\n    if i < 0 or not is_signal(df, i):\n        return None\n    d = 1 if RULES["side"] == "long" else -1\n    sig = df.iloc[i]\n    entry = sig.close if RULES["entry"] == "signal_close" else (sig.high if d > 0 else sig.low)\n    plan = plan_trade(df, i, entry)\n    if plan:\n        plan.update({"entry": entry, "side": RULES["side"]})\n    return plan\n    # To trade it, send an order with your broker here. Start on a PAPER account.\n    # Example idea (Alpaca paper): TradingClient(KEY, SECRET, paper=True).submit_order(...)\n\n\nif __name__ == "__main__":\n    data = pd.read_csv("candles.csv")\n    result = backtest(data)\n    wins = [t for t in result if t["r"] > 0]\n    print(len(result), "trades,", f"{(len(wins) / len(result) * 100 if result else 0):.0f}% wins, total R:", round(sum(t["r"] for t in result), 2))\n    for t in result:\n        print(t)\n';
+    var P = S.rules, ls = "";
+    try { var l = byStrat(logRows()); if (l.length) ls = "Your logged results by strategy (from the Trade log):\n" + l.slice(0, 8).map(function (s) { return "  " + s.k + ": " + s.n + " trades, " + Math.round(s.wr * 100) + "% wins, avg " + rr(s.avgR); }).join("\n") + "\n"; } catch (e) { }
+    var res = S.res ? "Backtest in the simulator: " + S.res.n + " trades, " + Math.round(S.res.wr * 100) + "% wins, total " + sgn(S.res.net) + " (" + rr(S.res.sumR) + ").\n" : "";
+    var head = '"""\nBot strategy: SL-1-RV style ' + (P.tradeShort ? "short" : "") + (P.tradeShort && P.tradeLong ? " + " : "") + (P.tradeLong ? "long" : "") + '\nBuilt in the Revatour Backtest Lab on ' + new Date().toISOString().slice(0, 10) + '.\n' + res + ls + '\nHow to use (Windows):\n  1. Install Python from python.org (tick "Add Python to PATH"). Nothing else to install.\n  2. Save your candles as candles.csv with columns: time,open,high,low,close,volume   (e.g. 09:30, one day per file)\n  3. Set PREV_CLOSE and TF below, then run:  python bot.py\n  4. In your own code call live_plan(rows) on each new closed candle to get the order to place. Use a PAPER account first.\n"""';
+    return PYTPL.replace("__HEADER__", head).replace("__RULES__", JSON.stringify(P, null, 2)).replace("__PREV_CLOSE__", f2(S.sim.pc)).replace("__TF__", String(S.sim.tf || 2));
   }
   function exportCandles() {
-    var p2 = function (v) { return (v < 10 ? "0" : "") + v; };
-    return "time,open,high,low,close,volume\n" + S.sim.c.map(function (x, i) { var m = 570 + i; return p2(Math.floor(m / 60)) + ":" + p2(m % 60) + "," + [x.o, x.h, x.l, x.c, x.v].join(","); }).join("\n");
+    var p2 = function (v) { return (v < 10 ? "0" : "") + v; }, tf = S.sim.tf || 2;
+    return "time,open,high,low,close,volume\n" + S.sim.c.map(function (x, i) { var m = 570 + i * tf; return p2(Math.floor(m / 60)) + ":" + p2(m % 60) + "," + [x.o, x.h, x.l, x.c, x.v].join(","); }).join("\n");
   }
 
   /* ---------------- UI ---------------- */
@@ -273,7 +382,7 @@
     var h = '<div class="bt-bar"><label>Yesterday\'s close $<input id="bt-pc" inputmode="decimal" value="' + sm.pc + '" style="width:80px"></label>' +
       '<label>Gap %<input id="bt-gap" type="range" min="-30" max="60" step="0.5" value="' + sm.gap + '"><input id="bt-gapn" inputmode="decimal" value="' + sm.gap + '" style="width:64px"></label>' +
       '<span class="bt-hint">Opens at ' + f2(sm.pc * (1 + sm.gap / 100)) + '</span><span class="bt-sp"></span>' +
-      '<label>Candle size<select id="bt-size">' + [[0.004, "Small"], [0.008, "Medium"], [0.015, "Big"], [0.03, "Huge"]].map(function (o) { return '<option value="' + o[0] + '"' + (sm.size === o[0] ? " selected" : "") + '>' + o[1] + '</option>'; }).join("") + '</select></label></div>';
+      '<label>Chart<select id="bt-tf">' + [1, 2, 5, 15].map(function (m) { return '<option value="' + m + '"' + ((sm.tf || 2) === m ? " selected" : "") + '>' + m + ' minute</option>'; }).join("") + '</select></label><button class="bt-b" data-a="example">Insert example setup</button><label>Candle size<select id="bt-size">' + [[0.004, "Small"], [0.008, "Medium"], [0.015, "Big"], [0.03, "Huge"]].map(function (o) { return '<option value="' + o[0] + '"' + (sm.size === o[0] ? " selected" : "") + '>' + o[1] + '</option>'; }).join("") + '</select></label></div>';
     h += '<div class="bt-bar bt-pal"><span class="bt-lbl">Add a candle</span>' + KINDS.map(function (k) { return '<button class="bt-cb' + (S.kind === k[0] ? " on" : "") + '" data-add="' + k[0] + '">' + miniIcon(k[0], S.col) + '<span>' + k[1] + '</span></button>'; }).join("") +
       '<span class="bt-seg"><button data-col="g" class="' + (S.col === "g" ? "on g" : "") + '">Green</button><button data-col="r" class="' + (S.col === "r" ? "on r" : "") + '">Red</button></span>' +
       '<span class="bt-lbl">Volume</span><span class="bt-seg">' + ["Low", "Normal", "High", "Huge"].map(function (n, i) { return '<button data-vol="' + i + '" class="' + (S.vol === i ? "on" : "") + '">' + n + '</button>'; }).join("") + '</span></div>';
@@ -281,28 +390,52 @@
       '<button class="bt-b' + (S.edit === "vw" ? " on" : "") + '" data-edit="vw">Drag VWAP</button><button class="bt-b' + (S.edit === "em" ? " on" : "") + '" data-edit="em">Drag 9 EMA</button><button class="bt-b" data-a="resetlines">Reset lines</button>' +
       '<span class="bt-sp"></span><button class="bt-b" data-a="undo">Undo last</button><button class="bt-b" data-a="del"' + (sc ? "" : " disabled") + '>Delete selected</button><button class="bt-b" data-a="clear">Clear chart</button></div>';
     h += '<div class="bt-hint2">' + (S.edit ? 'Drag the dots on the ' + (S.edit === "vw" ? "VWAP" : "9 EMA") + ' line up or down. Press the button again to go back to candles.' : sc ? 'Candle ' + (S.sel + 1) + ' selected. Drag its dots to move the high, open, close and low. Drag the bar under the chart to change its volume.' : 'Click a candle to select it, then drag its dots.') + '</div>';
+    if (Object.keys(sm.vw).length || Object.keys(sm.em).length) h += '<div class="bt-note">You dragged the VWAP or 9 EMA line, so the backtest uses your dragged line. The bot code always uses the real VWAP and 9 EMA. Press "Reset lines" to go back.</div>';
     h += '<div id="bt-chart" class="bt-chart"></div>';
     // scenes
     h += '<div class="bt-bar"><input id="bt-sn" placeholder="Name this chart (e.g. Gap up hammer)" style="width:240px"><button class="bt-b" data-a="savescene"' + (c.length ? "" : " disabled") + '>Save chart as a scene</button><span class="bt-hint">Save a few different scenes. The backtest runs on all of them.</span></div>';
     if (S.scenes.length) h += '<div class="bt-sc">' + S.scenes.map(function (x, i) { return '<span class="bt-chip"><button data-ls="' + i + '" title="Load into the chart">' + esc(x.name) + ' <small>' + x.c.length + ' candles</small></button><button data-ds="' + i + '" title="Delete">&times;</button></span>'; }).join("") + '</div>';
     // rules
-    h += '<h3 class="bt-h">Strategy rules <small>pick from the lists, no code</small></h3><div class="bt-rules">' +
-      rf("Trade direction", sel("side", R.side, [["long", "Long (buy)"], ["short", "Short (sell)"]])) + rf("Signal candle", sel("signal", R.signal, SIGN)) +
-      rf("Signal closes vs VWAP", sel("vwap", R.vwap, [["any", "Don't care"], ["above", "Above VWAP"], ["below", "Below VWAP"]])) + rf("Signal closes vs 9 EMA", sel("ema", R.ema, [["any", "Don't care"], ["above", "Above 9 EMA"], ["below", "Below 9 EMA"]])) +
-      rf("Smallest gap % to trade", '<input data-r="minGap" inputmode="decimal" value="' + R.minGap + '">') + rf("Signal volume at least (x avg of last 5)", '<input data-r="minVol" inputmode="decimal" value="' + R.minVol + '">') +
-      rf("Enter", sel("entry", R.entry, [["break", "When price breaks the signal candle"], ["close", "At the signal candle close"]])) + rf("Stop loss", sel("stop", R.stop, [["sigLow", "Other end of the signal candle"], ["pct", "Fixed % from entry"]])) +
-      (R.stop === "pct" ? rf("Stop %", '<input data-r="stopPct" inputmode="decimal" value="' + R.stopPct + '">') : "") + rf("Profit target (R)", '<input data-r="target" inputmode="decimal" value="' + R.target + '">') +
-      rf("Also exit when a candle closes past the 9 EMA", '<label class="bt-chk"><input type="checkbox" data-r="trail"' + (R.trail ? " checked" : "") + '> Yes</label>') + '</div>';
-    h += '<div class="bt-bar"><button class="bt-b on" data-a="run">Run backtest</button><button class="bt-b" data-a="code">Build bot code</button><span class="bt-hint">1 R = the distance from your entry to your stop.</span></div>';
+    h += '<h3 class="bt-h">Strategy rules <small>every setting from your SL-1-RV code. Defaults are your v46 short.</small></h3>' + rulesHtml();
+    h += '<div class="bt-bar"><button class="bt-b on" data-a="run">Run backtest</button><button class="bt-b" data-a="code">Build bot code</button><button class="bt-b" data-a="resetrules">Reset rules to my v46 defaults</button><span class="bt-hint">The chart marks each HIGH, trigger (TRG), entry, stop and targets.</span></div>';
     if (S.res) {
       var r = S.res;
-      h += '<div class="bt-tiles">' + tile(r.n, "Trades (" + r.scenes + (r.scenes === 1 ? " chart" : " charts") + ")") + tile(Math.round(r.wr * 100) + "%", "Win rate", "", "<b>Win rate</b> is the share of trades that made money.") + tile(r.pf === Infinity ? "n/a" : f2(r.pf), "Profit factor", "", "<b>Profit factor</b> is R won divided by R lost. Above 1 is profitable.") + tile(rr(r.sumR), "Total R", r.sumR >= 0 ? "gain" : "loss") + tile(rr(r.exp), "Avg per trade", r.exp >= 0 ? "gain" : "loss", "<b>Expectancy.</b> Average R each trade makes. Positive means an edge.") + '</div>';
-      if (!r.n) h += '<p class="hint">No trades matched these rules on your chart. Try adding the signal candle you picked, or loosen a rule.</p>';
-      else h += '<div class="bt-tw"><table class="bt-t"><thead><tr><th>Chart</th><th>Entry bar</th><th>Entry</th><th>Exit</th><th>Why</th><th>R</th></tr></thead><tbody>' + r.all.slice(0, 80).map(function (t) { return '<tr><td>' + esc(t.scene) + '</td><td>' + (t.ei + 1) + '</td><td>' + f2(t.entry) + '</td><td>' + f2(t.exit) + '</td><td>' + t.why + '</td><td class="' + (t.R > 0 ? "gain" : "loss") + '">' + rr(t.R) + '</td></tr>'; }).join("") + '</tbody></table></div>';
+      h += '<div class="bt-tiles">' + tile(r.n, "Trades (" + r.scenes + (r.scenes === 1 ? " chart" : " charts") + ")") + tile(Math.round(r.wr * 100) + "%", "Win rate", "", "<b>Win rate</b> is the share of trades that made money.") + tile(r.pf === Infinity ? "n/a" : f2(r.pf), "Profit factor", "", "<b>Profit factor</b> is dollars won divided by dollars lost. Above 1 is profitable.") + tile(sgn(r.net), "Net P/L", r.net >= 0 ? "gain" : "loss") + tile(rr(r.sumR), "Total R", r.sumR >= 0 ? "gain" : "loss", "R here is profit divided by your risk per trade (" + money(S.rules.riskDollars) + ").") + tile(rr(r.exp), "Avg per trade", r.exp >= 0 ? "gain" : "loss", "<b>Expectancy.</b> Average R each trade makes. Positive means an edge.") + '</div>';
+      if (r.fun) h += '<div class="bt-note">Where setups drop out (current chart): shape ' + r.fun.shape + ' &rarr; after a HIGH ' + r.fun.afterHigh + ' &rarr; broke its low ' + r.fun.broke + ' &rarr; green seen ' + r.fun.green + ' &rarr; VWAP ' + r.fun.vwap + ' &rarr; other filters ' + r.fun.other + ' &rarr; time and gap ' + r.fun.time + ' &rarr; trades ' + r.all.filter(function (t) { return t.scene === "Current chart"; }).length + '</div>';
+      if (!r.all.length) h += '<p class="hint">No trades on these charts. Try "Insert example setup", or loosen a rule (the drop-out line above shows which rule stops it).</p>';
+      else h += '<div class="bt-tw"><table class="bt-t"><thead><tr><th>Chart</th><th>Side</th><th>Entry bar</th><th>Entry</th><th>Exit</th><th>Shares</th><th>P/L</th><th>R</th><th>How it ended</th></tr></thead><tbody>' + r.all.slice(0, 120).map(function (t) { return '<tr><td>' + esc(t.scene) + '</td><td>' + (t.dir > 0 ? "Long" : "Short") + '</td><td>' + (t.ei + 1) + '</td><td>' + f2(t.entry) + '</td><td>' + (t.open ? "-" : f2(t.exit)) + '</td><td>' + t.shares + '</td><td class="' + (t.pnl >= 0 ? "gain" : "loss") + '">' + sgn(t.pnl) + '</td><td>' + rr(t.R) + '</td><td>' + t.why + (t.parts.length ? " (" + t.parts.join(", ") + " filled)" : "") + '</td></tr>'; }).join("") + '</tbody></table></div>';
     }
     return h;
   }
-  function rf(l, ctl) { return '<div class="bt-rf"><label>' + l + '</label>' + ctl + '</div>'; }
+  var GROUPS = [
+    ["1. The HIGH candle", "A candle becomes the HIGH only when the very next candle trades below its low without going above its high. If any later candle trades above the HIGH candle, the setup is thrown out and the search starts over. Then a candle must break the HIGH candle's low for the setup to play out.", [
+      ["swingBars", "HIGH must be the highest of the last N candles (0 = off)", "n"], ["requireHOD", "Must also be a new high of the day", "b"],
+      ["requireBreak", "A later candle must trade below the HIGH candle's low", "b"], ["cancelOnHigherHigh", "Cancel if a candle goes above the highest high since the break (after a green)", "b"], ["maxSetupBars", "Setup expires N candles after the HIGH", "n"]]],
+    ["2. What must happen after the break", "", [
+      ["needGreen", "A green candle must print after the HIGH (the trigger can be that green; a flat doji counts)", "b"], ["breakGreenCounts", "A green candle right after the HIGH counts as the green", "b"], ["noGreenNewLow", "A green candle that makes the new low can never be the trigger", "b"],
+      ["maxDrops", "Skip if more than N candles made a lower low before the trigger (0 = off)", "n"], ["maxBounceHH", "Max higher highs in the bounce, trigger included (0 = off)", "n"], ["minBouncePct", "Trigger must bounce at least this % of the drop from the HIGH (0 = off)", "n"]]],
+    ["3. Signal candles (the trigger)", "Tick every shape that is allowed to be the trigger. Any color.", [
+      ["shape:inv", "Inverted hammer", "b"], ["shape:inside", "Inside bar", "b"], ["shape:doji", "Doji (tiny body)", "b"], ["shape:spin", "Spinning top (small body, both wicks bigger than the body)", "b"], ["shape:wick", "Top wick at least as big as the body (body 60% or less)", "b"], ["shape:hammer", "Hammer (for longs)", "b"],
+      ["maxBodyPct", "Small body means at most this % of the candle", "n"], ["insideMaxBodyPct", "Inside bar body at most this %", "n"], ["trigNotBelowPrev", "Trigger low can't be below the previous candle's low", "b"], ["trigBelowEMA", "Trigger must close below the 9 EMA", "b"], ["requireEMATouch", "Must touch the 9 EMA in the last 6 candles", "b"], ["minTrigATR", "Trigger at least this many average candles tall (0 = off)", "n"]]],
+    ["4. VWAP, gap, time and limits", "", [
+      ["vwapRule", "VWAP rule", "s", [["room", "VWAP in front of the trade with room"], ["above", "Trigger closes above VWAP"], ["below", "Trigger closes below VWAP"], ["any", "Ignore VWAP"]]], ["vwapRoomR", "Room needed (x the trigger candle size)", "n"],
+      ["minGapPct", "Smallest gap up % from yesterday's close (0 = off)", "n"], ["minPrice", "Smallest price", "n"], ["startTime", "Fills allowed from (HHMM)", "n"], ["endTime", "...until (HHMM)", "n"],
+      ["tradeShort", "Trade shorts", "b"], ["tradeLong", "Trade longs", "b"], ["waitAfter", "After a trade from a HIGH", "s", [["any", "No more trades from that HIGH"], ["loss", "Only block after a losing trade"], ["never", "No limit"]]], ["testMode", "Test mode: ignore VWAP, gap and price filters", "b"]]],
+    ["5. Entry, stop, targets and size", "", [
+      ["riskDollars", "Risk per trade ($)", "n"], ["entryOffset", "Entry offset (beyond the trigger)", "n"], ["slippage", "Slippage per side", "n"], ["minRiskPS", "Size as if the stop is at least this far (per share)", "n"],
+      ["stopMode", "Stop", "s", [["beyond", "Beyond the trigger candle"], ["mid", "Middle of the trigger candle"]]], ["stopOffset", "Stop offset (beyond the trigger)", "n"], ["midStopOffset", "Extra beyond the middle (middle stop)", "n"],
+      ["t1SellPct", "T1: % of shares sold", "n"], ["t1R", "T1 at (R from the trigger)", "n"], ["t2R", "T2 at (R)", "n"], ["useT3", "Use a third target", "b"], ["t2SellPct", "T2: % sold (when T3 is on, else takes the rest)", "n"], ["t3R", "T3 at (R)", "n"],
+      ["midMoveR", "Stop to the trigger middle at this R (0 = off)", "n"], ["beMoveR", "Stop to breakeven at this R (0 = only at T1)", "n"], ["beLevel", "Breakeven means", "s", [["low", "The trigger candle's exact low/high"], ["entry", "Your entry price"]]]]]
+  ];
+  function ruleField(f) {
+    var k = f[0], v = k.indexOf("shape:") === 0 ? S.rules.shapes[k.slice(6)] : S.rules[k], attr = k.indexOf("shape:") === 0 ? 'data-shape="' + k.slice(6) + '"' : 'data-r="' + k + '" data-t="' + f[2] + '"';
+    if (f[2] === "b") return '<label class="bt-ck"><input type="checkbox" ' + attr + (v ? " checked" : "") + '><span>' + f[1] + '</span></label>';
+    if (f[2] === "s") return '<div class="bt-rf"><label>' + f[1] + '</label><select ' + attr + '>' + f[3].map(function (o) { return '<option value="' + o[0] + '"' + (String(v) === o[0] ? " selected" : "") + '>' + o[1] + '</option>'; }).join("") + '</select></div>';
+    return '<div class="bt-rf"><label>' + f[1] + '</label><input ' + attr + ' inputmode="decimal" value="' + v + '"></div>';
+  }
+  function rulesHtml() {
+    return GROUPS.map(function (g, gi) { return '<details class="bt-grp"' + (gi < 2 ? " open" : "") + '><summary>' + g[0] + '</summary>' + (g[1] ? '<p class="bt-gp">' + g[1] + '</p>' : "") + '<div class="bt-rules">' + g[2].map(ruleField).join("") + '</div></details>'; }).join("");
+  }
   function codeHtml() {
     if (!S.code) S.code = botCode();
     return '<div class="bt-note">This Python file is built from your rules. It runs the same backtest on any candles.csv, and has a <b>live_signal</b> function ready to plug into a broker (use a paper account first). Change the rules on the Simulator tab, then press Build bot code again.</div>' +
@@ -332,7 +465,7 @@
       '.bt-rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}.bt-rf{display:flex;flex-direction:column;gap:4px}.bt-rf>label{font-size:.76rem;font-weight:800;color:var(--mute)}.bt-rf label.bt-chk{display:flex;flex-direction:row;align-items:center;gap:6px;font-size:.85rem;font-weight:700;color:var(--ink);margin:0;width:auto}.bt-rf input[type=checkbox]{width:18px;height:18px}' +
       '.bt-tw{overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel);margin:8px 0}.bt-t{width:100%;border-collapse:collapse;font-size:.84rem}.bt-t th,.bt-t td{text-align:left;padding:7px 11px;border-bottom:1px solid var(--line);white-space:nowrap}.bt-t th{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mute)}tr[data-strat]{cursor:pointer}tr[data-strat]:hover,tr[data-strat].on{background:rgba(127,127,127,.12)}.bt-x{border:0;background:none;color:var(--mute);font-size:1.1rem;cursor:pointer}' +
       '.bt-add{margin:12px 0;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px}.bt-add summary{cursor:pointer;font-weight:800;font-size:.88rem}.bt-sc{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}.bt-chip{display:inline-flex;border:1px solid var(--line);border-radius:999px;background:var(--panel);overflow:hidden}.bt-chip button{border:0;background:none;color:var(--ink);padding:6px 10px;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}.bt-chip small{color:var(--mute);font-weight:500}' +
-      '.bt-code{background:#0d1117;color:#e6edf3;border-radius:12px;padding:14px 16px;overflow:auto;font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;max-height:70vh;white-space:pre}</style>';
+      '.bt-grp{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin:8px 0;padding:0 14px}.bt-grp>summary{cursor:pointer;font-weight:800;font-size:.92rem;padding:11px 0}.bt-gp{font-size:.82rem;color:var(--mute);margin:0 0 8px;line-height:1.5}.bt-grp .bt-rules{border:0;padding:0 0 12px;background:none}.bt-grp label.bt-ck{display:flex!important;flex-direction:row!important;align-items:center;gap:9px;font-size:.84rem;font-weight:600;line-height:1.3;cursor:pointer;margin:0!important;width:auto!important;color:var(--ink)}.bt-ck input{width:18px!important;height:18px;flex:none;margin:0}.bt-tag{font-size:10px;font-weight:800;fill:var(--mute)}.bt-tag.trg{fill:#ec4899}.bt-tag.hi{fill:var(--mute)}.bt-code{background:#0d1117;color:#e6edf3;border-radius:12px;padding:14px 16px;overflow:auto;font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;max-height:70vh;white-space:pre}</style>';
   }
 
   /* ---------------- events ---------------- */
@@ -346,18 +479,20 @@
       if ((b = t.closest("[data-col]"))) { S.col = b.getAttribute("data-col"); render(); return; }
       if ((b = t.closest("[data-vol]"))) { S.vol = +b.getAttribute("data-vol"); var c = S.sim.c[S.sel]; if (c && S.edit === "") { c.v = Math.round(S.sim.vb * volMul()); S.res = null; save(); } render(); return; }
       if ((b = t.closest("[data-edit]"))) { var e = b.getAttribute("data-edit"); S.edit = S.edit === e ? "" : e; render(); return; }
-      if ((b = t.closest("[data-ls]"))) { var sc = S.scenes[+b.getAttribute("data-ls")]; S.sim = { pc: sc.pc, gap: sc.gap, size: S.sim.size, vb: S.sim.vb, c: JSON.parse(JSON.stringify(sc.c)), vw: Object.assign({}, sc.vw), em: Object.assign({}, sc.em) }; S.sel = -1; S.res = null; save(); render(); return; }
+      if ((b = t.closest("[data-ls]"))) { var sc = S.scenes[+b.getAttribute("data-ls")]; S.sim = { pc: sc.pc, gap: sc.gap, tf: sc.tf || 2, size: S.sim.size, vb: S.sim.vb, c: JSON.parse(JSON.stringify(sc.c)), vw: Object.assign({}, sc.vw), em: Object.assign({}, sc.em) }; S.sel = -1; S.res = null; save(); render(); return; }
       if ((b = t.closest("[data-ds]"))) { S.scenes.splice(+b.getAttribute("data-ds"), 1); save(); render(); return; }
       if ((b = t.closest("[data-a]"))) act(b.getAttribute("data-a"));
     });
     root.addEventListener("change", function (ev) {
       var t = ev.target, f = t.getAttribute("data-f"), r = t.getAttribute("data-r");
       if (f) { S.f[f] = t.value; render(); return; }
-      if (r) { var v = t.type === "checkbox" ? t.checked : t.value; if (["minGap", "minVol", "stopPct", "target"].indexOf(r) >= 0) { v = parseFloat(v); if (isNaN(v) || v < 0) v = 0; if (r === "target" && v <= 0) v = 1; if (r === "stopPct" && v <= 0) v = 1; } S.rules[r] = v; S.res = null; S.code = ""; save(); render(); return; }
+      if (t.getAttribute("data-shape")) { S.rules.shapes[t.getAttribute("data-shape")] = t.checked; S.res = null; S.code = ""; save(); return; }
+      if (r) { var ty = t.getAttribute("data-t"), v = ty === "b" ? t.checked : ty === "n" ? parseFloat(t.value) : t.value; if (ty === "n") { if (isNaN(v) || v < 0) v = DEFRULES[r]; if (["t1R", "t2R", "t3R", "riskDollars"].indexOf(r) >= 0 && v <= 0) v = DEFRULES[r]; } S.rules[r] = v; S.res = null; S.code = ""; save(); if (ty === "n") t.value = v; return; }
       if (t.id === "bt-pc") { setPC(parseFloat(t.value)); return; }
       if (t.id === "bt-gapn") { setGap(parseFloat(t.value)); return; }
       if (t.id === "bt-gap") { setGap(parseFloat(t.value)); return; }
       if (t.id === "bt-size") { S.sim.size = parseFloat(t.value); save(); return; }
+      if (t.id === "bt-tf") { S.sim.tf = parseInt(t.value, 10); S.res = null; save(); render(); return; }
       if (t.id === "bt-drift") { S.drift = parseInt(t.value, 10); return; }
     });
     root.addEventListener("input", function (ev) { var t = ev.target; if (t.getAttribute("data-f") === "tk") { S.f.tk = t.value; render(); } if (t.id === "bt-gap") { var n = root.querySelector("#bt-gapn"); if (n) n.value = t.value; } });
@@ -370,6 +505,14 @@
     root.addEventListener("pointermove", onMove); root.addEventListener("pointerup", onUp); root.addEventListener("pointercancel", onUp);
     document.addEventListener("keydown", function (ev) { if (!root || root.hidden || S.tab !== "sim") return; if ((ev.key === "Delete" || ev.key === "Backspace") && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName) && S.sel >= 0) { ev.preventDefault(); act("del"); } });
   }
+  function exampleSetup() {
+    var raw = [[10.80, 10.95, 10.78, 10.92], [10.92, 11.15, 10.90, 11.10], [11.10, 11.45, 11.08, 11.40], [11.40, 11.90, 11.38, 11.85], [11.85, 12.35, 11.82, 12.30], [12.30, 12.70, 12.25, 12.62],
+      [12.60, 12.66, 12.20, 12.26], [12.26, 12.30, 11.98, 12.00], [12.00, 12.04, 11.76, 11.78], [11.78, 12.10, 11.77, 12.04], [11.89, 12.05, 11.84, 11.86], [11.86, 11.87, 11.62, 11.65], [11.65, 11.68, 11.30, 11.36], [11.36, 11.40, 11.20, 11.25], [11.25, 11.30, 11.12, 11.18]];
+    var vol = [6000, 1500, 900, 800, 700, 600, 500, 500, 400, 350, 300, 500, 600, 350, 300];
+    if (S.sim.c.length && !window.confirm("Replace the chart with the example setup?")) return;
+    S.sim = { pc: 10, gap: 8, tf: S.sim.tf || 2, size: S.sim.size, vb: 100000, c: raw.map(function (x, i) { return { o: x[0], h: x[1], l: x[2], c: x[3], v: vol[i] * 1000, k: "normal" }; }), vw: {}, em: {} };
+    S.sel = -1; S.res = null; save(); render(); toast("Example loaded: HIGH is candle 6, break is 7, trigger is 11");
+  }
   function act(a) {
     var sm = S.sim;
     if (a === "csv") download("trade-log.csv", csv(filt(logRows())), "text/csv");
@@ -379,7 +522,9 @@
     else if (a === "del") { if (S.sel < 0) return; sm.c.splice(S.sel, 1); sm.vw = {}; sm.em = {}; S.sel = Math.min(S.sel, sm.c.length - 1); S.res = null; save(); render(); }
     else if (a === "clear") { if (sm.c.length && !window.confirm("Clear all candles on the chart?")) return; sm.c = []; sm.vw = {}; sm.em = {}; S.sel = -1; S.res = null; save(); render(); }
     else if (a === "resetlines") { sm.vw = {}; sm.em = {}; S.res = null; save(); render(); }
-    else if (a === "savescene") { var n = (root.querySelector("#bt-sn").value || "").trim() || "Scene " + (S.scenes.length + 1); S.scenes.push({ name: n, pc: sm.pc, gap: sm.gap, c: JSON.parse(JSON.stringify(sm.c)), vw: Object.assign({}, sm.vw), em: Object.assign({}, sm.em) }); save(); render(); toast("Scene saved"); }
+    else if (a === "savescene") { var n = (root.querySelector("#bt-sn").value || "").trim() || "Scene " + (S.scenes.length + 1); S.scenes.push({ name: n, pc: sm.pc, gap: sm.gap, tf: sm.tf || 2, c: JSON.parse(JSON.stringify(sm.c)), vw: Object.assign({}, sm.vw), em: Object.assign({}, sm.em) }); save(); render(); toast("Scene saved"); }
+    else if (a === "resetrules") { S.rules = JSON.parse(JSON.stringify(DEFRULES)); S.res = null; S.code = ""; save(); render(); toast("Rules reset"); }
+    else if (a === "example") { exampleSetup(); }
     else if (a === "run") { if (!sm.c.length && !S.scenes.length) { toast("Add some candles first"); return; } runAll(); }
     else if (a === "code") { runAll(); S.code = botCode(); S.tab = "code"; render(); window.scrollTo(0, 0); }
     else if (a === "rebuild") { S.code = botCode(); render(); }
@@ -389,6 +534,6 @@
   }
 
   function mount(el) { H = window.StockBT || H; root = el; if (!S.rules) load(); if (!root.__bt) { root.__bt = 1; bind(); } host = null; render(); }
-  window.BacktestLab = { mount: mount };
+  window.BacktestLab = { mount: mount, _e: { backtest: backtest, analyze: analyze, DEF: DEFRULES, indOf: indOf } };
   load();
 })();
