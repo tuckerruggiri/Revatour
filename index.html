@@ -19,6 +19,7 @@
 <script src="shim.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+.ws-bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 8px}.ws-bar button{padding:5px 11px;font-size:.85rem}.ws-sp{flex:1}.ws-ck{display:inline-flex!important;flex-direction:row!important;align-items:center;gap:6px;font-size:.88rem;margin:0!important}.ws-ck input[type=checkbox]{width:auto!important;flex:none}.ws-ck input[type=number]{width:60px!important;padding:3px 6px;margin:0}.ws-ck i{display:inline-block;width:14px;height:4px;border-radius:2px}.ws-info{font-size:.85rem;min-height:1.3em;margin:2px 0 6px;font-variant-numeric:tabular-nums}.ws-cols{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px}@media(max-width:1000px){.ws-cols{grid-template-columns:minmax(0,1fr)}}.ws-pane{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:4px;touch-action:none;user-select:none}.ws-svg{width:100%;height:auto;display:block}.ws-svg *{pointer-events:none}.ws-svg [data-wsi],.ws-svg [data-wsh],.ws-svg [data-wsl],.ws-svg [data-wsv]{pointer-events:all}.ws-rr{margin:8px 0;padding:9px 12px;border:1px dashed var(--line);border-radius:10px;font-size:.92rem}.ws-sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}.ws-sc{border:1px solid var(--line);border-radius:12px;padding:10px}.ws-sc b{display:block}.ws-sc small{color:var(--mute)}.ws-sc p{margin:4px 0 0;font-size:.82rem;color:var(--mute)}.ws-spk{width:100%;height:36px;display:block;margin-bottom:4px}
 #planv.wrap{max-width:none;width:100%;box-sizing:border-box;padding-left:28px;padding-right:28px}@media(max-width:700px){#planv.wrap{padding-left:14px;padding-right:14px}}
 #planv .pl-cols{grid-template-columns:minmax(0,1.7fr) minmax(360px,1fr);gap:20px}#planv .pl-side{position:static;display:grid;gap:16px}#planv .pl-main{display:grid;gap:16px}#planv .pl-sa{scroll-margin-top:64px}@media(max-width:1000px){#planv .pl-cols{grid-template-columns:minmax(0,1fr)}#planv .pl-side{order:0}}
 .pl-nav{position:sticky;top:0;z-index:30;display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:8px 10px;margin:0 0 16px;background:color-mix(in srgb,var(--bg) 97%,transparent);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:14px}.pl-nav button{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:99px;font-size:.88rem;transition:transform .12s}.pl-nav button:hover{transform:translateY(-1px)}.pl-nav button i{font-style:normal}.pl-nav button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}.pl-live{margin-left:auto;font-size:.88rem;display:flex;gap:6px;align-items:center}.pl-live b{padding:2px 9px;border-radius:8px;background:var(--line)}.pl-live b.gain{background:var(--gain);color:var(--bg)}.pl-live b.loss{background:var(--loss);color:var(--bg)}
@@ -1406,9 +1407,9 @@ function plPaint(){if(!$("plck"))return;try{cadUpdate()}catch(e){}var c=plCalc()
 function plField(l,key,type,ph,ex){return '<label class="pl-f">'+l+'<input data-pf="'+key+'" type="'+(type||"text")+'"'+(type==="number"?' step="any" inputmode="decimal"':'')+' placeholder="'+(ph||"")+'" value="'+esc(pl[key]||"")+'"'+(ex||"")+'></label>'}
 function rkField(l,key,step){return '<label class="pl-f">'+l+'<input data-rk="'+key+'" type="number" step="'+(step||"any")+'" inputmode="decimal" value="'+(rk[key]||rk[key]===0?esc(rk[key]):"")+'"></label>'}
 function renderPlan(){var el=$("planv");if(!pl){try{pl=JSON.parse(localStorage.getItem(PLD)||"null")}catch(e){}if(!pl||!pl.chk)pl=plFresh()}if(!rk)rkInit();
- var strats={};plans.forEach(function(p){if(p.strat)strats[p.strat]=1});["Breakout","Pullback","Reversal","Opening range","VWAP reclaim","Fade"].forEach(function(s){strats[s]=1});
+ var strats={};plans.forEach(function(p){if(p.strat)strats[p.strat]=1});["Breakout","Pullback","Reversal","Opening range","VWAP reclaim","Fade"].forEach(function(s){strats[s]=1});try{wsNames().forEach(function(n){strats[n]=1})}catch(e){}
  el.innerHTML='<div class="hm-top"><div><h1>Trade Plan</h1><p class="sub">Size from your real balance, then earn the A+ before you click buy.</p></div></div>'+
- '<nav class="pl-nav" id="plnav" aria-label="Jump to a section">'+[["plrisk","&#129518;","Risk"],["pltrade","&#127919;","The trade"],["plcad","&#129692;","Cadence"],["plsumsec","&#128202;","Summary"],["plchksec","&#9989;","A+ checklist"],["pllinksec","&#128279;","Links"],["pllogsec","&#128450;","Plan log"]].map(function(x){return '<button type="button" data-plgo="'+x[0]+'"><i>'+x[1]+'</i> '+x[2]+'</button>'}).join("")+'<span class="pl-live" id="plnavlive" aria-live="polite"></span></nav>'+
+ '<nav class="pl-nav" id="plnav" aria-label="Jump to a section">'+[["plrisk","&#129518;","Risk"],["pltrade","&#127919;","The trade"],["plcad","&#129692;","Cadence"],["plws","&#128736;","Workshop"],["plsumsec","&#128202;","Summary"],["plchksec","&#9989;","A+ checklist"],["pllinksec","&#128279;","Links"],["pllogsec","&#128450;","Plan log"]].map(function(x){return '<button type="button" data-plgo="'+x[0]+'"><i>'+x[1]+'</i> '+x[2]+'</button>'}).join("")+'<span class="pl-live" id="plnavlive" aria-live="polite"></span></nav>'+
  '<section class="pl-card pl-sa" id="plrisk" aria-label="Today\'s risk"><h2>Today\'s risk</h2><div class="pl-grid">'+rkField("Account balance ($)","bal")+rkField("Daily goal (% of balance)","dpct")+rkField("Trades per day","tpd")+rkField("Max daily loss (R)","maxR")+rkField("Daily goal (R)","goalR")+rkField("P&amp;L today ($)","pnl")+'</div>'+
  '<details class="pl-adv"><summary>Drawdown rule: cut size when you are down</summary><div class="pl-grid">'+rkField("Cut size when down (% from peak)","dd")+rkField("Trade at this % of size while cut","cut")+rkField("Peak balance ($)","peak")+'</div><p class="hint" style="margin:6px 0 0">Your peak updates itself when your balance makes a new high. Edit it any time.</p></details>'+
  '<details class="pl-adv"><summary>My R rules: targets and reduced size</summary><div class="pl-grid">'+rkField("Target 1 (R)","m1")+rkField("Target 2 (R)","m2")+rkField("Target 3 (R)","m3")+rkField("Reduced size (R)","red")+'</div></details>'+
@@ -1427,8 +1428,8 @@ function renderPlan(){var el=$("planv");if(!pl){try{pl=JSON.parse(localStorage.g
   '<label class="pl-f">Exit plan<textarea data-pf="exit" rows="2" maxlength="400" placeholder="Where I take profit, how I trail, my time stop">'+esc(pl.exit)+'</textarea></label></section>'+
  '<section class="pl-card pl-sa" id="plcad" aria-label="Stop and entry cadence"></section></div>'+
  '<aside class="pl-side"><section class="pl-sa" id="plsumsec"><div id="plsum" class="pl-sum" aria-live="polite"></div></section>'+'<section class="pl-card pl-sa" id="plchksec" aria-label="A+ checklist"><h2 style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">A+ checklist <span id="plcount" class="pill"></span><button type="button" id="plall" style="margin-left:auto;font-size:13px;padding:5px 12px"></button></h2><p class="hint" style="margin:0 0 10px">Tap each one only when it is true. The grayed ones tick themselves from your numbers.</p><div id="plck" class="pl-ck"></div></section>'+'<section class="pl-card pl-sa" id="pllinksec" aria-label="Links"><h2>&#128279; Jump to</h2><div id="pllinks"></div></section></aside></div>'+
- '<section class="pl-sa" id="pllogsec"><h2 class="pf-sec">&#128450; Plan log</h2><div id="plstat"></div><div id="pllog"></div></section>';
- plPaint();plPics();plLog();cadBuild();plNavInit()}
+ '<section class="pl-card pl-sa" id="plws" aria-label="Setup workshop"></section><section class="pl-sa" id="pllogsec"><h2 class="pf-sec">&#128450; Plan log</h2><div id="plstat"></div><div id="pllog"></div></section>';
+ plPaint();plPics();plLog();cadBuild();wsBuild();plNavInit()}
 async function plPasteClip(){
  try{var items=await navigator.clipboard.read(),fs=[];
   for(var i=0;i<items.length;i++){var t=items[i].types.filter(function(x){return /^image\//.test(x)})[0];if(t){var bl=await items[i].getType(t);fs.push(new File([bl],"paste."+t.split("/")[1],{type:t}))}}
@@ -1554,6 +1555,121 @@ function plLinks(){var el=$("pllinks");if(!el)return;var t=(pl.ticker||"").trim(
 $("planv").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("[data-plgo],[data-plnav]");if(!b)return;
  if(b.dataset.plgo){var t=$(b.dataset.plgo);if(t){var y=t.getBoundingClientRect().top+window.scrollY-64;window.scrollTo({top:y,behavior:"smooth"});t.classList.remove("pl-flash");void t.offsetWidth;t.classList.add("pl-flash")}return}
  var n=$(b.dataset.plnav);if(n)n.click()});
+/* ===== Setup workshop (Trade Plan): build candles, 9 EMA, VWAP, R/R lines ===== */
+var WSK="stockspot-ws-v1",WS=null,WSDrag=null,WSFreeze=null,WSHist=[],WSG={W:720,H:400,top:12,ph:296,vt:330,vh:56,left:8,right:64};
+function wsFresh(){return {name:"",tf:5,side:"long",series:{1:[],2:[],5:[],15:[]},lines:{entry:null,stop:null,t1:null,t2:null},ei:0,sel:-1,ema:true,vwap:true,per:9,notes:"",saved:[]}}
+function wsLoad(){if(WS)return;try{WS=Object.assign(wsFresh(),JSON.parse(localStorage.getItem(WSK)||"{}"))}catch(e){WS=wsFresh()}
+ [1,2,5,15].forEach(function(k){if(!WS.series[k])WS.series[k]=[]});if(!WS.lines)WS.lines={entry:null,stop:null,t1:null,t2:null};WS.sel=-1}
+function wsSave(){try{localStorage.setItem(WSK,JSON.stringify(WS))}catch(e){toast("Workshop is too big to save")}}
+function wsNames(){wsLoad();return WS.saved.map(function(s){return s.name}).filter(Boolean)}
+function wsC(){return WS.series[WS.tf]}
+function wsPush(){try{WSHist.push(JSON.stringify({series:WS.series,lines:WS.lines,ei:WS.ei}));if(WSHist.length>60)WSHist.shift()}catch(e){}}
+function r2(v){return Math.round(v*100)/100}
+function wsInd(C){var k=2/((+WS.per||9)+1),ema=[],vw=[],pv=0,vv=0;
+ C.forEach(function(c,i){ema.push(i?ema[i-1]+k*(c.c-ema[i-1]):c.c);var tp=(c.h+c.l+c.c)/3,v=c.v>0?c.v:1;pv+=tp*v;vv+=v;vw.push(pv/vv)});return {ema:ema,vw:vw}}
+function wsRange(){if(WSFreeze)return WSFreeze;var C=wsC(),v=[],I=wsInd(C);C.forEach(function(c){v.push(c.h,c.l)});
+ ["entry","stop","t1","t2"].forEach(function(k){if(WS.lines[k]!=null)v.push(WS.lines[k])});if(WS.ema)v=v.concat(I.ema);if(WS.vwap)v=v.concat(I.vw);
+ if(!v.length)return [9,11];var lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),pad=(hi-lo)*0.14||0.5;return [lo-pad,hi+pad]}
+function wsMk(type,prev){var o=prev!=null?prev:10,u=Math.max(0.02,o*0.006),c,h,l;
+ if(type==="green"){c=o+u*2.2;h=c+u*.5;l=o-u*.4}else if(type==="red"){c=o-u*2.2;h=o+u*.4;l=c-u*.5}
+ else if(type==="doji"){c=o+u*.1;h=o+u*1.4;l=o-u*1.4}else if(type==="hammer"){c=o+u*.5;h=c+u*.2;l=o-u*2.6}
+ else{c=o-u*.5;l=c-u*.2;h=o+u*2.6}return {o:r2(o),h:r2(Math.max(h,o,c)),l:r2(Math.min(l,o,c)),c:r2(c),v:1000+Math.round(Math.random()*800)}}
+function wsExample(){var C=[],p=10;[[.4,.9],[.5,1.4],[-.2,1],[.7,1.1],[.3,.8],[-.5,1],[-.6,.9],[-.3,.8],[.2,.7],[.6,1],[.9,1.2],[.5,.9],[-.4,.9],[-.8,1.1],[.3,.7],[1.1,1.4]].forEach(function(x){var o=p,c=o+x[0],h=Math.max(o,c)+x[1]*.18,l=Math.min(o,c)-x[1]*.15;C.push({o:r2(o),h:r2(h),l:r2(l),c:r2(c),v:900+Math.round(Math.random()*1400)});p=c});return C}
+function wsAgg(src,k){var out=[];for(var i=0;i<src.length;i+=k){var g=src.slice(i,i+k);out.push({o:g[0].o,c:g[g.length-1].c,h:Math.max.apply(null,g.map(function(x){return x.h})),l:Math.min.apply(null,g.map(function(x){return x.l})),v:g.reduce(function(a,x){return a+(x.v||0)},0)})}return out}
+function wsGeom(W,nmax){var g=WSG;return {W:W,left:g.left,right:g.right,pw:W-g.left-g.right,n:nmax}}
+function wsDraw(){var host=$("wsc");if(!host)return;var C=wsC(),R=wsRange(),lo=R[0],hi=R[1],I=wsInd(C),g=WSG,nmax=Math.max(26,C.length+8);
+ var ys=function(p){return g.top+(hi-p)/(hi-lo)*g.ph};
+ var vmax=Math.max.apply(null,C.map(function(c){return c.v||0}).concat([1000]));
+ var one=function(W,kind){var pw=W-g.left-g.right,step=pw/nmax,xc=function(i){return g.left+step*(i+.5)},s='<svg viewBox="0 0 '+W+' '+g.H+'" class="ws-svg" data-wskind="'+kind+'" role="img" aria-label="'+(kind==="c"?"Candle chart":"Line chart")+'">';
+  for(var q=0;q<=4;q++){var pr=lo+(hi-lo)*q/4,y=ys(pr);s+='<line x1="'+g.left+'" x2="'+(W-g.right)+'" y1="'+y+'" y2="'+y+'" stroke="var(--line)" stroke-width="1"/><text x="'+(W-g.right+6)+'" y="'+(y+4)+'" font-size="11" fill="var(--mute)">'+pr.toFixed(2)+'</text>'}
+  var L=WS.lines;if(L.entry!=null&&WS.ei<nmax){var x0=xc(Math.min(WS.ei,nmax-1))-step/2,x1=W-g.right;
+   if(L.stop!=null)s+='<rect x="'+x0+'" y="'+Math.min(ys(L.entry),ys(L.stop))+'" width="'+(x1-x0)+'" height="'+Math.abs(ys(L.stop)-ys(L.entry))+'" fill="var(--loss)" opacity=".13"/>';
+   var tg=L.t2!=null?L.t2:L.t1;if(tg!=null)s+='<rect x="'+x0+'" y="'+Math.min(ys(L.entry),ys(tg))+'" width="'+(x1-x0)+'" height="'+Math.abs(ys(tg)-ys(L.entry))+'" fill="var(--gain)" opacity=".13"/>'}
+  for(var t=0;t<nmax;t+=Math.max(1,Math.round(nmax/8))){var mins=570+WS.tf*t,hh=Math.floor(mins/60)%24,mm=mins%60;s+='<text x="'+xc(t)+'" y="'+(g.H-2)+'" font-size="10" text-anchor="middle" fill="var(--mute)">'+hh+":"+("0"+mm).slice(-2)+'</text>'}
+  if(kind==="c"){C.forEach(function(c,i){var up=c.c>=c.o,col=up?"var(--gain)":"var(--loss)",x=xc(i),bw=Math.max(4,step*.62),yo=ys(c.o),yc=ys(c.c);
+    s+='<line x1="'+x+'" x2="'+x+'" y1="'+ys(c.h)+'" y2="'+ys(c.l)+'" stroke="'+col+'" stroke-width="6" stroke-opacity="0" data-wsi="'+i+'"/><line x1="'+x+'" x2="'+x+'" y1="'+ys(c.h)+'" y2="'+ys(c.l)+'" stroke="'+col+'" stroke-width="2"/><rect x="'+(x-bw/2)+'" y="'+Math.min(yo,yc)+'" width="'+bw+'" height="'+Math.max(2,Math.abs(yo-yc))+'" fill="'+col+'" stroke="'+(WS.sel===i?"var(--ink)":col)+'" stroke-width="'+(WS.sel===i?2:1)+'" data-wsi="'+i+'" style="cursor:grab"/>'+
+     '<rect x="'+(x-step/2)+'" y="'+(g.vt+g.vh-(c.v||0)/vmax*g.vh)+'" width="'+(step*.7)+'" height="'+((c.v||0)/vmax*g.vh)+'" fill="'+col+'" opacity=".35" data-wsv="'+i+'" style="cursor:ns-resize"/>'})}
+  else{if(C.length){s+='<polyline fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round" points="'+C.map(function(c,i){return xc(i)+","+ys(c.c)}).join(" ")+'"/>';C.forEach(function(c,i){s+='<circle cx="'+xc(i)+'" cy="'+ys(c.c)+'" r="'+(WS.sel===i?5:3)+'" fill="var(--ink)" data-wsi="'+i+'" style="cursor:pointer"/>'})}}
+  var path=function(arr,col,dash){return arr.length?'<polyline fill="none" stroke="'+col+'" stroke-width="2" '+(dash||"")+' points="'+arr.map(function(v,i){return xc(i)+","+ys(v)}).join(" ")+'"/>':""};
+  if(WS.ema)s+=path(I.ema,"#e8890c");if(WS.vwap)s+=path(I.vw,"#8e44ad",'stroke-dasharray="6 4"');
+  if(kind==="c"&&WS.sel>=0&&C[WS.sel]){var c=C[WS.sel],x=xc(WS.sel),bw=Math.max(4,step*.62);[["h",x,ys(c.h)],["l",x,ys(c.l)],["o",x-bw/2,ys(c.o)],["c",x+bw/2,ys(c.c)]].forEach(function(hd){s+='<circle cx="'+hd[1]+'" cy="'+hd[2]+'" r="6" fill="var(--panel)" stroke="var(--ink)" stroke-width="2" data-wsh="'+hd[0]+'" style="cursor:ns-resize"/>'})}
+  [["entry","Entry","var(--ink)"],["stop","Stop","var(--loss)"],["t1","T1","var(--gain)"],["t2","T2","var(--gain)"]].forEach(function(d){var v=L[d[0]];if(v==null)return;var y=ys(v),risk=(L.entry!=null&&L.stop!=null)?Math.abs(L.entry-L.stop):0,rr=risk>0&&d[0]!=="entry"?" "+(Math.abs(v-L.entry)/risk).toFixed(2)+"R":"";
+   s+='<line x1="'+g.left+'" x2="'+(W-g.right)+'" y1="'+y+'" y2="'+y+'" stroke="'+d[2]+'" stroke-width="2" stroke-dasharray="'+(d[0]==="entry"?"0":"7 4")+'"/><line x1="'+g.left+'" x2="'+(W-g.right)+'" y1="'+y+'" y2="'+y+'" stroke="transparent" stroke-width="16" data-wsl="'+d[0]+'" style="cursor:ns-resize"/>'+
+   '<rect x="'+(W-g.right-2)+'" y="'+(y-9)+'" width="'+(g.right+2)+'" height="18" rx="4" fill="'+d[2]+'" data-wsl="'+d[0]+'" style="cursor:ns-resize"/><text x="'+(W-g.right+3)+'" y="'+(y+4)+'" font-size="10.5" fill="var(--bg)" font-weight="700" pointer-events="none">'+d[1]+rr+'</text>'});
+  s+='<line class="ws-xh" x1="0" x2="0" y1="'+g.top+'" y2="'+(g.vt+g.vh)+'" stroke="var(--mute)" stroke-dasharray="3 3" opacity="0"/>';
+  if(!C.length)s+='<text x="'+(W/2)+'" y="'+(g.H/2)+'" text-anchor="middle" font-size="14" fill="var(--mute)">Press &#65291; Candle or Load example to start</text>';
+  return s+'</svg>'};
+ host.innerHTML=one(720,"c");$("wsl").innerHTML=one(560,"l");wsInfo();wsStats();var del=$("wsdel");if(del)del.disabled=WS.sel<0}
+function wsStats(){var el=$("wsrr");if(!el)return;var L=WS.lines,h="";
+ if(L.entry!=null&&L.stop!=null&&L.entry!==L.stop){var risk=Math.abs(L.entry-L.stop),side=L.stop<L.entry?"long":"short",c=null;try{c=plCalc()}catch(e){}var sh=c&&c.unit>0?Math.floor(c.unit/risk):0;
+  h='<b class="'+(side==="long"?"gain":"loss")+'">'+side.toUpperCase()+'</b> &middot; 1R = <b>$'+risk.toFixed(2)+'</b>/sh'+(sh?' &middot; <b>'+sh+'</b> sh at your 1R':"")+["t1","t2"].map(function(k){return L[k]!=null?' &middot; '+k.toUpperCase()+' <b>'+(Math.abs(L[k]-L.entry)/risk).toFixed(2)+'R</b>'+((L[k]>L.entry)===(side==="long")?"":' <em class="loss">(wrong side)</em>'):""}).join("")}
+ else h='Press <b>Add R/R lines</b>, then drag Entry, Stop and the targets.';el.innerHTML=h}
+function wsInfo(i){var el=$("wsinfo");if(!el)return;var C=wsC(),I=wsInd(C);if(i==null)i=WS.sel>=0?WS.sel:C.length-1;var c=C[i];if(!c){el.textContent="";return}
+ var mins=570+WS.tf*i;el.innerHTML='<b>'+Math.floor(mins/60)+":"+("0"+(mins%60)).slice(-2)+'</b> &nbsp;O '+c.o.toFixed(2)+' &nbsp;H '+c.h.toFixed(2)+' &nbsp;L '+c.l.toFixed(2)+' &nbsp;C '+c.c.toFixed(2)+' &nbsp;<span style="color:#e8890c">EMA'+(+WS.per||9)+' '+I.ema[i].toFixed(2)+'</span> &nbsp;<span style="color:#8e44ad">VWAP '+I.vw[i].toFixed(2)+'</span> &nbsp;'+(c.c>I.vw[i]?"above":"below")+' VWAP'}
+function wsBuild(){var el=$("plws");if(!el)return;wsLoad();
+ el.innerHTML='<h2 style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">&#128736; Setup workshop <span class="pill">build a new setup</span></h2><p class="hint" style="margin:0 0 10px">Make the candles, watch the 9 EMA and VWAP react, and drag the risk and reward lines. Candles on the left, the same picture as a line on the right.</p>'+
+ '<div class="ws-bar"><div class="pl-seg sm" role="group" aria-label="Time frame">'+[1,2,5,15].map(function(k){return '<button type="button" data-wstf="'+k+'" class="'+(WS.tf===k?"on":"")+'">'+k+'m</button>'}).join("")+'</div>'+
+ '<button type="button" data-wsadd="green">&#128994; Green</button><button type="button" data-wsadd="red">&#128308; Red</button><button type="button" data-wsadd="doji">&#10133; Doji</button><button type="button" data-wsadd="hammer">&#128296; Hammer</button><button type="button" data-wsadd="star">&#11088; Shooting star</button>'+
+ '<button type="button" id="wsdel" data-wsact="del">Delete candle</button><button type="button" data-wsact="undo">&#8630; Undo</button><button type="button" data-wsact="example">Load example</button><button type="button" data-wsact="agg">Build from 1m</button><button type="button" data-wsact="clear">Clear</button></div>'+
+ '<div class="ws-bar"><label class="ws-ck"><input type="checkbox" data-wsck="ema"'+(WS.ema?" checked":"")+'> <i style="background:#e8890c"></i> EMA <input type="number" data-wsper="1" min="2" max="50" value="'+(+WS.per||9)+'" style="width:56px"></label><label class="ws-ck"><input type="checkbox" data-wsck="vwap"'+(WS.vwap?" checked":"")+'> <i style="background:#8e44ad"></i> VWAP</label>'+
+ '<span class="ws-sp"></span><div class="pl-seg sm" role="group" aria-label="Side"><button type="button" data-wsside="long" class="'+(WS.side==="long"?"on":"")+'">Long</button><button type="button" data-wsside="short" class="'+(WS.side==="short"?"on":"")+'">Short</button></div><button type="button" class="primary" data-wsact="rr">Add R/R lines</button><button type="button" data-wsact="rrx">Remove lines</button></div>'+
+ '<div id="wsinfo" class="ws-info"></div><div class="ws-cols"><div id="wsc" class="ws-pane"></div><div id="wsl" class="ws-pane"></div></div><div id="wsrr" class="ws-rr"></div>'+
+ '<div class="pl-grid" style="margin-top:10px"><label class="pl-f">Setup name<input id="wsname" maxlength="40" placeholder="e.g. VWAP reclaim fade" value="'+esc(WS.name)+'"></label><label class="pl-f" style="grid-column:span 2">Notes: what makes this setup A+<input id="wsnotes" maxlength="300" placeholder="Entry trigger, what must be true, where it fails" value="'+esc(WS.notes)+'"></label></div>'+
+ '<div class="row" style="margin:6px 0 0;gap:8px"><button type="button" class="primary" data-wsact="save">&#128190; Save setup</button><span class="hint" style="margin:0">Saved setups show up in the Strategy box above.</span></div><div id="wssaved" class="ws-saved"></div>';
+ wsDraw();wsSaved()}
+function wsSpark(S){var C=S.series[S.tf]||[];if(C.length<2)return "";var lo=Math.min.apply(null,C.map(function(c){return c.l})),hi=Math.max.apply(null,C.map(function(c){return c.h})),d=hi-lo||1;
+ return '<svg viewBox="0 0 120 36" class="ws-spk"><polyline fill="none" stroke="var(--ink)" stroke-width="1.6" points="'+C.map(function(c,i){return (i/(C.length-1)*116+2)+","+(34-(c.c-lo)/d*32)}).join(" ")+'"/></svg>'}
+function wsSaved(){var el=$("wssaved");if(!el)return;if(!WS.saved.length){el.innerHTML="";return}
+ el.innerHTML='<h3 style="margin:14px 0 8px;font-size:1rem">My setups</h3><div class="ws-sg">'+WS.saved.map(function(s,i){var L=s.lines||{},r=(L.entry!=null&&L.stop!=null&&L.t1!=null&&L.entry!==L.stop)?(Math.abs(L.t1-L.entry)/Math.abs(L.entry-L.stop)).toFixed(1)+"R":"";
+  return '<div class="ws-sc">'+wsSpark(s)+'<b>'+esc(s.name||"Untitled")+'</b><small>'+s.tf+'m &middot; '+esc(s.side)+(r?' &middot; T1 '+r:'')+'</small>'+(s.notes?'<p>'+esc(s.notes)+'</p>':'')+'<div class="row" style="margin:6px 0 0;gap:6px"><button type="button" data-wsopen="'+i+'">Open</button><button type="button" data-wsuse="'+i+'">Use in plan</button><button type="button" data-wsrm="'+i+'" aria-label="Delete">&times;</button></div></div>'}).join("")+'</div>'}
+function wsY(ev,kind){var host=kind==="c"?$("wsc"):$("wsl"),sv=host&&host.firstChild;if(!sv)return null;var rc=sv.getBoundingClientRect(),vy=(ev.clientY-rc.top)*(WSG.H/rc.height),vx=(ev.clientX-rc.left)*(sv.viewBox.baseVal.width/rc.width);return {vy:vy,vx:vx,W:sv.viewBox.baseVal.width}}
+function wsPrice(vy){var R=WSFreeze||wsRange();return R[1]-(vy-WSG.top)/WSG.ph*(R[1]-R[0])}
+function wsIdx(vx,W){var nmax=Math.max(26,wsC().length+8),step=(W-WSG.left-WSG.right)/nmax;return Math.floor((vx-WSG.left)/step)}
+function wsStart(ev){var t=ev.target,kind=t.closest&&t.closest(".ws-svg")?t.closest(".ws-svg").dataset.wskind:null;if(!kind)return;var pos=wsY(ev,kind),C=wsC();ev.preventDefault();
+ if(t.dataset.wsl){wsPush();WSFreeze=wsRange();WSDrag={t:"line",k:t.dataset.wsl,kind:kind};return}
+ if(t.dataset.wsh&&kind==="c"){wsPush();WSFreeze=wsRange();WSDrag={t:"h",k:t.dataset.wsh,kind:kind};return}
+ if(t.dataset.wsv!=null&&kind==="c"){wsPush();WSDrag={t:"vol",i:+t.dataset.wsv,kind:kind,max:Math.max.apply(null,C.map(function(c){return c.v||0}).concat([1000]))};WS.sel=+t.dataset.wsv;return}
+ if(t.dataset.wsi!=null){var i=+t.dataset.wsi;WS.sel=i;wsPush();WSFreeze=wsRange();var c=C[i];WSDrag={t:"body",i:i,kind:kind,p0:wsPrice(pos.vy),o:c.o,h:c.h,l:c.l,c:c.c};wsDraw();return}
+ var idx=wsIdx(pos.vx,pos.W);if(kind==="c"&&idx>=C.length&&C.length<400){wsAddAt(null,"green");return}WS.sel=-1;wsDraw()}
+function wsMove(ev){if(!WSDrag)return;var d=WSDrag,pos=wsY(ev,d.kind);if(!pos)return;var C=wsC(),p=r2(wsPrice(pos.vy));
+ if(d.t==="line"){WS.lines[d.k]=Math.max(0.01,p)}
+ else if(d.t==="h"){var c=C[WS.sel];if(!c)return;if(d.k==="h")c.h=Math.max(p,c.o,c.c);else if(d.k==="l")c.l=Math.min(p,c.o,c.c);else{c[d.k]=p;c.h=Math.max(c.h,c.o,c.c);c.l=Math.min(c.l,c.o,c.c)}}
+ else if(d.t==="body"){var c2=C[d.i],dp=p-d.p0;c2.o=r2(d.o+dp);c2.h=r2(d.h+dp);c2.l=r2(d.l+dp);c2.c=r2(d.c+dp)}
+ else if(d.t==="vol"){var vv=(WSG.vt+WSG.vh-pos.vy)/WSG.vh*d.max;C[d.i].v=Math.max(10,Math.round(vv))}
+ wsDraw()}
+function wsEnd(){if(!WSDrag)return;WSDrag=null;WSFreeze=null;wsSave();wsDraw()}
+function wsAddAt(_,type){wsLoad();wsPush();var C=wsC(),prev=C.length?C[C.length-1].c:(WS.lines.entry!=null?WS.lines.entry:10);C.push(wsMk(type,prev));WS.sel=C.length-1;wsSave();wsDraw()}
+function wsRR(){var C=wsC();wsPush();var last=C[WS.sel>=0?WS.sel:C.length-1],cad=null;try{cadLoad();cad=CAD}catch(e){}var m1=cad?+cad.t1||1:1,m2=cad?+cad.t2||2:2;
+ var long=WS.side==="long",e=last?last.c:10,s=last?(long?last.l:last.h):(long?e-.4:e+.4);if(Math.abs(e-s)<0.02)s=long?e-.2:e+.2;var R=Math.abs(e-s),d=long?1:-1;
+ WS.lines={entry:r2(e),stop:r2(s),t1:r2(e+d*m1*R),t2:r2(e+d*m2*R)};WS.ei=WS.sel>=0?WS.sel:Math.max(0,C.length-1);wsSave();wsDraw();toast("Drag the lines to change them")}
+function wsUse(s){var L=s.lines||{};pl.strat=s.name||pl.strat;pl.side=s.side||pl.side;
+ if(L.entry!=null&&L.stop!=null){pl.mode="manual";pl.entry=String(L.entry);pl.stop=String(L.stop);pl.t1=L.t1!=null?String(L.t1):"";pl.t2=L.t2!=null?String(L.t2):"";pl.t3=""}
+ if(s.notes)pl.why=(pl.why?pl.why+"\n":"")+s.notes;plDraft();renderPlan();var t=$("pltrade");if(t)window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:"smooth"});toast("Setup loaded into your trade")}
+$("planv").addEventListener("pointerdown",function(ev){if(ev.target.closest&&ev.target.closest(".ws-svg"))wsStart(ev)});
+window.addEventListener("pointermove",function(ev){if(WSDrag)wsMove(ev);else if(ev.target.closest&&ev.target.closest(".ws-svg")){var sv=ev.target.closest(".ws-svg"),pos=wsY(ev,sv.dataset.wskind);if(!pos)return;var i=wsIdx(pos.vx,pos.W),C=wsC();if(i>=0&&i<C.length){wsInfo(i);document.querySelectorAll("#planv .ws-xh").forEach(function(l){var W=l.ownerSVGElement.viewBox.baseVal.width,st=(W-WSG.left-WSG.right)/Math.max(26,C.length+8),x=WSG.left+st*(i+.5);l.setAttribute("x1",x);l.setAttribute("x2",x);l.setAttribute("opacity",".6")})}}});
+window.addEventListener("pointerup",wsEnd);
+$("planv").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("[data-wstf],[data-wsadd],[data-wsact],[data-wsside],[data-wsopen],[data-wsuse],[data-wsrm]");if(!b)return;wsLoad();var d=b.dataset;
+ if(d.wstf){WS.tf=+d.wstf;WS.sel=-1;wsSave();wsBuild();return}
+ if(d.wsadd){wsAddAt(null,d.wsadd);return}
+ if(d.wsside){WS.side=d.wsside;wsSave();wsBuild();return}
+ if(d.wsopen!=null){var s=WS.saved[+d.wsopen];if(s){var keep=WS.saved;WS=Object.assign(wsFresh(),JSON.parse(JSON.stringify(s)));WS.saved=keep;wsSave();wsBuild();toast("Opened "+(s.name||"setup"))}return}
+ if(d.wsuse!=null){var u=WS.saved[+d.wsuse];if(u)wsUse(u);return}
+ if(d.wsrm!=null){WS.saved.splice(+d.wsrm,1);wsSave();wsSaved();return}
+ var a=d.wsact;
+ if(a==="del"){if(WS.sel>=0){wsPush();wsC().splice(WS.sel,1);WS.sel=-1;wsSave();wsDraw()}}
+ else if(a==="undo"){var h=WSHist.pop();if(h){var o=JSON.parse(h);WS.series=o.series;WS.lines=o.lines;WS.ei=o.ei;WS.sel=-1;wsSave();wsDraw()}}
+ else if(a==="example"){wsPush();WS.series[WS.tf]=wsExample();WS.sel=-1;WS.lines={entry:null,stop:null,t1:null,t2:null};wsSave();wsDraw()}
+ else if(a==="agg"){var base=WS.series[1];if(WS.tf===1||!base.length){toast(WS.tf===1?"Pick 2m, 5m or 15m first":"Build some 1m candles first");return}wsPush();WS.series[WS.tf]=wsAgg(base,WS.tf);WS.sel=-1;wsSave();wsDraw();toast("Built from your 1m candles")}
+ else if(a==="clear"){wsPush();WS.series[WS.tf]=[];WS.sel=-1;WS.lines={entry:null,stop:null,t1:null,t2:null};wsSave();wsDraw()}
+ else if(a==="rr")wsRR();
+ else if(a==="rrx"){wsPush();WS.lines={entry:null,stop:null,t1:null,t2:null};wsSave();wsDraw()}
+ else if(a==="save"){var nm=($("wsname").value||"").trim();if(!nm){toast("Name your setup first");$("wsname").focus();return}
+  WS.name=nm;WS.notes=($("wsnotes").value||"").trim();var snap=JSON.parse(JSON.stringify({name:WS.name,tf:WS.tf,side:WS.side,series:WS.series,lines:WS.lines,ei:WS.ei,ema:WS.ema,vwap:WS.vwap,per:WS.per,notes:WS.notes,ts:Date.now()})),ix=WS.saved.findIndex(function(x){return x.name===nm});
+  if(ix>=0)WS.saved[ix]=snap;else WS.saved.unshift(snap);wsSave();wsSaved();toast("Saved "+nm)}});
+$("planv").addEventListener("change",function(ev){var t=ev.target;if(!t||!t.dataset)return;wsLoad();
+ if(t.dataset.wsck){WS[t.dataset.wsck]=t.checked;wsSave();wsDraw()}else if(t.dataset.wsper){WS.per=Math.max(2,Math.min(50,parseInt(t.value)||9));wsSave();wsDraw()}
+ else if(t.id==="wsname"){WS.name=t.value;wsSave()}else if(t.id==="wsnotes"){WS.notes=t.value;wsSave()}});
+window.addEventListener("keydown",function(ev){if((ev.key==="Delete"||ev.key==="Backspace")&&WS&&WS.sel>=0&&$("wsc")&&!$("planv").hidden&&!/INPUT|TEXTAREA|SELECT/.test((ev.target||{}).tagName||"")){ev.preventDefault();wsPush();wsC().splice(WS.sel,1);WS.sel=-1;wsSave();wsDraw()}});
 
 function showPlan(){hideViews();$("navplan").classList.add("on");$("planv").hidden=false;rkInit();renderPlan();loadPlans().then(function(){if(!$("planv").hidden)renderPlan()});window.scrollTo(0,0)}
 $("navplan").addEventListener("click",showPlan);
