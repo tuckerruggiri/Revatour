@@ -169,6 +169,12 @@
     });
     return out;
   }
+  function aggDay(sym, d, tf) {
+    var bk = {}, order = [];
+    d.bars.forEach(function (x) { var k = Math.floor((x[0] - 570) / tf), c = bk[k]; if (!c) { bk[k] = { o: x[1], h: x[2], l: x[3], c: x[4], v: x[5], k: "normal" }; order.push(k); } else { c.h = Math.max(c.h, x[2]); c.l = Math.min(c.l, x[3]); c.c = x[4]; c.v += x[5]; } });
+    var c = order.sort(function (a, b) { return a - b; }).map(function (k) { return bk[k]; }), pc = d.pc > 0 ? d.pc : c[0].o;
+    return { name: sym + " " + d.day, pc: Math.round(pc * 100) / 100, gap: Math.round((c[0].o / pc - 1) * 1000) / 10, tf: tf, c: c, vw: {}, em: {} };
+  }
   function pct(x) { return Math.round(x * 100) + "%"; }
   function resHtml(s) {
     var q = ex(), r = B.res, m = q.money, h = '';
@@ -193,6 +199,7 @@
     var h = '<div class="bt-note"><b>Your strategy in plain English</b><ol class="bb-ol">' + sent.map(function (l) { return '<li>' + esc(l) + '</li>'; }).join("") + '</ol></div>';
     if (!s.trig.conds.length) h += '<div class="bt-note" style="border-left-color:var(--loss)">No signal rules yet, so every candle counts as a signal. Add rules in the Signal step.</div>';
     h += '<div class="bt-bar"><span class="bt-hint">Tests run on: <b>' + (S.sim.c.length ? "your current chart (" + S.sim.c.length + " candles)" : "no current chart") + '</b>, <b>' + S.scenes.length + '</b> saved ' + (S.scenes.length === 1 ? "scene" : "scenes") + '</span><label>and <select data-bpr="1">' + [0, 10, 20, 50, 100].map(function (v) { return '<option value="' + v + '"' + (B.practice === v ? " selected" : "") + '>' + (v ? v + " random practice days" : "no practice days") + '</option>'; }).join("") + '</select></label></div>';
+    h += '<div class="bt-note"><b>Pull from Schwab</b> <span class="bt-hint">1-minute candles, turned into the chart size you pick. Needs Schwab connected in Settings (same connection as Studio).</span><div class="bt-bar"><input id="bb-sym" placeholder="Ticker (GOOGL)" style="width:130px;text-transform:uppercase"><label>From <input id="bb-d1" type="date"></label><label>To (optional) <input id="bb-d2" type="date"></label><label>Chart size <select id="bb-tf"><option value="1">1 minute</option><option value="2" selected>2 minute</option><option value="5">5 minute</option></select></label><button type="button" class="bt-b on" data-bt-act="schwab">Pull candles</button></div><div id="bb-smsg" class="bt-hint"></div></div>';
     h += '<details class="bt-add"' + (B.imp || !S.scenes.length ? " open" : "") + '><summary>Add real charts (paste candles or upload a CSV, one day or many days)</summary><div class="bb-imp"><p class="bb-tip"><b>Many days at once is fine.</b> Put one candle per line: <b>date and time, open, high, low, close, volume</b>. Examples that work:<br><code>2026-10-01 09:30,4.52,4.60,4.48,4.55,120000</code><br><code>2026-10-01,09:30,4.52,4.60,4.48,4.55,120000</code><br><code>10/1/2026 9:30,4.52,4.60,4.48,4.55,120000</code><br>Each date becomes its own chart, and each day\'s "yesterday close" is the day before\'s last close. If your data has no dates, a new day starts whenever the time jumps back (like 15:59 to 09:30). Only 9:30am to 4:00pm candles are kept. Most brokers and TradingView can export a CSV like this, then open it in Notepad, copy everything, and paste it below, or use the upload button.</p><div class="bt-bar"><label>Upload a CSV file <input type="file" id="bb-file" accept=".csv,.txt,text/csv,text/plain"></label></div><textarea id="bb-csv" rows="6" placeholder="2026-10-01 09:30,4.52,4.60,4.48,4.55,120000&#10;2026-10-01 09:32,4.55,4.58,4.50,4.51,80000&#10;..."></textarea><div class="bt-bar"><input id="bb-csvn" placeholder="Name (e.g. XYZ)" style="width:200px"><label>Yesterday\'s close before the first day $ (optional)<input id="bb-csvpc" inputmode="decimal" style="width:80px"></label><button type="button" class="bt-b on" data-bt-act="import">Add charts</button>' + (S.scenes.length ? '<button type="button" class="bt-b" data-bt-act="clearscenes">Delete all ' + S.scenes.length + ' saved scenes</button>' : "") + '</div></div></details>';
     h += '<div class="bt-bar"><button type="button" class="bt-b on" data-bt-act="run">Run test</button><button type="button" class="bt-b" data-bt-act="code">Build bot code</button><span class="bt-hint">Run test also compares all your saved strategies.</span></div>' + resHtml(s) + codeBox(s);
     return card("review", n, "Review and test", "Check the plan, run it on your charts, then turn it into bot code.", h);
@@ -259,6 +266,24 @@
       var scs = parseCsv(root.querySelector("#bb-csv").value, (root.querySelector("#bb-csvn").value || "").trim(), parseFloat(root.querySelector("#bb-csvpc").value));
       if (!scs) { q.toast("Could not read those candles. Each line needs time, open, high, low, close, volume."); return; }
       scs.forEach(function (sc) { q.S.scenes.push(sc); }); q.save(); B.imp = false; stale(); q.toast(scs.length + (scs.length === 1 ? " chart" : " charts") + " added as scenes"); q.render();
+    }
+    if (a === "schwab") {
+      var sym = (root.querySelector("#bb-sym").value || "").trim().toUpperCase(), d1 = root.querySelector("#bb-d1").value, d2 = root.querySelector("#bb-d2").value || d1, tf = +root.querySelector("#bb-tf").value || 2, msg = root.querySelector("#bb-smsg"), SB = window.StockBT || {};
+      if (!sym || !d1) { msg.textContent = "Type a ticker and a date first."; return; }
+      if (!SB.schwabCandles) { msg.textContent = "Schwab is not available here."; return; }
+      msg.textContent = "Pulling from Schwab..."; b.disabled = true;
+      SB.schwabStatus().then(function (st) {
+        if (!st || !st.configured) throw new Error("Schwab is not set up yet. See Settings.");
+        if (!st.connected) throw new Error("Connect Schwab in Settings first.");
+        return SB.schwabCandles({ symbol: sym, from: d1, to: d2 });
+      }).then(function (r) {
+        if (r.reconnect) throw new Error("Your Schwab sign-in expired. Reconnect in Settings.");
+        if (r.noMarket) throw new Error("Schwab did not return candles (status " + r.status + "). Your Schwab app may need the Market Data product, or that date is too far back.");
+        if (!r.days || !r.days.length) throw new Error("No candles found for " + sym + " on those dates (weekend, holiday, or too far back).");
+        r.days.forEach(function (d) { q.S.scenes.push(aggDay(sym, d, tf)); });
+        q.save(); stale(); msg.textContent = ""; q.toast(r.days.length + (r.days.length === 1 ? " day" : " days") + " of " + sym + " added as scenes"); q.render();
+      }).catch(function (e) { msg.textContent = e.message || "Could not pull candles."; }).then(function () { b.disabled = false; });
+      return;
     }
     if (a === "clearscenes") { if (window.confirm("Delete all " + q.S.scenes.length + " saved scenes?")) { q.S.scenes = []; q.save(); stale(); q.render(); } }
   }

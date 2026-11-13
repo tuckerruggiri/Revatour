@@ -109,6 +109,24 @@ async function trader(path, access) {
   return r.json();
 }
 
+// Group Schwab 1-minute candles into regular-session days. pc = the previous day's last close (the first requested day uses Schwab's previousClose).
+function candleDays(candles, fromDay, firstPc) {
+  const by = {};
+  (candles || []).forEach((k) => {
+    const t = Number(k.datetime); if (!isFinite(t)) return;
+    const p = etParts(t), m = +p.hour * 60 + +p.minute; if (m < 570 || m >= 960) return;
+    const o = Number(k.open), h = Number(k.high), l = Number(k.low), c = Number(k.close); if (![o, h, l, c].every(isFinite)) return;
+    (by[p.year + '-' + p.month + '-' + p.day] = by[p.year + '-' + p.month + '-' + p.day] || []).push([m, o, h, l, c, Number(k.volume) || 0]);
+  });
+  const keys = Object.keys(by).sort(), out = [];
+  keys.forEach((day, i) => {
+    by[day].sort((a, b) => a[0] - b[0]);
+    const prev = i ? by[keys[i - 1]][by[keys[i - 1]].length - 1][4] : (isFinite(firstPc) && firstPc > 0 ? firstPc : 0);
+    if (day >= fromDay && by[day].length >= 5) out.push({ day, pc: prev || by[day][0][1], bars: by[day] });
+  });
+  return out;
+}
+
 module.exports = async (req, res) => {
   const action = String((req.query && req.query.action) || '');
   const need = ['SCHWAB_APP_KEY', 'SCHWAB_APP_SECRET', 'SUPABASE_URL', 'SUPABASE_ANON_KEY'];
@@ -173,6 +191,25 @@ module.exports = async (req, res) => {
         fills = fills.concat(toFills(tx, fromMs, toMs));
       }
       return res.status(200).json({ configured: true, accounts: (accts || []).length, fills });
+    }
+    if (action === 'candles') { // 1-minute candles for the Backtest Lab (needs the Market Data product on the Schwab app)
+      if (!c || daysLeft <= 0) return res.status(200).json({ configured: true, reconnect: true });
+      const sym = String(req.query.symbol || '').toUpperCase().trim(), from = String(req.query.from || ''), to = String(req.query.to || from);
+      if (!/^[A-Z]{1,5}([./-][A-Z])?$/.test(sym) || !/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) return res.status(400).json({ error: 'bad symbol or dates' });
+      const fromMs = etStart(from), toMs = etStart(to) + 864e5;
+      if (toMs <= fromMs || toMs - fromMs > 40 * 864e5) return res.status(400).json({ error: 'pick 1 to 40 days' });
+      let at = atCache.get(u.id);
+      if (!at || at.exp < Date.now() + 60000) {
+        try { const tk = await tokenCall({ grant_type: 'refresh_token', refresh_token: c.rt }); at = { token: tk.access_token, exp: Date.now() + (Number(tk.expires_in) || 1800) * 1000 }; atCache.set(u.id, at); }
+        catch (e) { if (e.status === 400 || e.status === 401) return res.status(200).json({ configured: true, reconnect: true }); throw e; }
+      }
+      const q = new URLSearchParams({ symbol: sym, periodType: 'day', frequencyType: 'minute', frequency: '1', startDate: String(fromMs - 6 * 864e5), endDate: String(Math.min(toMs, Date.now())), needExtendedHoursData: 'false', needPreviousClose: 'true' });
+      const r = await fetch(MARKET + '/pricehistory?' + q.toString(), { headers: { Authorization: 'Bearer ' + at.token, Accept: 'application/json' } });
+      if (r.status === 401) atCache.delete(u.id);
+      if (!r.ok) return res.status(200).json({ configured: true, noMarket: true, status: r.status });
+      const j = await r.json();
+      const days = candleDays(j && j.candles, from, Number(j && j.previousClose)).filter((d) => d.day <= to);
+      return res.status(200).json({ configured: true, symbol: sym, days, empty: !days.length });
     }
     if (action === 'quotes') { // live prices + volume for a watchlist (needs the Market Data product on the Schwab app)
       if (!c || daysLeft <= 0) return res.status(200).json({ configured: true, reconnect: true });

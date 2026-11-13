@@ -3528,7 +3528,7 @@ $("igwrap").addEventListener("click",async function(ev){var b=ev.target.closest&
   b.disabled=false;b.textContent=old}});
 $("igwrap").addEventListener("change",function(ev){if(ev.target.id==="igpal")igShow()});
 
-window.StockBT={trades:function(){return allTrades()},r1For:r1For,toast:toast};
+window.StockBT={trades:function(){return allTrades()},r1For:r1For,toast:toast,schwabStatus:function(){return sbStatus()},schwabCandles:function(p){var So=S();if(!So||!So.schwab)return Promise.reject(new Error("Schwab is not available here"));return So.schwab("candles",p)}};
 window.StockDay={r1For:r1For,fmtR:fmtR,r1Save:function(d,v){v=+v;if(!(v>0))return;if(!(+settings.r1>0)){settings.r1=v;saveSettings()}return v},alPost:function(t){return alPost(t)},strats:function(){try{return scNames(scSaved())}catch(e){return []}},entries:function(){return entries},put:function(e){return putEntry(e)},store:function(){return store},todayISO:todayISO,dayLabel:dayLabel,toast:toast,money:money,sgn:sgn,esc:esc,S:S,shrink:shrink,dataToBlob:dataToBlob,imgUrl:imgUrl,newId:newId,
  al:function(){return AL},alLoad:alLoad,alSave:alSave,alParse:alParse,alFmt:alFmt,alAgo:alAgo,alStat:alStat,alSt:AL_ST,risk:function(){try{rkInit()}catch(e){}return rk||{}},
  openEntry:function(d){renderEntry(d)},calendar:showPublishes,renderSide:renderSide,hide:hideViews,plan:showPlan,studio:showStudio,wlSync:function(){return wlLoad()},
