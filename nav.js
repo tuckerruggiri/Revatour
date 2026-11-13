@@ -52,7 +52,7 @@
     navhome: ["list", "Watchlist"], navday: ["cal", "Trading day"], navplan: ["target", "Trade Plan"], navfut: ["candles", "Futures"], navopt: ["layers", "Options school"],
     navmov: ["zap", "Parabolic movers"], navpulse: ["pulse", "Market pulse"], navnews: ["news", "News"], navzone: ["layers", "Zones"],
     navinv: ["pie", "Investments"], navrl: ["ladder", "Risk Ladder"],
-    navstudio: ["book", "Studio"], navsc: ["award", "Scorecard"], navlab: ["flask", "Setup Lab"], navprac: ["play", "Practice charts"], navbt: ["flask", "Backtest Lab"], navcoach: ["spark", "AI Coach"],
+    navstudio: ["book", "Studio"], navsc: ["award", "Scorecard"], navlab: ["flask", "Setup Lab"], navprac: ["play", "Practice charts"], navcoach: ["spark", "AI Coach"],
     navprofile: ["user", "Profile"], navpub: ["send", "Publishes"], navnotif: ["inbox", "Notifications"], navgd: ["help", "How-To"], navset: ["gear", "Settings"]
   };
   P.sun = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
@@ -66,7 +66,7 @@
     ["Trading day", "#e8782a", "zap", ["navday", "navhome", "navplan", "navfut", "navmov"]],
     ["Investing", "#1f9d55", "pie", ["navinv", "navrl", "navopt", "navhome"]],
     ["Research", "#2b7de0", "search", ["navpulse", "navnews", "navzone", "navmov"]],
-    ["Review & practice", "#8b4fe0", "book", ["navstudio", "navsc", "navlab", "navprac", "navbt", "navcoach"]],
+    ["Review & practice", "#8b4fe0", "book", ["navstudio", "navsc", "navlab", "navprac", "navcoach"]],
     ["You", "#7d8793", "user", YOU]
   ];
   function defaults() {
@@ -121,7 +121,6 @@
     });
     if (!(L.v >= 2) && out.sections.length && !out.sections.some(function (s) { return s.ids.indexOf("navday") > -1; })) out.sections[0].ids.unshift("navday");
     if (!(L.v >= 3) && out.sections.length && !out.sections.some(function (s) { return s.ids.indexOf("navopt") > -1; })) { var iv = out.sections.filter(function (s) { return s.ids.indexOf("navinv") > -1; })[0] || out.sections[0]; iv.ids.push("navopt"); }
-    if (!(L.v >= 4) && out.sections.length && !out.sections.some(function (s) { return s.ids.indexOf("navbt") > -1; })) { var pv = out.sections.filter(function (s) { return s.ids.indexOf("navprac") > -1; })[0] || out.sections[0]; pv.ids.splice(pv.ids.indexOf("navprac") + 1 || pv.ids.length, 0, "navbt"); }
     return out;
   }
   layout = sanitize(lsGet(KEY, null));
