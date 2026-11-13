@@ -467,7 +467,6 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <button class="nav" id="navlab" type="button">Setup Lab</button>
   <button class="nav" id="navzone" type="button">Zones</button>
   <button class="nav" id="navprac" type="button">Practice charts</button>
-  <button class="nav" id="navbt" type="button">Backtest Lab</button>
   <button class="nav" id="navfut" type="button">Futures</button>
   <button class="nav" id="navopt" type="button">Options school</button>
   <button class="nav" id="navmov" type="button">Parabolic movers</button>
@@ -498,7 +497,6 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <div class="wrap" id="futv" hidden></div>
 <div class="wrap" id="optv" hidden></div>
 <div class="wrap" id="pracv" hidden></div>
-<div class="wrap" id="btv" hidden></div>
 <div class="wrap" id="movv" hidden></div>
 <div class="wrap" id="pulsev" hidden></div>
 <div class="wrap" id="dayv" hidden></div>
@@ -1331,7 +1329,7 @@ function applyDefaults(){try{
  if(settings.name&&!$("name").value.trim())$("name").value=settings.name;
  if(settings.voice)$("voice").value=settings.voice;
  if(settings.grouping&&$("grouping"))$("grouping").value=settings.grouping}catch(e){}}
-["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("invv").hidden=true;$("rlv").hidden=true;$("newsv").hidden=true;$("alv").hidden=true;$("scv").hidden=true;$("labv").hidden=true;$("zonev").hidden=true;$("pracv").hidden=true;$("btv").hidden=true;$("futv").hidden=true;$("dayv").hidden=true;$("navday").classList.remove("on");$("navfut").classList.remove("on");$("navprac").classList.remove("on");$("navzone").classList.remove("on");$("navlab").classList.remove("on");$("navsc").classList.remove("on");$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("gdv").hidden=true;$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
+["home","studio","entry","pagev"].forEach(function(i){new MutationObserver(function(){if(!$(i).hidden){$("settingsv").hidden=true;$("profilev").hidden=true;$("tickerv").hidden=true;$("pubv").hidden=true;$("notifv").hidden=true;$("planv").hidden=true;$("invv").hidden=true;$("rlv").hidden=true;$("newsv").hidden=true;$("alv").hidden=true;$("scv").hidden=true;$("labv").hidden=true;$("zonev").hidden=true;$("pracv").hidden=true;$("futv").hidden=true;$("dayv").hidden=true;$("navday").classList.remove("on");$("navfut").classList.remove("on");$("navprac").classList.remove("on");$("navzone").classList.remove("on");$("navlab").classList.remove("on");$("navsc").classList.remove("on");$("navnews").classList.remove("on");$("navrl").classList.remove("on");$("gdv").hidden=true;$("navgd").classList.remove("on");$("navinv").classList.remove("on");$("navplan").classList.remove("on");$("navnotif").classList.remove("on");$("navset").classList.remove("on");$("navprofile").classList.remove("on");$("navpub").classList.remove("on");$("navcoach").classList.remove("on")}}).observe($(i),{attributes:true,attributeFilter:["hidden"]})});
 /* ---------- Trade Plan: risk sizing + A+ checklist + plan log ---------- */
 var PLK="stockspot-plans-v1",PLD="stockspot-plan-draft-v1",plans=[],plLoaded=false,pl=null,rk=null,plPend=[],plEditId="";
 function todayStr(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
@@ -2607,8 +2605,6 @@ function showOptions(){hideViews();$("navopt").classList.add("on");$("optv").hid
 $("navopt").addEventListener("click",showOptions);
 function showPractice(){hideViews();$("navprac").classList.add("on");$("pracv").hidden=false;if(window.PracticeChart)window.PracticeChart.mount($("pracv"));else $("pracv").textContent="Practice charts could not load. Refresh the page.";window.scrollTo(0,0)}
 $("navprac").addEventListener("click",showPractice);
-function showBacktest(){hideViews();$("navbt").classList.add("on");$("btv").hidden=false;if(window.BacktestLab)window.BacktestLab.mount($("btv"));else $("btv").textContent="Backtest Lab could not load. Refresh the page.";window.scrollTo(0,0)}
-$("navbt").addEventListener("click",showBacktest);
 function showMovers(){hideViews();$("navmov").classList.add("on");$("movv").hidden=false;if(window.ParabolicMovers)window.ParabolicMovers.mount($("movv"));else $("movv").textContent="Parabolic movers could not load. Refresh the page."}
 $("navmov").addEventListener("click",showMovers);
 function showPulse(){hideViews();$("navpulse").classList.add("on");$("pulsev").hidden=false;if(window.MarketPulse)window.MarketPulse.mount($("pulsev"));else $("pulsev").textContent="Market Pulse could not load. Refresh the page."}
@@ -2848,8 +2844,8 @@ async function saveProfile(){if(store.db)await store.db.doc("meta/profile").set(
 function myAvUrl(){return prof.src||(prof.aid?blobUrl(prof.aid):"")}
 function avatarHTML(cls,url,name){var A=window.stockspotAuth||{},u=url!=null?url:myAvUrl(),nm=name||A.username||A.email||"?";
  return '<div class="pf-av'+(cls?" "+cls:"")+'">'+(u?'<img alt="" src="'+esc(u)+'">':esc((nm.charAt(0)||"?").toUpperCase()))+'</div>'}
-function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","scv","labv","zonev","pracv","btv","futv","optv","movv","pulsev","invv","gdv","rlv","newsv","dayv"].forEach(function(i){$(i).hidden=true});
- ["navday","navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navsc","navlab","navzone","navprac","navbt","navfut","navopt","navmov","navpulse"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
+function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","scv","labv","zonev","pracv","futv","optv","movv","pulsev","invv","gdv","rlv","newsv","dayv"].forEach(function(i){$(i).hidden=true});
+ ["navday","navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navsc","navlab","navzone","navprac","navfut","navopt","navmov","navpulse"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
 function paintProfNav(){$("navprofile").classList.toggle("on",profTab!=="coach");$("navcoach").classList.toggle("on",profTab==="coach")}
 function tipTile(v,l,c,tip){return '<div class="hm-tile tipw" tabindex="0"><b'+(c?' class="'+c+'"':'')+'>'+v+'</b><span>'+l+' <i class="tipq" aria-hidden="true">?</i></span><div class="tipb" role="tooltip">'+tip+'</div></div>'}
 function recordBlock(){var all=allTrades();if(!all.length)return '<div class="pf-panel hint" style="margin:8px 0">No saved trades yet. Save a day in Studio and your record shows here.</div>';
@@ -3528,7 +3524,6 @@ $("igwrap").addEventListener("click",async function(ev){var b=ev.target.closest&
   b.disabled=false;b.textContent=old}});
 $("igwrap").addEventListener("change",function(ev){if(ev.target.id==="igpal")igShow()});
 
-window.StockBT={trades:function(){return allTrades()},r1For:r1For,toast:toast,schwabStatus:function(){return sbStatus()},schwabCandles:function(p){var So=S();if(!So||!So.schwab)return Promise.reject(new Error("Schwab is not available here"));return So.schwab("candles",p)}};
 window.StockDay={r1For:r1For,fmtR:fmtR,r1Save:function(d,v){v=+v;if(!(v>0))return;if(!(+settings.r1>0)){settings.r1=v;saveSettings()}return v},alPost:function(t){return alPost(t)},strats:function(){try{return scNames(scSaved())}catch(e){return []}},entries:function(){return entries},put:function(e){return putEntry(e)},store:function(){return store},todayISO:todayISO,dayLabel:dayLabel,toast:toast,money:money,sgn:sgn,esc:esc,S:S,shrink:shrink,dataToBlob:dataToBlob,imgUrl:imgUrl,newId:newId,
  al:function(){return AL},alLoad:alLoad,alSave:alSave,alParse:alParse,alFmt:alFmt,alAgo:alAgo,alStat:alStat,alSt:AL_ST,risk:function(){try{rkInit()}catch(e){}return rk||{}},
  openEntry:function(d){renderEntry(d)},calendar:showPublishes,renderSide:renderSide,hide:hideViews,plan:showPlan,studio:showStudio,wlSync:function(){return wlLoad()},
@@ -3541,10 +3536,6 @@ restore();try{vidPaint()}catch(e){}loadImgs();showStats();renderImgs();initStore
 <script src="options.js"></script>
 <script src="practice-data.js"></script>
 <script src="practice.js"></script>
-<script src="btengine.js"></script>
-<script src="strategy.js"></script>
-<script src="teach.js"></script>
-<script src="backtest.js"></script>
 <script src="chart.js"></script>
 <script src="movers.js"></script>
 <script src="pulse.js"></script>
@@ -3552,6 +3543,7 @@ restore();try{vidPaint()}catch(e){}loadImgs();showStats();renderImgs();initStore
 <script src="day.js"></script>
 <script src="pnlchart.js"></script>
 <script src="zones.js"></script>
+<script>try{["revatour-bt-v1","revatour-btb-v1","revatour-bt-teach-v1"].forEach(function(k){localStorage.removeItem(k)})}catch(e){}</script>
 <script src="nav.js"></script>
 </body>
 </html>
