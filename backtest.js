@@ -13,7 +13,7 @@
 
   /* ---------------- state ---------------- */
   var DEFRULES = { tradeShort: true, tradeLong: false, riskDollars: 50, t1SellPct: 80, t1R: 0.7, t2SellPct: 20, t2R: 2, useT3: false, t3R: 3, entryOffset: 0.02, stopMode: "beyond", midStopOffset: 0, stopOffset: 0.02, slippage: 0.03, minRiskPS: 0.10, trigNotBelowPrev: true, maxBounceHH: 1, breakGreenCounts: false, midMoveR: 0.5, beMoveR: 0.7, beLevel: "low", minPrice: 0, minGapPct: 0, maxSetupBars: 6, startTime: 934, endTime: 1548, requireBreak: true, waitAfter: "any", requireHOD: false, swingBars: 20, maxDrops: 2, minBouncePct: 30, trigBelowEMA: true, minTrigATR: 0, cancelOnHigherHigh: true, longMaxBars: 10, requireEMATouch: false, maxBodyPct: 35, insideMaxBodyPct: 80, vwapRule: "room", vwapRoomR: 2, needGreen: true, noGreenNewLow: true, testMode: false, shapes: { inv: true, inside: true, doji: true, spin: true, wick: true, hammer: true } };
-  var S = { tab: "log", manual: [], scenes: [], rules: null, sim: null, sel: -1, edit: "", res: null, code: "", f: { strat: "", tk: "", side: "", per: "all" }, vol: 1, kind: "normal", col: "g", drift: 0 };
+  var S = { tab: "log", cres: null, manual: [], scenes: [], rules: null, sim: null, sel: -1, edit: "", res: null, code: "", f: { strat: "", tk: "", side: "", per: "all" }, vol: 1, kind: "normal", col: "g", drift: 0 };
   function newSim() { return { pc: 10, gap: 8, size: 0.008, vb: 100000, tf: 2, c: [], vw: {}, em: {} }; }
   function load() { try { var d = JSON.parse(localStorage.getItem(KEY) || "{}"); S.manual = d.manual || []; S.scenes = d.scenes || []; S.rules = d.rules && d.rules.riskDollars ? d.rules : null; S.sim = d.sim || null; S.rules = Object.assign({}, DEFRULES, S.rules || {}); S.rules.shapes = Object.assign({}, DEFRULES.shapes, S.rules.shapes || {}); if (!S.sim || !S.sim.c) S.sim = newSim(); } catch (e) { S.rules = Object.assign({}, DEFRULES); S.sim = newSim(); } }
   function save() { try { localStorage.setItem(KEY, JSON.stringify({ manual: S.manual, scenes: S.scenes, rules: S.rules, sim: S.sim })); } catch (e) { } }
@@ -125,7 +125,7 @@
   var VW = null, DR = null;
   var LAYOUT = { padL: 10, padR: 62, top: 12, ph: 360, gap: 14, vh: 90, bot: 22 };
   function chartSvg() {
-    var sm = S.sim, c = sm.c, W = Math.max(520, (host && host.clientWidth) || 900), L = LAYOUT, Ht = L.top + L.ph + L.gap + L.vh + L.bot, ind = calc();
+    var RS = S.tab === "build" ? S.cres : S.res, sm = S.sim, c = sm.c, W = Math.max(520, (host && host.clientWidth) || 900), L = LAYOUT, Ht = L.top + L.ph + L.gap + L.vh + L.bot, ind = calc();
     var maxVis = Math.max(20, Math.floor((W - L.padL - L.padR) / 10)), st = Math.max(0, c.length - maxVis), vis = c.slice(st);
     var slots = Math.max(vis.length + 5, 18), sw = Math.min(60, (W - L.padL - L.padR) / slots), bw = Math.max(3, sw * 0.62);
     var pcl = sm.pc, lo = c.length ? Infinity : pcl, hi = c.length ? -Infinity : pcl;
@@ -153,16 +153,17 @@
     if (vis.length > 1) { s += path(ind.vw, "bt-vw") + path(ind.em, "bt-em"); }
     s += '<text x="' + (L.padL + 4) + '" y="' + (L.top + 12) + '" class="bt-lg"><tspan fill="#d4a017">&#9632; VWAP</tspan>  <tspan fill="#2b7de0">&#9632; 9 EMA</tspan></text>';
     // trade markers
-    if (S.res && S.res.cur) S.res.cur.forEach(function (t) {
+    if (RS && RS.cur) RS.cur.forEach(function (t) {
       if (t.ei < st) return; var x1 = X(t.ei), x2 = X(t.xi), win = t.R > 0;
       s += '<line x1="' + x1 + '" x2="' + x2 + '" y1="' + Y(t.entry) + '" y2="' + Y(t.exit) + '" stroke="' + (win ? "var(--gain)" : "var(--loss)") + '" stroke-width="2" stroke-dasharray="4 3" pointer-events="none"/>' +
         '<line x1="' + x1 + '" x2="' + Math.max(x2, x1 + sw) + '" y1="' + Y(t.stop) + '" y2="' + Y(t.stop) + '" class="bt-stop" pointer-events="none"/><line x1="' + x1 + '" x2="' + Math.max(x2, x1 + sw) + '" y1="' + Y(t.tgt) + '" y2="' + Y(t.tgt) + '" class="bt-tgt" pointer-events="none"/>' +
         '<path d="M' + x1 + ' ' + (Y(t.entry) - 1) + 'l-6 11h12z" fill="' + (t.dir > 0 ? "var(--gain)" : "var(--loss)") + '" pointer-events="none" transform="' + (t.dir > 0 ? "" : "rotate(180 " + x1 + " " + (Y(t.entry) + 4) + ")") + '"/><circle cx="' + x2 + '" cy="' + Y(t.exit) + '" r="4.5" fill="' + (win ? "var(--gain)" : "var(--loss)") + '" stroke="var(--panel)" stroke-width="1.5" pointer-events="none"/>' +
         '<text x="' + (x2 + 7) + '" y="' + (Y(t.exit) - 6) + '" class="bt-rt ' + (win ? "gain" : "loss") + '" pointer-events="none">' + rr(t.R) + '</text>';
     });
-    if (S.res && S.res.A) { var AA = S.res.A, seen = {};
+    if (RS && RS.A) { var AA = RS.A, seen = {};
       for (var q = 0; q < AA.n; q++) if (AA.nh[q] && !seen[AA.hi[q]] && AA.hi[q] >= st) { seen[AA.hi[q]] = 1; s += '<text x="' + X(AA.hi[q]) + '" y="' + (Y(AA.H[AA.hi[q]]) - 6) + '" text-anchor="middle" class="bt-tag hi" pointer-events="none">HIGH</text>'; }
-      (S.res.cur || []).forEach(function (t) { if (t.si >= st) s += '<text x="' + X(t.si) + '" y="' + (t.dir < 0 ? Y(S.sim.c[t.si].h) - 6 : Y(S.sim.c[t.si].l) + 14) + '" text-anchor="middle" class="bt-tag trg" pointer-events="none">TRG</text>'; }); }
+      (RS.cur || []).forEach(function (t) { if (t.si >= st) s += '<text x="' + X(t.si) + '" y="' + (t.dir < 0 ? Y(S.sim.c[t.si].h) - 6 : Y(S.sim.c[t.si].l) + 14) + '" text-anchor="middle" class="bt-tag trg" pointer-events="none">TRG</text>'; }); }
+    if (RS && RS.cust) { (RS.cur || []).forEach(function (t) { if (t.ai >= st && t.ai < c.length) s += '<text x="' + X(t.ai) + '" y="' + (t.dir < 0 ? Y(c[t.ai].h) - 6 : Y(c[t.ai].l) + 14) + '" text-anchor="middle" class="bt-tag hi" pointer-events="none">MARKER</text>'; if (t.si >= st && t.si < c.length) s += '<text x="' + X(t.si) + '" y="' + (t.dir < 0 ? Y(c[t.si].h) - (t.ai === t.si ? 18 : 6) : Y(c[t.si].l) + 14) + '" text-anchor="middle" class="bt-tag trg" pointer-events="none">SIGNAL</text>'; }); }
     // edit handles
     var sc = S.sim.c[S.sel];
     if (S.edit === "vw" || S.edit === "em") { var arr = S.edit === "vw" ? ind.vw : ind.em; vis.forEach(function (x, ii) { var i = st + ii; s += '<circle data-line="' + S.edit + '" data-i="' + i + '" cx="' + X(i) + '" cy="' + Y(arr[i]) + '" r="6" class="bt-hl ' + S.edit + '"/>'; }); }
@@ -442,13 +443,13 @@
       '<div class="bt-bar"><button class="bt-b on" data-a="copycode">Copy code</button><button class="bt-b" data-a="dlcode">Download bot.py</button><button class="bt-b" data-a="dlcandles">Download chart as candles.csv</button><button class="bt-b" data-a="rebuild">Rebuild from rules</button></div><pre class="bt-code" id="bt-code">' + esc(S.code) + '</pre>';
   }
   function head() {
-    return '<div class="bt-top"><h1>Backtest Lab</h1><div class="bt-tabs">' + [["log", "1. Trade log"], ["sim", "2. Simulator and strategy"], ["code", "3. Bot code"]].map(function (t) { return '<button data-tab="' + t[0] + '" class="' + (S.tab === t[0] ? "on" : "") + '">' + t[1] + '</button>'; }).join("") + '</div></div>';
+    return '<div class="bt-top"><h1>Backtest Lab</h1><div class="bt-tabs">' + [["log", "1. Trade log"], ["sim", "2. Simulator (SL-1-RV)"], ["build", "3. Build a strategy"], ["code", "4. SL-1-RV bot code"]].map(function (t) { return '<button data-tab="' + t[0] + '" class="' + (S.tab === t[0] ? "on" : "") + '">' + t[1] + '</button>'; }).join("") + '</div></div>';
   }
   function paint() { var ch = root.querySelector("#bt-chart"); if (ch) { host = ch; ch.innerHTML = chartSvg(); } }
   function render() {
     if (!root) return; var y = window.scrollY, ae = document.activeElement, aid = ae && (ae.id || ae.getAttribute("data-r") || ae.getAttribute("data-f")), pos = ae && ae.selectionStart;
-    root.innerHTML = css() + head() + '<div class="bt-body">' + (S.tab === "log" ? logHtml() : S.tab === "sim" ? simHtml() : codeHtml()) + '</div>';
-    if (S.tab === "sim") paint();
+    root.innerHTML = css() + head() + '<div class="bt-body">' + (S.tab === "log" ? logHtml() : S.tab === "sim" ? simHtml() : S.tab === "build" ? (window.BTBuilder ? window.BTBuilder.html() : "<p>Builder is loading...</p>") : codeHtml()) + '</div>';
+    if (S.tab === "sim" || S.tab === "build") paint();
     if (aid) { var el = root.querySelector('[id="' + aid + '"],[data-r="' + aid + '"],[data-f="' + aid + '"]'); if (el && el.tagName === "INPUT" && el.type !== "checkbox" && el.type !== "range") { el.focus(); try { el.setSelectionRange(pos, pos); } catch (e) { } } }
     window.scrollTo(0, y);
   }
@@ -470,6 +471,7 @@
 
   /* ---------------- events ---------------- */
   function bind() {
+    if (window.BTBuilder) window.BTBuilder.bind(root);
     root.addEventListener("click", function (ev) {
       var t = ev.target, b;
       if ((b = t.closest("[data-tab]"))) { S.tab = b.getAttribute("data-tab"); if (S.tab === "code" && !S.code) S.code = botCode(); render(); window.scrollTo(0, 0); return; }
@@ -487,7 +489,7 @@
       var t = ev.target, f = t.getAttribute("data-f"), r = t.getAttribute("data-r");
       if (f) { S.f[f] = t.value; render(); return; }
       if (t.getAttribute("data-shape")) { S.rules.shapes[t.getAttribute("data-shape")] = t.checked; S.res = null; S.code = ""; save(); return; }
-      if (r) { var ty = t.getAttribute("data-t"), v = ty === "b" ? t.checked : ty === "n" ? parseFloat(t.value) : t.value; if (ty === "n") { if (isNaN(v) || v < 0) v = DEFRULES[r]; if (["t1R", "t2R", "t3R", "riskDollars"].indexOf(r) >= 0 && v <= 0) v = DEFRULES[r]; } S.rules[r] = v; S.res = null; S.code = ""; save(); if (ty === "n") t.value = v; return; }
+      if (r) { var ty = t.getAttribute("data-t"), v = ty === "b" ? t.checked : ty === "n" ? parseFloat(t.value) : t.value; if (ty === "n") { if (isNaN(v) || v < 0) v = t.value.trim() === "" && DEFRULES[r] !== undefined && /\(0 =/.test((t.parentNode.querySelector("label") || {}).textContent || "") ? 0 : DEFRULES[r]; if (["t1R", "t2R", "t3R", "riskDollars"].indexOf(r) >= 0 && v <= 0) v = DEFRULES[r]; } S.rules[r] = v; S.res = null; S.code = ""; save(); if (ty === "n") t.value = v; return; }
       if (t.id === "bt-pc") { setPC(parseFloat(t.value)); return; }
       if (t.id === "bt-gapn") { setGap(parseFloat(t.value)); return; }
       if (t.id === "bt-gap") { setGap(parseFloat(t.value)); return; }
@@ -495,7 +497,7 @@
       if (t.id === "bt-tf") { S.sim.tf = parseInt(t.value, 10); S.res = null; save(); render(); return; }
       if (t.id === "bt-drift") { S.drift = parseInt(t.value, 10); return; }
     });
-    root.addEventListener("input", function (ev) { var t = ev.target; if (t.getAttribute("data-f") === "tk") { S.f.tk = t.value; render(); } if (t.id === "bt-gap") { var n = root.querySelector("#bt-gapn"); if (n) n.value = t.value; } });
+    root.addEventListener("input", function (ev) { var t = ev.target; if (t.getAttribute("data-t") === "n" && t.getAttribute("data-r")) { var nv = parseFloat(t.value); if (!isNaN(nv) && nv >= 0) { S.rules[t.getAttribute("data-r")] = nv; S.res = null; S.code = ""; save(); } } if (t.getAttribute("data-f") === "tk") { S.f.tk = t.value; render(); } if (t.id === "bt-gap") { var n = root.querySelector("#bt-gapn"); if (n) n.value = t.value; } });
     root.addEventListener("submit", function (ev) {
       if (ev.target.id !== "bt-addf") return; ev.preventDefault(); var fd = new FormData(ev.target), o = {}; fd.forEach(function (v, k) { o[k] = v; });
       var q = parseFloat(o.q), e = parseFloat(o.e), x = parseFloat(o.x); if (!(q > 0) || isNaN(e) || isNaN(x)) { toast("Check shares, entry and exit"); return; }
@@ -534,6 +536,6 @@
   }
 
   function mount(el) { H = window.StockBT || H; root = el; if (!S.rules) load(); if (!root.__bt) { root.__bt = 1; bind(); } host = null; render(); }
-  window.BacktestLab = { mount: mount, _e: { backtest: backtest, analyze: analyze, DEF: DEFRULES, indOf: indOf } };
+  window.BacktestLab = { mount: mount, _x: { S: S, save: save, render: render, esc: esc, f2: f2, money: money, sgn: sgn, rr: rr, tile: tile, download: download, toast: toast, exportCandles: exportCandles, paint: paint },  _e: { backtest: backtest, analyze: analyze, DEF: DEFRULES, indOf: indOf } };
   load();
 })();
