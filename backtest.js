@@ -487,7 +487,7 @@
       var t = ev.target, f = t.getAttribute("data-f"), r = t.getAttribute("data-r");
       if (f) { S.f[f] = t.value; render(); return; }
       if (t.getAttribute("data-shape")) { S.rules.shapes[t.getAttribute("data-shape")] = t.checked; S.res = null; S.code = ""; save(); return; }
-      if (r) { var ty = t.getAttribute("data-t"), v = ty === "b" ? t.checked : ty === "n" ? parseFloat(t.value) : t.value; if (ty === "n") { if (isNaN(v) || v < 0) v = DEFRULES[r]; if (["t1R", "t2R", "t3R", "riskDollars"].indexOf(r) >= 0 && v <= 0) v = DEFRULES[r]; } S.rules[r] = v; S.res = null; S.code = ""; save(); if (ty === "n") t.value = v; return; }
+      if (r) { var ty = t.getAttribute("data-t"), v = ty === "b" ? t.checked : ty === "n" ? parseFloat(t.value) : t.value; if (ty === "n") { if (isNaN(v) || v < 0) v = t.value.trim() === "" && DEFRULES[r] !== undefined && /\(0 =/.test((t.parentNode.querySelector("label") || {}).textContent || "") ? 0 : DEFRULES[r]; if (["t1R", "t2R", "t3R", "riskDollars"].indexOf(r) >= 0 && v <= 0) v = DEFRULES[r]; } S.rules[r] = v; S.res = null; S.code = ""; save(); if (ty === "n") t.value = v; return; }
       if (t.id === "bt-pc") { setPC(parseFloat(t.value)); return; }
       if (t.id === "bt-gapn") { setGap(parseFloat(t.value)); return; }
       if (t.id === "bt-gap") { setGap(parseFloat(t.value)); return; }
@@ -495,7 +495,7 @@
       if (t.id === "bt-tf") { S.sim.tf = parseInt(t.value, 10); S.res = null; save(); render(); return; }
       if (t.id === "bt-drift") { S.drift = parseInt(t.value, 10); return; }
     });
-    root.addEventListener("input", function (ev) { var t = ev.target; if (t.getAttribute("data-f") === "tk") { S.f.tk = t.value; render(); } if (t.id === "bt-gap") { var n = root.querySelector("#bt-gapn"); if (n) n.value = t.value; } });
+    root.addEventListener("input", function (ev) { var t = ev.target; if (t.getAttribute("data-t") === "n" && t.getAttribute("data-r")) { var nv = parseFloat(t.value); if (!isNaN(nv) && nv >= 0) { S.rules[t.getAttribute("data-r")] = nv; S.res = null; S.code = ""; save(); } } if (t.getAttribute("data-f") === "tk") { S.f.tk = t.value; render(); } if (t.id === "bt-gap") { var n = root.querySelector("#bt-gapn"); if (n) n.value = t.value; } });
     root.addEventListener("submit", function (ev) {
       if (ev.target.id !== "bt-addf") return; ev.preventDefault(); var fd = new FormData(ev.target), o = {}; fd.forEach(function (v, k) { o[k] = v; });
       var q = parseFloat(o.q), e = parseFloat(o.e), x = parseFloat(o.x); if (!(q > 0) || isNaN(e) || isNaN(x)) { toast("Check shares, entry and exit"); return; }
