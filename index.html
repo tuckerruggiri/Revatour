@@ -19,6 +19,7 @@
 <script src="shim.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+.dc-su,.imgsu{width:100%;box-sizing:border-box;margin:0 0 6px;padding:6px 8px;font-size:.85rem}.psetup{display:inline-block;margin:0 0 4px;padding:1px 8px;border-radius:99px;background:rgba(47,125,225,.12);font-size:.78rem}
 :root{--bg:#f3f3f3;--panel:#ffffff;--ink:#0a0a0a;--mute:#666666;--line:#d9d9d9;--gain:#0b6b5a;--loss:#b3261e;--accent:#0a0a0a;--accent-ink:#fff;
  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000000;--panel:#0f0f0f;--ink:#f2f2f2;--mute:#9a9a9a;--line:#2a2a2a;--gain:#3ecfae;--loss:#ff7b72;--accent:#f2f2f2;--accent-ink:#000;color-scheme:dark}}
@@ -874,7 +875,12 @@ function renderImgs(){var el=$("imglist");if(!el)return;el.innerHTML="";
   var o0=document.createElement("option");o0.value="";o0.textContent="Not linked to a trade";sel.appendChild(o0);
   var days={};trades.forEach(function(t){days[t.d]=1});var multi=Object.keys(days).length>1;
   sortedTrades().forEach(function(t){var o=document.createElement("option");o.value=tkey(t);o.textContent=optLabel(t,multi);if(o.value===m.tid)o.selected=true;sel.appendChild(o)});
-  sel.onchange=function(){m.tid=sel.value;saveImgs()};d.appendChild(sel);
+  var su=document.createElement("select");su.className="imgsu";su.setAttribute("aria-label","Setup for this trade");
+  var nm=[];try{nm=scNames(trades)}catch(e){}
+  su.innerHTML='<option value="">What setup was it?</option>'+nm.map(function(n){return '<option value="'+esc(n)+'"'+(n===m.su?" selected":"")+'>'+esc(n)+'</option>'}).join("");
+  if(m.su&&nm.indexOf(m.su)<0)su.insertAdjacentHTML("beforeend",'<option value="'+esc(m.su)+'" selected>'+esc(m.su)+'</option>');
+  su.onchange=function(){m.su=su.value;saveImgs();var tr=tradeFor(m.tid);if(tr&&su.value){tr.u=su.value;persist();try{scStudio();showStats()}catch(e){}toast("Setup saved on the trade")}};
+  sel.onchange=function(){m.tid=sel.value;var tr=tradeFor(m.tid);if(tr){if(tr.u){m.su=tr.u;su.value=tr.u}else if(m.su){tr.u=m.su;persist();try{scStudio();showStats()}catch(e){}}}saveImgs()};d.appendChild(sel);d.appendChild(su);
   var cap=document.createElement("input");cap.maxLength=160;cap.placeholder="Caption: what the chart shows";cap.value=m.cap||"";cap.setAttribute("aria-label","Caption");cap.oninput=function(){m.cap=cap.value};cap.onchange=saveImgs;d.appendChild(cap);
   var lb=document.createElement("label"),ck=document.createElement("input");ck.type="checkbox";ck.checked=!!m.sl;ck.onchange=function(){m.sl=ck.checked;saveImgs()};lb.appendChild(ck);lb.appendChild(document.createTextNode("Use as a carousel slide"));d.appendChild(lb);
   im.onclick=function(){window.open(m.src||"","_blank")};
@@ -1105,7 +1111,7 @@ async function loadPosts(pid){
  var o=lsGet()||{pages:{}};return ((o.pages[pid]||{}).posts||[]).slice()}
 async function addPost(pid,post){
  var id=newId(),rec={ts:Date.now(),text:post.text||""};
- if(post.imgs&&post.imgs.length)rec.imgs=post.imgs;
+ if(post.imgs&&post.imgs.length)rec.imgs=post.imgs;if(post.setup)rec.setup=post.setup;
  if(store.db)await store.db.doc("pages/"+pid+"/posts/"+id).set(rec);
  else{var o=lsGet()||{pages:{}},pg=o.pages[pid];if(!pg&&pid==="__wall"){pg=o.pages[pid]={posts:[]}}if(!pg)throw new Error("missing");pg.posts=pg.posts||[];pg.posts.push(Object.assign({id:id},rec));lsPut(o)}
  schedMirror(pid);return Object.assign({id:id},rec)}
@@ -1142,7 +1148,7 @@ function renderFeed(){var el=$("feed");if(!el)return;if(pages[curPage]&&pages[cu
     '<div class="row" style="margin:0"><button class="primary" type="button" data-edsave="1">Save</button><button type="button" data-edadd="1">Add picture</button><input id="edimg" type="file" accept="image/*,video/*" multiple hidden><button type="button" data-edcancel="1">Cancel</button></div></article>'}
   var L=postImgs(p),pics=L.map(function(m){var u=imgUrl(m);return u?(m.v?'<video controls playsinline preload="metadata" src="'+esc(u)+'"></video>':'<img alt="Posted screenshot" src="'+esc(u)+'">'):""}).join("");
   return '<article class="post"><div class="pmeta"><span>'+esc(postWhen(p.ts))+(p.edited?' · edited':'')+(p.from==="discord"?' · from Discord':'')+'</span><span><button class="linkbtn" type="button" data-edit="'+esc(p.id)+'" aria-label="Edit post">Edit</button> <button class="x" type="button" data-del="'+esc(p.id)+'" aria-label="Delete post">✕</button></span></div>'+
-   (p.text?'<div class="ptxt">'+rich(p.text)+'</div>':'')+(pics?'<div class="pics n'+Math.min(L.length,8)+'">'+pics+'</div>':'')+'</article>'}).join("");
+   (p.setup?'<div class="psetup">Setup: <b>'+esc(p.setup)+'</b></div>':'')+(p.text?'<div class="ptxt">'+rich(p.text)+'</div>':'')+(pics?'<div class="pics n'+Math.min(L.length,8)+'">'+pics+'</div>':'')+'</article>'}).join("");
  if(editing){var t=$("edtext");if(t&&!t.dataset.init){t.value=editing.text;t.dataset.init="1";t.focus()}}}
 async function updatePost(pid,id,rec){
  if(store.db)await store.db.doc("pages/"+pid+"/posts/"+id).set(rec);
@@ -1162,7 +1168,7 @@ async function editSave(){if(!editing)return;var pid=curPage,e=editing,t=$("edte
    if(store.db){if(store.assets){try{var u2=await pendUp(e.adds[k],function(b,t){return store.assets.upload(b,{type:t})});var m2={aid:u2.id};if(ev_)m2.v=1;imgs.push(m2)}catch(x){toast(ev_?"A video could not be saved (max 50 MB)":"An image could not be saved")}}else toast("Storage is unavailable here")}
    else if(ev_)toast("Videos need an online account");else imgs.push({src:e.adds[k]})}
   var old=feedPosts.find(function(p){return p.id===e.id});if(!old)return;
-  var rec={ts:old.ts,text:text,edited:Date.now()};if(imgs.length)rec.imgs=imgs;
+  var rec={ts:old.ts,text:text,edited:Date.now()};if(imgs.length)rec.imgs=imgs;if(old.setup)rec.setup=old.setup;
   await updatePost(pid,e.id,rec);
   Object.keys(old).forEach(function(k){if(k!=="id")delete old[k]});Object.assign(old,rec);
   editing=null;if(curPage===pid)renderFeed();toast("Saved")
@@ -1182,7 +1188,7 @@ async function showPage(pid){var pg=pages[pid];if(!pg){showStudio();return}
  var par=pg.parent&&pages[pg.parent],kids=par?[]:kidsOf(pid);
  el.innerHTML=(par?'<button class="crumb" type="button" data-go="'+esc(par.id)+'">&larr; '+esc(par.name)+'</button>':'')+'<div class="phead"><input id="pgname" class="pgname" maxlength="40" aria-label="'+(par?'Channel':'Page')+' name"><button id="pgedit" type="button" class="primary">Edit</button><button id="pgset" type="button" aria-label="Options">Options &hellip;</button></div>'+'<p class="pgdesc" id="pgdesc"'+(pg.descOn&&pg.desc?'':' hidden')+'>'+esc(pg.desc||'')+'</p>'+
   (par?'':'<h2 class="chhead">Channels</h2><div class="chlist">'+(kids.length?kids.map(function(k,ki){return '<div class="chrow" data-id="'+esc(k.id)+'"><button class="chcard" type="button" data-go="'+esc(k.id)+'"><span class="chtx"><span># '+esc(k.name)+'</span>'+(k.descOn&&k.desc?'<small class="chdesc">'+esc(k.desc)+'</small>':'')+'</span><span class="chev">&rsaquo;</span></button></div>'}).join(""):'<p class="hint" style="margin:0">No channels yet. Chat and posts live inside channels, so add one to get started.</p>')+'</div><div class="chips"><input id="chname" maxlength="40" placeholder="New channel name" aria-label="New channel name"><button class="primary" type="button" id="chadd">Add channel</button></div>')+
-  (par?'<p class="hint" id="commnote" style="margin:0 0 8px"></p><div id="feed" class="dc-stream" aria-live="polite"></div>'+dcComposer({prev:"pprev",pic:"pfile",file:"pimg",ta:"ptext",send:"ppost",max:4000,ph:"Message #"+pg.name}):'<div id="feed" class="feed"></div>');
+  (par?'<p class="hint" id="commnote" style="margin:0 0 8px"></p><div id="feed" class="dc-stream" aria-live="polite"></div>'+dcComposer({prev:"pprev",pic:"pfile",file:"pimg",ta:"ptext",send:"ppost",su:1,max:4000,ph:"Message #"+pg.name}):'<div id="feed" class="feed"></div>');
  $("pgname").value=pg.name;try{srtBtn(pg)}catch(e){}commNote();renderSide();window.scrollTo(0,0);
  try{feedPosts=await loadPosts(pid)}catch(e){toast("Could not load this page")}
  if(curPage!==pid)return;
@@ -1194,14 +1200,14 @@ async function showPage(pid){var pg=pages[pid];if(!pg){showStudio();return}
 async function doPost(){if(!pages[curPage]||!pages[curPage].parent)return;
  var t=tickify($("ptext").value.trim());if(!t&&!pend.length){toast("Write something or add a picture or video first");return}
  var btn=$("ppost"),pid=curPage;btn.disabled=true;
- try{var post={text:t};
+ try{var post={text:t},su_=$("ptextsu");if(su_&&su_.value)post.setup=su_.value;
   if(pend.length){post.imgs=[];
    for(var k=0;k<pend.length;k++){
     var pv_=isVid(pend[k]);
     if(store.db){if(store.assets){try{var up_=await pendUp(pend[k],function(b,t){return store.assets.upload(b,{type:t})});var mm={aid:up_.id};if(pv_)mm.v=1;post.imgs.push(mm)}catch(e){toast(pv_?"A video could not be saved (max 50 MB)":"An image could not be saved")}}else toast("Storage is unavailable here")}
     else if(pv_)toast("Videos need an online account");else post.imgs.push({src:pend[k]})}}
   var rec=await addPost(pid,post);
-  if(curPage===pid){feedPosts.push(rec);$("ptext").value="";pend=[];renderPrev();var f=$("feed");if(f)f.dataset.stick="1";var tp=$("ptext");if(tp)tp.style.height="";renderFeed()}
+  if(curPage===pid){feedPosts.push(rec);$("ptext").value="";var su2=$("ptextsu");if(su2)su2.value="";pend=[];renderPrev();var f=$("feed");if(f)f.dataset.stick="1";var tp=$("ptext");if(tp)tp.style.height="";renderFeed()}
  }catch(e){toast(e&&e.code==="quota_exceeded"?"Storage is full":"Could not post")}
  finally{btn.disabled=false}}
 async function createPage(){var inp=$("newpg"),name=inp.value.trim();if(!name)return;
@@ -2949,7 +2955,8 @@ function dcPaint(el,html,reset){var first=reset||!el.dataset.init,nb=el.scrollHe
  el.innerHTML=html;if(first){el.dataset.init="1";el.dataset.stick="1";el.addEventListener("scroll",function(){el.dataset.stick=(el.scrollHeight-el.scrollTop-el.clientHeight<80)?"1":"0"})}
  if(first||nb)el.scrollTop=el.scrollHeight;else el.scrollTop=st;
  [].forEach.call(el.querySelectorAll("img"),function(im){if(!im.complete)im.addEventListener("load",function(){if(el.dataset.stick==="1")el.scrollTop=el.scrollHeight})})}
-function dcComposer(o){return '<div class="dc-comp"><div id="'+o.prev+'" class="dc-prev"></div><div class="dc-bar"><button type="button" class="dc-plus" id="'+o.pic+'" aria-label="Add a picture or video">+</button><input id="'+o.file+'" type="file" accept="image/*,video/*" multiple hidden><textarea id="'+o.ta+'" class="dc-ta" rows="1" maxlength="'+o.max+'" placeholder="'+esc(o.ph)+'" aria-label="Message"></textarea><button type="button" class="primary dc-send" id="'+o.send+'">Send</button></div></div>'}
+function dcSetupSel(id){var nm=[];try{nm=scNames(trades)}catch(e){}return '<select id="'+id+'" class="dc-su" aria-label="Setup for this trade"><option value="">Setup (if this is a trade)</option>'+nm.map(function(n){return '<option value="'+esc(n)+'">'+esc(n)+'</option>'}).join("")+'</select>'}
+function dcComposer(o){return '<div class="dc-comp"><div id="'+o.prev+'" class="dc-prev"></div>'+(o.su?dcSetupSel(o.ta+"su"):"")+'<div class="dc-bar"><button type="button" class="dc-plus" id="'+o.pic+'" aria-label="Add a picture or video">+</button><input id="'+o.file+'" type="file" accept="image/*,video/*" multiple hidden><textarea id="'+o.ta+'" class="dc-ta" rows="1" maxlength="'+o.max+'" placeholder="'+esc(o.ph)+'" aria-label="Message"></textarea><button type="button" class="primary dc-send" id="'+o.send+'">Send</button></div></div>'}
 function ownerItems(){var A=window.stockspotAuth||{},So=S(),me={id:So?So.uid():"me",username:A.username||"you",avatar_url:myAvUrl()},out=[];
  feedPosts.forEach(function(p){out.push({kind:"post",id:p.id,author:me,text:p.text||"",imgs:postImgs(p),ts:p.ts,edited:p.edited,canEdit:true,canDel:true,delAttr:"data-del"})});
  if(chat&&chat.page)(chat.msgs||[]).forEach(function(m){out.push({kind:"chat",id:m.id,author:m.author,text:m.text,imgs:m.imgs||[],ts:m.ts,canDel:true,delAttr:"data-cmdel"})});
