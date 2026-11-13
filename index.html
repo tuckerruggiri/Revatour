@@ -2347,7 +2347,7 @@ function scKey(t){return [t.t,t.s,t.d,t.tm||"",t.ot||"",t.q,(+t.p).toFixed(4)].j
 function scStratPage(){var ks=Object.keys(pages).filter(function(k){return !pages[k].parent&&/master\s*class/i.test(pages[k].name)});return ks.length?pages[ks[0]]:null}
 function scMasterPages(){return Object.keys(pages).map(function(k){return pages[k]}).filter(function(p){return /master\s*class/i.test(p.name)})}
 function scMaster(){var o={},out=[];scMasterPages().forEach(function(p){kidsOf(p.id).forEach(function(k){if(!o[k.name.toLowerCase()]){o[k.name.toLowerCase()]=1;out.push(k.name)}})});return out}
-function scNames(extra){var o={},sp=scStratPage(),ms=scMaster();ms.forEach(function(n){o[n]=1});if(sp&&!ms.length)kidsOf(sp.id).forEach(function(k){o[k.name]=1});
+function scNames(extra){var o={},sp=scStratPage(),ms=scMaster();ms.forEach(function(n){o[n]=1});try{wsNames().forEach(function(n){o[n]=1})}catch(e){}if(sp&&!ms.length)kidsOf(sp.id).forEach(function(k){o[k.name]=1});
  Object.keys(entries).forEach(function(d){(entries[d].trades||[]).forEach(function(t){if(t.u)o[t.u]=1})});
  (extra||[]).forEach(function(t){if(t.u)o[t.u]=1});return Object.keys(o).sort(function(a,b){var ia=ms.indexOf(a),ib=ms.indexOf(b);if(ia>=0&&ib>=0)return ia-ib;if(ia>=0)return -1;if(ib>=0)return 1;return a.toLowerCase()<b.toLowerCase()?-1:1})}
 function scOpts(cur,names){var h='<option value="">Untagged</option>';names.forEach(function(n){h+='<option value="'+esc(n)+'"'+(n===cur?" selected":"")+'>'+esc(n)+'</option>'});if(cur&&names.indexOf(cur)<0)h+='<option value="'+esc(cur)+'" selected>'+esc(cur)+'</option>';return h}
