@@ -167,7 +167,7 @@
       var names = await namesFor(posts.map(function (p) { return p.author_id; }).concat(com.map(function (c) { return c.author_id; })).concat(Object.keys(origs).map(function (k) { return origs[k].author_id; })));
       return posts.filter(function (p) { return p.author_id === uid || !hide[p.author_id]; }).map(function (p) {
         var ps = likes.filter(function (x) { return x.post_id === p.id; }), rr = reps.filter(function (x) { return x.repost_of === p.id; }), og = p.repost_of ? origs[p.repost_of] : null;
-        return { id: p.id, owner_id: p.owner_id, author: pickName(names, p.author_id), text: p.text, imgs: p.imgs || [], ts: new Date(p.created_at).getTime(), pinned: !!p.pinned,
+        return { id: p.id, owner_id: p.owner_id, author: pickName(names, p.author_id), text: p.text, imgs: p.imgs || [], ts: new Date(p.created_at).getTime(), pinned: !!p.pinned, edited: !!p.edited_at,
           likeCount: ps.length, liked: ps.some(function (x) { return x.user_id === uid; }),
           repostCount: rr.length, myRepost: (rr.filter(function (x) { return x.author_id === uid; })[0] || {}).id || '',
           orig: og ? { id: og.id, author: pickName(names, og.author_id), text: og.text, imgs: og.imgs || [], ts: new Date(og.created_at).getTime() } : null, isRepost: !!p.repost_of,
@@ -291,6 +291,7 @@
       if (ts) row.created_at = new Date(ts).toISOString();
       var r = await sb.from('ss_wall_posts').insert(row).select().single(); if (r.error) throw r.error; return r.data;
     },
+    editPost: async function (id, text) { await ready; var r = await sb.from('ss_wall_posts').update({ text: text }).eq('id', id).select().single(); if (r.error) throw r.error; return r.data; },
     delPost: async function (id) { await ready; var r = await sb.from('ss_wall_posts').delete().eq('id', id); if (r.error) throw r.error; },
     addComment: async function (postId, text) { await ready; var r = await sb.from('ss_wall_comments').insert({ post_id: postId, author_id: uid, text: text }).select().single(); if (r.error) throw r.error; return r.data; },
     delComment: async function (id) { await ready; var r = await sb.from('ss_wall_comments').delete().eq('id', id); if (r.error) throw r.error; },
