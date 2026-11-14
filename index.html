@@ -19,6 +19,10 @@
 <script src="shim.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+#profilev.wrap{max-width:none;width:100%;box-sizing:border-box;padding-left:28px;padding-right:28px}@media(max-width:700px){#profilev.wrap{padding-left:14px;padding-right:14px}}
+.pf-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:24px;align-items:start}@media(max-width:1100px){.pf-cols{grid-template-columns:minmax(0,1fr)}}.pf-sa{scroll-margin-top:64px}#pchans{scroll-margin-top:64px}
+.pf-nav .pf-sep{width:1px;height:22px;background:var(--line);margin:0 4px}.pf-nav .pf-say{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}.pf-nav .ghost{opacity:.85}
+#profilev .hm-tile{transition:transform .15s,box-shadow .15s}#profilev .hm-tile:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,.12)}#profilev .pf-av{transition:transform .25s}#profilev .pf-av:hover{transform:rotate(-4deg) scale(1.06)}
 .ws-bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 8px}.ws-bar button{padding:5px 11px;font-size:.85rem}.ws-sp{flex:1}.ws-ck{display:inline-flex!important;flex-direction:row!important;align-items:center;gap:6px;font-size:.88rem;margin:0!important}.ws-ck input[type=checkbox]{width:auto!important;flex:none}.ws-ck input[type=number]{width:60px!important;padding:3px 6px;margin:0}.ws-ck i{display:inline-block;width:14px;height:4px;border-radius:2px}.ws-info{font-size:.85rem;min-height:1.3em;margin:2px 0 6px;font-variant-numeric:tabular-nums}.ws-cols{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px}@media(max-width:1000px){.ws-cols{grid-template-columns:minmax(0,1fr)}}.ws-pane{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:4px;touch-action:none;user-select:none}.ws-svg{width:100%;height:auto;display:block}.ws-svg *{pointer-events:none}.ws-svg [data-wsi],.ws-svg [data-wsh],.ws-svg [data-wsl],.ws-svg [data-wsv]{pointer-events:all}.ws-rr{margin:8px 0;padding:9px 12px;border:1px dashed var(--line);border-radius:10px;font-size:.92rem}.ws-sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}.ws-sc{border:1px solid var(--line);border-radius:12px;padding:10px}.ws-sc b{display:block}.ws-sc small{color:var(--mute)}.ws-sc p{margin:4px 0 0;font-size:.82rem;color:var(--mute)}.ws-spk{width:100%;height:36px;display:block;margin-bottom:4px}
 #planv.wrap{max-width:none;width:100%;box-sizing:border-box;padding-left:28px;padding-right:28px}@media(max-width:700px){#planv.wrap{padding-left:14px;padding-right:14px}}
 #planv .pl-cols{grid-template-columns:minmax(0,1.7fr) minmax(360px,1fr);gap:20px}#planv .pl-side{position:static;display:grid;gap:16px}#planv .pl-main{display:grid;gap:16px}#planv .pl-sa{scroll-margin-top:64px}@media(max-width:1000px){#planv .pl-cols{grid-template-columns:minmax(0,1fr)}#planv .pl-side{order:0}}
@@ -3093,6 +3097,29 @@ function t3(v,l,n){return '<div class="hm-tile"><b class="'+(n>=0?"gain":"loss")
 function mountRec(){var h=$("pfrec");if(h&&window.PnlChart&&recRows.length)PnlChart.mount(h,recRows,{money:money,sgn:sgn,pct:fmtPct,label:dayLabel})}
 function coachTab(){return '<section style="margin-top:14px"><p class="hint">Reads your saved trades and your page notes, then tells you what is working, what is not, your strong and weak areas, and the niche your record points to.</p>'+
   '<div class="row"><button class="primary" id="chgo" type="button">'+(coach&&coach.md?"Run a fresh review":"Analyze my record")+'</button><button id="chstop" type="button" hidden>Stop</button>'+(coach&&coach.md?'<button id="chpost" type="button"'+(coach.posted?' disabled':'')+'>'+(coach.posted?'Posted to wall':'Post to wall')+'</button>':'')+'</div><div class="status" id="cstatus"></div>'+coachBody()+'</section>'}
+/* ===== Profile banner ===== */
+var pfObs=null,pfVis={},pfMo=null;
+function pfNavHTML(self){var B=self?[["pfhead","&#128100;","Profile"],["pchans","&#128250;","Channels"],["pfrec","&#127942;","Record"],["pfwall","&#128483;","Wall"],["pfcoach","&#129504;","AI coach"]]:[["pfhead","&#128100;","Profile"],["pfwall","&#128483;","Wall"]];
+ var L=self?[["navsc","&#128202;","Scorecard"],["navday","&#128467;","Trading day"],["navplan","&#127919;","Trade Plan"],["navstudio","&#127902;","Studio"],["navpub","&#128227;","Publishes"]]:[];
+ return '<nav class="pl-nav pf-nav" id="pfnav" aria-label="Jump to a section">'+B.map(function(x){return '<button type="button" data-pfgo="'+x[0]+'"><i>'+x[1]+'</i> '+x[2]+'</button>'}).join("")+(self?'<button type="button" class="pf-say" data-pfsay="1"><i>&#9997;&#65039;</i> Post something</button>':'')+
+  (L.length?'<span class="pf-sep"></span>'+L.map(function(x){return '<button type="button" class="ghost" data-pfnav="'+x[0]+'"><i>'+x[1]+'</i> '+x[2]+'</button>'}).join(""):'')+'<span class="pl-live" id="pfnavlive" aria-live="polite"></span></nav>'}
+function pfLevel(){var n=0;try{n=allTrades().length}catch(e){}var Lv=[[0,"🐣 Rookie"],[10,"📈 Regular"],[50,"🔥 Pro"],[200,"👑 Legend"]],c=Lv[0],nx=null;Lv.forEach(function(l,i){if(n>=l[0]){c=l;nx=Lv[i+1]||null}});
+ return {n:n,name:c[1],tip:nx?(nx[0]-n)+" more logged trades to "+nx[1]:"Top level reached"}}
+function pfNavLive(){var el=$("pfnavlive");if(!el)return;var lv=pfLevel(),a=$("cfers"),b=$("cfing");
+ el.innerHTML='<span title="'+esc(lv.tip)+'"><b>'+lv.name+'</b> '+lv.n+' trades</span>'+(a&&b?' &middot; <span><b>'+esc(a.textContent)+'</b> followers</span> <span><b>'+esc(b.textContent)+'</b> following</span>':'')}
+function pfNavInit(self){var nav=$("pfnav");if(!nav)return;pfNavLive();
+ if(pfMo)pfMo.disconnect();if("MutationObserver" in window){pfMo=new MutationObserver(pfNavLive);var f=$("cfers"),g=$("cfing");[f,g].forEach(function(x){if(x)pfMo.observe(x,{childList:true,characterData:true,subtree:true})})}
+ if(pfObs)pfObs.disconnect();pfVis={};if("IntersectionObserver" in window){pfObs=new IntersectionObserver(function(es){es.forEach(function(e){pfVis[e.target.id]=e.isIntersecting?e.boundingClientRect.top:null});
+  var best=null,bt=1e9;Object.keys(pfVis).forEach(function(k){if(pfVis[k]!=null&&Math.abs(pfVis[k]-80)<bt){bt=Math.abs(pfVis[k]-80);best=k}});
+  nav.querySelectorAll("[data-pfgo]").forEach(function(b){b.classList.toggle("on",b.dataset.pfgo===best||(best==="pfwall"&&b.dataset.pfgo==="pfcoach"&&profTab==="coach"&&false))})},{rootMargin:"-70px 0px -55% 0px",threshold:[0,1]});
+  document.querySelectorAll("#profilev .pf-sa,#pchans").forEach(function(x){pfObs.observe(x)})}}
+function pfScroll(id){var t=$(id);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:"smooth"});t.classList.remove("pl-flash");void t.offsetWidth;t.classList.add("pl-flash")}
+$("profilev").addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("[data-pfgo],[data-pfnav],[data-pfsay]");if(!b)return;
+ if(b.dataset.pfgo==="pfcoach"){var tb=document.querySelector('#profilev [data-ptab="coach"]');if(tb&&profTab!=="coach")tb.click();setTimeout(function(){pfScroll("pfwall")},60);return}
+ if(b.dataset.pfgo){if(b.dataset.pfgo==="pfwall"&&profTab==="coach"){var wb=document.querySelector('#profilev [data-ptab="wall"]');if(wb)wb.click()}pfScroll(b.dataset.pfgo==="pfwall"?"pfwall":b.dataset.pfgo);return}
+ if(b.dataset.pfsay){if(profTab==="coach"){var w2=document.querySelector('#profilev [data-ptab="wall"]');if(w2)w2.click()}setTimeout(function(){pfScroll("pfwall");var t=$("wtext");if(t)t.focus()},80);return}
+ var n=$(b.dataset.pfnav);if(n)n.click()});
+
 async function showProfile(){hideViews();paintProfNav();$("profilev").hidden=false;var A=window.stockspotAuth||{},So=S();
  pv={self:true,id:So?So.uid():"",username:A.username||"",bio:prof.bio,avatar:myAvUrl(),created:A.created};
  renderProfile();renderSide();window.scrollTo(0,0);
@@ -3118,17 +3145,17 @@ function wallTab(){var who=pv.self?"your":"@"+esc(pv.username)+"'s";
   '<div id="wall" class="feed"><p class="hint">Loading...</p></div>'}
 function renderProfile(){var A=window.stockspotAuth||{},el=$("profilev"),self=pv.self,cd=self?A.created:pv.created,since=cd?new Date(cd).toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"}):"",nm=pv.username||"you";
  if(!self)profTab="wall";
- el.innerHTML='<div class="row" style="margin:0 0 14px"><input id="findu" maxlength="21" placeholder="Search @trader or $TICKER" aria-label="Search for a trader by @username or a ticker by $symbol" autocapitalize="off" style="max-width:300px"><button type="button" id="findgo">Go</button></div>'+
-  '<div class="pf-head">'+avatarHTML("",self?myAvUrl():pv.avatar,nm)+'<div class="pf-main"><div class="pf-top"><div><h1>@'+esc(nm)+'</h1></div>'+
+ el.innerHTML=pfNavHTML(self)+'<div class="pf-cols"><div class="pf-left"><div class="row" style="margin:0 0 14px"><input id="findu" maxlength="21" placeholder="Search @trader or $TICKER" aria-label="Search for a trader by @username or a ticker by $symbol" autocapitalize="off" style="max-width:300px"><button type="button" id="findgo">Go</button></div>'+
+  '<section class="pf-sa" id="pfhead"><div class="pf-head">'+avatarHTML("",self?myAvUrl():pv.avatar,nm)+'<div class="pf-main"><div class="pf-top"><div><h1>@'+esc(nm)+'</h1></div>'+
   (self?'<button id="pfedit" type="button" class="primary">Edit profile</button>':'<span class="row" style="margin:0"><button id="pffollow" type="button" class="primary" aria-pressed="false">Follow</button><button id="pfconn" type="button">Request to connect</button><button id="pfwrite" type="button">Write on @'+esc(nm)+"'s wall</button></span>")+'</div>'+
   '<div class="pf-bio">'+((self?prof.bio:pv.bio)?rich(self?prof.bio:pv.bio):'<span class="hint">'+(self?"No bio yet. Add one with Edit profile.":"No bio yet.")+'</span>')+'</div>'+
   '<div class="pf-counts"><button type="button" data-fp="following"><b id="cfing">0</b> Following</button><button type="button" data-fp="followers"><b id="cfers">0</b> Followers</button></div>'+
-  '<div id="pchans"></div>'+(self?'<div id="pmembers"></div>':'')+'<div id="fpanel" class="pf-panel" hidden></div>'+(since?'<div class="pf-since">Member since '+esc(since)+'</div>':'')+'</div></div>'+
-  (self?'<h2 class="pf-sec">Record at a glance</h2>'+recordBlock()+
+  '<div id="pchans"></div>'+(self?'<div id="pmembers"></div>':'')+'<div id="fpanel" class="pf-panel" hidden></div>'+(since?'<div class="pf-since">Member since '+esc(since)+'</div>':'')+'</div></div></section>'+
+  (self?'<section class="pf-sa" id="pfrec"><h2 class="pf-sec">&#127942; Record at a glance</h2>'+recordBlock()+'</section></div><div class="pf-right"><section class="pf-sa" id="pfwall">'+
   '<div class="ptabs" role="tablist"><button type="button" role="tab" data-ptab="wall" aria-selected="'+(profTab==="wall")+'">Wall</button><button type="button" role="tab" data-ptab="coach" aria-selected="'+(profTab==="coach")+'">AI coach</button></div>':
-  '<h2 class="pf-sec">Wall</h2>')+
-  (self&&profTab==="coach"?coachTab():wallTab());
- mountRec();connState="";wpend=[];renderWPrev();loadFollowInfo();loadProfChannels();if(self)loadMembers()}
+  '</div><div class="pf-right"><section class="pf-sa" id="pfwall"><h2 class="pf-sec">&#128483; Wall</h2>')+
+  (self&&profTab==="coach"?coachTab():wallTab())+'</section></div></div>';
+ mountRec();connState="";wpend=[];renderWPrev();loadFollowInfo();loadProfChannels();if(self)loadMembers();pfNavInit(self)}
 async function smartSearch(v){var q=String(v||"").trim();if(!q)return;
  if(q.charAt(0)==="$"){lookupTicker(q);return}
  if(q.charAt(0)==="@"){showUserProfile(q);return}
