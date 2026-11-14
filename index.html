@@ -17,6 +17,7 @@
 <script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="shim.js"></script>
+<script src="visit.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 #profilev.wrap{max-width:none;width:100%;box-sizing:border-box;padding-left:28px;padding-right:28px}@media(max-width:700px){#profilev.wrap{padding-left:14px;padding-right:14px}}
@@ -209,7 +210,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .wmwrap{position:relative;display:inline-block}.wdots{opacity:.7;font-size:1.1rem}.wmenu{position:absolute;right:0;top:28px;z-index:30;min-width:170px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;display:flex;flex-direction:column}
 .tdbar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}.tdfill{height:100%;background:var(--accent);transition:width .3s}.tdadd{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}.tdadd{align-items:center}.tdadd input,.tdadd select{width:auto!important;margin:0!important}.tdadd #tdtxt{flex:1 1 220px;min-width:0;width:auto!important}.tdf{display:flex;gap:6px;margin:0 0 8px}.tdf button{border:1px solid var(--line);background:none;color:var(--mute);border-radius:99px;padding:4px 12px;font:inherit;cursor:pointer}.tdf button[aria-selected="true"]{color:var(--ink);border-color:var(--ink);font-weight:600}.tdl{list-style:none;margin:0;padding:0}.tdl li{display:flex;align-items:center;gap:8px;padding:9px 4px;border-bottom:1px solid var(--line)}.tdl li{align-items:flex-start}.tdl li .tdt,.tdl li .tdedit{flex:1;min-width:0;word-break:break-word;white-space:pre-wrap}.tdl li .tdedit{width:100%;font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);resize:vertical}.tdadd #tdtxt{font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);resize:vertical;min-height:44px}.tdl li.done .tdt{text-decoration:line-through;color:var(--mute)}.tdl input[type=checkbox]{width:18px;height:18px;flex:none}.tdp{font-size:.72rem;border-radius:99px;padding:1px 8px;border:1px solid var(--line)}.tdp.h{color:#c0392b;border-color:#c0392b}.tdd{font-size:.78rem;color:var(--mute)}.tdd.od{color:#c0392b;font-weight:600}
 .wedit textarea{width:100%;box-sizing:border-box;min-height:90px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}.wedit .row{display:flex;gap:8px;margin-top:6px}.iv-mf{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}.iv-mf label{display:flex;flex-direction:column;gap:3px;font-size:.78rem;font-weight:700;color:var(--mute)}.iv-mf input{width:auto!important;min-width:130px;margin:0!important}.iv-ml{list-style:none;margin:12px 0 0;padding:0}.iv-ml li{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:7px 2px;border-bottom:1px solid var(--line)}.iv-ml li span:first-child{flex:1}
-.wmenu button{border:0;background:none;color:var(--ink);text-align:left;font:inherit;padding:9px 10px;border-radius:6px;cursor:pointer}.wmenu button:hover{background:var(--bg)}.wp-flag{color:var(--mute);font-size:.78rem;margin-bottom:4px}.rp-q{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-top:4px;background:var(--bg)}
+.nav[hidden]{display:none!important}.wmenu button{border:0;background:none;color:var(--ink);text-align:left;font:inherit;padding:9px 10px;border-radius:6px;cursor:pointer}.wmenu button:hover{background:var(--bg)}.wp-flag{color:var(--mute);font-size:.78rem;margin-bottom:4px}.rp-q{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-top:4px;background:var(--bg)}
 .linkbtn{border:0;background:none;color:var(--mute);font:inherit;font-size:.85rem;padding:0;cursor:pointer}.linkbtn:hover{color:var(--ink)}
 .cms{margin-top:8px;border-top:1px solid var(--line);padding-top:8px}.cm{margin:0 0 8px;font-size:.92rem}
 .nlist{display:flex;flex-direction:column;gap:8px;margin-top:12px}.nitem{display:flex;flex-direction:column;gap:2px;text-align:left;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;color:var(--ink);cursor:pointer}
@@ -495,6 +496,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <button class="nav" id="navpub" type="button">Publishes <span id="navpubn" class="badge"></span></button>
   <button class="nav" id="navcoach" type="button">AI Coach</button>
   <button class="nav" id="navnotif" type="button">Notifications <span id="navnotn" class="badge" hidden></span></button>
+  <button class="nav" id="navtraffic" type="button" hidden>Visitors</button>
   <button class="nav" id="navset" type="button">Settings</button>
   <div class="sechead"><span>Pages</span><button id="addpg" class="x show" type="button" aria-label="Add a page">+</button></div>
   <div id="addrow" hidden><input id="newpg" maxlength="40" placeholder="Page name" aria-label="New page name"><button id="newpgok" type="button">Add</button></div>
@@ -504,6 +506,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 </aside>
 <div class="wrap" id="home"><p class="hint">Loading your record...</p></div>
 <div class="wrap" id="settingsv" hidden></div>
+<div class="wrap" id="trafficv" hidden></div>
 <div class="wrap" id="planv" hidden></div>
 <div class="wrap" id="rlv" hidden></div>
 <div class="wrap" id="newsv" hidden></div>
@@ -2857,6 +2860,9 @@ function showFutures(){hideViews();$("navfut").classList.add("on");$("futv").hid
 $("navfut").addEventListener("click",showFutures);
 function showOptions(){hideViews();$("navopt").classList.add("on");$("optv").hidden=false;if(window.OptionsPage)window.OptionsPage.mount($("optv"));else $("optv").textContent="The Options page could not load. Refresh the page.";window.scrollTo(0,0)}
 $("navopt").addEventListener("click",showOptions);
+function showTraffic(){hideViews();$("navtraffic").classList.add("on");$("trafficv").hidden=false;if(window.TrafficPage)window.TrafficPage.mount($("trafficv"));window.scrollTo(0,0)}
+$("navtraffic").addEventListener("click",showTraffic);
+setTimeout(function(){try{window.stockspotRPC("ss_is_admin").then(function(a){if(a){var b=$("navtraffic");if(b)b.hidden=false}}).catch(function(){})}catch(e){}},1500);
 function showCharts(){hideViews();$("navcharts").classList.add("on");$("chartsv").hidden=false;if(window.ChartsPage)window.ChartsPage.mount($("chartsv"));else $("chartsv").textContent="The Charts page could not load. Refresh the page.";window.scrollTo(0,0)}
 $("navcharts").addEventListener("click",showCharts);
 function showPractice(){hideViews();$("navprac").classList.add("on");$("pracv").hidden=false;if(window.PracticeChart)window.PracticeChart.mount($("pracv"));else $("pracv").textContent="Practice charts could not load. Refresh the page.";window.scrollTo(0,0)}
@@ -3100,8 +3106,8 @@ async function saveProfile(){if(store.db)await store.db.doc("meta/profile").set(
 function myAvUrl(){return prof.src||(prof.aid?blobUrl(prof.aid):"")}
 function avatarHTML(cls,url,name){var A=window.stockspotAuth||{},u=url!=null?url:myAvUrl(),nm=name||A.username||A.email||"?";
  return '<div class="pf-av'+(cls?" "+cls:"")+'">'+(u?'<img alt="" src="'+esc(u)+'">':esc((nm.charAt(0)||"?").toUpperCase()))+'</div>'}
-function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","scv","labv","zonev","pracv","futv","optv","chartsv","movv","pulsev","invv","gdv","rlv","newsv","dayv"].forEach(function(i){$(i).hidden=true});
- ["navday","navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navsc","navlab","navzone","navprac","navfut","navopt","navcharts","navmov","navpulse"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
+function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","scv","labv","zonev","pracv","futv","optv","trafficv","chartsv","movv","pulsev","invv","gdv","rlv","newsv","dayv"].forEach(function(i){$(i).hidden=true});
+ ["navday","navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navsc","navlab","navzone","navprac","navfut","navopt","navtraffic","navcharts","navmov","navpulse"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
 function paintProfNav(){$("navprofile").classList.toggle("on",profTab!=="coach");$("navcoach").classList.toggle("on",profTab==="coach")}
 function tipTile(v,l,c,tip){return '<div class="hm-tile tipw" tabindex="0"><b'+(c?' class="'+c+'"':'')+'>'+v+'</b><span>'+l+' <i class="tipq" aria-hidden="true">?</i></span><div class="tipb" role="tooltip">'+tip+'</div></div>'}
 function recordBlock(){var all=allTrades();if(!all.length)return '<div class="pf-panel hint" style="margin:8px 0">No saved trades yet. Save a day in Studio and your record shows here.</div>';
@@ -3842,6 +3848,7 @@ restore();try{vidPaint()}catch(e){}loadImgs();showStats();renderImgs();initStore
 </script>
 <script src="futures.js"></script>
 <script src="options.js"></script>
+<script src="traffic.js"></script>
 <script src="charts.js"></script>
 <script src="practice-data.js"></script>
 <script src="practice.js"></script>
