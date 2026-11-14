@@ -978,7 +978,7 @@ async function initStore(){
   if(store.db){var snap=await store.db.collection("entries").get();snap.docs.forEach(function(d){if(d.exists)entries[d.id]=clone(d.data())})}
   else entries=JSON.parse(localStorage.getItem(KEYJ)||"{}")
  }catch(e){try{entries=JSON.parse(localStorage.getItem(KEYJ)||"{}")}catch(e2){entries={}}}
- await loadPages();schedSync();await loadSettings();applyDefaults();await loadProfile();await loadCoach();renderSide();showHome();sbFinish();try{var hm=/^#p=(.+)$/.exec(location.hash);if(hm&&pages[hm[1]])showPage(hm[1])}catch(e){}}
+ await loadPages();schedSync();await loadSettings();applyDefaults();await loadProfile();await loadCoach();renderSide();showHome();sbFinish();try{var hm=/^#p=(.+)$/.exec(location.hash);if(hm&&pages[hm[1]])showPage(hm[1]);else{profTab="wall";showProfile()}}catch(e){}}
 async function putEntry(ent){
  if(store.db)await store.db.doc("entries/"+ent.date).set(ent);
  else{var all=JSON.parse(localStorage.getItem(KEYJ)||"{}");all[ent.date]=ent;localStorage.setItem(KEYJ,JSON.stringify(all))}
