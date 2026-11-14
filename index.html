@@ -100,7 +100,7 @@ label.pl-half{display:flex;flex-direction:row;justify-content:flex-start;gap:8px
 .out a{color:var(--accent)}
 .warn{font-size:.85rem;color:var(--mute);margin-top:12px}
 .shell{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:100vh}
-#side{background:var(--panel);border-right:1px solid var(--line);padding:16px 10px;position:sticky;top:0;height:100vh;overflow-y:auto;align-self:start}
+#side{background:var(--panel);border-right:1px solid var(--line);padding:16px 10px 140px;position:sticky;top:0;height:100vh;overflow-y:auto;align-self:start}
 #side .brand{font:800 1.2rem "Bricolage Grotesque",sans-serif;padding:4px 10px 14px}
 .nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;text-align:left;border:0;background:transparent;color:var(--mute);padding:8px 10px;border-radius:6px;font:500 .95rem "Instrument Sans",sans-serif;cursor:pointer}
 .nav:hover{background:var(--bg);color:var(--ink)}
@@ -1228,6 +1228,11 @@ async function createPage(){var inp=$("newpg"),name=inp.value.trim();if(!name)re
  try{await putPage(p);inp.value="";$("addrow").hidden=true;renderSide();showPage(p.id)}catch(e){toast("Could not add the page")}}
 function sortedPages(){return Object.keys(pages).map(function(k){return pages[k]}).filter(function(p){return !p.parent||!pages[p.parent]}).sort(function(a,b){return (a.order-b.order)||(a.created-b.created)})}
 function kidsOf(pid){return Object.keys(pages).map(function(k){return pages[k]}).filter(function(p){return p.parent===pid}).sort(function(a,b){return (a.order-b.order)||(a.created-b.created)})}
+
+window.StockPub={dests:function(){var out=[];Object.keys(pages).map(function(k){return pages[k]}).filter(function(p){return !p.parent}).sort(function(a,b){return (a.order-b.order)||(a.created-b.created)}).forEach(function(t){var ks=kidsOf(t.id);out.push({id:t.id,name:t.name||"Untitled",depth:0,kids:ks.length});ks.forEach(function(c){out.push({id:c.id,name:c.name||"Untitled",depth:1})})});return out},
+post:async function(pid,text,blob){if(!pages[pid])throw new Error("missing");var post={text:text||""};
+if(blob){if(store.db&&store.assets){var up=await store.assets.upload(blob,{type:blob.type});post.imgs=[{aid:up.id}]}else{var u=await new Promise(function(r){var fr=new FileReader();fr.onload=function(){r(fr.result)};fr.readAsDataURL(blob)});post.imgs=[{src:u}]}}
+var rec=await addPost(pid,post);if(curPage===pid&&rec){try{feedPosts.push(rec);renderFeed()}catch(e){}}return rec}};
 var IC={add:'<path d="M12 5v14M5 12h14"/>',pin:'<path d="M9 3h6l-1 6 3 3v2H7v-2l3-3-1-6zM12 14v7"/>',link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',edit:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',dup:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',del:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>'};
 function icon(k){return '<svg class="mi" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+IC[k]+'</svg>'}
 function closeMenu(){var m=$("pmenu");if(m)m.remove()}
