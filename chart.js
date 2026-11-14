@@ -220,5 +220,5 @@
   function start() { qwInit(); dec(document.body); new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true }); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
 
-  window.StockChart = { syncWatch: syncWl, open: open, close: close, link: link, embed: embed, icon: ICON };
+  window.StockChart = { loadTV: loadTV, clean: clean, syncWatch: syncWl, open: open, close: close, link: link, embed: embed, icon: ICON };
 })();
