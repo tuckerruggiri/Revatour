@@ -23,7 +23,7 @@
     "@media(hover:none){.px-b{opacity:.3}}" +
     ".px-show .px-c{outline:1px dashed #2f7de1;outline-offset:-1px}.px-show .px-b{opacity:1;width:22px;height:22px;line-height:20px;background:#2f7de1;color:#fff;font-size:12px}.px-show .px-b.on{background:#0b6b5a}" +
     "#pxfab{position:fixed;right:20px;bottom:78px;z-index:2147483000;display:flex;gap:6px;align-items:center}#pxfab button{border:1px solid var(--line,#ccc);background:var(--panel,#fff);color:var(--ink,#111);border-radius:99px;padding:6px 12px;font:600 12px system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.18);opacity:.8}#pxfab button:hover,#pxfab button.on{opacity:1}#pxfab button.on{background:#2f7de1;color:#fff;border-color:#2f7de1}" +
-    "#pxbox{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(860px,calc(100vw - 24px));max-height:88vh;display:flex;flex-direction:column;background:var(--panel,#fff);color:var(--ink,#111);border:1px solid var(--line,#ccc);border-radius:14px;box-shadow:0 0 0 100vmax rgba(0,0,0,.45),0 16px 50px rgba(0,0,0,.4);z-index:2147483001;font:13px/1.4 system-ui,sans-serif}#pxbox .pxh{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line,#ccc);font-size:15px}#pxbox .pxb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;padding:14px 16px;overflow:auto;min-height:0}@media(max-width:700px){#pxbox .pxb{grid-template-columns:minmax(0,1fr)}}#pxbox .pv{border:1px solid var(--line,#ccc);border-radius:8px;padding:6px;margin:0 0 8px;max-height:240px;overflow:auto;text-align:center;opacity:.9}#pxbox .pv img{max-width:100%;display:block;margin:0 auto}#pxbox textarea{width:100%;box-sizing:border-box;height:90px;font:inherit;border:1px solid var(--line,#ccc);border-radius:6px;padding:6px;resize:vertical;background:var(--bg,#fff);color:inherit}#pxbox .ck{display:flex;gap:6px;align-items:center;margin:6px 0}#pxbox .pxq{display:flex;gap:6px;align-items:center;margin:0 0 6px}#pxbox .pxq span{margin-left:auto;opacity:.7}#pxbox .dl{border:1px solid var(--line,#ccc);border-radius:8px;max-height:46vh;overflow:auto;padding:4px}#pxbox .dr{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer}#pxbox .dr:hover{background:var(--line,#eee)}#pxbox .dr.top{background:color-mix(in srgb,#2f7de1 10%,transparent)}#pxbox .dh{display:flex;align-items:center;gap:8px;padding:8px 8px 4px;font-weight:700;opacity:.8}#pxbox .dh input{margin-left:auto;width:140px;padding:3px 6px}#pxbox input[type=checkbox]{width:auto;flex:none}#pxbox .pxf{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line,#ccc)}#pxbox button{font:inherit;padding:6px 14px;border-radius:8px;border:1px solid var(--line,#ccc);background:var(--bg,#f3f6f9);color:inherit;cursor:pointer}#pxbox button.go{background:#2f7de1;color:#fff;border-color:#2f7de1}#pxbox button.go:disabled{opacity:.5;cursor:default}" +
+    "#pxbox{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(860px,calc(100vw - 24px));max-height:88vh;display:flex;flex-direction:column;background:var(--panel,#fff);color:var(--ink,#111);border:1px solid var(--line,#ccc);border-radius:14px;box-shadow:0 0 0 100vmax rgba(0,0,0,.45),0 16px 50px rgba(0,0,0,.4);z-index:2147483001;font:13px/1.4 system-ui,sans-serif}#pxbox .pxh{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line,#ccc);font-size:15px}#pxbox .pxb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;padding:14px 16px;overflow:auto;min-height:0}@media(max-width:700px){#pxbox .pxb{grid-template-columns:minmax(0,1fr)}}#pxbox .pv{border:1px solid var(--line,#ccc);border-radius:8px;padding:6px;margin:0 0 8px;max-height:240px;overflow:auto;text-align:center;opacity:.9}#pxbox .pv img{max-width:100%;display:block;margin:0 auto}#pxbox textarea{width:100%;box-sizing:border-box;height:90px;font:inherit;border:1px solid var(--line,#ccc);border-radius:6px;padding:6px;resize:vertical;background:var(--bg,#fff);color:inherit}#pxbox .ck{display:flex;gap:6px;align-items:center;margin:6px 0}#pxbox .pxq{display:flex;gap:6px;align-items:center;margin:0 0 6px}#pxbox .pxq span{margin-left:auto;opacity:.7}#pxbox .dl{border:1px solid var(--line,#ccc);border-radius:8px;max-height:46vh;overflow:auto;padding:4px}#pxbox label,#pxbox .dr,#pxbox .ck{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;text-align:left!important;gap:8px;margin:0}#pxbox .ck{margin:6px 0!important;flex-wrap:wrap}#pxbox input[type=checkbox]{width:16px!important;height:16px!important;min-width:0!important;margin:0!important;flex:none!important}#pxbox select{width:auto!important;min-width:0!important}#pxbox select#pxly{max-width:200px}#pxbox .dr{padding:6px 8px;border-radius:6px;cursor:pointer}#pxbox .dr:hover{background:var(--line,#eee)}#pxbox .dr.top{background:color-mix(in srgb,#2f7de1 10%,transparent)}#pxbox .dh{display:flex;align-items:center;gap:8px;padding:8px 8px 4px;font-weight:700;opacity:.8}#pxbox .dh input{margin-left:auto;width:140px;padding:3px 6px}#pxbox input[type=checkbox]{width:auto;flex:none}#pxbox select.ly{margin-left:auto;font:inherit;font-size:12px;max-width:150px;padding:2px 4px;display:none}#pxbox .dr:has(input:checked) select.ly{display:block}#pxbox .pxpre{margin-top:6px;font-size:12px}#pxbox .pxpre pre{white-space:pre-wrap;margin:4px 0;padding:6px;border:1px dashed var(--line,#ccc);border-radius:6px;max-height:110px;overflow:auto;font:inherit}#pxbox small{opacity:.6}#pxbox .pxf{display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line,#ccc)}#pxbox button{font:inherit;padding:6px 14px;border-radius:8px;border:1px solid var(--line,#ccc);background:var(--bg,#f3f6f9);color:inherit;cursor:pointer}#pxbox button.go{background:#2f7de1;color:#fff;border-color:#2f7de1}#pxbox button.go:disabled{opacity:.5;cursor:default}" +
     
     "@media(max-width:700px){#pxfab{right:12px;bottom:70px}}#rvpins .pk{display:flex;align-items:center;gap:8px;width:100%;padding:14px;border-radius:10px;border:1px solid var(--line,#ccc);background:var(--panel,#fff);color:inherit;font:600 .95rem system-ui,sans-serif;cursor:pointer;text-align:left}#rvpins .pk:hover{border-color:#2f7de1}" +
     "tr.px-c>.px-b{display:none}tr.px-c td:last-child{position:relative}tr.px-c td:last-child>.px-b{display:block}" +
@@ -162,6 +162,14 @@
   function elText(el) { var bs = Array.prototype.slice.call(el.querySelectorAll(".px-b")); bs.forEach(function (b) { b.style.display = "none"; }); var t = el.innerText || el.textContent; bs.forEach(function (b) { b.style.display = ""; }); return t; }
   function cleanTxt(s) { return String(s || "").replace(/ /g, " ").replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim().slice(0, 900); }
   function closePub() { if (pbox) { if (pbox._url) URL.revokeObjectURL(pbox._url); pbox.remove(); pbox = null; } }
+  function lay(l, t, nm, page) {
+    t = (t || "").trim(); var ln = t.split(/\n/), first = (ln[0] || "").trim(), rest = ln.slice(1).join("\n").trim(), d = new Date().toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
+    if (l === "text") return { text: t, pic: false };
+    if (l === "head") return { text: first.slice(0, 120).toUpperCase(), pic: true };
+    if (l === "pic") return { text: (first.length > 140 ? first.slice(0, 137) + "\u2026" : first), pic: true };
+    if (l === "card") return { text: (/^\p{Extended_Pictographic}/u.test(first) ? "" : "\ud83d\udccc ") + (first || nm) + (rest ? "\n\n" + rest : "") + "\n\n\u2014 " + nm + " \u00b7 " + d, pic: true };
+    return { text: t, pic: true };
+  }
   var DK = "rv-pubdest-v1";
   function lastDest() { try { var a = JSON.parse(localStorage.getItem(DK) || "null"); return Array.isArray(a) ? a : ["__wall"]; } catch (e) { return ["__wall"]; } }
   function openPub(el, mode) {
@@ -170,17 +178,28 @@
     var txt = page ? "📄 " + pname + " · " + new Date().toLocaleDateString([], { month: "short", day: "numeric" }) : cleanTxt(elText(el));
     var dests = [], sp = window.StockPub; try { dests = sp && sp.dests ? sp.dests() : []; } catch (e) {}
     var sel = lastDest().filter(function (id) { return id === "__wall" || dests.some(function (d) { return d.id === id; }); }); if (!sel.length) sel = ["__wall"];
-    var rows = '<label class="dr top"><input type="checkbox" data-d="__wall"' + (sel.indexOf("__wall") >= 0 ? " checked" : "") + '> <b>👤 My profile wall</b></label>' +
+    var LAY = '<option value="clean">Clean</option><option value="card">Card</option><option value="pic">Picture + short caption</option><option value="text">Text only</option><option value="head">Headline + picture</option>';
+    var sl = function (id) { return '<select class="ly" data-l="' + esc(id) + '" aria-label="Layout">' + LAY + '</select>'; };
+    var rows = '<div class="dh">Profile</div><label class="dr top"><input type="checkbox" data-d="__wall"' + (sel.indexOf("__wall") >= 0 ? " checked" : "") + '> <b>👤 My profile wall</b>' + sl("__wall") + '</label>' +
+      '<div class="dh">Journal</div><label class="dr"><input type="checkbox" data-d="__studio"' + (sel.indexOf("__studio") >= 0 ? " checked" : "") + '> 🎞 Studio: today\'s page <small>text only</small>' + sl("__studio") + '</label>' +
       (dests.length ? '<div class="dh">Pages <input id="pxdf" placeholder="Filter" aria-label="Filter pages"></div>' + dests.map(function (d) {
-        return '<label class="dr" data-n="' + esc(d.name.toLowerCase()) + '" style="padding-left:' + (8 + d.depth * 18) + 'px"><input type="checkbox" data-d="' + esc(d.id) + '"' + (sel.indexOf(d.id) >= 0 ? " checked" : "") + '> ' + (d.depth ? "↳ " : "📁 ") + esc(d.name) + (d.kids ? ' <small>' + d.kids + ' channels</small>' : "") + '</label>';
+        return '<label class="dr" data-n="' + esc(d.name.toLowerCase()) + '" data-dep="' + d.depth + '" data-par="' + esc(d.par || "") + '" style="padding-left:' + (8 + d.depth * 18) + 'px"><input type="checkbox" data-d="' + esc(d.id) + '"' + (sel.indexOf(d.id) >= 0 ? " checked" : "") + '> ' + (d.depth ? "# " : "📁 ") + esc(d.name) + (d.kids ? ' <small>' + d.kids + ' channels</small>' : "") + sl(d.id) + '</label>';
       }).join("") : '<div class="dh">Pages</div><div class="dr" style="opacity:.6">No pages found</div>');
     pbox = document.createElement("div"); pbox.id = "pxbox";
-    pbox.innerHTML = '<div class="pxh"><b>Publish to…</b><button type="button" class="no" aria-label="Close">&times;</button></div><div class="pxb"><div class="pxl"><div class="pv" id="pxpv">Making a picture…</div><textarea id="pxtx" maxlength="4000" aria-label="Post text"></textarea><label class="ck"><input type="checkbox" id="pxck" checked> Include the picture</label></div>' +
+    pbox.innerHTML = '<div class="pxh"><b>Publish to…</b><button type="button" class="no" aria-label="Close">&times;</button></div><div class="pxb"><div class="pxl"><div class="pv" id="pxpv">Making a picture…</div><textarea id="pxtx" maxlength="4000" aria-label="Post text"></textarea><label class="ck"><input type="checkbox" id="pxck" checked> Include the picture</label><label class="ck">Layout for all: <select id="pxly">'+LAY+'</select> <small>(or pick one per place)</small></label><div class="pxpre" id="pxpre"></div></div>' +
       '<div class="pxr"><div class="pxq"><button type="button" data-q="all">Select all</button><button type="button" data-q="none">Clear</button><span id="pxn"></span></div><div class="dl" id="pxdl">' + rows + '</div></div></div><div class="pxf"><button type="button" class="no">Cancel</button><button type="button" class="go">Publish</button></div>';
     document.body.appendChild(pbox);
     var ta = pbox.querySelector("#pxtx"); ta.value = txt;
     var upd = function () { var n = pbox.querySelectorAll("#pxdl input[data-d]:checked").length; pbox.querySelector("#pxn").textContent = n + " selected"; var g = pbox.querySelector(".go"); g.textContent = n ? "Publish to " + n + (n === 1 ? " place" : " places") : "Pick a place"; g.disabled = !n; };
-    pbox.addEventListener("change", upd); upd();
+    var LK = "rv-publay-v1", dl = "clean"; try { dl = localStorage.getItem(LK) || "clean"; } catch (e) {}
+    pbox.querySelector("#pxly").value = dl; pbox.querySelectorAll("select.ly").forEach(function (x) { x.value = dl; });
+    var pre = function () { var l = pbox.querySelector("#pxly").value, o = lay(l, ta.value, pname, page); pbox.querySelector("#pxpre").innerHTML = '<b>Preview (' + esc(l) + ')</b><pre>' + esc(o.text || "(picture only)") + '</pre>' + (o.pic ? '' : '<i>No picture</i>'); };
+    pbox.addEventListener("change", function (e) {
+      var t = e.target;
+      if (t.id === "pxly") { pbox.querySelectorAll("select.ly").forEach(function (x) { x.value = t.value; }); pre(); }
+      else if (t.matches && t.matches("input[data-d]") && t.closest(".dr").dataset.dep === "0") { var id = t.dataset.d; pbox.querySelectorAll('.dr[data-par="' + id + '"] input[data-d]').forEach(function (c) { c.checked = t.checked; }); }
+      upd();
+    }); ta.addEventListener("input", pre); upd(); pre();
     pbox.querySelector("#pxdf") && pbox.querySelector("#pxdf").addEventListener("input", function (e) { var q = e.target.value.trim().toLowerCase(); pbox.querySelectorAll("#pxdl .dr[data-n]").forEach(function (r) { r.style.display = !q || r.dataset.n.indexOf(q) >= 0 ? "" : "none"; }); });
     pbox.querySelectorAll("[data-q]").forEach(function (b) { b.onclick = function () { pbox.querySelectorAll("#pxdl input[data-d]").forEach(function (c) { if (c.closest(".dr").style.display !== "none") c.checked = b.dataset.q === "all"; }); upd(); }; });
     toImage(el).then(function (b) {
@@ -190,16 +209,19 @@
     });
     pbox.querySelectorAll(".no").forEach(function (b) { b.onclick = closePub; });
     pbox.querySelector(".go").onclick = async function () {
-      var v = cleanTxt(ta.value), So = window.stockspotSocial, b = this, ids = Array.prototype.map.call(pbox.querySelectorAll("#pxdl input[data-d]:checked"), function (c) { return c.dataset.d; }), withPic = !!pbox._blob && pbox.querySelector("#pxck").checked, blob = pbox._blob;
-      if (!v && !withPic) { toast("Nothing to publish"); return; }
+      var v0 = cleanTxt(ta.value), So = window.stockspotSocial, b = this, ids = Array.prototype.map.call(pbox.querySelectorAll("#pxdl input[data-d]:checked"), function (c) { return c.dataset.d; }), withPic = !!pbox._blob && pbox.querySelector("#pxck").checked, blob = pbox._blob;
+      if (!v0 && !withPic) { toast("Nothing to publish"); return; }
+      try { localStorage.setItem(LK, pbox.querySelector("#pxly").value); } catch (e) {}
       b.disabled = true; b.textContent = "Publishing…"; var ok = 0, bad = [];
       for (var k = 0; k < ids.length; k++) {
         try {
+          var lyo = pbox.querySelector('select.ly[data-l="' + ids[k].replace(/"/g, "") + '"]'), L = lay(lyo ? lyo.value : "clean", v0, pname, page), v = L.text, wp = withPic && L.pic;
+          if (ids[k] === "__studio") { await window.StockPub.studio(v); ok++; continue; }
           if (ids[k] === "__wall") {
             if (!So || !So.addPost) throw new Error("no wall"); var imgs = [];
-            if (withPic) { try { imgs.push({ src: await So.uploadImage(blob) }); } catch (e) {} }
+            if (wp) { try { imgs.push({ src: await So.uploadImage(blob) }); } catch (e) {} }
             await So.addPost(So.uid(), v, imgs);
-          } else { await window.StockPub.post(ids[k], v, withPic ? blob : null); }
+          } else { await window.StockPub.post(ids[k], v, wp ? blob : null); }
           ok++;
         } catch (e) { bad.push(ids[k]); }
       }
