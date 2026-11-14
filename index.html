@@ -464,7 +464,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <body>
 <div class="shell">
 <aside id="side" aria-label="Journal">
-  <div class="brand">Stockspot</div>
+  <div class="brand"><button type="button" id="brandgo" title="Go to my profile" style="all:unset;cursor:pointer;display:block">Stockspot</button></div>
   <div id="acct" style="display:flex;align-items:center;gap:8px;margin:2px 0 10px;font-size:.82rem;color:var(--mute)"><span id="whoami" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span><button id="themebtn" type="button" aria-label="Switch between light and dark" title="Light / dark" style="border:1px solid var(--line);background:none;color:var(--ink);border-radius:7px;padding:4px 8px;font:inherit;cursor:pointer;line-height:1"></button><button id="logout" type="button" style="border:1px solid var(--line);background:none;color:var(--ink);border-radius:7px;padding:4px 9px;font:inherit;cursor:pointer">Log out</button></div>
   <div id="pnlcard"></div>
   <button class="nav on" id="navhome" type="button">Watchlist</button>
@@ -3553,6 +3553,7 @@ async function runCoach(){
   if(text&&coachCtl.signal.aborted){coach={md:text,ts:Date.now(),n:d.n};await saveCoach()}
  }finally{var b=$("chgo");if(b)b.disabled=false;var sb=$("chstop");if(sb)sb.hidden=true}}
 $("navhome").addEventListener("click",showHome);
+$("brandgo").addEventListener("click",function(){var n=$("navprofile");if(n)n.click()});
 $("home").addEventListener("click",async function(ev){var b=ev.target.closest&&ev.target.closest("button");
  var bp=$("bellpanel");if(bp&&!bp.hidden&&!(ev.target.closest&&ev.target.closest(".bellw")))bp.hidden=true;if(!b)return;
  if(b.id==="bellbtn"){bellToggle();return}
