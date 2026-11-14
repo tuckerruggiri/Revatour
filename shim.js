@@ -134,6 +134,7 @@
     (r.data || []).forEach(function (p) { map[p.id] = p; });
     return map;
   }
+  window.stockspotRPC = async function (name, args) { await ready; var r = await sb.rpc(name, args || {}); if (r.error) throw r.error; return r.data; };
   window.stockspotSocial = {
     uid: function () { return uid; },
     profileByName: async function (name) {
