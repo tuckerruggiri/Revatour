@@ -207,7 +207,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 .chatlist{max-height:380px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:8px 12px;display:flex;flex-direction:column;gap:10px}.cmsg .cmh{display:flex;align-items:center;gap:8px;font-size:.82rem}.cmsg .ptxt{margin-top:2px}
 .wp-actions{margin-top:8px;display:flex;gap:18px;align-items:center}.wact{border:0;background:none;color:var(--mute);font:inherit;font-size:.9rem;padding:4px 2px;cursor:pointer;border-radius:6px;display:inline-flex;gap:5px;align-items:center}.wact:hover{color:var(--ink)}.wact.on{color:var(--accent,#0a0a0a);font-weight:700}
 .wmwrap{position:relative;display:inline-block}.wdots{opacity:.7;font-size:1.1rem}.wmenu{position:absolute;right:0;top:28px;z-index:30;min-width:170px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;display:flex;flex-direction:column}
-.wmenu button{border:0;background:none;color:var(--ink);text-align:left;font:inherit;padding:9px 10px;border-radius:6px;cursor:pointer}.wmenu button:hover{background:var(--bg)}.wp-flag{color:var(--mute);font-size:.78rem;margin-bottom:4px}.rp-q{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-top:4px;background:var(--bg)}
+.wedit textarea{width:100%;box-sizing:border-box;min-height:90px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}.wedit .row{display:flex;gap:8px;margin-top:6px}.wmenu button{border:0;background:none;color:var(--ink);text-align:left;font:inherit;padding:9px 10px;border-radius:6px;cursor:pointer}.wmenu button:hover{background:var(--bg)}.wp-flag{color:var(--mute);font-size:.78rem;margin-bottom:4px}.rp-q{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-top:4px;background:var(--bg)}
 .linkbtn{border:0;background:none;color:var(--mute);font:inherit;font-size:.85rem;padding:0;cursor:pointer}.linkbtn:hover{color:var(--ink)}
 .cms{margin-top:8px;border-top:1px solid var(--line);padding-top:8px}.cm{margin:0 0 8px;font-size:.92rem}
 .nlist{display:flex;flex-direction:column;gap:8px;margin-top:12px}.nitem{display:flex;flex-direction:column;gap:2px;text-align:left;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;color:var(--ink);cursor:pointer}
@@ -3276,17 +3276,18 @@ async function toggleConn(){var So=S();if(!So||pv.self)return;
 function paintFollowBtn(){var b=$("pffollow");if(!b||!fInfo)return;b.textContent=fInfo.iFollow?"Following":"Follow";b.setAttribute("aria-pressed",String(!!fInfo.iFollow));b.classList.toggle("primary",!fInfo.iFollow)}
 async function toggleFollow(){var So=S();if(!So||!fInfo)return;var on=!fInfo.iFollow;
  try{await So.follow(pv.id,on);fInfo.iFollow=on;fInfo.followers+=on?1:-1;var a=$("cfers");if(a)a.textContent=fInfo.followers;paintFollowBtn();toast(on?"Following @"+pv.username:"Unfollowed")}catch(e){toast("Could not follow. You may be blocked.")}}
-var wmenu="",likeView=null;
+var wmenu="",likeView=null,wedit="";
 function wallPostHTML(p){var A=window.stockspotAuth||{},me=S()?S().uid():"",mine=p.author.id===me,owner=pv.id===me,L=p.imgs||[],
   pics=L.map(function(m){return m.src?'<img alt="Posted image" src="'+esc(m.src)+'">':""}).join(""),open=!!openCm[p.id];
  var cm=p.comments.map(function(c){return '<div class="cm"><div><button type="button" class="tk un" data-un="'+esc(c.author.username)+'">@'+esc(c.author.username)+'</button> <span class="hint" style="margin:0">'+esc(postWhen(c.ts))+'</span>'+((c.author.id===me||owner)?' <button class="x" type="button" data-cdel="'+esc(c.id)+'" aria-label="Delete comment">✕</button>':'')+'</div><div class="ptxt">'+rich(c.text)+'</div></div>'}).join("");
  var tid=p.isRepost&&p.orig?p.orig.id:p.id,menu="";
  if(wmenu===p.id){menu='<div class="wmenu" role="menu"><button type="button" role="menuitem" data-wm="likes" data-id="'+esc(p.id)+'">View Likes</button>'+
+ (mine&&!p.isRepost?'<button type="button" role="menuitem" data-wm="edit" data-id="'+esc(p.id)+'">Edit Post</button>':'')+
   (owner?'<button type="button" role="menuitem" data-wm="pin" data-id="'+esc(p.id)+'">'+(p.pinned?"Unpin Post":"Pin Post")+'</button>':'')+
   ((mine||owner)?'<button type="button" role="menuitem" data-wm="del" data-id="'+esc(p.id)+'">Delete Post</button>':'')+
   (!mine?'<button type="button" role="menuitem" data-wm="mute" data-id="'+esc(p.author.id)+'" data-nm="'+esc(p.author.username)+'">Mute @'+esc(p.author.username)+'</button><button type="button" role="menuitem" data-wm="report" data-id="'+esc(p.id)+'">Report</button><button type="button" role="menuitem" data-wm="block" data-id="'+esc(p.author.id)+'" data-nm="'+esc(p.author.username)+'">Block</button>':'')+'</div>'}
  var body=p.isRepost?(p.orig?'<div class="rp-q"><div class="pmeta"><span class="wp-who">'+avatarHTML("xs",p.orig.author.avatar_url,p.orig.author.username)+'<button type="button" class="tk un" data-un="'+esc(p.orig.author.username)+'">@'+esc(p.orig.author.username)+'</button> &middot; '+esc(postWhen(p.orig.ts))+'</span></div>'+(p.orig.text?'<div class="ptxt">'+rich(p.orig.text)+'</div>':'')+((p.orig.imgs||[]).length?'<div class="pics n'+Math.min(p.orig.imgs.length,8)+'">'+p.orig.imgs.map(function(m){return m.src?'<img alt="Posted image" src="'+esc(m.src)+'">':""}).join("")+'</div>':'')+'</div>':'<p class="hint">The original post is gone.</p>'):
-  (p.text?'<div class="ptxt">'+rich(p.text)+'</div>':'')+(pics?'<div class="pics n'+Math.min(L.length,8)+'">'+pics+'</div>':'');
+  (wedit===p.id?'<div class="wedit"><textarea id="wedtx" maxlength="4000" aria-label="Edit post">'+esc(p.text||"")+'</textarea><div class="row"><button type="button" class="primary" data-wesave="'+esc(p.id)+'">Save</button><button type="button" data-wecancel="1">Cancel</button></div></div>':(p.text?'<div class="ptxt">'+rich(p.text)+(p.edited?' <small class="hint" style="margin:0">(edited)</small>':'')+'</div>':''))+(pics?'<div class="pics n'+Math.min(L.length,8)+'">'+pics+'</div>':'');
  return '<article class="post" data-pid="'+esc(p.id)+'">'+(p.pinned?'<div class="wp-flag">📌 Pinned</div>':'')+(p.isRepost?'<div class="wp-flag">🔁 @'+esc(p.author.username)+' reposted</div>':'')+
   '<div class="pmeta"><span class="wp-who">'+avatarHTML("xs",p.author.avatar_url,p.author.username)+'<button type="button" class="tk un" data-un="'+esc(p.author.username)+'">@'+esc(p.author.username)+'</button> &middot; '+esc(postWhen(p.ts))+'</span>'+
   '<span class="wmwrap"><button class="x wdots" type="button" data-wmo="'+esc(p.id)+'" aria-label="More options" aria-haspopup="menu" aria-expanded="'+(wmenu===p.id)+'">⋯</button>'+menu+'</span></div>'+body+
@@ -3305,6 +3306,7 @@ async function wallMenu(act,id,nm,btn){var So=S();if(!So)return;wmenu="";
  try{
   if(act==="likes"){var L=await So.likers(id);showLikes(L);renderWall();return}
   if(act==="pin"){var p=wall.find(function(x){return x.id===id});await So.pin(id,!(p&&p.pinned));await wallReload();toast(p&&p.pinned?"Unpinned":"Pinned to the top");return}
+  if(act==="edit"){wedit=id;renderWall();var t=$("wedtx");if(t){t.focus();t.setSelectionRange(t.value.length,t.value.length)}return}
   if(act==="del"){await So.delPost(id);await wallReload();toast("Deleted");return}
   if(act==="mute"){await So.mute(id,true);await wallReload();toast("Muted @"+nm+". Undo in Settings.");return}
   if(act==="block"){await So.block(id,true);await wallReload();toast("Blocked @"+nm+". Undo in Settings.");return}
@@ -3494,6 +3496,9 @@ $("profilev").addEventListener("click",function(ev){var b=ev.target.closest&&ev.
  if(b.id==="pffollow"){toggleFollow();return}if(b.id==="pfconn"){toggleConn();return}
  if(b.id==="pfwrite"){var wt=$("wtext");if(wt){wt.scrollIntoView({block:"center"});wt.focus()}return}
  if(b.id==="findgo"){smartSearch($("findu").value);return}
+ if(b.dataset.wecancel){wedit="";renderWall();return}
+ if(b.dataset.wesave){var sid=b.dataset.wesave,tx=tickify($("wedtx").value.trim()),op=wall.find(function(x){return x.id===sid});if(!tx&&!(op&&(op.imgs||[]).length)){toast("A post needs some text or a picture");return}b.disabled=true;
+  S().editPost(sid,tx).then(function(){wedit="";return wallReload()}).then(function(){toast("Post updated")}).catch(function(){b.disabled=false;toast("Could not save the edit. The database update may not be installed yet.")});return}
  if(b.dataset.wmo){var mo=b.dataset.wmo;wmenu=wmenu===mo?"":mo;renderWall();return}
  if(b.dataset.wm){if(b.dataset.wm==="del"||b.dataset.wm==="block"){if(!b.dataset.armed){b.dataset.armed="1";b.textContent=b.dataset.wm==="del"?"Delete? Tap again":"Block? Tap again";return}}wallMenu(b.dataset.wm,b.dataset.id,b.dataset.nm,b);return}
  if(b.dataset.lk){wallLike(b.dataset.lk);return}
