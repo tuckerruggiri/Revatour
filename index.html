@@ -1498,11 +1498,13 @@ var CADK="stockspot-cad-v1",CAD=null;
 var CADA={mid:{ic:"🛡️",l:"Stop to candle middle",v:null},be:{ic:"🛡️",l:"Stop to breakeven",v:null},lock:{ic:"🔒",l:"Lock in stop at (R)",v:"R"},sell:{ic:"🎯",l:"Sell (%)",v:"%"},trail:{ic:"🏄",l:"Start trailing (cents cushion)",v:"¢"}};
 function cadSteps(a){return a.map(function(x){return {at:x[0],a:x[1],v:x[2]}})}
 function cadDefSteps(){return cadSteps([[0.5,"mid",0],[0.7,"sell",33],[0.7,"be",0],[1.8,"sell",33],[1.8,"trail",0]])}
-function cadDef(){return {off:2,steps:cadDefSteps(),hi:"",lo:"",m:0.2,lc:1.4}}
-function cadLoad(){if(CAD)return;var o={};try{o=JSON.parse(localStorage.getItem(CADK)||"{}")}catch(e){}CAD=Object.assign(cadDef(),o);
+function tpNew(){var m=window.__navHide;return !!(m&&m.__tpex)}
+function cadPrev(){try{return !!window.__isAdmin&&localStorage.getItem("ss-preview-new")==="1"}catch(e){return false}}
+function cadDef(){return tpNew()?{off:0,steps:[],hi:"",lo:"",m:0.2,lc:1.4}:{off:2,steps:cadDefSteps(),hi:"",lo:"",m:0.2,lc:1.4}}
+function cadLoad(){if(CAD)return;var o={};try{if(!cadPrev())o=JSON.parse(localStorage.getItem(CADK)||"{}")}catch(e){}CAD=Object.assign(cadDef(),o);
  if(!Array.isArray(o.steps)&&(o.half!=null||o.t1!=null)){var s=[];if(o.half>0)s.push({at:+o.half,a:"mid",v:0});s.push({at:+o.t1||0.7,a:"sell",v:+o.p1||33});if(o.be!==false)s.push({at:+o.t1||0.7,a:"be",v:0});s.push({at:+o.t2||1.8,a:"sell",v:+o.p2||33});s.push({at:+o.t2||1.8,a:"trail",v:+o.toff||0});CAD.steps=s}
  CAD.steps=CAD.steps.filter(function(x){return CADA[x.a]})}
-function cadSave(){try{localStorage.setItem(CADK,JSON.stringify(CAD))}catch(e){}}
+function cadSave(){if(cadPrev())return;try{localStorage.setItem(CADK,JSON.stringify(CAD))}catch(e){}}
 function cadSort(){CAD.steps=CAD.steps.map(function(x,i){return {s:x,i:i}}).sort(function(a,b){return (+a.s.at||0)-(+b.s.at||0)||a.i-b.i}).map(function(x){return x.s})}
 function cadSellRs(){cadLoad();var r=CAD.steps.filter(function(x){return x.a==="sell"}).map(function(x){return +x.at||0});return [r[0]||1,r[1]||2]}
 function cadF(v){return "$"+v.toFixed(2)}
@@ -1529,7 +1531,7 @@ function cadStepsEd(){return '<div class="cad-eds">'+CAD.steps.map(function(s,i)
 function cadBuild(){var el=$("plcad");if(!el)return;cadLoad();
  var f=function(l,k,ph){return '<label class="pl-f">'+l+'<input data-cd="'+k+'" type="number" step="any" inputmode="decimal" placeholder="'+(ph||"")+'" value="'+esc(CAD[k])+'"></label>'};
  el.innerHTML='<h2 style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">&#129692; Stop &amp; entry cadence <span class="pill">your game plan</span></h2><p class="hint" style="margin:0 0 10px">Every step is yours: pick when it happens (in R), what happens, and add or remove steps. Drag the rocket to replay it. Saves itself.</p>'+
- '<div class="cad-pre"><button type="button" data-cdpre="mine">My cadence</button><button type="button" data-cdpre="tight">Tight &#128274;</button><button type="button" data-cdpre="runner">Runner &#127939;</button><button type="button" data-cdpre="early">Trail at 1.5R &#127940;</button><span id="cadpre-lbl" class="cad-using"></span></div>'+
+ (tpNew()?'':'<div class="cad-pre"><button type="button" data-cdpre="mine">My cadence</button><button type="button" data-cdpre="tight">Tight &#128274;</button><button type="button" data-cdpre="runner">Runner &#127939;</button><button type="button" data-cdpre="early">Trail at 1.5R &#127940;</button><span id="cadpre-lbl" class="cad-using"></span></div>')+
  '<div class="pl-grid">'+f("Trigger candle high","hi",pl.hi||"0.00")+f("Trigger candle low","lo",pl.lo||"0.00")+f("Enter this many cents past the trigger","off","2")+'</div>'+
  '<h3 class="cad-h">Steps <small>(they run in order of R)</small></h3><div id="cadeds"></div><div class="row" style="margin:6px 0 8px;gap:8px"><button type="button" data-cdadd="1">&#65291; Add step</button></div>'+
  '<div class="pl-grid" style="margin-top:6px"><label class="pl-f" style="margin:0">&#128640; How far has it gone your way? <b id="cadmv"></b><input type="range" data-cd="m" min="-1.2" max="3.2" step="0.05" value="'+CAD.m+'" aria-label="Move the price"></label><label class="pl-f" id="cadlcw" style="margin:0" hidden>Last candle closed at <b id="cadlcv"></b><input type="range" data-cd="lc" min="0" max="3.5" step="0.05" value="'+CAD.lc+'" aria-label="Last candle close"></label></div><div id="cadout"></div>'+
@@ -2864,7 +2866,7 @@ function showTraffic(){hideViews();$("navtraffic").classList.add("on");$("traffi
 $("navtraffic").addEventListener("click",showTraffic);
 window.__hiddenList=[];window.__isAdmin=false;
 window.applyHidden=function(){var m={},prev=false;try{prev=localStorage.getItem("ss-preview-new")==="1"}catch(e){}
- if(!window.__isAdmin||prev)(window.__hiddenList||[]).forEach(function(i){m[i]=1});window.__navHide=m;try{window.StockNav&&StockNav.refresh()}catch(e){}
+ if(!window.__isAdmin||prev)(window.__hiddenList||[]).forEach(function(i){m[i]=1});window.__navHide=m;try{CAD=null;var pv2=document.getElementById("planv");if(pv2&&!pv2.hidden)renderPlan()}catch(e){}try{window.StockNav&&StockNav.refresh()}catch(e){}
  var bar=document.getElementById("prevbar");if(window.__isAdmin&&prev){if(!bar){bar=document.createElement("div");bar.id="prevbar";bar.innerHTML='<span>You are previewing the site as a brand-new user sees it.</span><button type="button" id="prevexit">Exit preview</button>';document.body.appendChild(bar);bar.querySelector("button").onclick=function(){try{localStorage.removeItem("ss-preview-new")}catch(e){}window.applyHidden()}}}else if(bar)bar.remove()};
 window.loadSiteVis=function(){try{if(!window.stockspotRPC)return;window.stockspotRPC("ss_get_hidden").then(function(l){window.__hiddenList=Array.isArray(l)?l:[];window.applyHidden()}).catch(function(){});
  window.stockspotRPC("ss_is_admin").then(function(a){window.__isAdmin=!!a;if(a){var b=$("navtraffic");if(b)b.hidden=false}window.applyHidden()}).catch(function(){})}catch(e){}};
