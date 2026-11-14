@@ -141,6 +141,7 @@
       } else if (tries++ < 40) setTimeout(poll, 1000);
     })();
   }
+  function vis(id) { var h = window.__navHide; return !(h && h[id]); }
   function recent() { return lsGet(RKEY, []).filter(function (i) { return ITEMS[i]; }); }
   function pushRecent(id) { var r = recent().filter(function (x) { return x !== id; }); r.unshift(id); lsSet(RKEY, r.slice(0, 6)); }
 
@@ -210,6 +211,7 @@
     layout.sections.forEach(function (s) { if (s.ids.length) list.push(s); });
     var free = Object.keys(ITEMS).filter(function (i) { return !used[i]; });
     if (free.length) list.push({ id: "__un", n: "Unsorted", c: "#7d8793", ic: "folder", ids: free });
+    list = list.map(function (g) { return Object.assign({}, g, { ids: g.ids.filter(vis) }); }).filter(function (g) { return g.ids.length; });
     main.innerHTML = "";
     if (pgSec) { pgSec.classList.toggle("c", !!coll.__pages); pgSec.querySelector(".nsh").setAttribute("aria-expanded", String(!coll.__pages)); if (layout.pg === "top") { main.appendChild(pgSec); secEls.push(pgSec); } }
     list.forEach(function (g) {
@@ -347,7 +349,7 @@
   }
   function results(q) {
     q = q.trim().toLowerCase(); var out = [];
-    Object.keys(ITEMS).forEach(function (id) {
+    Object.keys(ITEMS).filter(vis).forEach(function (id) {
       var s = tagOf(id), l = ITEMS[id][1];
       if (!q || l.toLowerCase().indexOf(q) > -1 || s.t.toLowerCase().indexOf(q) > -1) out.push({ g: "Pages", ic: ITEMS[id][0], c: s.c, l: l, tag: s.t, run: function () { var b = $(id); if (b) b.click(); } });
     });
@@ -392,4 +394,5 @@
   document.addEventListener("keydown", function (e) {
     if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) { e.preventDefault(); openPal(); }
   });
+  window.StockNav = { refresh: function () { if (!editing) render(); } };
 })();
