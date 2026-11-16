@@ -1,9 +1,9 @@
 {
  "started": "2026-11-04",
- "asof": "2026-11-13",
+ "asof": "2026-11-16",
  "bench": "SPY",
- "spyLast": 757.12,
- "spyLastD": "2026-11-12",
+ "spyLast": 754.37,
+ "spyLastD": "2026-11-13",
  "horizon": {
   "day": 1,
   "radar": 10,
@@ -738,9 +738,12 @@
    "entry": 0.54,
    "entryN": "Nov 5 close (screener)",
    "spy": 733,
-   "last": 0.395,
-   "lastD": "2026-11-11",
-   "status": "open"
+   "last": 0.2824,
+   "lastD": "2026-11-13",
+   "status": "closed",
+   "closed": 0.2824,
+   "closedD": "2026-11-13",
+   "spyClosed": 754.37
   },
   {
    "id": "micro-SDA-20261109",
@@ -750,9 +753,12 @@
    "entry": 0.377,
    "entryN": "Nov 5 close (screener)",
    "spy": 733,
-   "last": 0.3244,
-   "lastD": "2026-11-11",
-   "status": "open"
+   "last": 0.2512,
+   "lastD": "2026-11-13",
+   "status": "closed",
+   "closed": 0.2512,
+   "closedD": "2026-11-13",
+   "spyClosed": 754.37
   },
   {
    "id": "micro-RCT-20261109",
@@ -762,9 +768,12 @@
    "entry": 0.0424,
    "entryN": "Nov 5 close (screener)",
    "spy": 733,
-   "last": 0.034,
-   "lastD": "2026-11-11",
-   "status": "open"
+   "last": 0.0361,
+   "lastD": "2026-11-13",
+   "status": "closed",
+   "closed": 0.0361,
+   "closedD": "2026-11-13",
+   "spyClosed": 754.37
   },
   {
    "id": "micro-VIVK-20261109",
@@ -774,9 +783,12 @@
    "entry": 0.496,
    "entryN": "Nov 5 close (screener)",
    "spy": 733,
-   "last": 0.227,
-   "lastD": "2026-11-12",
-   "status": "open"
+   "last": 0.21,
+   "lastD": "2026-11-13",
+   "status": "closed",
+   "closed": 0.21,
+   "closedD": "2026-11-13",
+   "spyClosed": 754.37
   },
   {
    "id": "radar-LKQ-20261109",
@@ -969,8 +981,8 @@
    "entry": 2.83,
    "entryN": "Nov 9 close (Alpha Vantage previous close)",
    "spy": 752.69,
-   "last": 2.07,
-   "lastD": "2026-11-11",
+   "last": 2.06,
+   "lastD": "2026-11-13",
    "status": "open"
   },
   {
@@ -981,8 +993,8 @@
    "entry": 1.41,
    "entryN": "Nov 9 close (Alpha Vantage previous close)",
    "spy": 752.69,
-   "last": 1.41,
-   "lastD": "2026-11-10",
+   "last": 1.18,
+   "lastD": "2026-11-13",
    "status": "open"
   },
   {
@@ -993,8 +1005,8 @@
    "entry": 1.82,
    "entryN": "Nov 9 close (Alpha Vantage previous close)",
    "spy": 752.69,
-   "last": 1.97,
-   "lastD": "2026-11-10",
+   "last": 1.64,
+   "lastD": "2026-11-13",
    "status": "open"
   },
   {
@@ -1005,9 +1017,12 @@
    "entry": 0.1895,
    "entryN": "Nov 9 close (Alpha Vantage previous close)",
    "spy": 752.69,
-   "last": 0.1873,
-   "lastD": "2026-11-10",
-   "status": "open"
+   "last": 0.1677,
+   "lastD": "2026-11-13",
+   "status": "closed",
+   "closed": 0.1677,
+   "closedD": "2026-11-13",
+   "spyClosed": 754.37
   },
   {
    "id": "micro-XHLD-20261110",
@@ -1017,9 +1032,12 @@
    "entry": 0.87,
    "entryN": "Nov 9 close (Alpha Vantage previous close)",
    "spy": 752.69,
-   "last": 0.858,
-   "lastD": "2026-11-10",
-   "status": "open"
+   "last": 0.7638,
+   "lastD": "2026-11-13",
+   "status": "closed",
+   "closed": 0.7638,
+   "closedD": "2026-11-13",
+   "spyClosed": 754.37
   },
   {
    "id": "micro-ESLA-20261110",
@@ -1029,9 +1047,12 @@
    "entry": 0.5139,
    "entryN": "Nov 9 close (Alpha Vantage previous close)",
    "spy": 752.69,
-   "last": 0.7939,
-   "lastD": "2026-11-11",
-   "status": "open"
+   "last": 0.514,
+   "lastD": "2026-11-13",
+   "status": "closed",
+   "closed": 0.514,
+   "closedD": "2026-11-13",
+   "spyClosed": 754.37
   },
   {
    "id": "micro-AKBA-20261110",
@@ -1041,9 +1062,12 @@
    "entry": 0.5328,
    "entryN": "Nov 9 close (Alpha Vantage previous close)",
    "spy": 752.69,
-   "last": 0.5418,
-   "lastD": "2026-11-10",
-   "status": "open"
+   "last": 0.4742,
+   "lastD": "2026-11-13",
+   "status": "closed",
+   "closed": 0.4742,
+   "closedD": "2026-11-13",
+   "spyClosed": 754.37
   },
   {
    "id": "day-CEG-20261110",
@@ -1116,8 +1140,8 @@
    "entry": 2.63,
    "entryN": "Nov 9 close (MarketBeat via DailyPolitical)",
    "spy": 752.69,
-   "last": 2.63,
-   "lastD": "2026-11-09",
+   "last": 1.94,
+   "lastD": "2026-11-13",
    "status": "open"
   },
   {
@@ -1128,8 +1152,8 @@
    "entry": 3.23,
    "entryN": "Nov 9 close (MarketBeat via DailyPolitical)",
    "spy": 752.69,
-   "last": 3.23,
-   "lastD": "2026-11-09",
+   "last": 2.22,
+   "lastD": "2026-11-13",
    "status": "open"
   },
   {
@@ -1140,9 +1164,12 @@
    "entry": 0.81,
    "entryN": "Nov 9 close (MarketBeat via DailyPolitical)",
    "spy": 752.69,
-   "last": 0.81,
-   "lastD": "2026-11-09",
-   "status": "open"
+   "last": 0.7299,
+   "lastD": "2026-11-13",
+   "status": "closed",
+   "closed": 0.7299,
+   "closedD": "2026-11-13",
+   "spyClosed": 754.37
   },
   {
    "id": "radar-TXO-20261111",
@@ -1380,8 +1407,8 @@
    "entry": 0.46,
    "entryN": "Price at publication, Nov 11",
    "spy": 749.92,
-   "last": 0.46,
-   "lastD": "2026-11-11",
+   "last": 0.4418,
+   "lastD": "2026-11-13",
    "status": "open"
   }
  ]
