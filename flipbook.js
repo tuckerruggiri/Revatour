@@ -138,24 +138,35 @@
 
   /* Monthly chart page with the clear page */
   function chartPage() {
-    var M = month(), C = M.candles, n = C.length, W = 1400, H = 470, pl = 58, pr = 64, pt = 34, pb = 66, lo = 745, hi = 786, base = M.prevClose;
-    var X = function (i) { return pl + (i + 0.5) * (W - pl - pr) / n; }, Y = function (v) { return pt + (hi - v) * (H - pt - pb) / (hi - lo); };
-    var s = "", bw = (W - pl - pr) / n * 0.56, idx = {};
-    for (var v = 750; v <= 785; v += 5) s += '<line x1="' + pl + '" y1="' + Y(v).toFixed(1) + '" x2="' + (W - pr) + '" y2="' + Y(v).toFixed(1) + '" class="gl"/><text x="' + (pl - 10) + '" y="' + (Y(v) + 4).toFixed(1) + '" text-anchor="end" class="ax">$' + v + '</text>';
-    [-2, -1, 0, 1, 2].forEach(function (p) { var vv = base * (1 + p / 100); s += '<text x="' + (W - pr + 10) + '" y="' + (Y(vv) + 4).toFixed(1) + '" class="ax b">' + (p > 0 ? "+" : p < 0 ? "−" : "±") + Math.abs(p) + '%</text>'; });
+    var M = month(), C = M.candles, n = C.length, PR = M.prior || [], off = PR.reduce(function (t, m) { return t + m.candles.length; }, 0), FW = off ? 3 : 1, N = off + n * FW, W = 1400, H = 470, pl = 58, pr = 64, pt = 34, pb = 66, lo = off ? 722 : 745, hi = 786, base = M.prevClose;
+    var X = function (i) { return pl + (i < 0 ? i + off + 0.5 : off + i * FW + FW / 2) * UW; }, Y = function (v) { return pt + (hi - v) * (H - pt - pb) / (hi - lo); };
+    var s = "", UW = (W - pl - pr) / N, bw = UW * FW * 0.56, idx = {};
+    for (var v = off ? 730 : 750; v <= 785; v += off ? 10 : 5) s += '<line x1="' + pl + '" y1="' + Y(v).toFixed(1) + '" x2="' + (W - pr) + '" y2="' + Y(v).toFixed(1) + '" class="gl"/><text x="' + (pl - 10) + '" y="' + (Y(v) + 4).toFixed(1) + '" text-anchor="end" class="ax">$' + v + '</text>';
+    (off ? [-4, -2, 0, 2] : [-2, -1, 0, 1, 2]).forEach(function (p) { var vv = base * (1 + p / 100); s += '<text x="' + (W - pr + 10) + '" y="' + (Y(vv) + 4).toFixed(1) + '" class="ax b">' + (p > 0 ? "+" : p < 0 ? "−" : "±") + Math.abs(p) + '%</text>'; });
     s += '<line x1="' + pl + '" y1="' + Y(base).toFixed(1) + '" x2="' + (W - pr) + '" y2="' + Y(base).toFixed(1) + '" stroke="' + INK + '" stroke-opacity=".3" stroke-dasharray="4 5"/>';
+    var gc = 0;
+    PR.forEach(function (m, k) {
+      var a = gc; gc += m.candles.length;
+      if (k) s += '<line x1="' + ((X(a - off - 1) + X(a - off)) / 2).toFixed(1) + '" y1="' + pt + '" x2="' + ((X(a - off - 1) + X(a - off)) / 2).toFixed(1) + '" y2="' + (H - pb + 8) + '" stroke="' + INK + '" stroke-opacity=".12" stroke-dasharray="3 5"/>';
+      s += '<text x="' + ((X(a - off) + X(gc - 1 - off)) / 2).toFixed(1) + '" y="' + (H - pb + 22) + '" text-anchor="middle" class="ax">' + esc(m.label) + '</text>';
+      m.candles.forEach(function (c, j) {
+        var i = a + j - off, col = "#B9BFCB", bwp = UW * 0.62, y0 = Y(Math.max(c[1], c[4])), hh = Math.max(2, Y(Math.min(c[1], c[4])) - y0);
+        s += '<line x1="' + X(i).toFixed(1) + '" y1="' + Y(c[2]).toFixed(1) + '" x2="' + X(i).toFixed(1) + '" y2="' + Y(c[3]).toFixed(1) + '" stroke="' + col + '" stroke-width="1.5"/><rect x="' + (X(i) - bwp / 2).toFixed(1) + '" y="' + y0.toFixed(1) + '" width="' + bwp.toFixed(1) + '" height="' + hh.toFixed(1) + '" fill="' + col + '" rx="1.5"/>';
+      });
+    });
+    if (off) s += '<line x1="' + ((X(-1) + X(0)) / 2).toFixed(1) + '" y1="' + pt + '" x2="' + ((X(-1) + X(0)) / 2).toFixed(1) + '" y2="' + (H - pb + 8) + '" stroke="' + INK + '" stroke-opacity=".12" stroke-dasharray="3 5"/>';
     C.forEach(function (c, i) {
       idx[c[0]] = i; var col = c[4] >= c[1] ? GRN : RED, y0 = Y(Math.max(c[1], c[4])), hh = Math.max(2, Y(Math.min(c[1], c[4])) - y0);
       s += '<line x1="' + X(i).toFixed(1) + '" y1="' + Y(c[2]).toFixed(1) + '" x2="' + X(i).toFixed(1) + '" y2="' + Y(c[3]).toFixed(1) + '" stroke="' + col + '" stroke-width="2"/><rect x="' + (X(i) - bw / 2).toFixed(1) + '" y="' + y0.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + hh.toFixed(1) + '" fill="' + col + '" rx="2"/>' +
         '<text x="' + X(i).toFixed(1) + '" y="' + (H - pb + 22) + '" text-anchor="middle" class="ax">' + (+c[0].slice(3)) + '</text>';
     });
-    s += '<text x="' + ((pl + W - pr) / 2) + '" y="' + (H - pb + 46) + '" text-anchor="middle" class="ax cap">OCTOBER TRADING DAYS</text>';
+    s += '<text x="' + ((pl + W - pr) / 2) + '" y="' + (H - pb + 46) + '" text-anchor="middle" class="ax cap">' + esc(((M.label || "").split(" ")[0] || "").toUpperCase()) + ' TRADING DAYS</text>';
     if (on("blurbs")) M.events.forEach(function (e, k) {
       var i = idx[e[0]]; if (i == null) return; var x = X(i), y = Y(C[i][2]) - 30 - (e[0] === "10-29" ? 36 : 0), col = CAT[e[1]] || BLU;
       s += '<line x1="' + x.toFixed(1) + '" y1="' + (Y(C[i][2]) - 3).toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + (y + 15).toFixed(1) + '" stroke="' + col + '" stroke-width="2"/><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="15" fill="' + col + '" stroke="#fff" stroke-width="3"/><text x="' + x.toFixed(1) + '" y="' + (y + 5).toFixed(1) + '" text-anchor="middle" class="pin">' + (k + 1) + '</text>';
     });
     // clear page layer
-    var line = (A().line && A().line.length === n + 1) ? A().line : M.sampleLine, xs = [pl].concat(C.map(function (c, i) { return X(i); }));
+    var line = (A().line && A().line.length === n + 1) ? A().line : M.sampleLine, xs = [X(-1)].concat(C.map(function (c, i) { return X(i); }));
     var P = line.map(function (q) { return base * (1 + q / 100); }), Sp = [base].concat(C.map(function (c) { return c[4]; }));
     var pp = "M" + xs.map(function (x, i) { return x.toFixed(1) + "," + Y(P[i]).toFixed(1); }).join(" L"), sp = "M" + xs.map(function (x, i) { return x.toFixed(1) + "," + Y(Sp[i]).toFixed(1); }).join(" L");
     var you = line[line.length - 1], mkt = (Sp[Sp.length - 1] / base - 1) * 100, xe = xs[xs.length - 1];
