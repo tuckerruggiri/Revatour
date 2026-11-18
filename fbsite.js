@@ -139,12 +139,56 @@
     F.times.forEach(function (t, i) { var o = p, c = o * (1 + (r() - 0.48) * vol * 2), h = Math.max(o, c) * (1 + r() * vol * 0.7), l = Math.min(o, c) * (1 - r() * vol * 0.7); out.push({ t: t, o: o, h: h, l: l, c: c, v: (0.4 + r()) * (F.intra && i < F.times.length * 0.12 ? 1.8 : 1) }); p = c; });
     return out;
   }
+  /* real candles (Yahoo Finance via /api/candles), cached per symbol + frame */
+  var RC = {};
+  function ySym(sym, asset) {
+    var s = String(sym || "").toUpperCase().replace(/^\$/, "").replace(/^\//, "");
+    var IDX = { SPX: "^GSPC", NDX: "^NDX", DJI: "^DJI", VIX: "^VIX", RUT: "^RUT" }; if (IDX[s]) return IDX[s];
+    if (asset === "futures" && !/[=]/.test(s)) return s.replace(/[A-Z]\d{1,2}$/, "") + "=F";
+    if (asset === "crypto" && !/-/.test(s)) return s.replace(/USDT?$/, "") + "-USD";
+    if (asset === "forex" && !/=/.test(s)) return s.replace("/", "") + "=X";
+    return s;
+  }
+  function stepMsOf(F) { return typeof F.step === "number" ? F.step * 6e4 : F.step === "W" ? 7 * 864e5 : 864e5; }
+  function pickIv(F) {
+    var age = (Date.now() - F.times[0]) / 864e5, st = F.step, iv, note = "";
+    if (st === "D") iv = "1d"; else if (st === "W") iv = "1wk";
+    else iv = { 1: "1m", 2: "2m", 3: "1m", 5: "5m", 10: "5m", 15: "15m", 30: "30m", 60: "60m", 120: "60m", 240: "60m" }[st] || "5m";
+    if (iv === "1m" && age > 29) { iv = "5m"; note = "1-minute history only goes back 30 days"; }
+    if (/^(1m|2m|5m|15m|30m)$/.test(iv) && age > 59) { iv = "60m"; note = "Minute history only goes back 60 days"; }
+    if (iv === "60m" && age > 720) { iv = "1d"; note = "Hourly history only goes back 2 years"; }
+    return [iv, note];
+  }
+  function realKey(F, sym) { return sym + "|" + F.times[0] + "|" + F.times.length + "|" + F.step + "|" + (F.ext ? 1 : 0); }
+  function fetchReal(F, sym, asset, key) {
+    var So = window.stockspotSocial; if (!So || !So.candles) { RC[key] = { st: "err", msg: "Sign in to load real candles" }; return; }
+    var pk = pickIv(F), stepMs = stepMsOf(F), end = Math.min(Date.now(), F.times[F.times.length - 1] + stepMs);
+    RC[key] = { st: "loading" };
+    So.candles({ symbol: ySym(sym, asset), interval: pk[0], start: String(F.times[0] - (typeof F.step === "number" ? 0 : stepMs)), end: String(end + 60e3), ext: F.ext ? "1" : "0" }).then(function (r) {
+      var got = (r && r.candles) || [];
+      if (!got.length) { RC[key] = { st: "err", msg: r && r.error ? r.error : "No real candles for $" + sym + " in this time frame (market closed?)" }; return done(); }
+      var out = [];
+      if (typeof F.step !== "number") { out = got.filter(function (k) { return k.t >= F.times[0] - stepMs && k.t <= end; }); }
+      else {
+        var B = [], j = 0;
+        got.forEach(function (k) { while (j < F.times.length - 1 && k.t >= F.times[j + 1]) j++; if (k.t < F.times[0] || k.t >= F.times[j] + stepMs) return; var b = B[j]; if (!b) B[j] = { t: F.times[j], o: k.o, h: k.h, l: k.l, c: k.c, v: k.v }; else { b.h = Math.max(b.h, k.h); b.l = Math.min(b.l, k.l); b.c = k.c; b.v += k.v; } });
+        out = B.filter(Boolean);
+      }
+      if (out.length < 3) { RC[key] = { st: "err", msg: "Not enough real candles for $" + sym + " in this time frame" }; return done(); }
+      var mx = Math.max.apply(null, out.map(function (b) { return b.v; })) || 1; out.forEach(function (b) { b.v = b.v / mx * 1.6 + 0.05; });
+      RC[key] = { st: "ok", C: out, src: r.source || "market data", note: pk[1], name: r.name || "" }; done();
+    }).catch(function () { RC[key] = { st: "err", msg: "Could not load real candles. Try again." }; done(); });
+    function done() { if (host && !host.hidden && (cur === "build" || cur === "clear")) render(); }
+  }
   function getCandles(F) {
     var sym = tkr().t || "NVDA", key = sym + "|" + F.times[0] + "|" + F.times.length + "|" + F.step;
-    if (REAL && REALKEY === key && REAL.length > 5) return { C: REAL, real: true };
+    if (REAL && REALKEY === key && REAL.length > 5) return { C: REAL, real: true, F: F, src: "Schwab" };
+    var rk = realKey(F, sym), R0 = RC[rk];
+    if (!R0) { fetchReal(F, sym, (tkr().asset || D.asset), rk); R0 = RC[rk]; }
+    if (R0 && R0.st === "ok") { var F2 = Object.assign({}, F, { times: R0.C.map(function (c) { return c.t; }) }); return { C: R0.C, real: true, F: F2, src: R0.src, note: R0.note }; }
     var px = execList().map(function (e) { return +e.price; }).filter(function (x) { return x > 0; });
     var base = px.length ? px.reduce(function (a, b) { return a + b; }, 0) / px.length : null;
-    return { C: sample(F, sym, base), real: false };
+    return { C: fitToExecs(sample(F, sym, base), F), real: false, F: F, loading: R0 && R0.st === "loading", msg: R0 && R0.msg };
   }
   function execList() { return (D.execs || []).filter(function (e) { return +e.price > 0; }); }
 
@@ -542,7 +586,7 @@
         '<div class="fbx-quick">' + [["open", "Opening hour"], ["power", "Power hour"], ["pre", "Pre-market only"], ["day", "Full day"], ["3d", "Last 3 days"], ["2w", "Last 2 weeks"]].map(function (q) { return '<button type="button" data-fbq="' + q[0] + '">' + q[1] + '</button>'; }).join("") + '</div></div>' : '') +
       (T ? '<p class="fbx-lab2">Candle size</p><div class="fbx-chips fbx-cs">' + CSZ.map(function (c) { var on = String(D.cs || "auto") === String(c[0]); return chip("cs", c[0], c[0] === "auto" ? "Auto (" + fmtStep(F.auto) + ")" : c[1], on); }).join("") + '</div>' : '') +
       (custom && !T ? '<div class="fbx-custom"><label>From<input type="date" data-fbin="iFrom" value="' + esc(D.iFrom) + '"></label><label>To<input type="date" data-fbin="iTo" value="' + esc(D.iTo) + '"></label></div>' : '') +
-      '<div class="fbx-frame"><div class="fbx-fhead"><div><b>$' + esc(tkr().t || "NVDA") + '</b> <span>' + esc(frameRange(F)) + '</span></div><span class="fbx-badge">' + esc(F.label) + '</span>' + (F.pages > 1 ? '<span class="fbx-badge warn">' + F.times.length + ' candles: prints across ' + F.pages + ' pages so they stay sharp</span>' : '') + (T && F.long ? '<span class="fbx-badge warn">Longer than 4 weeks: this prints in your Investing book <button type="button" data-fbset="style" data-v="investing">Switch</button></span>' : T ? '<span class="fbx-badge ok">&#10003; Fits the Trading book</span>' : '') + '</div>' + pageChart({ F: F, C: fitToExecs(CC.C, F), ind: [], W: 980, H: 200, demo: false }) + '</div></div>' +
+      '<div class="fbx-frame"><div class="fbx-fhead"><div><b>$' + esc(tkr().t || "NVDA") + '</b> <span>' + esc(frameRange(F)) + '</span></div><span class="fbx-badge">' + esc(F.label) + '</span>' + (F.pages > 1 ? '<span class="fbx-badge warn">' + F.times.length + ' candles: prints across ' + F.pages + ' pages so they stay sharp</span>' : '') + (T && F.long ? '<span class="fbx-badge warn">Longer than 4 weeks: this prints in your Investing book <button type="button" data-fbset="style" data-v="investing">Switch</button></span>' : T ? '<span class="fbx-badge ok">&#10003; Fits the Trading book</span>' : '') + '</div>' + pageChart({ F: CC.F, C: CC.C, ind: [], W: 980, H: 200, demo: false }) + srcLine(CC) + '</div></div>' +
       '<div class="fbx-blk"><h3><b>3</b> Tickers and dates</h3><p class="fbx-mut">The first ticker is the one you design next. Add as many as you want printed, or paste lines like <code>NVDA, 2026-10-14</code>.</p><div class="fbx-tk">' +
       D.tickers.map(function (t) { return '<div class="fbx-tkr" data-tk="' + t.id + '"><input data-tkf="t" value="' + esc(t.t) + '" placeholder="Ticker (NVDA, ES)" maxlength="12" aria-label="Ticker"><input type="date" data-tkf="from" value="' + esc(t.from) + '" aria-label="Date"><input type="date" data-tkf="to" value="' + esc(t.to) + '" aria-label="End date (optional)"><select data-tkf="asset" aria-label="Type">' + A.map(function (a) { return '<option value="' + a[0] + '"' + (t.asset === a[0] ? " selected" : "") + '>' + a[1].replace(/&#\d+; /, "").replace("&amp;", "&") + '</option>'; }).join("") + '</select><button type="button" class="fbx-x" data-tkdel="' + t.id + '" aria-label="Remove">&#10005;</button></div>'; }).join("") +
       '</div><div class="fbx-cta sm"><button type="button" class="fbx-btn ghost sm" data-tkadd="1">+ Add a ticker</button><label class="fbx-btn ghost sm fbx-up">&#11014; Upload CSV<input type="file" accept=".csv,.txt" data-tkcsv="1" hidden></label></div>' +
@@ -550,10 +594,30 @@
       '<div class="fbx-blk"><h3><b>4</b> Design the clear page</h3><p class="fbx-mut">Your prices, your indicators, your lines. It&rsquo;s the fun part.</p><button type="button" class="fbx-btn" data-fbgo="clear">Design my clear page &rarr;</button></div></section>');
   }
 
+  var SPYC = {};
+  function spyData(F) {
+    var endD = new Date(F.times[F.times.length - 1]), end = Math.min(Date.now(), endD.getTime() + 864e5), days = { "1m": 31, "3m": 92, "6m": 183, "1y": 366, "2y": 731, "3y": 1096 }[D.spy] || 366, start = end - days * 864e5;
+    if (D.spy === "custom") { if (D.spyFrom) start = pd(D.spyFrom).getTime(); if (D.spyTo) end = pd(D.spyTo).getTime() + 864e5; }
+    var iv = (end - start) / 864e5 > 400 ? "1wk" : "1d", key = D.spy + "|" + Math.round(start / 864e5) + "|" + Math.round(end / 864e5), R = SPYC[key];
+    if (!R) { var So = window.stockspotSocial; if (!So || !So.candles) return { msg: "Sign in to load SPY" }; R = SPYC[key] = { st: "loading" };
+      So.candles({ symbol: "SPY", interval: iv, start: String(start), end: String(end) }).then(function (r) { SPYC[key] = r && r.candles && r.candles.length > 3 ? { st: "ok", C: r.candles } : { st: "err", msg: (r && r.error) || "No SPY data" }; if (host && cur === "clear") render(); }).catch(function () { SPYC[key] = { st: "err", msg: "Could not load SPY" }; }); }
+    return R.st === "ok" ? { C: R.C } : { loading: R.st === "loading", msg: R.msg };
+  }
+  function spyChart(C, markA, markB) {
+    var W = 980, H = 170, pl = 8, pr = 60, pt = 10, pb = 22, n = C.length, lo = Math.min.apply(null, C.map(function (c) { return c.l; })), hi = Math.max.apply(null, C.map(function (c) { return c.h; })), pad = (hi - lo) * 0.06; lo -= pad; hi += pad;
+    var X = function (i) { return pl + (i + 0.5) * (W - pl - pr) / n; }, Y = function (v) { return pt + (1 - (v - lo) / (hi - lo)) * (H - pt - pb); }, bw = Math.max(1, (W - pl - pr) / n * 0.62);
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="fbx-svg" role="img" aria-label="SPY daily candles">';
+    for (var g = 0; g <= 3; g++) { var gy = pt + g * (H - pt - pb) / 3; s += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + gy + '" y2="' + gy + '" stroke="#EEF0F3"/><text x="' + (W - pr + 6) + '" y="' + (gy + 3) + '" class="fbx-ax">' + (hi - (hi - lo) * g / 3).toFixed(0) + '</text>'; }
+    if (markA) { var a = -1, b = -1; C.forEach(function (c, i) { if (c.t >= markA - 864e5 && c.t <= markB + 864e5) { if (a < 0) a = i; b = i; } }); if (a < 0) { C.forEach(function (c, i) { if (c.t <= markA) a = b = i; }); } if (a >= 0) s += '<rect x="' + (X(a) - bw) + '" y="' + pt + '" width="' + Math.max(4, X(b) - X(a) + bw * 2) + '" height="' + (H - pt - pb) + '" fill="#2F6FE4" opacity=".12"/><text x="' + X(a) + '" y="' + (pt + 10) + '" text-anchor="' + (X(a) > W - 140 ? "end" : "start") + '" class="fbx-tag" fill="#2F6FE4">&#9660; YOUR TRADE</text>'; }
+    C.forEach(function (c, i) { var up = c.c >= c.o, col = up ? "#16A34A" : "#DC2626"; s += '<line x1="' + X(i).toFixed(1) + '" x2="' + X(i).toFixed(1) + '" y1="' + Y(c.h).toFixed(1) + '" y2="' + Y(c.l).toFixed(1) + '" stroke="' + col + '"/><rect x="' + (X(i) - bw / 2).toFixed(1) + '" y="' + Y(Math.max(c.o, c.c)).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(1, Math.abs(Y(c.o) - Y(c.c))).toFixed(1) + '" fill="' + col + '"/>'; });
+    var used = []; for (var k = 0; k < n; k += Math.max(1, Math.round(n / 7))) { var d = new Date(C[k].t), x = X(k); if (used.some(function (u) { return Math.abs(u - x) < 70; })) continue; used.push(x); s += '<text x="' + x + '" y="' + (H - 6) + '" text-anchor="' + (k === 0 ? "start" : "middle") + '" class="fbx-ax">' + MN[d.getMonth()] + ' ' + (n > 260 ? "'" + String(d.getFullYear()).slice(2) : d.getDate()) + '</text>'; }
+    return s + '</svg>';
+  }
+  function srcLine(CC) { return CC.real ? '<p class="fbx-src">&#9679; Real ' + esc(CC.src) + ' candles' + (CC.note ? ' · ' + esc(CC.note) + ', so this uses a bigger candle' : '') + '.</p>' : CC.loading ? '<p class="fbx-src load">Loading the real candles for this day…</p>' : '<p class="fbx-src warn">Showing sample candles: ' + esc(CC.msg || "real data not loaded") + '.</p>'; }
   /* ---------- clear page designer ---------- */
   var INTRA_ONLY = ["pm", "or5", "or15", "or30", "kz", "sb", "ib", "on", "asr", "hodlod", "dopen", "svwap", "sess"];
   function pClear() {
-    var F = frame(), CC = getCandles(F), C = fitToExecs(CC.C, F), sym = tkr().t || "NVDA";
+    var F0 = frame(), CC = getCandles(F0), F = CC.F, C = CC.C, sym = tkr().t || "NVDA";
     var avail = IND.filter(function (x) { return fitsAsset(x) && (F.intra || INTRA_ONLY.indexOf(x[0]) < 0); });
     var q = indQ.trim().toLowerCase(), list = q ? avail.filter(function (x) { return (x[1] + " " + x[2]).toLowerCase().indexOf(q) >= 0; }) : indCat === "pop" ? POP.map(indDef).filter(function (x) { return x && avail.indexOf(x) >= 0; }) : avail.filter(function (x) { return x[2] === indCat; });
     var cats = CATS.filter(function (c) { return c[0] === "pop" || avail.some(function (x) { return x[2] === c[0]; }); });
@@ -561,7 +625,7 @@
     var MK = [["entry", "&#128309; Entries"], ["exit", "&#9899; Exits"], ["partial", "&#9986; Partials"], ["stop", "&#128721; Stop"], ["target", "&#127919; Targets"], ["notes", "&#128221; Note"]];
     var execRows = (D.execs.length ? D.execs : []).map(function (e) { return '<div class="fbx-exr" data-ex="' + e.id + '"><select data-exf="side" aria-label="Buy or sell">' + [["buy", "Buy"], ["sell", "Sell"], ["short", "Short"], ["cover", "Cover"]].map(function (o) { return '<option value="' + o[0] + '"' + (e.side === o[0] ? " selected" : "") + '>' + o[1] + '</option>'; }).join("") + '</select><input data-exf="qty" type="number" min="0" step="any" value="' + esc(e.qty) + '" placeholder="Qty" aria-label="Quantity"><input data-exf="price" type="number" min="0" step="any" value="' + esc(e.price) + '" placeholder="Price" aria-label="Price"><input data-exf="time" type="datetime-local" value="' + esc(e.time) + '" aria-label="Time"><button type="button" class="fbx-x" data-exdel="' + e.id + '" aria-label="Remove">&#10005;</button></div>'; }).join("");
     var spyLbl = { "1m": "1 month", "3m": "3 months", "6m": "6 months", "1y": "1 year", "2y": "2 years", "3y": "3 years" };
-    var S = candles(D.spy === "3y" ? 156 : D.spy === "2y" ? 104 : D.spy === "1y" ? 120 : D.spy === "6m" ? 126 : D.spy === "3m" ? 63 : D.spy === "1m" ? 21 : 90, 3, 420, D.spy.slice(-1) === "y" ? 0.02 : 0.01, 0.03);
+    var SP = spyData(F0);
     var TOOLS = [["", "&#9995;", "Move"], ["h", "&#9472;", "Line"], ["t", "&#10187;", "Trendline"], ["z", "&#9645;", "Zone"], ["n", "&#9998;", "Note"], ["erase", "&#9003;", "Erase"]];
     return shell("clear", '<section class="fbx-sec"><p class="fbx-kick">The clear page</p><h1 class="fbx-h1">Design your overlay.</h1><p class="fbx-lead">Enter your real prices, pick your indicators, draw your own lines. Everything on the right prints on clear film that lays over the chart.</p>' +
       '<div class="fbx-clear"><div class="fbx-ctrl">' +
@@ -572,11 +636,12 @@
       '<div class="fbx-row3"><label>&#128721; Stop<input type="number" step="any" min="0" data-fbin="stop" value="' + esc(D.stop) + '" placeholder="e.g. 179.50"></label>' + D.targets.map(function (t, i) { return '<label>&#127919; Target ' + (D.targets.length > 1 ? i + 1 : "") + '<span class="fbx-inl"><input type="number" step="any" min="0" data-tg="' + i + '" value="' + esc(t) + '" placeholder="e.g. 188">' + (i ? '<button type="button" class="fbx-x sm" data-tgdel="' + i + '" aria-label="Remove target">&#10005;</button>' : '') + '</span></label>'; }).join("") + '<button type="button" class="fbx-link" data-tgadd="1">+ another target</button></div>' +
       '<label class="fbx-full">&#128221; Note on the page<input data-fbin="note" maxlength="90" value="' + esc(D.note) + '" placeholder="Why you took it, in one line"></label></div>' +
       '<div class="fbx-pnl"><h3><span>2</span> Indicators <small>' + sel.length + ' on' + (sel.length > 6 ? ' · 6 or fewer reads cleanest' : '') + '</small></h3>' +
-      '<div class="fbx-presets">' + PRESETS.concat((D.strats || []).map(function (s) { return ["my:" + s.id, "&#9733; " + esc(s.name), s.ind]; })).map(function (p) { var on = p[2].length === sel.length && p[2].every(function (x) { return sel.indexOf(x) >= 0; }); return '<button type="button" class="fbx-pre' + (on ? " on" : "") + '" data-fbpre="' + p[0] + '">' + p[1] + '</button>'; }).join("") + '</div>' +
+      '<p class="fbx-lab2" style="margin-top:0!important">Start from a style <small class="fbx-hint">one tap</small></p><div class="fbx-pregrid">' + PRESETS.concat((D.strats || []).map(function (s) { return ["my:" + s.id, "&#9733; " + esc(s.name), s.ind]; })).map(function (p) { var on = p[2].length === sel.length && p[2].every(function (x) { return sel.indexOf(x) >= 0; }); return '<button type="button" class="fbx-pre' + (on ? " on" : "") + '" data-fbpre="' + p[0] + '"><b>' + p[1] + '</b><small>' + p[2].map(function (x) { var d = indDef(x); return d ? esc(d[1]) : ""; }).filter(Boolean).slice(0, 4).join(" · ") + '</small></button>'; }).join("") + '</div>' +
+      '<p class="fbx-lab2">Or pick one by one <small class="fbx-hint">tap to turn on or off</small></p>' +
       (sel.length ? '<div class="fbx-tray">' + sel.map(function (id) { var d = indDef(id); return '<span class="fbx-sel" style="--c:' + d[4] + '"><i></i>' + esc(d[1]) + '<button type="button" data-fbset="ind" data-v="' + esc(id) + '" aria-label="Remove ' + esc(d[1]) + '">&#10005;</button></span>'; }).join("") + '<button type="button" class="fbx-link" data-indclear="1">Clear all</button></div>' : '') +
       '<input type="search" class="fbx-isearch" data-indq="1" value="' + esc(indQ) + '" placeholder="&#128269; Search ' + avail.length + ' indicators (VWAP, FVG, RSI…)" aria-label="Search indicators">' +
       (q ? '' : '<div class="fbx-cats">' + cats.map(function (c) { return '<button type="button" data-indcat="' + c[0] + '" class="' + (indCat === c[0] ? "on" : "") + '">' + c[1] + '</button>'; }).join("") + '</div>') +
-      '<div class="fbx-chips">' + list.map(function (x) { return chip("ind", x[0], esc(x[1]), sel.indexOf(x[0]) >= 0, '<i class="sw" style="background:' + x[4] + '"></i>'); }).join("") + (list.length ? "" : '<p class="fbx-hint">No match. Try another word.</p>') + '</div>' +
+      '<div class="fbx-itiles">' + list.map(function (x) { var on = sel.indexOf(x[0]) >= 0; return '<button type="button" class="fbx-itile' + (on ? " on" : "") + '" data-fbset="ind" data-v="' + esc(x[0]) + '" aria-pressed="' + on + '" style="--c:' + x[4] + '"><i class="ck">' + (on ? "&#10003;" : "") + '</i><b>' + esc(x[1]) + '</b><span class="sw"></span></button>'; }).join("") + (list.length ? "" : '<p class="fbx-hint">No match. Try another word.</p>') + '</div>' +
       (sel.indexOf("fibr") >= 0 ? '<p class="fbx-lab2">Fibonacci levels</p><div class="fbx-chips">' + [0.236, 0.382, 0.5, 0.618, 0.705, 0.786].map(function (f) { return chip("fib", f, (f * 100).toFixed(1).replace(".0", "") + "%", D.fib.indexOf(f) >= 0); }).join("") + '</div>' : '') +
       '<details class="fbx-cma"><summary>+ Build your own moving average</summary><div class="fbx-cmar"><select data-cmat aria-label="Type"><option value="ema">EMA</option><option value="sma">SMA</option><option value="wma">WMA</option><option value="hma">Hull</option><option value="dema">DEMA</option><option value="tema">TEMA</option></select><input data-cman type="number" min="2" max="400" value="34" aria-label="Length"><input data-cmac type="color" value="#0EA5E9" aria-label="Color"><button type="button" class="fbx-btn sm" data-cmaadd="1">Add</button></div></details></div>' +
       '<div class="fbx-pnl"><h3><span>3</span> Your strategy</h3><p class="fbx-hint">Name it, write your rules, draw your own lines on the chart, then save it to reuse on every page.</p>' +
@@ -586,13 +651,13 @@
       '<p class="fbx-lab2">S&amp;P 500 (SPY) context page</p><div class="fbx-chips">' + [["1m", "1M"], ["3m", "3M"], ["6m", "6M"], ["1y", "1Y"], ["2y", "2Y"], ["3y", "3Y"], ["custom", "Custom"], ["off", "Off"]].map(function (s) { return chip("spy", s[0], s[1], D.spy === s[0]); }).join("") + '</div>' +
       (D.spy === "custom" ? '<div class="fbx-row3"><label>From<input type="date" data-fbin="spyFrom" value="' + esc(D.spyFrom) + '"></label><label>To<input type="date" data-fbin="spyTo" value="' + esc(D.spyTo) + '"></label></div>' : '') +
       (D.spy !== "off" ? '<label class="fbx-tg"><input type="checkbox" data-fbin="spyMarks"' + (D.spyMarks ? " checked" : "") + '> Mark my trades on the SPY chart</label>' : '') + '</div>' +
-      '</div><div class="fbx-prev"><div class="fbx-prevcard"><div class="fbx-pgh"><b>$' + esc(sym) + '</b><span>' + esc(frameRange(F)) + ' · ' + esc(F.label) + '</span><em class="' + (CC.real ? "real" : "") + '">' + (CC.real ? "&#9679; Real Schwab data" : "Sample candles") + '</em></div>' +
+      '</div><div class="fbx-prev"><div class="fbx-prevcard"><div class="fbx-pgh"><b>$' + esc(sym) + '</b><span>' + esc(frameRange(F)) + ' · ' + esc(F.label) + '</span><em class="' + (CC.real ? "real" : CC.loading ? "load" : "") + '">' + (CC.real ? "&#9679; Real candles · " + esc(CC.src) : CC.loading ? "Loading real candles…" : "Sample candles") + '</em></div>' +
       (D.strat.name ? '<div class="fbx-stratbar">&#9733; ' + esc(D.strat.name) + (D.strat.entry ? ' · <span>' + esc(D.strat.entry.slice(0, 80)) + '</span>' : '') + '</div>' : '') +
       (D.style === "trading" ? '<div class="fbx-csbar"><span>Candles</span>' + CSZ.map(function (c) { var on = String(D.cs || "auto") === String(c[0]); return '<button type="button" data-fbset="cs" data-v="' + c[0] + '" class="' + (on ? "on" : "") + '">' + (c[0] === "auto" ? "Auto" : c[1]) + '</button>'; }).join("") + '</div>' : '') +
       '<div class="fbx-tools" role="toolbar" aria-label="Drawing tools">' + TOOLS.map(function (t) { return '<button type="button" data-fbtool="' + t[0] + '" class="' + (tool === t[0] ? "on" : "") + '" title="' + t[2] + '"><span>' + t[1] + '</span>' + t[2] + '</button>'; }).join("") +
       '<span class="fbx-cols">' + ["#2F6FE4", "#16A34A", "#DC2626", "#F59E0B", "#7C4DCC", "#0B0B0C"].map(function (c) { return '<button type="button" data-fbcol="' + c + '" class="' + (dcol === c ? "on" : "") + '" style="background:' + c + '" aria-label="Color"></button>'; }).join("") + '</span><input class="fbx-dlab" data-fbdlab="1" placeholder="Label" maxlength="24" aria-label="Label for new lines">' + (D.draw.length ? '<button type="button" class="fbx-link" data-drawclear="1">Clear lines</button>' : '') + '</div>' +
-      '<div class="fbx-cwrap">' + pageChart({ F: F, C: C, ind: sel, W: 980, H: 380 }) + '</div><p class="fbx-hint">' + (tool === "h" ? "Click the chart to drop a line." : tool === "t" || tool === "z" ? "Press and drag on the chart." : tool === "n" ? "Click where the note goes." : tool === "erase" ? "Click a line or zone to erase it." : "Drag your own lines up or down to move them.") + '</p></div>' +
-      (D.spy !== "off" ? '<div class="fbx-prevcard sm"><div class="fbx-pgh"><b>SPY</b><span>' + (D.spy === "custom" ? (D.spyFrom || "start") + " → " + (D.spyTo || "today") : spyLbl[D.spy]) + ' · context page</span></div>' + chartSVG({ C: S, W: 640, H: 150, ind: ["sma50"], marks: D.spyMarks ? { entry: 1, exit: 1 } : null, pb: 6 }) + '</div>' : '') + '</div></div></section>');
+      '<div class="fbx-cwrap">' + pageChart({ F: F, C: C, ind: sel, W: 980, H: 380 }) + '</div>' + srcLine(CC) + '<p class="fbx-hint">' + (tool === "h" ? "Click the chart to drop a line." : tool === "t" || tool === "z" ? "Press and drag on the chart." : tool === "n" ? "Click where the note goes." : tool === "erase" ? "Click a line or zone to erase it." : "Drag your own lines up or down to move them.") + '</p></div>' +
+      (D.spy !== "off" ? '<div class="fbx-prevcard sm"><div class="fbx-pgh"><b>SPY</b><span>' + (D.spy === "custom" ? (D.spyFrom || "start") + " → " + (D.spyTo || "today") : spyLbl[D.spy]) + ' · context page</span></div>' + (SP.C ? spyChart(SP.C, D.spyMarks ? F.times[0] : null, F.times[F.times.length - 1]) : '<p class="fbx-src ' + (SP.loading ? "load" : "warn") + '">' + (SP.loading ? "Loading real SPY candles…" : esc(SP.msg || "Could not load SPY")) + '</p>') + '</div>' : '') + '</div></div></section>');
   }
 
   /* ---------- pricing ---------- */
@@ -706,7 +771,7 @@
     if (!drag) return; var p = svgPoint(ev); if (!p) return; ev.preventDefault();
     if (drag.mode === "new") { drag.d.i2 = p.i; drag.d.p2 = p.price; }
     else { var dp = p.price - drag.sp, di = p.i - drag.si; drag.d.p1 = drag.o.p1 + dp; if (drag.o.p2 != null) drag.d.p2 = drag.o.p2 + dp; if (drag.o.i1 != null && drag.d.k !== "h") { drag.d.i1 = Math.max(0, drag.o.i1 + di); if (drag.o.i2 != null) drag.d.i2 = Math.max(0, drag.o.i2 + di); } }
-    if (!mvT) mvT = requestAnimationFrame(function () { mvT = 0; var w = host.querySelector(".fbx-cwrap"); if (!w) return; if (drag && drag.mode === "new" && D.draw.indexOf(drag.d) < 0) { D.draw.push(drag.d); drag.added = true; } var F = frame(), CC = getCandles(F); w.innerHTML = pageChart({ F: F, C: fitToExecs(CC.C, F), ind: D.ind.filter(function (id) { var d = indDef(id); return d && fitsAsset(d); }), W: 980, H: 380 }); });
+    if (!mvT) mvT = requestAnimationFrame(function () { mvT = 0; var w = host.querySelector(".fbx-cwrap"); if (!w) return; if (drag && drag.mode === "new" && D.draw.indexOf(drag.d) < 0) { D.draw.push(drag.d); drag.added = true; } var CC = getCandles(frame()); w.innerHTML = pageChart({ F: CC.F, C: CC.C, ind: D.ind.filter(function (id) { var d = indDef(id); return d && fitsAsset(d); }), W: 980, H: 380 }); });
   }
   function onUp() { if (!drag) return; var d = drag; drag = null; if (d.mode === "new") { if (D.draw.indexOf(d.d) < 0) D.draw.push(d.d); if (d.d.i1 === d.d.i2 && Math.abs(d.d.p1 - d.d.p2) < 1e-9) D.draw = D.draw.filter(function (x) { return x !== d.d; }); } else { ["p1", "p2"].forEach(function (k) { if (d.d[k] != null) d.d[k] = +(+d.d[k]).toFixed(2); }); } saveD(); render(); }
   function onClick(ev) {
@@ -850,7 +915,10 @@
       ".fbx-hint{color:var(--g);font-size:12.5px;margin:6px 0!important}.fbx-sym{display:flex;gap:8px}.fbx-sym select{flex:1}.fbx-btn.schwab{background:linear-gradient(135deg,#00A0DF,#0072CE);border-color:#0072CE;white-space:nowrap}",
       ".fbx-exh,.fbx-exr{display:grid;grid-template-columns:78px 64px 84px 1fr 34px;gap:6px;align-items:center}.fbx-exh{margin-top:10px;font:700 10.5px Inter,sans-serif;color:var(--g);letter-spacing:.06em;text-transform:uppercase}.fbx-exr{margin-top:6px}.fbx-exr input,.fbx-exr select{padding:7px 8px!important;font-size:13px!important}.fbx-x.sm{width:28px;height:28px}",
       ".fbx-row3{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:12px}.fbx-row3 label,.fbx-full{display:flex!important;flex-direction:column;gap:4px;font:600 12px Inter,sans-serif;color:var(--g);flex:1;min-width:120px}.fbx-full{margin-top:10px}.fbx-inl{display:flex;gap:4px;align-items:center}.fbx-link{border:0;background:none;color:var(--bl);font:600 12.5px Inter,sans-serif;cursor:pointer;padding:4px 2px}",
-      ".fbx-presets{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px;scrollbar-width:thin}.fbx-pre{flex:0 0 auto;border:1px solid #E2E4E8;background:linear-gradient(180deg,#fff,#F7F8FA);border-radius:14px;padding:9px 12px;font:600 12.5px Inter,sans-serif;cursor:pointer;color:var(--k);transition:all .15s}.fbx-pre:hover{transform:translateY(-1px);box-shadow:0 6px 14px rgba(0,0,0,.06)}.fbx-pre.on{background:var(--k);color:#fff;border-color:var(--k)}",
+      ".fbx-pregrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:6px}.fbx-pre{text-align:left;display:flex;flex-direction:column;gap:3px;border:1.5px solid #E2E4E8;background:#fff;border-radius:14px;padding:10px 12px;font:600 13px Inter,sans-serif;cursor:pointer;color:var(--k);transition:all .15s}.fbx-pre small{font:500 11px Inter,sans-serif;color:var(--g);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fbx-pre.on small{color:#C7C9CF}",
+      ".fbx-itiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.fbx-itile{display:flex;align-items:center;gap:9px;text-align:left;border:1.5px solid #E7E9EC;background:#fff;border-radius:12px;padding:9px 10px;font:600 13px Inter,sans-serif;color:var(--k);cursor:pointer;transition:all .12s;min-width:0}.fbx-itile b{flex:1;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fbx-itile .ck{flex:0 0 20px;height:20px;border-radius:6px;border:2px solid #C9CDD3;display:grid;place-items:center;font-style:normal;font-size:12px;color:#fff;font-weight:800}.fbx-itile .sw{flex:0 0 14px;height:4px;border-radius:2px;background:var(--c)}.fbx-itile:hover{border-color:#B9BDC5}.fbx-itile.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 7%,#fff)}.fbx-itile.on .ck{background:var(--c);border-color:var(--c)}",
+      ".fbx-src{font:600 12px Inter,sans-serif;color:#15803D;margin:6px 0 0!important}.fbx-src.load{color:var(--g)}.fbx-src.warn{color:#B45309}.fbx-pgh em.load{background:#F2F3F5}",
+      ".fbx-dummy{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px;scrollbar-width:thin}.fbx-predummy{flex:0 0 auto;border:1px solid #E2E4E8;background:linear-gradient(180deg,#fff,#F7F8FA);border-radius:14px;padding:9px 12px;font:600 12.5px Inter,sans-serif;cursor:pointer;color:var(--k);transition:all .15s}.fbx-pre:hover{transform:translateY(-1px);box-shadow:0 6px 14px rgba(0,0,0,.06)}.fbx-pre.on{background:var(--k);color:#fff;border-color:var(--k)}",
       ".fbx-tray{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:10px;border-radius:14px;background:#F7F8FA;margin-bottom:10px}.fbx-sel{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #E2E4E8;border-radius:999px;padding:4px 4px 4px 10px;font:600 12px Inter,sans-serif}.fbx-sel i{width:8px;height:8px;border-radius:50%;background:var(--c)}.fbx-sel button{border:0;background:#F2F3F5;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:10px;color:var(--g)}",
       ".fbx-isearch{margin-bottom:8px!important}.fbx-cats{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}.fbx-cats button{border:0;background:#F2F3F5;color:var(--g);border-radius:999px;padding:6px 11px;font:600 12px Inter,sans-serif;cursor:pointer}.fbx-cats .on{background:var(--k);color:#fff}.fbx-pnl .fbx-chip{padding:7px 11px;font-size:12.5px}",
       ".fbx-cma{margin-top:12px}.fbx-cma summary{cursor:pointer;color:var(--bl);font:600 13px Inter,sans-serif}.fbx-cmar{display:grid;grid-template-columns:1fr 70px 46px auto;gap:6px;margin-top:8px}.fbx-cmar input[type=color]{padding:2px!important;height:38px}",
