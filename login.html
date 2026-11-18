@@ -22,7 +22,7 @@
     .card { width:100%; max-width:400px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:28px 24px; }
     .logo { font-weight:800; font-size:24px; letter-spacing:-.02em; margin:0 0 4px; }
     .sub { color:var(--mute); margin:0 0 20px; font-size:14px; }
-    .tabs { display:grid; grid-template-columns:1fr 1fr; gap:4px; background:var(--bg); padding:4px; border-radius:10px; margin-bottom:20px; }
+    .tabs { display:none; grid-template-columns:1fr 1fr; gap:4px; background:var(--bg); padding:4px; border-radius:10px; margin-bottom:20px; }
     .tabs button { border:0; background:none; padding:9px; border-radius:7px; font:inherit; font-weight:600; color:var(--mute); cursor:pointer; }
     .tabs button[aria-selected="true"] { background:var(--card); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.12); }
     label { display:block; font-size:13px; font-weight:600; margin:14px 0 6px; }
@@ -45,7 +45,7 @@
 
     <div class="tabs" role="tablist">
       <button type="button" role="tab" id="tabin" aria-selected="true">Log in</button>
-      <button type="button" role="tab" id="tabup" aria-selected="false">Sign up</button>
+      <button type="button" role="tab" id="tabup" aria-selected="false" hidden>Sign up</button>
     </div>
 
     <form id="form" novalidate>
@@ -71,6 +71,7 @@
       <div class="msg" id="msg" role="status" aria-live="polite"></div>
       <button type="button" class="link" id="forgot">Forgot password?</button>
     </form>
+    <p class="sub" style="margin:18px 0 0;text-align:center">New sign-ups are closed until launch. <a href="landing.html" style="color:var(--brand);font-weight:600">Join the waitlist</a></p>
   </main>
 
   <script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
