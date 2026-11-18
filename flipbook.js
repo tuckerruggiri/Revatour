@@ -80,14 +80,14 @@
     });
   }
   /* One-time private import link: revatour.com/#flipbook=<data>. The data stays in the link and your own account. */
-  function importFromHash() {
-    var m = /#flipbook=([A-Za-z0-9_\-]+)/.exec(location.hash || ""); if (!m) return false;
+  function importFromHash(txt) {
+    var m = /flipbook=([A-Za-z0-9_\-]+)/.exec(txt || location.hash || ""); if (!m) return false;
     try {
       var b = m[1].replace(/-/g, "+").replace(/_/g, "/"); while (b.length % 4) b += "=";
       var j = JSON.parse(decodeURIComponent(escape(atob(b))));
       var go = function () {
         ST.acct = j.acct || null; if (j.start) { ST.cfg = ST.cfg || defCfg(); ST.cfg.start = j.start; }
-        save(); history.replaceState(null, "", location.pathname + location.search); toast("Your 401(k) numbers were saved to your Flipbook");
+        save(); if (/flipbook=/.test(location.hash || "")) history.replaceState(null, "", location.pathname + location.search); toast("Your 401(k) numbers were saved to your Flipbook");
         var b2 = document.getElementById("navflip"); if (b2) b2.click();
       };
       var tries = 0; (function wait() { if (ST.loaded || tries > 40) go(); else { tries++; setTimeout(wait, 250); } })();
@@ -342,11 +342,11 @@
   }
   function viewAcct() {
     var a = ST.acct;
-    if (!a) return '<div class="fb-build"><h3>My accounts</h3><p>Your Flipbook is showing <b>sample numbers</b> right now.</p><ol class="fb-steps"><li>Ask Claude in your Revatour chat to “connect my 401(k) to Flipbook.”</li><li>Claude reads your Fidelity and Principal pages (read-only) and gives you a <b>private link</b>.</li><li>Open that link while signed in to Revatour. Your numbers are saved only to <b>your</b> account.</li></ol><p class="fb-mut">Your balances are never stored in Revatour’s public files.</p></div>';
+    if (!a) return '<div class="fb-build"><h3>My accounts</h3><p>Your Flipbook is showing <b>sample numbers</b> right now.</p><ol class="fb-steps"><li>Ask Claude in your Revatour chat to “connect my 401(k) to Flipbook.”</li><li>Claude reads your Fidelity and Principal pages (read-only) and gives you a <b>private link</b>.</li><li>Open that link while signed in to Revatour. Your numbers are saved only to <b>your</b> account.</li></ol><p class="fb-mut">Your balances are never stored in Revatour’s public files.</p>'+'<div class="fb-row" style="margin-top:12px"><input id="fbimp" type="text" placeholder="Paste your private link here" aria-label="Private link" style="flex:1;min-width:240px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink)"><button type="button" class="fb-btn pri" data-act="imp">Load my accounts</button></div></div></div>';
     var rows = a.plans.map(function (p) { return '<tr><td><b>' + esc(p.n) + '</b><br><small>' + esc(p.p || "") + '</small></td><td>' + money(p.bal, 2) + '</td><td>' + (p.r12 != null ? pct(p.r12) : "—") + '</td><td>' + (p.rm != null ? pct(p.rm, 2) : "—") + '</td><td>' + esc(p.since || "") + '</td></tr>'; }).join("");
     return '<div class="fb-build"><h3>My accounts</h3><p>Private to you. Updated ' + esc(a.asOf || "") + '.</p><div class="fb-tbl"><table><thead><tr><th>Plan</th><th>Balance</th><th>12 months</th><th>October</th><th>Started</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
       '<div class="fb-g3">' + stat("Total", money(total(), 2), "All plans together", INK) + stat("Saving rate", (a.rate || 0) + "%", "of each paycheck", GRN) + stat("Monthly", money(a.monthly || 0), "going in", BLU) + '</div>' +
-      '<div class="fb-row"><button type="button" class="fb-btn" data-act="forget">Remove my numbers from Flipbook</button></div></div>';
+      '<div class="fb-row"><button type="button" class="fb-btn" data-act="forget">Remove my numbers from Flipbook</button></div>'+'<div class="fb-row" style="margin-top:12px"><input id="fbimp" type="text" placeholder="Paste your private link here" aria-label="Private link" style="flex:1;min-width:240px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink)"><button type="button" class="fb-btn pri" data-act="imp">Load my accounts</button></div></div></div>';
   }
 
   /* ---------- render + events ---------- */
@@ -373,6 +373,7 @@
     else if (a === "all") { ALL.forEach(function (k) { ST.cfg.on[k] = true; }); save(); }
     else if (a === "sm" || a === "sy") { var si = startIdx(), y = 2000 + Math.floor(si / 12), m = si % 12; if (a === "sm") m = +t.value; else y = +t.value; ST.cfg.start = y + "-" + String(m + 1).padStart(2, "0"); save(); }
     else if (a === "qs") { var mm = /([A-Za-z]{3}) (\d{4})/.exec(v); if (mm) { ST.cfg.start = mm[2] + "-" + String(MN.indexOf(mm[1]) + 1).padStart(2, "0"); save(); } }
+    else if (a === "imp") { var iv = document.getElementById("fbimp"); if (!iv || !iv.value.trim() || !importFromHash(iv.value.trim())) toast("That link didn’t work. Paste the whole private link."); }
     else if (a === "forget") { if (window.confirm("Remove your 401(k) numbers from Flipbook? You can add them again later.")) { ST.acct = null; save(); } }
     var y0 = window.scrollY; render(); if (a === "go" || a === "prev" || a === "next") { var s = root.querySelector(".fb-stage"); if (s) s.classList.add("turn"); } else window.scrollTo(0, y0);
   }
@@ -439,4 +440,6 @@
     }
   };
   if (/#flipbook=/.test(location.hash || "")) { if (!ST.loaded) load(); importFromHash(); }
+  /* Opening the link in a tab that is already open only changes the # part, so listen for that too. */
+  window.addEventListener("hashchange", function () { if (/#flipbook=/.test(location.hash || "")) { if (!ST.loaded) load(); importFromHash(); } });
 })();
