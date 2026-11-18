@@ -304,37 +304,54 @@
     return { entry: entry, stop: stop, target: tgt, risk: Math.abs(entry - stop), rew: Math.abs(tgt - entry), i: i != null ? i : Math.floor(((F && F.times.length) || 100) * 0.3) };
   }
   function placeLabels(svg, G2, C) {
-    var X = G2.X, Y = G2.Y, n = C.length, bw = Math.max(1, (G2.W - G2.pl - G2.pr) / n), top = G2.pt, bot = G2.pt + G2.mainH, placed = [];
-    var hitC = function (x0, x1, y0, y1) { var a = Math.max(0, Math.floor((x0 - G2.pl) / bw) - 1), b = Math.min(n - 1, Math.ceil((x1 - G2.pl) / bw) + 1), mn = Infinity, mx = -Infinity, hit = false; for (var i = a; i <= b; i++) { var cx = X(i); if (cx + bw / 2 < x0 || cx - bw / 2 > x1) continue; var ch = Y(C[i].h), cl = Y(C[i].l); mn = Math.min(mn, ch); mx = Math.max(mx, cl); if (ch < y1 && cl > y0) hit = true; } return { hit: hit, mn: mn, mx: mx }; };
+    var X = G2.X, Y = G2.Y, n = C.length, bw = Math.max(1, (G2.W - G2.pl - G2.pr) / n), top = G2.pt, bot = G2.pt + G2.mainH, placed = [], axis = [];
+    var hitC = function (x0, x1, y0, y1) { var a = Math.max(0, Math.floor((x0 - G2.pl) / bw) - 1), b = Math.min(n - 1, Math.ceil((x1 - G2.pl) / bw) + 1), hit = false; for (var i = a; i <= b; i++) { var cx = X(i); if (cx + bw / 2 < x0 || cx - bw / 2 > x1) continue; if (Y(C[i].h) < y1 && Y(C[i].l) > y0) hit = true; } return hit; };
     var hitL = function (b) { return placed.some(function (p) { return b.x0 < p.x1 && b.x1 > p.x0 && b.y0 < p.y1 && b.y1 > p.y0; }); };
-    return svg.replace(/<text x="([\d.\-]+)" y="([\d.\-]+)"((?: dy="[\d.\-]+")?)((?: text-anchor="(?:start|middle|end)")?) class="fbx-lab" fill="([^"]+)">([^<]*)<\/text>/g, function (m, xs, ys, dys, anc, col, txt) {
-      var x = +xs, y = +ys + (dys ? +dys.replace(/[^\d.\-]/g, "") : 0);
-      var pill = /^PILL\|/.test(txt), dotY = 0; if (pill) { var pp = txt.split("|"); dotY = +pp[1]; txt = pp.slice(2).join("|"); }
-      if (!pill && (y < top + 2 || y > bot + 2)) return m;
-      var len = txt.replace(/&[a-z#0-9]+;/gi, "x").length, w = pill ? len * 5.8 + 12 : len * 5.7 + 4, a = /middle/.test(anc) ? "m" : /end/.test(anc) ? "e" : "s";
-      var x0 = a === "s" ? x - 2 : a === "e" ? x - w + 2 : x - w / 2; if (pill) x0 = Math.max(G2.pl + 2, Math.min(G2.W - G2.pr - w - 2, x0)); var x1 = x0 + w, B = function (yy) { return pill ? { x0: x0, x1: x1, y0: yy - 12, y1: yy + 6 } : { x0: x0, x1: x1, y0: yy - 9, y1: yy + 2 }; };
-      if (pill) {
-        var hp = hitC(x0, x1, top, bot), up = y < dotY, cs = [y].concat(up ? [hp.mn - 9, hp.mx + 18, hp.mn - 28, hp.mx + 38] : [hp.mx + 18, hp.mn - 9, hp.mx + 38, hp.mn - 28]).filter(function (v) { return v > top + 12 && v < bot - 6; });
-        var py = null; for (var q = 0; q < cs.length; q++) { var pb = B(cs[q]); if (!hitC(x0, x1, pb.y0, pb.y1).hit && !hitL(pb)) { py = cs[q]; break; } }
-        if (py == null) { py = cs[0] != null ? cs[0] : y; for (var z = 0; z < 6 && hitL(B(py)); z++) py += up ? -20 : 20; }
-        placed.push(B(py)); var cx = (x0 + x1) / 2, ex2 = py < dotY ? py + 6 : py - 12;
-        return '<line x1="' + x.toFixed(1) + '" y1="' + dotY.toFixed(1) + '" x2="' + cx.toFixed(1) + '" y2="' + ex2.toFixed(1) + '" stroke="' + col + '" stroke-width="1.2" stroke-dasharray="2 2" opacity=".8"/><g transform="translate(' + cx.toFixed(1) + ',' + py.toFixed(1) + ')"><rect x="' + (-w / 2).toFixed(1) + '" y="-11" width="' + w.toFixed(1) + '" height="16" rx="8" fill="' + col + '"/><text text-anchor="middle" y="1" class="fbx-tag" fill="#fff">' + txt + '</text></g>';
+    var inside = function (b) { return b.x0 >= G2.pl && b.x1 <= G2.W - G2.pr && b.y0 >= top && b.y1 <= bot; };
+    var ok = function (b) { return inside(b) && !hitC(b.x0, b.x1, b.y0, b.y1) && !hitL(b); };
+    var tw = function (t, k) { return t.replace(/&[a-z#0-9]+;/gi, "x").length * (k || 5.7); };
+    var out = svg.replace(/<text x="([\d.\-]+)" y="([\d.\-]+)"((?: dy="[\d.\-]+")?)((?: text-anchor="(?:start|middle|end)")?) class="fbx-lab" fill="([^"]+)">([^<]*)<\/text>/g, function (m, xs, ys, dys, anc, col, txt) {
+      var x = +xs, y = +ys + (dys ? +dys.replace(/[^\d.\-]/g, "") : 0), P = txt.split("|");
+      if (P[0] === "AXT") { axis.push({ y: +P[1], col: col, a: P[2], b: P[3] || "" }); return ""; }
+      if (P[0] === "PILL") { // trade label next to its arrow, never on candles, no pointer lines
+        var ax = +P[1], ay = +P[2], dn = P[3] === "d", lab = P.slice(4).join("|"), w = tw(lab, 5.8) + 12, hh = 16, c = [];
+        var mk = function (cx, cy) { return { x0: cx - w / 2, x1: cx + w / 2, y0: cy - hh / 2, y1: cy + hh / 2, cx: cx, cy: cy }; };
+        [0, 1, 2, 3, 4, 5].forEach(function (k) { var dy = (dn ? -1 : 1) * (14 + k * 14); c.push(mk(ax, ay + dy)); c.push(mk(ax + w / 2 + 8, ay + (dn ? -1 : 1) * (4 + k * 14))); c.push(mk(ax - w / 2 - 8, ay + (dn ? -1 : 1) * (4 + k * 14))); });
+        var pick = null; for (var q = 0; q < c.length; q++) { var bx = c[q]; if (bx.x0 < G2.pl) { bx = mk(G2.pl + w / 2 + 2, bx.cy); } if (bx.x1 > G2.W - G2.pr) { bx = mk(G2.W - G2.pr - w / 2 - 2, bx.cy); } if (ok(bx)) { pick = bx; break; } }
+        if (!pick) { pick = mk(Math.max(G2.pl + w / 2 + 2, Math.min(G2.W - G2.pr - w / 2 - 2, ax)), Math.max(top + 10, Math.min(bot - 10, ay + (dn ? -16 : 16)))); }
+        placed.push(pick);
+        return '<g transform="translate(' + pick.cx.toFixed(1) + ',' + pick.cy.toFixed(1) + ')"><rect x="' + (-w / 2).toFixed(1) + '" y="-8" width="' + w.toFixed(1) + '" height="16" rx="8" fill="' + col + '"/><text text-anchor="middle" y="3.5" class="fbx-tag" fill="#fff">' + lab + '</text></g>';
       }
-      var h = hitC(x0, x1, y - 9, y + 2);
-      if (!h.hit && !hitL(B(y))) { placed.push(B(y)); return m; }
-      var cands = [h.mn - 5, h.mx + 12, h.mn - 18, h.mx + 25].filter(function (v) { return v > top + 9 && v < bot - 1; }).sort(function (p, q) { return Math.abs(p - y) - Math.abs(q - y); });
-      var ny = null; for (var k = 0; k < cands.length; k++) { var bb = B(cands[k]); if (!hitC(x0, x1, bb.y0, bb.y1).hit && !hitL(bb)) { ny = cands[k]; break; } }
-      if (ny == null) ny = cands[0] != null ? cands[0] : y;
-      placed.push(B(ny));
-      var lx = (x0 + x1) / 2, ay = y - 4, ly = ny < y ? ny + 3 : ny - 10;
-      var lead = Math.abs(ny - y) > 6 ? '<line x1="' + lx.toFixed(1) + '" y1="' + ly.toFixed(1) + '" x2="' + lx.toFixed(1) + '" y2="' + ay.toFixed(1) + '" stroke="' + col + '" stroke-width="1" stroke-dasharray="2 2"/><circle cx="' + lx.toFixed(1) + '" cy="' + ay.toFixed(1) + '" r="2.2" fill="' + col + '"/>' : "";
-      return lead + '<text x="' + xs + '" y="' + ny.toFixed(1) + '"' + anc + ' class="fbx-lab" fill="' + col + '">' + txt + '</text>';
+      if (P[0] === "ZL") { // zone label: inside the zone, else just above/below it, never on candles
+        var zx0 = +P[1], zy0 = +P[2], zx1 = +P[3], zy1 = +P[4], zt = P.slice(5).join("|"), zw = tw(zt) + 6, zc = [];
+        var zb = function (lx, ly) { return { x0: lx, x1: lx + zw, y0: ly - 9, y1: ly + 2, lx: lx, ly: ly }; };
+        var xsC = [zx0 + 3, zx1 - zw - 3, (zx0 + zx1) / 2 - zw / 2], ysC = [zy0 + 10, zy1 - 3, zy0 - 3, zy1 + 11];
+        ysC.forEach(function (yy) { xsC.forEach(function (xx) { zc.push(zb(xx, yy)); }); });
+        var zp = null; for (var r = 0; r < zc.length; r++) if (ok(zc[r]) || (r < 6 && !hitL(zc[r]) && inside(zc[r]) && zy1 - zy0 > 12 && !hitC(zc[r].x0, zc[r].x1, zc[r].y0, zc[r].y1))) { zp = zc[r]; break; }
+        if (!zp) zp = zc.filter(function (b) { return inside(b) && !hitL(b); })[0] || zc[0];
+        placed.push(zp);
+        return '<text x="' + zp.lx.toFixed(1) + '" y="' + zp.ly.toFixed(1) + '" class="fbx-lab" fill="' + col + '">' + zt + '</text>';
+      }
+      if (y < top + 2 || y > bot + 2) return m;
+      var len = tw(txt) + 4, a = /middle/.test(anc) ? "m" : /end/.test(anc) ? "e" : "s", x0 = a === "s" ? x - 2 : a === "e" ? x - len + 2 : x - len / 2;
+      var B = function (dx, yy) { return { x0: x0 + dx, x1: x0 + dx + len, y0: yy - 9, y1: yy + 2, dx: dx, yy: yy }; };
+      var cs = [B(0, y)];[12, -12, 24, -24].forEach(function (d) { cs.push(B(0, y + d)); });[len + 6, -len - 6].forEach(function (d) { cs.push(B(d, y)); });
+      var pk = null; for (var k = 0; k < cs.length; k++) if (ok(cs[k])) { pk = cs[k]; break; }
+      if (!pk) pk = cs[0];
+      placed.push(pk);
+      return '<text x="' + (x + pk.dx).toFixed(1) + '" y="' + pk.yy.toFixed(1) + '"' + anc + ' class="fbx-lab" fill="' + col + '">' + txt + '</text>';
     });
+    // price-axis tags on the right edge: never over candles, stacked so they never overlap
+    axis.sort(function (p, q) { return p.y - q.y; });
+    var last = -1e9, tags = "";
+    axis.forEach(function (t) { var h2 = t.b ? 26 : 16, yy = Math.max(t.y - 8, last + 2); if (yy + h2 > bot + 20) yy = bot + 20 - h2; last = yy + h2; var x = G2.W - G2.pr + 3, w = G2.pr - 6;
+      tags += '<line x1="' + (G2.W - G2.pr - 4) + '" x2="' + x + '" y1="' + t.y.toFixed(1) + '" y2="' + (yy + 8).toFixed(1) + '" stroke="' + t.col + '" stroke-width="1.2"/><rect x="' + x + '" y="' + yy.toFixed(1) + '" width="' + w + '" height="' + h2 + '" rx="5" fill="' + t.col + '"/><text x="' + (x + 6) + '" y="' + (yy + 11.5).toFixed(1) + '" class="fbx-tag" fill="#fff">' + t.a + '</text>' + (t.b ? '<text x="' + (x + 6) + '" y="' + (yy + 22).toFixed(1) + '" class="fbx-ax" fill="#fff" style="fill:#fff;letter-spacing:.02em">' + t.b + '</text>' : ''); });
+    return out + tags;
   }
   function pageChart(o) {
     var F = o.F, C = o.C, n = C.length, W = o.W || 900, ids = (o.ind || []).filter(function (id) { var d = indDef(id); return d && fitsAsset(d); });
     var osc = ids.filter(function (id) { return indDef(id)[3] === "osc"; }).slice(0, 2), hasVol = ids.indexOf("vol") >= 0;
-    var pl = 10, pr = 74, pt = 14, mainH = o.H || 380, ph = 78, pb = 26, H = pt + mainH + osc.length * (ph + 8) + pb;
+    var pl = 10, pr = 112, pt = 14, mainH = o.H || 380, ph = 78, pb = 26, H = pt + mainH + osc.length * (ph + 8) + pb;
     var ex = execList(), stop = +D.stop || null, tg = (D.targets || []).map(Number).filter(function (x) { return x > 0; });
     var lo = Infinity, hi = -Infinity; C.forEach(function (c) { lo = Math.min(lo, c.l); hi = Math.max(hi, c.h); });
     var useDemo = !ex.length && o.demo !== false, e0 = C[Math.floor(n * 0.3)].c;
@@ -371,7 +388,7 @@
       wins.forEach(function (w) { var a = -1, b = -1; C.forEach(function (c, i) { var dd = new Date(c.t), m = dd.getHours() * 60 + dd.getMinutes(); if (m >= w[0] && m < w[1]) { if (a < 0) a = i; b = i; } }); if (a >= 0) s += '<rect x="' + (X(a) - bw) + '" y="' + pt + '" width="' + (X(b) - X(a) + bw * 2) + '" height="' + mainH + '" fill="' + d[4] + '" opacity=".045"/><text x="' + (X(a) - bw + 3) + '" y="' + (pt + mainH - 5) + '" class="fbx-lab" fill="' + d[4] + '">' + w[2] + '</text>'; }); });
     // zones under candles
     var sw = swings(C, n > 60 ? 3 : 2), avgBody = C.reduce(function (a, c) { return a + Math.abs(c.c - c.o); }, 0) / n;
-    var box = function (i0, i1, a, b, col, lab, op) { var y1 = Y(Math.max(a, b)), y2 = Y(Math.min(a, b)); return '<rect x="' + (X(i0) - bw / 2).toFixed(1) + '" y="' + y1.toFixed(1) + '" width="' + Math.max(4, X(i1) - X(i0) + bw).toFixed(1) + '" height="' + Math.max(2, y2 - y1).toFixed(1) + '" fill="' + col + '" opacity="' + (op || 0.13) + '" rx="2"/><rect x="' + (X(i0) - bw / 2).toFixed(1) + '" y="' + y1.toFixed(1) + '" width="' + Math.max(4, X(i1) - X(i0) + bw).toFixed(1) + '" height="' + Math.max(2, y2 - y1).toFixed(1) + '" fill="none" stroke="' + col + '" stroke-opacity=".5" rx="2"/>' + (lab ? '<text x="' + (X(i0) + 2).toFixed(1) + '" y="' + (y1 + 10).toFixed(1) + '" class="fbx-lab" fill="' + col + '">' + lab + '</text>' : ''); };
+    var box = function (i0, i1, a, b, col, lab, op) { var y1 = Y(Math.max(a, b)), y2 = Y(Math.min(a, b)); return '<rect x="' + (X(i0) - bw / 2).toFixed(1) + '" y="' + y1.toFixed(1) + '" width="' + Math.max(4, X(i1) - X(i0) + bw).toFixed(1) + '" height="' + Math.max(2, y2 - y1).toFixed(1) + '" fill="' + col + '" opacity="' + (op || 0.13) + '" rx="2"/><rect x="' + (X(i0) - bw / 2).toFixed(1) + '" y="' + y1.toFixed(1) + '" width="' + Math.max(4, X(i1) - X(i0) + bw).toFixed(1) + '" height="' + Math.max(2, y2 - y1).toFixed(1) + '" fill="none" stroke="' + col + '" stroke-opacity=".5" rx="2"/>' + (lab ? '<text x="0" y="0" class="fbx-lab" fill="' + col + '">ZL|' + (X(i0) - bw / 2).toFixed(1) + '|' + y1.toFixed(1) + '|' + (X(i1) + bw / 2).toFixed(1) + '|' + y2.toFixed(1) + '|' + lab + '</text>' : ''); };
     var zEnd = function (i0, natural) { var z = D.zlen || "fill"; if (z === "edge") return n - 1; if (z === "short") return Math.min(n - 1, i0 + 14); return natural >= 0 ? natural : n - 1; };
     ids.forEach(function (id) {
       var d = indDef(id), col = d[4]; if (d[3] !== "zone" && d[3] !== "vp") return;
@@ -382,7 +399,7 @@
       if (id === "pdz" || id === "ote") { var H2 = Math.max.apply(null, C.map(function (x) { return x.h; })), L2 = Math.min.apply(null, C.map(function (x) { return x.l; })); if (id === "pdz") { s += box(0, n - 1, H2, (H2 + L2) / 2, "#DC2626", "Premium", 0.05) + box(0, n - 1, (H2 + L2) / 2, L2, "#16A34A", "Discount", 0.05); } else s += box(Math.floor(n * 0.5), n - 1, H2 - (H2 - L2) * 0.62, H2 - (H2 - L2) * 0.79, col, "OTE 62–79%", 0.16); }
       if (d[3] === "vp") { var bins = 24, hist = new Array(bins).fill(0); C.forEach(function (c) { var b4 = Math.min(bins - 1, Math.max(0, Math.floor((c.c - lo) / (hi - lo) * bins))); hist[b4] += c.v; }); var mx = Math.max.apply(null, hist), poc = hist.indexOf(mx), bh = mainH / bins; hist.forEach(function (v, b5) { var w = v / mx * (W - pl - pr) * 0.22; s += '<rect x="' + (W - pr - w).toFixed(1) + '" y="' + (pt + mainH - (b5 + 1) * bh + 1).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + (bh - 2).toFixed(1) + '" fill="' + (b5 === poc ? "#F59E0B" : col) + '" opacity=".35"/>'; }); var pocP = lo + (poc + 0.5) / bins * (hi - lo); s += hline(pocP, "#F59E0B", "POC", "", 1.4); s += hline(pocP + (hi - lo) * 0.12, col, "VAH", "4 3") + hline(pocP - (hi - lo) * 0.12, col, "VAL", "4 3"); }
     });
-    function hline(p, col, lab, dash, w) { if (!(p > lo && p < hi)) return ""; var y = Y(p).toFixed(1); return '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y + '" y2="' + y + '" stroke="' + col + '" stroke-width="' + (w || 1.2) + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + '/><text x="' + (W - pr - 4) + '" y="' + (+y - 3) + '" text-anchor="end" class="fbx-lab" fill="' + col + '">' + lab + '</text>'; }
+    function hline(p, col, lab, dash, w) { if (!(p > lo && p < hi)) return ""; var y = Y(p).toFixed(1); return '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y + '" y2="' + y + '" stroke="' + col + '" stroke-width="' + (w || 1.2) + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + '/><text x="0" y="0" class="fbx-lab" fill="' + col + '">AXT|' + y + '|' + lab + '</text>'; }
     if (hasVol) C.forEach(function (c, i) { var vh = c.v / 2.2 * mainH * 0.22; s += '<rect x="' + (X(i) - bw / 2).toFixed(1) + '" y="' + (pt + mainH - vh).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + vh.toFixed(1) + '" fill="' + (c.c >= c.o ? "#BBF7D0" : "#FECACA") + '"/>'; });
     // candles
     C.forEach(function (c, i) { var up = c.c >= c.o, col = up ? "#16A34A" : "#DC2626", y0 = Y(Math.max(c.o, c.c)), hh = Math.max(1, Math.abs(Y(c.o) - Y(c.c)));
@@ -455,11 +472,9 @@
       var i0 = R.i, i1 = Math.min(n - 1, i0 + Math.max(10, Math.round(n * 0.32))), x0 = X(i0) - bw / 2, x1 = X(i1) + bw / 2, ye = Y(R.entry), ys = Y(R.stop), yt = Y(R.target), cg = ucol("target", "#16A34A"), cr = ucol("stop", "#DC2626"), o = "";
       o += '<rect x="' + x0.toFixed(1) + '" y="' + Math.min(ye, yt).toFixed(1) + '" width="' + (x1 - x0).toFixed(1) + '" height="' + Math.abs(yt - ye).toFixed(1) + '" fill="' + cg + '" opacity=".16"/>';
       o += '<rect x="' + x0.toFixed(1) + '" y="' + Math.min(ye, ys).toFixed(1) + '" width="' + (x1 - x0).toFixed(1) + '" height="' + Math.abs(ys - ye).toFixed(1) + '" fill="' + cr + '" opacity=".16"/>';
-      [["target", yt, cg, "Target " + R.target.toFixed(2) + "  (" + (R.rew >= 0 ? "+" : "") + R.rew.toFixed(2) + ")"], ["entry", ye, "#334155", "Entry " + R.entry.toFixed(2)], ["stop", ys, cr, "Stop " + R.stop.toFixed(2) + "  (-" + R.risk.toFixed(2) + ")"]].forEach(function (l) {
-        o += '<g data-rr="' + l[0] + '" class="fbx-rrl"><line x1="' + x0.toFixed(1) + '" x2="' + x1.toFixed(1) + '" y1="' + l[1].toFixed(1) + '" y2="' + l[1].toFixed(1) + '" stroke="' + l[2] + '" stroke-width="1.6"/><line class="hit" x1="' + x0.toFixed(1) + '" x2="' + x1.toFixed(1) + '" y1="' + l[1].toFixed(1) + '" y2="' + l[1].toFixed(1) + '" stroke="transparent" stroke-width="14"/><circle cx="' + x1.toFixed(1) + '" cy="' + l[1].toFixed(1) + '" r="4.5" fill="#fff" stroke="' + l[2] + '" stroke-width="1.6"/></g><text x="' + (x1 + 8).toFixed(1) + '" y="' + (l[1] + 3).toFixed(1) + '" class="fbx-lab" fill="' + l[2] + '">' + l[3] + '</text>';
+      [["target", yt, cg, "TARGET " + R.target.toFixed(2) + "|R:R 1:" + (R.risk > 0 ? (R.rew / R.risk).toFixed(2) : "-") + "  +" + R.rew.toFixed(2)], ["entry", ye, "#334155", "ENTRY " + R.entry.toFixed(2)], ["stop", ys, cr, "STOP " + R.stop.toFixed(2) + "|-" + R.risk.toFixed(2) + " per share"]].forEach(function (l) {
+        o += '<g data-rr="' + l[0] + '" class="fbx-rrl"><line x1="' + x0.toFixed(1) + '" x2="' + x1.toFixed(1) + '" y1="' + l[1].toFixed(1) + '" y2="' + l[1].toFixed(1) + '" stroke="' + l[2] + '" stroke-width="1.6"/><line class="hit" x1="' + x0.toFixed(1) + '" x2="' + x1.toFixed(1) + '" y1="' + l[1].toFixed(1) + '" y2="' + l[1].toFixed(1) + '" stroke="transparent" stroke-width="14"/><circle cx="' + x1.toFixed(1) + '" cy="' + l[1].toFixed(1) + '" r="4.5" fill="#fff" stroke="' + l[2] + '" stroke-width="1.6"/></g><text x="0" y="0" class="fbx-lab" fill="' + l[2] + '">AXT|' + l[1].toFixed(1) + '|' + l[3] + '</text>';
       });
-      var ratio = R.risk > 0 ? R.rew / R.risk : 0, my = (Math.min(ye, yt) + Math.max(ye, yt)) / 2;
-      o += '<g transform="translate(' + ((x0 + x1) / 2).toFixed(1) + ',' + my.toFixed(1) + ')"><rect x="-44" y="-11" width="88" height="20" rx="10" fill="#0B0B0C"/><text text-anchor="middle" y="3.5" class="fbx-tag" fill="#fff">R:R 1 : ' + ratio.toFixed(2) + '</text></g>';
       return o;
     }
     var COLS = { buy: "#2F6FE4", sell: "#0B0B0C", short: "#7C4DCC", cover: "#E0662B" }, posQ = 0;
@@ -472,7 +487,10 @@
       var lab = (partial ? "PARTIAL " : "") + (e.side === "buy" ? "BUY" : e.side === "sell" ? "SELL" : e.side === "short" ? "SHORT" : "COVER") + (e.qty ? " " + e.qty : "") + " @ " + (+e.price).toFixed(2);
       var show = partial ? M.partial : (e.side === "buy" || e.side === "short") ? M.entry : M.exit; if (!show) return;
       var x = X(e.i), y = Y(e.price), col = partial ? "#E0662B" : COLS[e.side] || "#111", up = e.side === "buy" || e.side === "cover", ty = up ? y + 24 : y - 16;
-      s += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="6.5" fill="' + col + '" stroke="#fff" stroke-width="2"/>'; pills.push('<text x="' + x.toFixed(1) + '" y="' + ty.toFixed(1) + '" text-anchor="middle" class="fbx-lab" fill="' + col + '">PILL|' + y.toFixed(1) + '|' + lab + '</text>');
+      var cd = C[Math.max(0, Math.min(n - 1, e.i))], tipY = up ? Y(cd.l) + 3 : Y(cd.h) - 3, sz = Math.max(5, Math.min(8, bw * 0.9));
+      s += '<line x1="' + (x + bw / 2 + 1).toFixed(1) + '" x2="' + (x + bw / 2 + 9).toFixed(1) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="' + col + '" stroke-width="2.2" stroke-linecap="round"/>' +
+        '<path d="M' + x.toFixed(1) + ' ' + tipY.toFixed(1) + ' l' + (-sz) + ' ' + (up ? sz * 1.4 : -sz * 1.4) + ' h' + (sz * 2) + ' z" fill="' + col + '" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>';
+      var ay2 = up ? tipY + sz * 1.4 : tipY - sz * 1.4; pills.push('<text x="0" y="0" class="fbx-lab" fill="' + col + '">PILL|' + x.toFixed(1) + '|' + ay2.toFixed(1) + '|' + (up ? "u" : "d") + '|' + lab + '</text>');
     });
     s += pills.join("");
     if (M.notes && (D.note || useDemo)) { var nt = (D.note || "Waited for the VWAP reclaim. Stop under the flag.").slice(0, 90); s += '<g transform="translate(' + (pl + 8) + ',' + (pt + 8) + ')"><rect width="' + Math.min(W * 0.5, nt.length * 5.4 + 20) + '" height="24" rx="8" fill="#FFF8D6" stroke="#EAD98A"/><text x="10" y="16" class="fbx-note">&#128221; ' + esc(nt) + '</text></g>'; }
@@ -528,9 +546,10 @@
     if (o.marks) { var M = o.marks, e0 = C[Math.floor(n * 0.3)].c, stp = e0 * 0.985, tg = e0 * 1.03, ex = C[Math.floor(n * 0.72)].c, ix = Math.floor(n * 0.3), ox = Math.floor(n * 0.72);
       if (M.stop) s += hl(stp, "#DC2626", "STOP", "5 3");
       if (M.target) s += hl(tg, "#16A34A", "TARGET", "5 3");
-      if (M.entry) s += '<circle cx="' + X(ix) + '" cy="' + Y(e0) + '" r="7" fill="#2F6FE4" stroke="#fff" stroke-width="2"/><text x="' + (X(ix) - 8) + '" y="' + (Y(e0) + 22) + '" class="fbx-tag" fill="#2F6FE4">BUY</text>';
-      if (M.partial) { var px = Math.floor(n * 0.55); s += '<circle cx="' + X(px) + '" cy="' + Y(C[px].c) + '" r="6" fill="#E0662B" stroke="#fff" stroke-width="2"/><text x="' + (X(px) - 14) + '" y="' + (Y(C[px].c) - 12) + '" class="fbx-tag" fill="#E0662B">PARTIAL</text>'; }
-      if (M.exit) s += '<circle cx="' + X(ox) + '" cy="' + Y(ex) + '" r="7" fill="#111" stroke="#fff" stroke-width="2"/><text x="' + (X(ox) - 10) + '" y="' + (Y(ex) - 13) + '" class="fbx-tag" fill="#111">SELL</text>';
+      var arw = function (i, upA, col, lab) { var c = C[i], ty = upA ? Y(c.l) + 3 : Y(c.h) - 3, sz = 6; return '<path d="M' + X(i) + ' ' + ty + ' l-' + sz + ' ' + (upA ? 8.5 : -8.5) + ' h' + (sz * 2) + ' z" fill="' + col + '" stroke="#fff" stroke-width="1"/><text x="' + X(i) + '" y="' + (upA ? ty + 20 : ty - 12) + '" text-anchor="middle" class="fbx-tag" fill="' + col + '">' + lab + '</text>'; };
+      if (M.entry) s += arw(ix, true, "#2F6FE4", "BUY");
+      if (M.partial) s += arw(Math.floor(n * 0.55), false, "#E0662B", "PARTIAL");
+      if (M.exit) s += arw(ox, false, "#111", "SELL");
       if (M.notes) s += '<g transform="translate(' + (X(Math.floor(n * 0.08))) + ',' + (pt + 8) + ')"><rect width="150" height="34" rx="8" fill="#FFF8D6" stroke="#EAD98A"/><text x="10" y="15" class="fbx-note">Waited for VWAP reclaim.</text><text x="10" y="27" class="fbx-note">Stop under the flag.</text></g>';
     }
     return s + '</svg>';
