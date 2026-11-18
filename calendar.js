@@ -81,8 +81,8 @@
     var q = C.q.toLowerCase(), out = [];
     C.ev.forEach(function (e) { if (hits(e, day) && (!q || (e.t + " " + (e.notes || "")).toLowerCase().indexOf(q) >= 0)) out.push({ src: "cal", e: e, day: day, done: !!(e.dn && e.dn.indexOf(day) >= 0) }); });
     var T = TDx();
-    if (C.link && T && T.items) T.items.forEach(function (i) {
-      if (!i.due) return;
+    if (T && T.items) T.items.forEach(function (i) {
+      if (!i.due || i.cal === false) return;
       var on = i.rec && i.rec.f && !i.done ? hits({ date: i.due, rec: i.rec }, day) && day >= i.due : i.due === day;
       if (on && (!q || i.t.toLowerCase().indexOf(q) >= 0)) out.push({ src: "td", e: { id: i.id, t: i.t, kind: "todo", allDay: true, color: i.p === "h" ? "#C2364A" : "#17845B", rec: i.rec }, day: day, done: day === i.due ? !!i.done : false, ti: i });
     });
@@ -158,13 +158,13 @@
     return h + '</div></div>';
   }
   function sidebar() {
-    var T = TDx(), un = (C.link && T && T.items ? T.items.filter(function (i) { return !i.done && !i.due; }) : []);
+    var T = TDx(), un = (T && T.items ? T.items.filter(function (i) { return !i.done && !i.due && i.cal !== false; }) : []);
     var up = []; for (var i = 0; i < 14 && up.length < 6; i++) { var d = add(today(), i); itemsOn(d).forEach(function (it) { if (!it.done && up.length < 6) up.push(it); }); }
     return '<aside class="ccal-side">' +
       '<button type="button" class="ccal-create" data-cnew="' + C.cur + '"><span>+</span> Create</button>' + mini() +
       '<div class="ccal-box"><h4>Coming up</h4>' + (up.length ? up.map(function (it) { return '<div class="upr"><small>' + (it.day === today() ? "Today" : it.day === add(today(), 1) ? "Tomorrow" : nice(it.day)) + (it.e.start && !it.e.allDay ? " · " + fmtT(it.e.start) : "") + '</small>' + chip(it, "wide") + '</div>'; }).join("") : '<p class="hint">Nothing in the next 2 weeks.</p>') + '</div>' +
-      '<div class="ccal-box"><h4>&#128279; To-do list</h4><label class="tg"><input type="checkbox" data-clink="1"' + (C.link ? " checked" : "") + '> Show my to-dos on the calendar</label>' +
-      (C.link ? (un.length ? '<p class="hint" style="margin:8px 0 4px">No date yet. Drag one onto a day:</p>' + un.slice(0, 12).map(function (i) { return '<button type="button" class="ccal-chip wide k-todo un" style="--c:#17845B" data-cev="' + esc(i.id) + '" data-csrc="td" data-cday="">&#9744; ' + esc(i.t.length > 60 ? i.t.slice(0, 60) + "…" : i.t) + '</button>'; }).join("") : '<p class="hint" style="margin-top:8px">Every open to-do has a date.</p>') : '') + '</div>' +
+      '<div class="ccal-box"><h4>&#128279; To-do list</h4><p class="hint" style="margin:0">Tap &#128197; on a task in your To-do tab to show or hide it here.</p>' +
+      (true ? (un.length ? '<p class="hint" style="margin:8px 0 4px">No date yet. Drag one onto a day:</p>' + un.slice(0, 12).map(function (i) { return '<button type="button" class="ccal-chip wide k-todo un" style="--c:#17845B" data-cev="' + esc(i.id) + '" data-csrc="td" data-cday="">&#9744; ' + esc(i.t.length > 60 ? i.t.slice(0, 60) + "…" : i.t) + '</button>'; }).join("") : '<p class="hint" style="margin-top:8px">Every open to-do has a date.</p>') : '') + '</div>' +
       '<div class="ccal-box"><h4>&#128276; Reminder alerts</h4><p class="hint" style="margin:0 0 8px">Pop-ups show while Revatour is open.</p>' + ("Notification" in window && Notification.permission !== "granted" ? '<button type="button" data-cnotif="1">Turn on desktop alerts</button>' : '<p class="hint" style="margin:0">' + ("Notification" in window ? "Desktop alerts are on." : "This browser has no desktop alerts.") + '</p>') + '</div>' +
       '</aside>';
   }
