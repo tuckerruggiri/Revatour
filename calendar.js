@@ -172,11 +172,13 @@
     if (!host || !document.body.contains(host)) return;
     var sy = host.querySelector("#ccalgb"), keep = sy ? sy.scrollTop : null;
     var V = C.view, body = V === "day" ? gridView([C.cur]) : V === "week" ? gridView([0, 1, 2, 3, 4, 5, 6].map(function (i) { return add(wkStart(C.cur), i); })) : V === "year" ? yearView() : V === "agenda" ? agendaView() : monthView();
+    host.classList.toggle("ccal-max", !!C.max); document.documentElement.classList.toggle("ccal-lock", !!C.max);
     host.innerHTML = '<div class="ccal">' + sidebar() + '<div class="ccal-main"><div class="ccal-top">' +
       '<button type="button" data-ctoday="1">Today</button><button type="button" class="ar" data-cstep="-1" aria-label="Previous">&#8249;</button><button type="button" class="ar" data-cstep="1" aria-label="Next">&#8250;</button><h3>' + esc(title()) + '</h3>' +
+      '<button type="button" class="mx" data-cmax="1" aria-pressed="' + !!C.max + '" title="' + (C.max ? "Exit full screen (Esc)" : "Make the calendar fill the screen") + '">' + (C.max ? "&#10005; Exit full screen" : "&#x26F6; Full screen") + '</button>' +
       '<input type="search" class="ccal-q" placeholder="Search" value="' + esc(C.q) + '" aria-label="Search calendar">' +
       '<div class="ccal-views" role="tablist">' + [["day", "Day", "D"], ["week", "Week", "W"], ["month", "Month", "M"], ["year", "Year", "Y"], ["agenda", "Schedule", "A"]].map(function (v) { return '<button type="button" role="tab" data-cview="' + v[0] + '" aria-selected="' + (V === v[0]) + '" title="Shortcut: ' + v[2] + '">' + v[1] + '</button>'; }).join("") + '</div></div>' +
-      '<div class="ccal-body">' + body + '</div><p class="hint ccal-keys">Tips: click any day or time to add. Drag items to move them. Keys: T today, ← → move, D W M Y A switch view, N new.</p></div></div>';
+      '<div class="ccal-body">' + body + '</div><p class="hint ccal-keys">Tips: click any day or time to add. Drag items to move them. Keys: T today, ← → move, D W M Y A switch view, N new, F full screen.</p></div></div>';
     var gb = host.querySelector("#ccalgb"); if (gb) gb.scrollTop = keep != null ? keep : 7 * 48;
   }
 
@@ -258,6 +260,7 @@
       if (b.dataset.csrc === "td") { toast("This is from your To-do list. Edit it there, or check it off here."); return; }
       var e = C.ev.find(function (x) { return x.id === b.dataset.cev; }); if (e) editor({ e: e, day: b.dataset.cday }); return;
     }
+    if (t.closest("[data-cmax]")) { C.max = !C.max; return paint(); }
     if ((b = t.closest("[data-cview]"))) { C.view = b.dataset.cview; save(); return paint(); }
     if ((b = t.closest("[data-cstep]"))) return step(+b.dataset.cstep);
     if (t.closest("[data-ctoday]")) { C.cur = today(); C.mini = null; return paint(); }
@@ -273,9 +276,11 @@
   }
   function onInput(ev) { if (ev.target.classList.contains("ccal-q")) { C.q = ev.target.value; clearTimeout(onInput.t); onInput.t = setTimeout(function () { var p = ev.target.selectionStart; paint(); var q = host.querySelector(".ccal-q"); if (q) { q.focus(); try { q.setSelectionRange(p, p); } catch (e) {} } }, 250); } }
   function onKey(ev) {
-    if (!host || !document.body.contains(host) || !host.offsetParent) return;
+    if (!host || !document.body.contains(host) || !host.getClientRects().length) return;
     if (document.querySelector(".ccal-modal")) return;
+    if (ev.key === "Escape" && C.max) { C.max = false; paint(); return; }
     if (/input|select|textarea/i.test(ev.target.tagName) || ev.target.isContentEditable || ev.ctrlKey || ev.metaKey || ev.altKey) return;
+    if (ev.key.toLowerCase() === "f") { C.max = !C.max; paint(); ev.preventDefault(); return; }
     var k = ev.key.toLowerCase(), V = { d: "day", w: "week", m: "month", y: "year", a: "agenda" }[k];
     if (V) { C.view = V; save(); paint(); }
     else if (k === "t") { C.cur = today(); paint(); }
@@ -389,6 +394,8 @@
       ".ccal-year{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}.ccal-year .ymt{border:0;background:none;color:var(--ink);font:inherit;font-weight:700;font-size:15px;cursor:pointer;padding:0 0 6px}.ccal-year .ymg{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;gap:1px}.ccal-year i{font-style:normal;font-size:10px;color:var(--mute)}.ccal-year .ymg button{border:0;background:none;color:var(--ink);font:inherit;font-size:12px;aspect-ratio:1;border-radius:50%;cursor:pointer;padding:0;position:relative}.ccal-year .ymg button:hover{background:var(--line)}.ccal-year .t{background:var(--accent)!important;color:var(--accent-ink,#fff)!important;font-weight:700}.ccal-year .has::after{content:'';position:absolute;bottom:2px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--accent)}",
       ".ccal-agenda .ag{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.ccal-agenda .agd{border:0;background:none;color:var(--ink);text-align:left;cursor:pointer;font:inherit;display:flex;align-items:center;gap:8px}.ccal-agenda .agd b{font-size:22px;width:38px;height:38px;line-height:38px;text-align:center;border-radius:50%}.ccal-agenda .agd.today b{background:var(--accent);color:var(--accent-ink,#fff)}.ccal-agenda .agd small{color:var(--mute);font-size:12px}.ccal-agenda .agr{display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:center;margin-bottom:4px}.ccal-agenda .agt{font-size:13px;color:var(--mute)}",
       ".ccal-keys{font-size:12px;margin-top:10px}",
+      ".ccal-top .mx{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer}.ccal-top .mx[aria-pressed=true]{background:var(--accent);color:var(--accent-ink,#fff);border-color:var(--accent)}",
+      ".ccal-max{position:fixed!important;inset:0;z-index:9000;background:var(--bg,#fff);overflow:auto;padding:18px 24px;margin:0!important;max-width:none!important}html.ccal-lock,html.ccal-lock body{overflow:hidden}.ccal-max .ccal-grid .gb{height:calc(100vh - 250px)}.ccal-max .ccal-cell{min-height:calc((100vh - 200px) / 6)}",
       ".ccal-modal{position:fixed;inset:0;background:rgba(10,14,22,.45);display:flex;align-items:center;justify-content:center;z-index:10000;padding:16px}.ccal-ed{background:var(--panel,#fff);color:var(--ink);border-radius:18px;padding:20px;width:min(520px,100%);max-height:92vh;overflow:auto;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 50px rgba(0,0,0,.3)}",
       ".ccal-ed .kinds{display:flex;gap:6px}.ccal-ed .kinds button{flex:1;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:8px;font:inherit;font-weight:600;cursor:pointer}.ccal-ed .kinds [aria-pressed=true]{background:var(--accent);color:var(--accent-ink,#fff);border-color:var(--accent)}",
       ".ccal-ed .et{font-size:22px;font-weight:700;border:0;border-bottom:2px solid var(--line);background:transparent;color:var(--ink);padding:6px 2px;outline:0}.ccal-ed .et:focus{border-bottom-color:var(--accent)}",
