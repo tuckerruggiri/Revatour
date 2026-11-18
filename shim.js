@@ -206,6 +206,9 @@
     quotes: async function (syms) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
       var r = await fetch('/api/quotes?symbols=' + encodeURIComponent((syms || []).join(',')), { headers: { Authorization: 'Bearer ' + tok } });
       if (!r.ok) throw new Error('quotes failed'); return r.json(); },
+    ics: async function (url) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
+      var r = await fetch('/api/ics?url=' + encodeURIComponent(url), { headers: { Authorization: 'Bearer ' + tok } });
+      var j = await r.json().catch(function () { return {}; }); if (!r.ok && !j.error) j.error = 'Could not load that calendar.'; return j; },
     discord: async function (action, q) { await ready; var tok = (await sb.auth.getSession()).data.session.access_token;
       var r = await fetch('/api/discord?' + new URLSearchParams(Object.assign({ action: action }, q || {})).toString(), { headers: { Authorization: 'Bearer ' + tok } });
       var j = await r.json().catch(function () { return {}; }); if (!r.ok && !j.error) j.error = 'failed'; return j; },
