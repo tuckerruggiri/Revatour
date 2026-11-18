@@ -49,7 +49,11 @@
   function isSample() { return !ST.acct; }
   function total() { return A().plans.reduce(function (t, p) { return t + (+p.bal || 0); }, 0); }
   function spDollars() { return A().plans.reduce(function (t, p) { return t + (p.sp500 != null ? (p.sp500 <= 1 ? p.sp500 * p.bal : p.sp500) : 0); }, 0); }
-  function month() { return D.months["2026-10"]; }
+  function mkey() { var ks = Object.keys(D.months).sort(); return ST.mk && D.months[ST.mk] ? ST.mk : ks[ks.length - 1]; }
+  function month() { return D.months[mkey()]; }
+  function mFull() { return (month().label || "").split(" ")[0]; }
+  function mShort() { return mFull().slice(0, 3); }
+  function inMo(L) { var mm = mkey().slice(5); return (L || []).filter(function (d) { return d.d && d.d.slice(0, 2) === mm; }); }
   function startIdx() {
     var s = (ST.cfg && ST.cfg.start) || A().start || "2019-06", m = /^(\d{4})-(\d\d)$/.exec(s), N = D.spyMonthly.length;
     if (!m) return N - 1; var i = (+m[1] - 2000) * 12 + (+m[2] - 1); return Math.max(0, Math.min(N - 1, i));
@@ -169,32 +173,33 @@
     var line = (A().line && A().line.length === n + 1) ? A().line : M.sampleLine, xs = [X(-1)].concat(C.map(function (c, i) { return X(i); }));
     var P = line.map(function (q) { return base * (1 + q / 100); }), Sp = [base].concat(C.map(function (c) { return c[4]; }));
     var pp = "M" + xs.map(function (x, i) { return x.toFixed(1) + "," + Y(P[i]).toFixed(1); }).join(" L"), sp = "M" + xs.map(function (x, i) { return x.toFixed(1) + "," + Y(Sp[i]).toFixed(1); }).join(" L");
+    var yY = Y(P[P.length - 1]) + 28, yM = Y(Sp[Sp.length - 1]) - 14; if (Math.abs(yY - yM) < 24) { if (yY >= yM) yY = yM + 24; else yM = yY + 24; }
     var you = line[line.length - 1], mkt = (Sp[Sp.length - 1] / base - 1) * 100, xe = xs[xs.length - 1];
-    var dots = ((A().deposits || []).concat((A().earnings || []).map(function (e) { return Object.assign({ t: "earn" }, e); }))).map(function (d) {
-      var i = idx[d.d]; if (i == null) { C.forEach(function (c, k) { if (c[0] <= d.d) i = k; }); } if (i == null) return ""; var x = xs[i + 1], y = Y(P[i + 1]), col = d.t === "earn" ? "#8A5A10" : GRN, lab = d.t === "earn" ? "EARNINGS +" + money(d.a, 2) : "BUY " + money(d.a, 2);
-      return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="11" fill="' + col + '" stroke="#fff" stroke-width="3"/><rect x="' + (x - 72).toFixed(1) + '" y="' + (y + 18).toFixed(1) + '" width="144" height="26" rx="13" fill="' + col + '"/><text x="' + x.toFixed(1) + '" y="' + (y + 36).toFixed(1) + '" text-anchor="middle" class="dl">' + lab + '</text>';
+    var dots = (inMo(A().deposits).concat(inMo(A().earnings).map(function (e) { return Object.assign({ t: "earn" }, e); }))).map(function (d) {
+      var i = idx[d.d]; if (i == null) { C.forEach(function (c, k) { if (c[0] <= d.d) i = k; }); } if (i == null) return ""; var x = xs[i + 1], y = Y(P[i + 1]), col = d.t === "earn" ? "#8A5A10" : GRN, lab = d.t === "earn" ? "EARNINGS +" + money(d.a, 2) : "BUY " + money(d.a, 2), late = i >= n - 4, bx = late ? x - 90 : x, by = late ? y - 34 : y + 31;
+      return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="11" fill="' + col + '" stroke="#fff" stroke-width="3"/><rect x="' + (bx - 72).toFixed(1) + '" y="' + (by - 13).toFixed(1) + '" width="144" height="26" rx="13" fill="' + col + '"/><text x="' + bx.toFixed(1) + '" y="' + (by + 5).toFixed(1) + '" text-anchor="middle" class="dl">' + lab + '</text>';
     }).join("");
     var clear = '<g class="fb-clear"><rect x="0" y="0" width="' + W + '" height="' + H + '" rx="12" fill="rgba(226,236,252,.45)" stroke="rgba(47,107,216,.5)" stroke-width="1.5"/>' +
       '<path d="' + sp + '" fill="none" stroke="' + INK + '" stroke-width="3" stroke-dasharray="9 6" stroke-opacity=".7"/><path d="' + pp + '" fill="none" stroke="' + BLU + '" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>' + dots +
-      '<circle cx="' + xe + '" cy="' + Y(P[P.length - 1]).toFixed(1) + '" r="7" fill="' + BLU + '" stroke="#fff" stroke-width="3"/><text x="' + (xe - 12) + '" y="' + (Y(P[P.length - 1]) + 28).toFixed(1) + '" text-anchor="end" class="ll" fill="' + BLU + '">You ' + pct(you) + '</text>' +
-      '<text x="' + (xe - 12) + '" y="' + (Y(Sp[Sp.length - 1]) - 14).toFixed(1) + '" text-anchor="end" class="ll" fill="' + INK + '">Market ' + pct(mkt) + '</text>' +
+      '<circle cx="' + xe + '" cy="' + Y(P[P.length - 1]).toFixed(1) + '" r="7" fill="' + BLU + '" stroke="#fff" stroke-width="3"/><text x="' + (xe - 12) + '" y="' + yY.toFixed(1) + '" text-anchor="end" class="ll" fill="' + BLU + '">You ' + pct(you) + '</text>' +
+      '<text x="' + (xe - 12) + '" y="' + yM.toFixed(1) + '" text-anchor="end" class="ll" fill="' + INK + '">Market ' + pct(mkt) + '</text>' +
       '<rect x="18" y="12" width="270" height="30" rx="15" fill="' + BLU + '"/><text x="153" y="32" text-anchor="middle" class="dl">CLEAR PAGE · YOU VS. THE MARKET</text>' + (A().lineNote ? '<text x="' + (W - 22) + '" y="34" text-anchor="end" class="ax">' + esc(A().lineNote) + '</text>' : '') + '</g>';
-    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="fb-svg" role="img" aria-label="Daily S&amp;P 500 candles for October 2026' + (ST.clear ? " with your 401(k) line on top" : "") + '">' + s + (ST.clear ? clear : "") + '</svg>';
+    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="fb-svg" role="img" aria-label="Daily S&amp;P 500 candles for ' + esc(month().label) + (ST.clear ? " with your 401(k) line on top" : "") + '">' + s + (ST.clear ? clear : "") + '</svg>';
     var best = { v: -99 }, worst = { v: 99 }, pc = base; C.forEach(function (c) { var ch = (c[4] / pc - 1) * 100; if (ch > best.v) best = { v: ch, d: c[0] }; if (ch < worst.v) worst = { v: ch, d: c[0] }; pc = c[4]; });
-    var right = '<div class="fb-g3 tight">' + stat("The market (SPY)", pct(mkt, 2), "$" + base + " → $" + Sp[Sp.length - 1], mkt >= 0 ? GRN : RED) + stat("Best day", "Oct " + (+best.d.slice(3)), pct(best.v, 2) + " in one day", GRN) + stat("Worst day", "Oct " + (+worst.d.slice(3)), pct(worst.v, 2) + " in one day", RED) + '</div>';
+    var right = '<div class="fb-g3 tight">' + stat("The market (SPY)", pct(mkt, 2), "$" + base + " → $" + Sp[Sp.length - 1], mkt >= 0 ? GRN : RED) + stat("Best day", mShort() + " " + (+best.d.slice(3)), pct(best.v, 2) + " in one day", GRN) + stat("Worst day", mShort() + " " + (+worst.d.slice(3)), pct(worst.v, 2) + " in one day", RED) + '</div>';
     var leg = '<div class="fb-leg"><span><i style="background:' + GRN + '"></i>Green day: price went up</span><span><i style="background:' + RED + '"></i>Red day: price went down</span>' + (on("blurbs") ? '<span><i class="o">1</i>Pin: read the story below</span>' : "") +
       (on("clear") ? '<button type="button" class="fb-flip' + (ST.clear ? " on" : "") + '" data-act="clear">' + (ST.clear ? "Lift the clear page" : "Flip the clear page over the chart") + '</button>' : "") + '</div>';
     var blurbs = "";
     if (on("blurbs")) { pc = base; var ch = {}; C.forEach(function (c) { ch[c[0]] = (c[4] / pc - 1) * 100; pc = c[4]; });
-      blurbs = '<div class="fb-blurbs">' + M.events.map(function (e, k) { var v = ch[e[0]] || 0; return '<div class="fb-bl"><i style="background:' + (CAT[e[1]] || BLU) + '">' + (k + 1) + '</i><div><div class="t"><span class="chip" style="background:' + (CAT[e[1]] || BLU) + '">' + esc(e[1]) + '</span><span>OCT ' + (+e[0].slice(3)) + '</span><span style="color:' + (v >= 0 ? GRN : RED) + '">' + (v >= 0 ? "▲" : "▼") + " " + Math.abs(v).toFixed(1) + '%</span></div><b>' + esc(e[2]) + '</b><p>' + esc(e[3]) + '</p></div></div>'; }).join("") + '</div>'; }
+      blurbs = '<div class="fb-blurbs">' + M.events.map(function (e, k) { var v = ch[e[0]] || 0; return '<div class="fb-bl"><i style="background:' + (CAT[e[1]] || BLU) + '">' + (k + 1) + '</i><div><div class="t"><span class="chip" style="background:' + (CAT[e[1]] || BLU) + '">' + esc(e[1]) + '</span><span>' + mShort().toUpperCase() + ' ' + (+e[0].slice(3)) + '</span><span style="color:' + (v >= 0 ? GRN : RED) + '">' + (v >= 0 ? "▲" : "▼") + " " + Math.abs(v).toFixed(1) + '%</span></div><b>' + esc(e[2]) + '</b><p>' + esc(e[3]) + '</p></div></div>'; }).join("") + '</div>'; }
     var extras = [];
     if (on("mood")) extras.push(moodMeter(M));
-    if (on("sectors")) extras.push('<div class="fb-box"><h4>Sector scoreboard</h4>' + M.sectors.map(function (x) { var w = Math.abs(x[1]) / 14 * 100; return '<div class="fb-sec"><span>' + esc(x[0]) + '</span><div><i style="width:' + w + '%;background:' + (x[1] >= 0 ? GRN : RED) + '"></i></div><b style="color:' + (x[1] >= 0 ? GRN : RED) + '">' + pct(x[1]) + '</b></div>'; }).join("") + '<p class="fb-mut">Big tech fell while energy and health care rose — the “average” stock did better than the index.</p></div>');
+    if (on("sectors")) extras.push('<div class="fb-box"><h4>Sector scoreboard</h4>' + M.sectors.map(function (x) { var w = Math.abs(x[1]) / 14 * 100; return '<div class="fb-sec"><span>' + esc(x[0]) + '</span><div><i style="width:' + w + '%;background:' + (x[1] >= 0 ? GRN : RED) + '"></i></div><b style="color:' + (x[1] >= 0 ? GRN : RED) + '">' + pct(x[1]) + '</b></div>'; }).join("") + (M.sectorNote ? '<p class="fb-mut">' + esc(M.sectorNote) + '</p>' : '') + '</div>');
     if (on("econ")) extras.push('<div class="fb-box"><h4>Economy dashboard</h4><div class="fb-econ">' + M.economy.map(function (x) { return '<div><small>' + esc(x[0]) + '</small><b>' + esc(x[1]) + '</b><span>' + esc(x[2]) + '</span></div>'; }).join("") + '</div></div>');
     if (on("history")) extras.push('<div class="fb-box hist"><h4>This month in history</h4>' + M.history.map(function (h) { return '<div class="fb-hi"><small>' + esc(h[0]) + '</small><b>' + esc(h[1]) + '</b><p>' + esc(h[2]) + '</p></div>'; }).join("") + '</div>');
     var inner = leg + '<div class="fb-chartwrap">' + svg + '</div>' + blurbs + (extras.length ? '<div class="fb-extras">' + extras.join("") + '</div>' : "") +
       (ST.clear ? '<div class="fb-cleargrid">' + clearCards(you, mkt) + '</div>' : "");
-    return paper("October 2026 · the market’s month", 'October <span class="fb-yr">2026</span>', esc(M.mood) + " Here’s the market, one candle per day.", inner, { right: right });
+    return paper(esc(M.label) + " · the market’s month", esc(mFull()) + ' <span class="fb-yr">' + esc((M.label || "").split(" ")[1] || "") + '</span>', esc(M.mood) + " Here’s the market, one candle per day.", inner, { right: right });
   }
   function moodMeter(M) {
     var v = Math.max(-1, Math.min(1, M.vixChange / 50)), ang = -90 + (v + 1) * 90, r = 80, cx = 100, cy = 96;
@@ -202,10 +207,10 @@
     var arc = function (a0, a1, col) { var p0 = [cx + Math.sin(a0 * Math.PI / 180) * r, cy - Math.cos(a0 * Math.PI / 180) * r], p1 = [cx + Math.sin(a1 * Math.PI / 180) * r, cy - Math.cos(a1 * Math.PI / 180) * r]; return '<path d="M' + p0 + ' A' + r + ',' + r + ' 0 0 1 ' + p1 + '" stroke="' + col + '" stroke-width="18" fill="none"/>'; };
     return '<div class="fb-box"><h4>Market mood</h4><svg viewBox="0 0 200 116" class="fb-mood" role="img" aria-label="Mood needle leaning toward nervous">' + arc(-90, -36, "#2e9e6b") + arc(-36, 18, "#f0b429") + arc(18, 90, "#d64545") +
       '<line x1="' + cx + '" y1="' + cy + '" x2="' + nx.toFixed(1) + '" y2="' + ny.toFixed(1) + '" stroke="' + INK + '" stroke-width="5" stroke-linecap="round"/><circle cx="' + cx + '" cy="' + cy + '" r="8" fill="' + INK + '"/><text x="22" y="114" class="ax">Calm</text><text x="178" y="114" text-anchor="end" class="ax">Scared</text></svg>' +
-      '<p><b>Getting nervous.</b> The VIX “fear gauge” rose about ' + Math.round(M.vixChange) + '% in October as tech stocks slid.</p></div>';
+      '<p><b>Getting nervous.</b> The VIX “fear gauge” rose about ' + Math.round(M.vixChange) + '% in ' + esc(mFull()) + ' ' + esc(M.vixNote || "") + '.</p></div>';
   }
   function clearCards(you, mkt) {
-    var a = A(), dep = (a.deposits || [])[0], earn = (a.earnings || [])[0];
+    var a = A(), dep = inMo(a.deposits)[0], earn = inMo(a.earnings)[0];
     return [["Your buys", dep ? money(dep.a, 2) : money(a.deposit, 2), dep ? "Paycheck deposit (green dot)" : "Each paycheck buy gets a dot", INK],
       ["Company match", a.matchPct != null ? a.matchPct + "% so far" : money(a.match, 2), a.matchTotal ? money(a.matchTotal, 2) + " from your company to date" : "Free money from your company", GRN],
       ["Dividends reinvested", "+" + money(earn ? earn.a : a.earn, 2), earn ? "Bought more shares for you (gold dot)" : "Companies paying you to own them", "#8A5A10"],
@@ -219,21 +224,21 @@
     seed: '<svg viewBox="0 0 24 24"><path d="M12 21V11M12 11c0-4 3-7 8-7 0 5-3 7-8 7zM12 14c0-3-2-5-7-5 0 4 2 5 7 5z"/></svg>', wave: '<svg viewBox="0 0 24 24"><path d="M3 15c3 0 3-6 6-6s3 6 6 6 3-6 6-6"/></svg>'
   };
   function pgMonth() {
-    var a = A(), t = total(), dep = (a.deposits || [])[0], earn = (a.earnings || [])[0];
+    var a = A(), t = total(), dep = inMo(a.deposits)[0], earn = inMo(a.earnings)[0];
     var mv = a.plans.reduce(function (s, p) { return s + (+p.rm || 0) * (+p.bal || 0); }, 0) / (t || 1);
     var cols = ["#2F6BD8", "#17845B", "#E0672B", "#8A5BA8", "#0F7C7C"];
     var bar = a.plans.map(function (p, i) { return '<i style="width:' + ((+p.bal || 0) / t * 100).toFixed(2) + '%;background:' + cols[i % 5] + '"></i>'; }).join("");
     var leg = a.plans.map(function (p, i) { return '<span><i style="background:' + cols[i % 5] + '"></i><b>' + esc(p.n) + '</b> ' + esc(p.p || "") + ' <em>' + money(p.bal, 2) + '</em></span>'; }).join("");
     var inner = sampleNote() + '<div class="fb-g4">' +
-      tile(I.dep, "You put in", money(dep ? dep.a : a.deposit, 2), dep ? "Paycheck deposit on Oct " + (+dep.d.slice(3)) + ". It bought shares automatically." : "Your paycheck deposits this month.", BLU, "#EEF3FC") +
+      tile(I.dep, "You put in", money(dep ? dep.a : a.deposit, 2), dep ? "Paycheck deposit on " + mShort() + " " + (+dep.d.slice(3)) + ". It bought shares automatically." : "Your paycheck deposits this month.", BLU, "#EEF3FC") +
       tile(I.gift, "Company match", a.matchPct != null ? a.matchPct + "%" : money(a.match, 2), a.matchTotal ? "Your company has added " + money(a.matchTotal, 2) + " so far." : "Free money your company added.", GRN, "#E9F6EF") +
       tile(I.seed, "Earnings reinvested", "+" + money(earn ? earn.a : a.earn, 2), "Your funds paid you and bought more shares. Small seeds grow.", "#8A5A10", "#FBF3E3") +
-      tile(I.wave, "Market wobble", "≈ " + pct(mv), "Your investments moved with October’s tech slide. Normal — markets breathe.", mv >= 0 ? GRN : RED, mv >= 0 ? "#E9F6EF" : "#FCEDEB") + '</div>' +
+      tile(I.wave, "Market wobble", "≈ " + pct(mv), "Your investments moved with the market in " + mFull() + ". Normal — markets breathe.", mv >= 0 ? GRN : RED, mv >= 0 ? "#E9F6EF" : "#FCEDEB") + '</div>' +
       '<div class="fb-totbox"><div class="r"><small>Everything you’ve saved for retirement</small><b>' + money(t, 2) + '</b></div><div class="fb-bar">' + bar + '</div><div class="fb-bleg">' + leg + '</div></div>';
-    return paper("Your money", "Your October", "What you added, what your company added, and what the market did.", inner);
+    return paper("Your money", "Your " + esc(mFull()), "What you added, what your company added, and what the market did.", inner);
   }
   function pgPaycheck() {
-    var a = A(), dep = (a.deposits || [])[0], amt = dep ? dep.a : a.deposit, mix = a.alloc || [["S&P 500 index", 60], ["International index", 25], ["Mid-cap index", 10], ["Small-cap index", 5]];
+    var a = A(), dep = inMo(a.deposits)[0], amt = dep ? dep.a : a.deposit, mix = a.alloc || [["S&P 500 index", 60], ["International index", 25], ["Mid-cap index", 10], ["Small-cap index", 5]];
     var cols = [BLU, GRN, ORG, "#8A5BA8", "#0F7C7C"];
     var cards = mix.map(function (m, i) {
       var d = amt * m[1] / 100, coins = Math.max(1, Math.round(m[1] / 8)), st = ""; for (var k = 0; k < coins; k++) st += '<i style="bottom:' + (k * 11) + 'px"></i>';
@@ -321,9 +326,9 @@
   function pages() {
     var L = [];
     if (on("big")) L.push(["You started here", pgBig]);
-    L.push(["October chart", chartPage]);
+    L.push([mFull() + " chart", chartPage]);
     if (on("panic")) L.push(["If you’d panicked", pgPanic]);
-    if (on("month")) L.push(["Your October", pgMonth]);
+    if (on("month")) L.push(["Your " + mFull(), pgMonth]);
     if (on("paycheck")) L.push(["Paycheck became", pgPaycheck]);
     if (on("own")) L.push(["What you own", pgOwn]);
     if (on("vest")) L.push(["Match & limit", pgVest]);
@@ -371,15 +376,16 @@
   function render() {
     if (!root) return;
     if (!ST.loaded) { root.innerHTML = '<p class="fb-mut">Opening your Flipbook…</p>'; return; }
-    var tabs = [["book", "My book"], ["build", "Build my book"], ["acct", "My accounts"]].map(function (t) { return '<button type="button" class="fb-tab' + (ST.tab === t[0] ? " on" : "") + '" data-act="tab" data-v="' + t[0] + '">' + t[1] + '</button>'; }).join("");
+    var mks = Object.keys(D.months).sort().reverse(), msel = mks.length > 1 ? '<label class="fb-mk">Month <select data-act="mk" aria-label="Pick a month">' + mks.map(function (k) { return '<option value="' + k + '"' + (k === mkey() ? " selected" : "") + '>' + esc(D.months[k].label) + '</option>'; }).join("") + '</select></label>' : "";
+    var tabs = msel + [["book", "My book"], ["build", "Build my book"], ["acct", "My accounts"]].map(function (t) { return '<button type="button" class="fb-tab' + (ST.tab === t[0] ? " on" : "") + '" data-act="tab" data-v="' + t[0] + '">' + t[1] + '</button>'; }).join("");
     root.innerHTML = '<div class="fb-top"><div><h2>Flipbook</h2><p>Your retirement, page by page. A new set of pages every month to snap into your book.</p></div><div class="fb-tabs">' + tabs + '</div></div>' +
       (ST.tab === "book" ? viewBook() : ST.tab === "build" ? viewBuild() : viewAcct());
   }
   function act(e) {
     var t = e.target.closest("[data-act]"); if (!t || !root.contains(t)) return;
     var a = t.getAttribute("data-act"), v = t.getAttribute("data-v");
-    if (e.type === "change" && !/^(ck|sm|sy)$/.test(a)) return;
-    if (e.type === "click" && /^(ck|sm|sy)$/.test(a)) return;
+    if (e.type === "change" && !/^(ck|sm|sy|mk)$/.test(a)) return;
+    if (e.type === "click" && /^(ck|sm|sy|mk)$/.test(a)) return;
     if (a === "tab") { ST.tab = v; ST.clear = false; }
     else if (a === "go") { ST.page = +v; ST.clear = false; }
     else if (a === "prev") { ST.page--; ST.clear = false; }
@@ -391,6 +397,7 @@
     else if (a === "sm" || a === "sy") { var si = startIdx(), y = 2000 + Math.floor(si / 12), m = si % 12; if (a === "sm") m = +t.value; else y = +t.value; ST.cfg.start = y + "-" + String(m + 1).padStart(2, "0"); save(); }
     else if (a === "qs") { var mm = /([A-Za-z]{3}) (\d{4})/.exec(v); if (mm) { ST.cfg.start = mm[2] + "-" + String(MN.indexOf(mm[1]) + 1).padStart(2, "0"); save(); } }
     else if (a === "imp") { var iv = document.getElementById("fbimp"); if (!iv || !iv.value.trim() || !importFromHash(iv.value.trim())) toast("That link didn’t work. Paste the whole private link."); }
+    else if (a === "mk") { ST.mk = t.value; ST.clear = false; }
     else if (a === "forget") { if (window.confirm("Remove your 401(k) numbers from Flipbook? You can add them again later.")) { ST.acct = null; save(); } }
     var y0 = window.scrollY; render(); if (a === "go" || a === "prev" || a === "next") { var s = root.querySelector(".fb-stage"); if (s) s.classList.add("turn"); } else window.scrollTo(0, y0);
   }
@@ -442,7 +449,7 @@
     '.fb-build{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:18px}.fb-build h3{margin:0;font-size:24px}.fb-build p{margin:4px 0 0;color:var(--mute)}.fb-bhead{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:flex-end}.fb-count{text-align:right}.fb-count b{display:block;font-size:44px;line-height:1;color:#E0672B}.fb-count span{color:var(--mute);font-size:13px}' +
     '.fb-startbox{border:1px solid var(--line);border-radius:16px;padding:16px 18px}.fb-startbox h4{margin:0;font-size:17px}.fb-startbox select{font:inherit;font-size:16px;padding:8px 12px;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);margin-left:6px}.fb-mini{margin-top:12px;color:var(--ink)}' +
     '.fb-grps{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}.fb-grp{border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:0;display:flex;flex-direction:column;gap:6px}.fb-grp legend{font-weight:800;padding:0 6px;font-size:14px}.fb-ck{display:flex;gap:12px;align-items:flex-start;padding:8px 6px;border-radius:10px;cursor:pointer;min-height:44px}.fb-ck:hover{background:var(--bg)}.fb-ck input{width:22px;height:22px;flex:none;margin:2px 0 0;accent-color:#17845B}.fb-ck b{display:block;font-size:14.5px}.fb-ck small{display:block;color:var(--mute);font-size:12.5px;line-height:1.4}' +
-    '.fb-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.fb-row.end{justify-content:flex-end}.fb-btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:10px 18px;min-height:44px;font:inherit;font-weight:700;cursor:pointer}.fb-paper .fb-btn{background:#fff;color:#1B2333;border-color:#D5DAE2}.fb-btn.pri{background:#E0672B;border-color:#E0672B;color:#fff}' +
+    '.fb-mk{display:flex!important;flex-direction:row!important;align-items:center;gap:8px;font-weight:700;margin-right:6px}.fb-mk select{font:inherit;font-weight:700;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}.fb-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.fb-row.end{justify-content:flex-end}.fb-btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:10px 18px;min-height:44px;font:inherit;font-weight:700;cursor:pointer}.fb-paper .fb-btn{background:#fff;color:#1B2333;border-color:#D5DAE2}.fb-btn.pri{background:#E0672B;border-color:#E0672B;color:#fff}' +
     '.fb-steps{margin:0;padding-left:20px;line-height:1.7}.fb-tbl{overflow-x:auto}.fb-tbl table{width:100%;border-collapse:collapse;font-size:14px}.fb-tbl th,.fb-tbl td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}.fb-tbl small{color:var(--mute)}.fb-build .fb-stat{background:var(--bg);color:var(--ink)}.fb-build .fb-stat small,.fb-build .fb-stat span{color:var(--mute)}' +
     '.fb-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1B2333;color:#fff;padding:12px 18px;border-radius:12px;font:600 14px Inter,system-ui,sans-serif;z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,.3)}' +
     '@media(max-width:700px){#flipv{padding:0 12px 30px}.fb-flip{margin-left:0}}';
