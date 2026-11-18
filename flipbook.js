@@ -5,7 +5,7 @@
   "use strict";
   var D = window.FLIPBOOK_DATA;
   var KEY = "flipbook", LKEY = "ss-flipbook";
-  var ST = { tab: "book", page: 0, clear: false, cfg: null, acct: null, loaded: false, years: 30, extra: 100, rate: 7 };
+  var ST = { tab: "book", page: 0, clear: false, cfg: null, acct: null, loaded: false, years: 30, extra: 100, rate: 7, wr: 4, wmode: "pct", wamt: 4000, ry: 30 };
   var MN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   var CAT = { "Market": "#2F6BD8", "Economy": "#7046C2", "Companies": "#C45A1C", "World": "#0F7C7C", "Hedge funds": "#B02E56", "Crypto": "#8A5A10" };
   var INK = "#1B2333", MUT = "#586172", GRN = "#17845B", RED = "#C93A30", ORG = "#E0672B", BLU = "#2F6BD8", YEL = "#F5C543";
@@ -296,18 +296,52 @@
     return paper("Proud page", "The race", "Last 12 months. Who went the farthest?", sampleNote() + '<div class="fb-lanes">' + lane + '</div><p class="fb-big">Beating inflation means your money <b>buys more</b> next year, not less.</p><p class="fb-mut">Inflation: September CPI, 3.7% over 12 months.</p>');
   }
   function pgHeading() {
-    var a = A(), t = total(), r = ST.rate / 100, n = ST.years, f = Math.pow(1 + r, n), ann = (f - 1) / r, mo = a.monthly || 0;
-    var base = t * f + mo * 12 * ann, ex = ST.extra * 12 * ann;
-    var btn = function (v, cur, act, lab) { return '<button type="button" class="fb-pill' + (v === cur ? " on" : "") + '" data-act="' + act + '" data-v="' + v + '">' + lab + '</button>'; };
-    var rows = [25, 50, 100, 200].map(function (x) { var v = x * 12 * ann, w = v / (200 * 12 * ann) * 100; return '<div class="fb-wi' + (x === ST.extra ? " on" : "") + '"><b>+$' + x + '<small>/mo</small></b><div><i style="width:' + w + '%"></i></div><em>+' + money(v) + '</em></div>'; }).join("");
-    var inner = sampleNote() + '<div class="fb-g2 head"><div class="fb-dark"><small>At your current pace</small><b>' + money(base + ex * 0) + '</b><p>in ' + n + ' years if your <b>' + money(t) + '</b> keeps growing and you keep adding <b>' + money(mo) + ' a month</b>.</p>' +
-      '<div class="fb-ctl"><span>Years</span>' + [10, 20, 30, 40].map(function (v) { return btn(v, n, "yrs", v); }).join("") + '</div><div class="fb-ctl"><span>Growth</span>' + [5, 7, 9].map(function (v) { return btn(v, ST.rate, "rate", v + "%"); }).join("") + '</div></div>' +
-      '<div><h3 class="fb-h3">What if you added a little more?</h3>' + rows + '<div class="fb-ctl light"><span>Try it</span>' + [25, 50, 100, 200].map(function (v) { return btn(v, ST.extra, "extra", "+$" + v); }).join("") + '</div>' +
-      '<div class="fb-wires"><small>With +$' + ST.extra + ' a month</small><b>' + money(base + ex) + '</b><span>that’s ' + money(ex) + ' more</span></div>' +
+    var a = A(), t = total(), r = ST.rate / 100, n = ST.years, f = Math.pow(1 + r, n), ann = r ? (f - 1) / r : n, mo = a.monthly || 0;
+    var base = t * f + mo * 12 * ann, ex = ST.extra * 12 * ann, egg = base + ex;
+    var btn = function (v, cur, act, lab) { return '<button type="button" class="fb-pill' + (String(v) === String(cur) ? " on" : "") + '" data-act="' + act + '" data-v="' + v + '">' + lab + '</button>'; };
+    var box = function (act, val, pre, suf, step, min, max, lab) { return '<label class="fb-cbox">' + (pre ? '<i>' + pre + '</i>' : '') + '<input type="number" inputmode="decimal" data-act="' + act + '" value="' + val + '" step="' + step + '" min="' + min + '" max="' + max + '" aria-label="' + lab + '">' + (suf ? '<i>' + suf + '</i>' : '') + '</label>'; };
+    var YRS = [5, 10, 15, 20, 25, 30, 35, 40], RTS = [4, 5, 6, 7, 8, 9, 10], EXS = [25, 50, 100, 200, 500];
+    var exList = EXS.indexOf(ST.extra) < 0 ? EXS.concat([ST.extra]).sort(function (x, y) { return x - y; }) : EXS, top = Math.max.apply(null, exList) * 12 * ann || 1;
+    var rows = exList.map(function (x) { var v = x * 12 * ann, w = v / top * 100; return '<div class="fb-wi' + (x === ST.extra ? " on" : "") + '"><b>+$' + x + '<small>/mo</small></b><div><i style="width:' + w + '%"></i></div><em>+' + money(v) + '</em></div>'; }).join("");
+    /* retirement: withdraw a % of the balance each year, or a set amount each month */
+    var B = egg, path = [], first = 0, outAt = 0;
+    for (var k = 0; k <= ST.ry; k++) {
+      path.push(B); if (k === ST.ry) break;
+      var w = ST.wmode === "pct" ? B * ST.wr / 100 : ST.wamt * 12; if (!k) first = w;
+      B = (B - Math.min(w, B)) * (1 + r); if (B <= 0 && !outAt) { outAt = k + 1; B = 0; }
+    }
+    var endB = path[path.length - 1], wPer = ST.wmode === "pct" ? first : ST.wamt * 12, impliedPct = egg ? wPer / egg * 100 : 0;
+    /* chart: saving years then withdrawing years */
+    var pts = []; for (var y = 0; y <= n; y++) { var fy = Math.pow(1 + r, y); pts.push(t * fy + (mo + ST.extra) * 12 * (r ? (fy - 1) / r : y)); }
+    pts = pts.concat(path.slice(1));
+    var W = 1200, H = 260, pl = 104, pr = 20, pt = 20, pb = 34, mx = Math.max.apply(null, pts) || 1, N = pts.length - 1;
+    var X = function (i) { return pl + i * (W - pl - pr) / N; }, Yv = function (v) { return pt + (1 - v / mx) * (H - pt - pb); };
+    var d1 = "M" + pts.slice(0, n + 1).map(function (v, i) { return X(i).toFixed(1) + "," + Yv(v).toFixed(1); }).join(" L"), d2 = "M" + pts.slice(n).map(function (v, i) { return X(i + n).toFixed(1) + "," + Yv(v).toFixed(1); }).join(" L");
+    var gl = ""; [0, .25, .5, .75, 1].forEach(function (q) { gl += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + Yv(mx * q) + '" y2="' + Yv(mx * q) + '" class="gl"/><text x="' + (pl - 8) + '" y="' + (Yv(mx * q) + 4) + '" text-anchor="end" class="ax">' + money(mx * q) + '</text>'; });
+    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="fb-svg" role="img" aria-label="Saving then withdrawing">' + gl +
+      '<path d="' + d1 + ' L' + X(n) + ',' + Yv(0) + ' L' + X(0) + ',' + Yv(0) + 'Z" fill="' + GRN + '" fill-opacity=".14"/><path d="' + d1 + '" fill="none" stroke="' + GRN + '" stroke-width="4"/>' +
+      '<path d="' + d2 + ' L' + X(N) + ',' + Yv(0) + ' L' + X(n) + ',' + Yv(0) + 'Z" fill="' + ORG + '" fill-opacity=".14"/><path d="' + d2 + '" fill="none" stroke="' + ORG + '" stroke-width="4"/>' +
+      '<line x1="' + X(n) + '" x2="' + X(n) + '" y1="' + pt + '" y2="' + (H - pb) + '" stroke="' + INK + '" stroke-dasharray="4 5" stroke-opacity=".4"/><circle cx="' + X(n) + '" cy="' + Yv(egg) + '" r="8" fill="' + INK + '" stroke="#fff" stroke-width="3"/>' +
+      '<text x="' + (X(n) / 2 + pl / 2) + '" y="' + (H - 10) + '" text-anchor="middle" class="ax b" fill="' + GRN + '">SAVING · ' + n + ' YEARS</text><text x="' + ((X(n) + X(N)) / 2) + '" y="' + (H - 10) + '" text-anchor="middle" class="ax b" fill="' + ORG + '">WITHDRAWING · ' + ST.ry + ' YEARS</text></svg>';
+    var inner = sampleNote() + '<div class="fb-g2 head"><div class="fb-dark"><small>At your current pace</small><b>' + money(base) + '</b><p>in ' + n + ' years if your <b>' + money(t) + '</b> keeps growing and you keep adding <b>' + money(mo) + ' a month</b>.</p>' +
+      '<div class="fb-ctl"><span>Years</span>' + YRS.map(function (v) { return btn(v, n, "yrs", v); }).join("") + box("yrsc", n, "", "yrs", 1, 1, 60, "Custom years") + '</div>' +
+      '<div class="fb-ctl"><span>Growth</span>' + RTS.map(function (v) { return btn(v, ST.rate, "rate", v + "%"); }).join("") + box("ratec", ST.rate, "", "%", 0.5, 0, 20, "Custom growth percent") + '</div></div>' +
+      '<div><h3 class="fb-h3">What if you added a little more?</h3>' + rows + '<div class="fb-ctl light"><span>Try it</span>' + EXS.map(function (v) { return btn(v, ST.extra, "extra", "+$" + v); }).join("") + box("extrac", ST.extra, "+$", "/mo", 25, 0, 100000, "Custom extra per month") + '</div>' +
+      '<div class="fb-wires"><small>With +$' + ST.extra + ' a month</small><b>' + money(egg) + '</b><span>that’s ' + money(ex) + ' more</span></div>' +
       (a.limitNote2 ? '<div class="fb-note">' + esc(a.limitNote2) + '</div>' : '<div class="fb-note">401(k)s have a yearly limit ($24,500 in 2026). Extra money could also go into an IRA.</div>') + '</div></div>' +
+      '<h3 class="fb-h3" style="margin-top:22px">Then you retire: take some out every year</h3>' +
+      '<div class="fb-ctl light"><span>How</span>' + btn("pct", ST.wmode, "wmode", "A % each year") + btn("amt", ST.wmode, "wmode", "A set $ each month") + '</div>' +
+      (ST.wmode === "pct" ? '<div class="fb-ctl light"><span>Rate</span>' + [3, 3.5, 4, 4.5, 5].map(function (v) { return btn(v, ST.wr, "wr", v + "%"); }).join("") + box("wrc", ST.wr, "", "%", 0.25, 0, 20, "Custom withdrawal percent") + '</div>'
+        : '<div class="fb-ctl light"><span>Amount</span>' + [2000, 3000, 4000, 6000, 8000].map(function (v) { return btn(v, ST.wamt, "wamt", money(v)); }).join("") + box("wamtc", ST.wamt, "$", "/mo", 100, 0, 1000000, "Custom monthly amount") + '</div>') +
+      '<div class="fb-ctl light"><span>For</span>' + [20, 25, 30, 35].map(function (v) { return btn(v, ST.ry, "ry", v + " yrs"); }).join("") + box("ryc", ST.ry, "", "yrs", 1, 1, 60, "Custom retirement years") + '</div>' +
+      '<div class="fb-g3" style="margin-top:12px">' + stat("You take out", money(wPer / 12) + "/mo", money(wPer) + " in year one" + (ST.wmode === "amt" ? " · about " + impliedPct.toFixed(1) + "% of your pile" : ""), BLU) +
+      stat("Your pile at retirement", money(egg), "after " + n + " years of saving", INK) +
+      stat(outAt ? "Money runs out" : "Still left after " + ST.ry + " yrs", outAt ? "Year " + outAt : money(endB), outAt ? "Try a smaller amount or more saving years" : (endB >= egg ? "It kept growing while you withdrew" : "Still invested and working"), outAt ? RED : GRN) + '</div>' + svg +
+      '<p class="fb-mut">' + (ST.wmode === "pct" ? "Taking a % of what’s left means the amount goes up in good years and down in bad years, and the money never fully runs out." : "A set amount stays the same each month. If growth is lower than what you take out, the pile shrinks.") + ' Common rule of thumb: about 4% a year. Numbers are not adjusted for inflation or taxes.</p>' +
       '<div class="fb-nadv"><b>This is not investment advice.</b> These are “what if” math examples that assume a steady ' + ST.rate + '% a year. Real markets go up and down, and nothing here is a promise or a recommendation.</div>';
-    return paper("The future", "Where you’re heading", "Small, steady amounts turn into big numbers. Tap the buttons to play with it.", inner);
+    return paper("The future", "Where you’re heading", "Small, steady amounts turn into big numbers. Tap the buttons or type your own.", inner);
   }
+
   function pgStickers() {
     var a = A(), t = total(), h = hist(), minC = Math.min.apply(null, h.plans[0].c);
     var S = [["$10K saved", t >= 10000, "#2F6BD8"], ["$25K saved", t >= 25000, "#17845B"], ["$50K saved", t >= 50000, "#E0672B"], ["$100K saved", t >= 100000, "#8A5BA8"],
@@ -384,14 +418,16 @@
   function act(e) {
     var t = e.target.closest("[data-act]"); if (!t || !root.contains(t)) return;
     var a = t.getAttribute("data-act"), v = t.getAttribute("data-v");
-    if (e.type === "change" && !/^(ck|sm|sy|mk)$/.test(a)) return;
-    if (e.type === "click" && /^(ck|sm|sy|mk)$/.test(a)) return;
+    if (e.type === "change" && !/^(ck|sm|sy|mk|yrsc|ratec|extrac|wrc|wamtc|ryc)$/.test(a)) return;
+    if (e.type === "click" && /^(ck|sm|sy|mk|yrsc|ratec|extrac|wrc|wamtc|ryc)$/.test(a)) return;
     if (a === "tab") { ST.tab = v; ST.clear = false; }
     else if (a === "go") { ST.page = +v; ST.clear = false; }
     else if (a === "prev") { ST.page--; ST.clear = false; }
     else if (a === "next") { ST.page++; ST.clear = false; }
     else if (a === "clear") ST.clear = !ST.clear;
     else if (a === "yrs") ST.years = +v; else if (a === "rate") ST.rate = +v; else if (a === "extra") ST.extra = +v;
+    else if (a === "wr") ST.wr = +v; else if (a === "wamt") ST.wamt = +v; else if (a === "ry") ST.ry = +v; else if (a === "wmode") ST.wmode = v;
+    else if (/^(yrsc|ratec|extrac|wrc|wamtc|ryc)$/.test(a)) { var nv = parseFloat(t.value), lim = { yrsc: [1, 60, "years"], ratec: [0, 20, "rate"], extrac: [0, 100000, "extra"], wrc: [0, 20, "wr"], wamtc: [0, 1000000, "wamt"], ryc: [1, 60, "ry"] }[a]; if (!isFinite(nv)) return; nv = Math.max(lim[0], Math.min(lim[1], nv)); if (a === "yrsc" || a === "ryc") nv = Math.round(nv); ST[lim[2]] = nv; }
     else if (a === "ck") { ST.cfg.on[v] = t.checked; save(); }
     else if (a === "all") { ALL.forEach(function (k) { ST.cfg.on[k] = true; }); save(); }
     else if (a === "sm" || a === "sy") { var si = startIdx(), y = 2000 + Math.floor(si / 12), m = si % 12; if (a === "sm") m = +t.value; else y = +t.value; ST.cfg.start = y + "-" + String(m + 1).padStart(2, "0"); save(); }
@@ -440,7 +476,7 @@
     '.fb-race,.fb-lanes{display:flex;flex-direction:column;gap:12px}.fb-rr{display:grid;grid-template-columns:minmax(0,1.3fr) 2fr 90px;gap:14px;align-items:center;font-size:15px}.fb-rr div{height:30px;background:#F1F3F6;border-radius:15px;overflow:hidden}.fb-rr i{display:block;height:100%;border-radius:15px}.fb-rr b{font-family:Fraunces,serif;font-size:28px}' +
     '.fb-lane{display:grid;grid-template-columns:34px minmax(0,1.2fr) 3fr 80px;gap:12px;align-items:center;font-size:15px}.fb-lane .pos{width:30px;height:30px;border-radius:15px;background:#1B2333;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}.fb-lane .trk{position:relative;height:16px;background:repeating-linear-gradient(90deg,#F1F3F6 0 30px,#E6E8EC 30px 32px);border-radius:8px}.fb-lane .trk i{display:block;height:100%;border-radius:8px}.fb-lane .trk em{position:absolute;top:-7px;width:30px;height:30px;margin-left:-15px;border-radius:15px;background:#fff;border:4px solid}.fb-lane b{font-family:Fraunces,serif;font-size:22px;text-align:right}' +
     '.fb-dark{background:#1B2333;color:#fff;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:12px}.fb-dark small{color:#9FD8BC;font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:13px}.fb-dark b{font-family:Fraunces,serif;font-size:clamp(44px,5vw,80px);font-weight:900;line-height:1}.fb-dark p{margin:0;color:#D9DEE6;font-size:16px;line-height:1.5}' +
-    '.fb-ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.fb-ctl span{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#9FD8BC;width:62px}.fb-ctl.light span{color:#586172}.fb-pill{border:2px solid #D5DAE2;background:#fff;color:#1B2333;border-radius:999px;padding:9px 14px;min-height:44px;font:inherit;font-weight:700;cursor:pointer}.fb-pill.on{background:#E0672B;border-color:#E0672B;color:#fff}' +
+    '.fb-dark p b{font:inherit!important;font-weight:800!important;color:#fff}.fb-cbox i,.fb-cbox input{display:inline-block!important;flex:0 0 auto}.fb-cbox{white-space:nowrap;flex-direction:row!important;width:auto!important;display:inline-flex!important;align-items:center;gap:4px;border:2px dashed #D5DAE2;border-radius:999px;padding:4px 12px;background:#fff;color:#1B2333;margin:0!important}.fb-cbox i{font-style:normal;font-weight:700;font-size:13px;color:#586172}.fb-cbox input{width:72px;border:0!important;outline:0;font:inherit;font-weight:800;font-size:15px;background:transparent!important;color:#1B2333!important;padding:4px 0!important;box-shadow:none!important}.fb-ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.fb-ctl span{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#9FD8BC;width:62px}.fb-ctl.light span{color:#586172}.fb-pill{border:2px solid #D5DAE2;background:#fff;color:#1B2333;border-radius:999px;padding:9px 14px;min-height:44px;font:inherit;font-weight:700;cursor:pointer}.fb-pill.on{background:#E0672B;border-color:#E0672B;color:#fff}' +
     '.fb-h3{font-family:Fraunces,serif;font-size:28px;margin:0 0 10px}.fb-wi{display:grid;grid-template-columns:110px 1fr 110px;gap:12px;align-items:center;padding:10px 14px;border:1px solid #E6E8EC;border-radius:14px;margin-bottom:8px}.fb-wi.on{border-color:#17845B;box-shadow:0 0 0 2px #17845B inset}.fb-wi b{font-family:Fraunces,serif;font-size:28px}.fb-wi b small{font-size:13px;color:#586172}.fb-wi div{height:24px;background:#F1F3F6;border-radius:12px;overflow:hidden}.fb-wi i{display:block;height:100%;background:linear-gradient(90deg,#17845B,#3BB27F)}.fb-wi em{font-style:normal;font-family:Fraunces,serif;font-size:24px;font-weight:900;color:#17845B;text-align:right}' +
     '.fb-wires{margin:10px 0;background:#E9F6EF;border-radius:16px;padding:14px 18px;display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}.fb-wires small{font-weight:800;color:#586172}.fb-wires b{font-family:Fraunces,serif;font-size:34px;color:#17845B}.fb-note{background:#FFF7E0;border-radius:14px;padding:12px 16px;font-size:14px;line-height:1.5}.fb-nadv{border:3px solid #1B2333;border-radius:16px;padding:14px 20px;font-size:15px;line-height:1.5}' +
     '.fb-stks{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}.fb-stk{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}.fb-stk .b{width:110px;height:110px;border-radius:55px;background:var(--sc);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 rgba(0,0,0,.15);transform:rotate(-6deg)}.fb-stk .b svg{width:56px;height:56px;fill:#fff}.fb-stk.off .b{background:#E6E8EC;box-shadow:none;transform:none}.fb-stk.off .b svg{fill:#C9CED6}.fb-stk span{font-size:12px;color:#586172;font-weight:700}' +
