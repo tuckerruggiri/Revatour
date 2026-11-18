@@ -51,7 +51,7 @@
   var ITEMS = {
     navhome: ["list", "Watchlist"], navday: ["cal", "Trading day"], navcharts: ["candles", "Charts"], navplan: ["target", "Trade Plan"], navfut: ["candles", "Futures"], navopt: ["layers", "Options school"],
     navmov: ["zap", "Parabolic movers"], navpulse: ["pulse", "Market pulse"], navnews: ["news", "News"], navzone: ["layers", "Zones"],
-    navinv: ["pie", "Investments"], navrl: ["ladder", "Risk Ladder"],
+    navinv: ["pie", "Investments"], navflip: ["book", "Flipbook"], navrl: ["ladder", "Risk Ladder"],
     navstudio: ["book", "Studio"], navsc: ["award", "Scorecard"], navlab: ["flask", "Setup Lab"], navprac: ["play", "Practice charts"], navcoach: ["spark", "AI Coach"],
     navprofile: ["user", "Profile"], navpub: ["send", "Publishes"], navnotif: ["inbox", "Notifications"], navgd: ["help", "How-To"], navset: ["gear", "Settings"], navtraffic: ["pulse", "Visitors"]
   };
@@ -64,7 +64,7 @@
   var YOU = ["navprofile", "navpub", "navnotif", "navgd", "navtraffic", "navset"];
   var DEF = [
     ["Trading day", "#e8782a", "zap", ["navday", "navcharts", "navhome", "navplan", "navfut", "navmov"]],
-    ["Investing", "#1f9d55", "pie", ["navinv", "navrl", "navopt", "navhome"]],
+    ["Investing", "#1f9d55", "pie", ["navinv", "navflip", "navrl", "navopt", "navhome"]],
     ["Research", "#2b7de0", "search", ["navpulse", "navnews", "navzone", "navmov"]],
     ["Review & practice", "#8b4fe0", "book", ["navstudio", "navsc", "navlab", "navprac", "navcoach"]],
     ["You", "#7d8793", "user", YOU]
@@ -114,7 +114,7 @@
   var KEY = "ss-navlayout-v3", CKEY = "ss-navsec-v3", RKEY = "ss-navrecent", layout, editing = false, pp = null, arm = null, dragId = null, dragFrom = null, pushT = null;
   function sanitize(L) {
     if (!L || !Array.isArray(L.sections)) return defaults();
-    var out = { ts: +L.ts || 0, rec: L.rec !== false, pg: L.pg === "top" ? "top" : "bottom", v: 6, sections: [] };
+    var out = { ts: +L.ts || 0, rec: L.rec !== false, pg: L.pg === "top" ? "top" : "bottom", v: 7, sections: [] };
     L.sections.slice(0, 14).forEach(function (s) {
       var seen = {}, ids = (s.ids || []).filter(function (i) { if (!ITEMS[i] || seen[i]) return false; seen[i] = 1; return true; });
       out.sections.push({ id: String(s.id || uid()), n: String(s.n || "Section").slice(0, 24), c: hex(s.c), ic: P[s.ic] ? s.ic : "", ids: ids });
@@ -123,6 +123,7 @@
     if (!(L.v >= 3) && out.sections.length && !out.sections.some(function (s) { return s.ids.indexOf("navopt") > -1; })) { var iv = out.sections.filter(function (s) { return s.ids.indexOf("navinv") > -1; })[0] || out.sections[0]; iv.ids.push("navopt"); }
     if (!(L.v >= 5) && out.sections.length && !out.sections.some(function (s) { return s.ids.indexOf("navcharts") > -1; })) { var dy = out.sections.filter(function (s) { return s.ids.indexOf("navday") > -1; })[0] || out.sections[0]; var di = dy.ids.indexOf("navday"); dy.ids.splice(di + 1, 0, "navcharts"); }
     if (!(L.v >= 6) && out.sections.length && !out.sections.some(function (s) { return s.ids.indexOf("navtraffic") > -1; })) { var st = out.sections.filter(function (s) { return s.ids.indexOf("navset") > -1; })[0] || out.sections[out.sections.length - 1]; var si = st.ids.indexOf("navset"); st.ids.splice(si < 0 ? st.ids.length : si, 0, "navtraffic"); }
+    if (!(L.v >= 7) && out.sections.length && !out.sections.some(function (s) { return s.ids.indexOf("navflip") > -1; })) { var ivs = out.sections.filter(function (s) { return s.ids.indexOf("navinv") > -1; })[0] || out.sections[0]; var ii = ivs.ids.indexOf("navinv"); ivs.ids.splice(ii < 0 ? ivs.ids.length : ii + 1, 0, "navflip"); }
     return out;
   }
   layout = sanitize(lsGet(KEY, null));
