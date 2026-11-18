@@ -8,6 +8,7 @@
     ["example", "Example book", "navfbex"],
     ["build", "Build your book", "navfbbuild"],
     ["clear", "Clear page", "navfbclear"],
+    ["proof", "See it printed", "navfbproof"],
     ["pricing", "Pricing", "navfbprice"],
     ["goals", "Goals", "navfbgoals"],
     ["ideas", "Ideas checklist", "navfbideas"]
@@ -363,8 +364,9 @@
     var padv = (hi - lo) * 0.07; lo -= padv; hi += padv;
     var X = function (i) { return pl + (i + 0.5) * (W - pl - pr) / n; }, Y = function (v) { return pt + (1 - (v - lo) / (hi - lo)) * mainH; }, bw = Math.max(1, (W - pl - pr) / n * 0.64), y2p = function (y) { return lo + (1 - (y - pt) / mainH) * (hi - lo); };
     G = { W: W, H: H, pl: pl, pr: pr, pt: pt, mainH: mainH, n: n, lo: lo, hi: hi, y2p: y2p, X: X, Y: Y };
-    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="fbx-svg fbx-big' + (tool ? " drawing t-" + tool : "") + '" id="fbxchart" role="img" aria-label="' + esc((tkr().t || "") + " chart preview") + '">';
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="fbx-svg fbx-big' + (o.layer ? " lay-" + o.layer : "") + (tool && !o.layer ? " drawing t-" + tool : "") + '"' + (o.layer ? '' : ' id="fbxchart"') + ' role="img" aria-label="' + esc((tkr().t || "") + (o.layer === "film" ? " clear overlay" : o.layer === "base" ? " chart page" : " chart preview")) + '">';
     s += '<defs><clipPath id="fbxclip"><rect x="' + pl + '" y="' + pt + '" width="' + (W - pl - pr) + '" height="' + mainH + '"/></clipPath></defs>';
+    s += '<g class="L-base">';
     // grid + price labels
     for (var g = 0; g <= 4; g++) { var gy = pt + g * mainH / 4, gp = y2p(gy); s += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + gy + '" y2="' + gy + '" stroke="#EEF0F3"/><text x="' + (W - pr + 6) + '" y="' + (gy + 3) + '" class="fbx-ax">' + gp.toFixed(gp < 10 ? 3 : 2) + '</text>'; }
     // session shading (pre / after hours) + day separators + time axis
@@ -381,6 +383,7 @@
       s += '<line x1="' + X(i) + '" x2="' + X(i) + '" y1="' + (pt + mainH) + '" y2="' + (pt + mainH + 4) + '" stroke="#B9BFCB"/><text x="' + X(i) + '" y="' + axY + '" text-anchor="' + (X(i) < pl + 40 ? "start" : X(i) > W - pr - 40 ? "end" : "middle") + '" class="fbx-ax' + (tk[1] === "day" ? " b" : "") + '">' + lab + '</text>';
     });
     if (F.intra && F.ext) { s += '<text x="' + (pl + 4) + '" y="' + (pt + 11) + '" class="fbx-ax">PRE / AFTER HOURS SHADED</text>'; }
+    s += '</g>';
     s += '<g clip-path="url(#fbxclip)">';
     // time-based shading indicators
     ids.forEach(function (id) { var d = indDef(id); if (d[3] !== "time" || !F.intra) return;
@@ -402,8 +405,10 @@
     function hline(p, col, lab, dash, w) { if (!(p > lo && p < hi)) return ""; var y = Y(p).toFixed(1); return '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y + '" y2="' + y + '" stroke="' + col + '" stroke-width="' + (w || 1.2) + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + '/><text x="0" y="0" class="fbx-lab" fill="' + col + '">AXT|' + y + '|' + lab + '</text>'; }
     if (hasVol) C.forEach(function (c, i) { var vh = c.v / 2.2 * mainH * 0.22; s += '<rect x="' + (X(i) - bw / 2).toFixed(1) + '" y="' + (pt + mainH - vh).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + vh.toFixed(1) + '" fill="' + (c.c >= c.o ? "#BBF7D0" : "#FECACA") + '"/>'; });
     // candles
+    s += '<g class="L-base">';
     C.forEach(function (c, i) { var up = c.c >= c.o, col = up ? "#16A34A" : "#DC2626", y0 = Y(Math.max(c.o, c.c)), hh = Math.max(1, Math.abs(Y(c.o) - Y(c.c)));
       s += '<line x1="' + X(i).toFixed(1) + '" x2="' + X(i).toFixed(1) + '" y1="' + Y(c.h).toFixed(1) + '" y2="' + Y(c.l).toFixed(1) + '" stroke="' + col + '"/><rect x="' + (X(i) - bw / 2).toFixed(1) + '" y="' + y0.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + hh.toFixed(1) + '" fill="' + (up ? "#fff" : col) + '" stroke="' + col + '" stroke-width="1"/>'; });
+    s += '</g>';
     var path = function (arr, col, w, dash) { var dd = ""; arr.forEach(function (v, i) { if (v == null || !isFinite(v)) return; dd += (dd ? "L" : "M") + X(i).toFixed(1) + "," + Y(v).toFixed(1); }); return dd ? '<path d="' + dd + '" fill="none" stroke="' + col + '" stroke-width="' + (w || 1.8) + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + ' stroke-linejoin="round"/>' : ""; };
     var dOpen = C[0].o, H0 = Math.max.apply(null, C.map(function (x) { return x.h; })), L0 = Math.min.apply(null, C.map(function (x) { return x.l; })), rngP = H0 - L0;
     ids.forEach(function (id) {
@@ -479,7 +484,7 @@
     }
     var COLS = { buy: "#2F6FE4", sell: "#0B0B0C", short: "#7C4DCC", cover: "#E0662B" }, posQ = 0;
     var demo = useDemo ? [{ side: "buy", qty: 100, price: e0, i: Math.floor(n * 0.3) }, { side: "sell", qty: 50, price: C[Math.floor(n * 0.55)].c, i: Math.floor(n * 0.55) }, { side: "sell", qty: 50, price: C[Math.floor(n * 0.75)].c, i: Math.floor(n * 0.75) }] : ex.map(function (e) { return { side: e.side, qty: +e.qty || 0, price: +e.price, i: idxAt(F, e.time) }; }).filter(function (e) { return e.i != null; });
-    if (useDemo && !D.rr) { s += hline(e0 * 0.985, "#DC2626", "STOP (example)", "5 3", 1.6) + hline(e0 * 1.03, "#16A34A", "TARGET (example)", "5 3", 1.6); }
+    if (useDemo && !D.rr) { s += hline(e0 * 0.985, "#DC2626", "STOP", "5 3", 1.6) + hline(e0 * 1.03, "#16A34A", "TARGET", "5 3", 1.6); }
     var M = D.marks || {}, pills = [];
     demo.forEach(function (e, k) {
       var before = posQ; posQ += (e.side === "buy" || e.side === "cover" ? 1 : -1) * (e.qty || 0);
@@ -745,6 +750,30 @@
   /* ---------- pricing ---------- */
   var TIERS = [["starter", "Starter", 79, 150, "1.5\" ring binder, linen hardcover", ["Holds up to 150 pages", "20 page sleeves + 10 clear pages to start", "Name and year on the cover", "First month of pages included"]], ["pro", "Pro", 129, 350, "3\" D-ring, vegan leather, gold foil", ["Holds up to 350 pages (a full year)", "40 page sleeves + 25 clear pages", "Numbered spine, ribbon marker", "First month of pages included"]], ["archive", "Archive", 199, 700, "2-volume slipcase set", ["Holds up to 700 pages", "Two Pro volumes in an archival slipcase", "Year tabs + index pages", "First month of pages included"]]];
   var CAD = { weekly: [12, "/week", "5 trade pages + 5 clear pages every Friday", 260], monthly: [29, "/month", "12 trade pages + month report card + SPY page + 12 clear pages", 168], quarterly: [79, "/quarter", "36 trade pages + quarter report + SPY pages + 36 clear pages · save 9%", 160] };
+  var pfView = "book", pfLift = false;
+  function pProof() {
+    var CC = getCandles(frame()), F = CC.F, C = CC.C, sel = D.ind.filter(function (id) { var d = indDef(id); return d && fitsAsset(d); }), t = tkr(), sym = t.t || "NVDA";
+    var opts = function (layer) { return pageChart({ F: F, C: C, ind: sel, W: 980, H: 380, layer: layer }); };
+    var base = opts("base"), film = opts("film");
+    var ex = execList(), fmtD = function (d) { if (!d) return ""; var x = pd(d); return MN[x.getMonth()] + " " + x.getDate() + ", " + x.getFullYear(); };
+    var rows = ex.map(function (e) { return '<tr><td>' + esc(String(e.side).toUpperCase()) + '</td><td>' + esc(e.qty) + '</td><td>$' + (+e.price).toFixed(2) + '</td></tr>'; }).join("");
+    var R = D.rr ? rrVals(0, ex, F) : null;
+    var notes = '<div class="pf-notes"><p class="pf-k">Trade ' + (D.tickers.indexOf(t) + 1) + (t.from ? ' · ' + esc(fmtD(t.from)) : '') + '</p><h3>$' + esc(sym) + '</h3>' +
+      (D.strat && D.strat.name ? '<p class="pf-strat">' + esc(D.strat.name) + '</p>' : '') +
+      '<p class="pf-quote">' + esc(D.note || "Waited for the VWAP reclaim. Partial at the flag, rest at target.") + '</p>' +
+      (rows ? '<table class="pf-t"><thead><tr><th>Side</th><th>Qty</th><th>Price</th></tr></thead><tbody>' + rows + '</tbody></table>' : '<p class="pf-mut">Your buys and sells print here.</p>') +
+      '<div class="pf-stats">' + (D.stop ? '<span><b>Stop</b>' + esc(D.stop) + '</span>' : '') + ((D.targets || [])[0] ? '<span><b>Target</b>' + esc(D.targets[0]) + '</span>' : '') + (R ? '<span><b>R:R</b>1 : ' + (R.risk > 0 ? (R.rew / R.risk).toFixed(2) : "–") + '</span>' : '') + '</div>' +
+      (D.strat && (D.strat.entry || D.strat.exit) ? '<p class="pf-rules"><b>Rules</b> ' + esc(((D.strat.entry || "") + (D.strat.exit ? " · " + D.strat.exit : "")).slice(0, 220)) + '</p>' : '') +
+      '<p class="pf-foot">Flipbook · Volume I · ' + new Date().getFullYear() + '</p></div>';
+    var views = [["book", "In the book"], ["together", "Chart + overlay"], ["base", "Chart only"], ["film", "Overlay only"]];
+    var stage;
+    if (pfView === "book") stage = '<div class="pf-room"><div class="pf-book' + (pfLift ? " lifted" : "") + '"><div class="pf-cover"></div><div class="pf-spread"><div class="pf-page pf-left">' + notes + '</div><div class="pf-gutter"></div><div class="pf-page pf-right"><div class="pf-chart">' + base + '</div><div class="pf-film">' + film + '<i class="pf-shine"></i></div></div></div><span class="pf-ribbon"></span></div></div>' +
+      '<div class="pf-ctl"><button type="button" class="fbx-btn" data-pflift="1">' + (pfLift ? "Lay the overlay back on" : "Lift the clear overlay") + '</button><span class="fbx-hint">The clear film flips over to the left page, just like the real book.</span></div>';
+    else stage = '<div class="pf-flat ' + pfView + '"><div class="pf-sheet">' + (pfView === "film" ? '<div class="pf-checker"></div>' : '') + (pfView !== "film" ? base : '') + (pfView !== "base" ? '<div class="pf-filmflat">' + film + '</div>' : '') + '</div><p class="fbx-hint">' + (pfView === "base" ? "The printed chart page: real candles, no markings." : pfView === "film" ? "The clear overlay on its own: everything you marked, printed on clear film." : "Overlay laid on the chart: exactly how it reads in your book.") + '</p></div>';
+    return shell("proof", '<section class="fbx-sec"><p class="fbx-kick">Your finished page</p><h1 class="fbx-h1">See it printed.</h1><p class="fbx-lead">This is exactly what lands in your book: the chart page, the clear overlay, and both together inside a linen hardcover.</p>' +
+      '<div class="pf-tabs" role="tablist">' + views.map(function (v) { return '<button type="button" role="tab" aria-selected="' + (pfView === v[0]) + '" class="' + (pfView === v[0] ? "on" : "") + '" data-pfview="' + v[0] + '">' + v[1] + '</button>'; }).join("") + '</div>' + stage +
+      '<div class="pf-edit"><button type="button" class="fbx-btn ghost" data-fbgo="clear">&larr; Change something on the clear page</button><button type="button" class="fbx-btn" data-fbgo="pricing">Love it? See pricing &rarr;</button></div></section>');
+  }
   function pPricing() {
     var cad = D.cadence, t = TIERS.filter(function (x) { return x[0] === D.tier; })[0] || TIERS[1], perYr = CAD[cad][3], fits = perYr <= t[3];
     return shell("pricing", '<section class="fbx-sec"><p class="fbx-kick">Pricing</p><h1 class="fbx-h1">One book that grows. Fresh pages on your schedule.</h1>' +
@@ -775,7 +804,7 @@
   /* ---------- render + events ---------- */
   function render() {
     if (!host) return;
-    var f = { home: pHome, example: pExample, build: pBuild, clear: pClear, pricing: pPricing, goals: pGoals, ideas: pIdeas }[cur] || pHome;
+    var f = { home: pHome, example: pExample, build: pBuild, clear: pClear, proof: pProof, pricing: pPricing, goals: pGoals, ideas: pIdeas }[cur] || pHome;
     var keep = host.querySelector(".fbx-ctrl"), sc = keep ? keep.scrollTop : 0;
     host.innerHTML = f();
     PAGES.forEach(function (p) { var b = document.getElementById(p[2]); if (b) b.classList.toggle("on", p[0] === cur); });
@@ -862,6 +891,8 @@
     var b = ev.target.closest("button"); if (!b || !host.contains(b)) return;
     var d = b.dataset;
     if (d.fbgo) return go(d.fbgo);
+    if (d.pfview) { pfView = d.pfview; return render(); }
+    if (d.pflift) { pfLift = !pfLift; var bk = host.querySelector('.pf-book'); if (bk) { bk.classList.toggle('lifted', pfLift); b.textContent = pfLift ? 'Lay the overlay back on' : 'Lift the clear overlay'; } return; }
     if (d.fbflip) { flipAt += +d.fbflip; return render(); }
     if (d.fbpage) { flipAt = +d.fbpage; return render(); }
     if (d.fbset) {
@@ -1009,6 +1040,32 @@
       ".fbx-zlen{flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:6px;font:600 11.5px Inter,sans-serif}.fbx-zlen span{color:var(--g);margin-right:4px}.fbx-zlen button{border:1px solid #E2E4E8;background:#fff;border-radius:999px;padding:5px 10px;font:600 11.5px Inter,sans-serif;cursor:pointer;color:var(--k)}.fbx-zlen button.on{background:#0B0B0C;color:#fff;border-color:#0B0B0C}",
       ".fbx-rr{margin-top:12px;padding:10px 12px;border:1px solid #EEF0F3;border-radius:12px;background:#FCFCFD}.fbx-rrrow{display:flex;gap:12px;align-items:flex-end;margin-top:8px;flex-wrap:wrap}.fbx-rrrow label{flex:1 1 120px}.fbx-rrout{display:flex;flex-direction:column;background:#0B0B0C;color:#fff;border-radius:10px;padding:6px 12px}.fbx-rrout b{font:800 16px Inter,sans-serif}.fbx-rrout small{font-size:11px;color:#C7C9CF}",
       ".fbx{padding-bottom:110px}.fbx-lt{display:inline-flex;align-items:center;gap:7px}",
+      ".pf-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 18px}.pf-tabs button{min-height:42px;padding:0 18px;border:1.5px solid #E2E4E8;border-radius:999px;background:#fff;font:700 13.5px Inter,sans-serif;cursor:pointer;color:var(--k)}.pf-tabs button.on{background:#0B0B0C;border-color:#0B0B0C;color:#fff}",
+      ".lay-base *:not(g):not(defs):not(defs *):not(.L-base *){display:none}.lay-film .L-base{display:none}",
+      ".pf-room{position:relative;border-radius:22px;padding:56px 24px 64px;background:radial-gradient(120% 90% at 50% 0%,#7A5538 0%,#5B3D29 55%,#3F2A1D 100%);overflow:hidden;perspective:2200px}",
+      ".pf-room:before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(178deg,rgba(255,255,255,.03) 0 3px,rgba(0,0,0,.04) 3px 9px);pointer-events:none}",
+      ".pf-book{position:relative;margin:0 auto;max-width:1180px;transform:rotateX(14deg);transform-style:preserve-3d}",
+      ".pf-cover{position:absolute;inset:-14px -16px -16px -16px;border-radius:10px;background:#1B355A;box-shadow:0 40px 80px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.06)}",
+      ".pf-spread{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);background:#FBF8F1;border-radius:4px;box-shadow:0 2px 0 #E9E2D2,0 4px 0 #E2DACA,0 6px 0 #D9D0BE;transform-style:preserve-3d}",
+      ".pf-page{position:relative;aspect-ratio:9/7;overflow:visible}.pf-left{background:linear-gradient(90deg,#FBF8F1 80%,#EFE8DA)}.pf-right{background:linear-gradient(270deg,#FBF8F1 80%,#EFE8DA);transform-style:preserve-3d}",
+      ".pf-gutter{background:linear-gradient(90deg,#E6DDCB,#CFC4AE 50%,#E6DDCB)}",
+      ".pf-chart{position:absolute;inset:7% 4% 7% 5%}.pf-chart svg,.pf-film svg{width:100%;height:100%}",
+      ".pf-film{position:absolute;inset:3% 1% 3% 0;border-radius:3px;transform-origin:left center;transition:transform 1.2s cubic-bezier(.3,.9,.3,1);background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(210,226,255,.07));box-shadow:0 0 0 1px rgba(15,23,42,.10),0 10px 30px rgba(0,0,0,.10)}",
+      ".pf-film svg{position:absolute;left:5.05%;top:4.26%;width:91.92%;height:91.48%}.pf-shine{position:absolute;inset:0;border-radius:3px;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.32) 45%,transparent 60%);pointer-events:none}",
+      ".pf-book.lifted .pf-film{transform:translateZ(2px) rotateY(-178deg)}",
+      ".pf-notes{position:absolute;inset:9% 10% 8% 10%;display:flex;flex-direction:column;gap:10px;color:#1B355A;overflow:hidden}.pf-k{margin:0!important;font:700 11px Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#B8893B}.pf-notes h3{margin:0;font:400 clamp(28px,3.4vw,44px)/1 'Instrument Serif',Georgia,serif;color:#0F172A}",
+      ".pf-strat{margin:0!important;font:700 13px Inter,sans-serif;color:#1B355A}.pf-quote{margin:0!important;font:italic 400 clamp(15px,1.5vw,19px)/1.4 'Instrument Serif',Georgia,serif;color:#334155}",
+      ".pf-t{border-collapse:collapse;font:600 12.5px Inter,sans-serif;color:#0F172A;width:100%;max-width:280px}.pf-t th{text-align:left;font:700 10px Inter,sans-serif;letter-spacing:.12em;color:#8A8F98;text-transform:uppercase;padding:0 0 4px}.pf-t td{padding:4px 0;border-top:1px solid #E9E2D2}",
+      ".pf-stats{display:flex;gap:16px;flex-wrap:wrap}.pf-stats span{display:flex;flex-direction:column;font:700 15px Inter,sans-serif;color:#0F172A}.pf-stats b{font:700 10px Inter,sans-serif;letter-spacing:.12em;color:#8A8F98;text-transform:uppercase}",
+      ".pf-rules{margin:0!important;font:400 12.5px/1.5 Inter,sans-serif;color:#526073}.pf-rules b{color:#1B355A}.pf-mut{margin:0!important;color:#8A8F98;font:400 13px Inter,sans-serif}.pf-foot{margin:auto 0 0!important;font:italic 400 13px 'Instrument Serif',Georgia,serif;color:#A39A88}",
+      ".pf-ribbon{position:absolute;left:calc(50% + 40px);bottom:-46px;width:12px;height:60px;background:#8E1B2B;clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%)}",
+      ".pf-ctl{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:16px}",
+      ".pf-flat .pf-sheet{position:relative;border-radius:14px;padding:18px;background:#fff;box-shadow:0 1px 0 #E6E8EC,0 20px 40px rgba(15,23,42,.08)}",
+      ".pf-checker{position:absolute;inset:0;border-radius:14px;background-color:#fff;background-image:linear-gradient(45deg,#EEF0F3 25%,transparent 25%),linear-gradient(-45deg,#EEF0F3 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#EEF0F3 75%),linear-gradient(-45deg,transparent 75%,#EEF0F3 75%);background-size:22px 22px;background-position:0 0,0 11px,11px -11px,-11px 0}",
+      ".pf-flat.together .pf-filmflat{position:absolute;inset:18px}.pf-flat.film .pf-filmflat{position:relative}.pf-filmflat svg{width:100%;height:auto;display:block}",
+      ".pf-edit{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:26px}",
+      "@media(max-width:820px){.pf-spread{grid-template-columns:1fr}.pf-gutter,.pf-left{display:none}.pf-book{transform:none}.pf-room{padding:30px 14px 50px}}",
+
       ".fbx-isearch{margin-bottom:8px!important}.fbx-cats{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}.fbx-cats button{border:0;background:#F2F3F5;color:var(--g);border-radius:999px;padding:6px 11px;font:600 12px Inter,sans-serif;cursor:pointer}.fbx-cats .on{background:var(--k);color:#fff}.fbx-pnl .fbx-chip{padding:7px 11px;font-size:12.5px}",
       ".fbx-cma{margin-top:12px}.fbx-cma summary{cursor:pointer;color:var(--bl);font:600 13px Inter,sans-serif}.fbx-cmar{display:grid;grid-template-columns:1fr 70px 46px auto;gap:6px;margin-top:8px}.fbx-cmar input[type=color]{padding:2px!important;height:38px}",
       ".fbx-pnl>input,.fbx-pnl>textarea{margin-bottom:8px!important}.fbx-mystrat{display:inline-flex;align-items:center;gap:6px;background:#F6F2EA;color:#7A5B2A;border-radius:999px;padding:4px 4px 4px 12px;font:600 12px Inter,sans-serif}.fbx-mystrat button{border:0;background:none;color:#7A5B2A;cursor:pointer}",
