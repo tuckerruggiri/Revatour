@@ -165,7 +165,7 @@
       '<div class="ccal-box"><h4>Coming up</h4>' + (up.length ? up.map(function (it) { return '<div class="upr"><small>' + (it.day === today() ? "Today" : it.day === add(today(), 1) ? "Tomorrow" : nice(it.day)) + (it.e.start && !it.e.allDay ? " · " + fmtT(it.e.start) : "") + '</small>' + chip(it, "wide") + '</div>'; }).join("") : '<p class="hint">Nothing in the next 2 weeks.</p>') + '</div>' +
       '<div class="ccal-box"><h4>&#128279; To-do list</h4><p class="hint" style="margin:0">Tap &#128197; on a task in your To-do tab to show or hide it here.</p>' +
       (true ? (un.length ? '<p class="hint" style="margin:8px 0 4px">No date yet. Drag one onto a day:</p>' + un.slice(0, 12).map(function (i) { return '<button type="button" class="ccal-chip wide k-todo un" style="--c:#17845B" data-cev="' + esc(i.id) + '" data-csrc="td" data-cday="">&#9744; ' + esc(i.t.length > 60 ? i.t.slice(0, 60) + "…" : i.t) + '</button>'; }).join("") : '<p class="hint" style="margin-top:8px">Every open to-do has a date.</p>') : '') + '</div>' +
-      '<div class="ccal-box"><h4>&#128276; Reminder alerts</h4><p class="hint" style="margin:0 0 8px">Pop-ups show while Revatour is open.</p>' + ("Notification" in window && Notification.permission !== "granted" ? '<button type="button" data-cnotif="1">Turn on desktop alerts</button>' : '<p class="hint" style="margin:0">' + ("Notification" in window ? "Desktop alerts are on." : "This browser has no desktop alerts.") + '</p>') + '</div>' +
+      '<div class="ccal-box"><h4>&#128276; Reminder alerts</h4><p class="hint" style="margin:0 0 8px">Anything with a time pops up while Revatour is open. Snooze it, check it off, or close it.</p><button type="button" data-cpdemo="1" style="margin-bottom:8px">&#10024; Preview a pop-up</button><br>' + ("Notification" in window && Notification.permission !== "granted" ? '<button type="button" data-cnotif="1">Turn on desktop alerts</button>' : '<p class="hint" style="margin:0">' + ("Notification" in window ? "Desktop alerts are on." : "This browser has no desktop alerts.") + '</p>') + '</div>' +
       '</aside>';
   }
   function paint() {
@@ -195,7 +195,7 @@
       '<div class="er"><label>&#8635; Repeat <select name="rec"><option value="">Does not repeat</option><option value="daily"' + (rsel === "daily" ? " selected" : "") + '>Every day</option><option value="weekdays"' + (rsel === "weekdays" ? " selected" : "") + '>Every weekday (Mon–Fri)</option><option value="weekly"' + (rsel === "weekly" ? " selected" : "") + '>Every week</option><option value="biweekly"' + (rsel === "biweekly" ? " selected" : "") + '>Every 2 weeks</option><option value="monthly"' + (rsel === "monthly" ? " selected" : "") + '>Every month</option><option value="yearly"' + (rsel === "yearly" ? " selected" : "") + '>Every year</option></select></label>' +
       '<label class="un"' + (r.f ? '' : ' hidden') + '>Until <input type="date" name="until" value="' + (r.until || "") + '"></label></div>' +
       '<div class="er wd"' + (r.f === "weekly" ? '' : ' hidden') + '><span class="lb">On</span>' + DN.map(function (x, i) { var on = (r.days && r.days.length ? r.days : [wd]).indexOf(i) >= 0; return '<label class="dw"><input type="checkbox" name="d' + i + '"' + (on ? " checked" : "") + '><span>' + x[0] + '</span></label>'; }).join("") + '</div>' +
-      '<div class="er"><label>&#128276; Alert <select name="alert">' + [["", "No alert"], ["0", "At start time"], ["10", "10 minutes before"], ["30", "30 minutes before"], ["60", "1 hour before"], ["1440", "1 day before"]].map(function (a) { return '<option value="' + a[0] + '"' + (String(e.alert) === a[0] ? " selected" : "") + '>' + a[1] + '</option>'; }).join("") + '</select></label></div>' +
+      '<div class="er"><label>&#128276; Alert <select name="alert">' + [["none", "No alert"], ["", "At start time (default)"], ["10", "10 minutes before"], ["30", "30 minutes before"], ["60", "1 hour before"], ["1440", "1 day before"]].map(function (a) { return '<option value="' + a[0] + '"' + (String(e.alert) === a[0] ? " selected" : "") + '>' + a[1] + '</option>'; }).join("") + '</select></label></div>' +
       '<div class="er cols"><span class="lb">Color</span>' + COLORS.map(function (c) { return '<label class="sw" title="' + c[1] + '"><input type="radio" name="color" value="' + c[0] + '"' + (e.color === c[0] ? " checked" : "") + '><span style="background:' + c[0] + '"></span></label>'; }).join("") + '</div>' +
       '<textarea name="notes" rows="3" maxlength="3000" placeholder="Notes" aria-label="Notes">' + esc(e.notes || "") + '</textarea>' +
       '<div class="eb">' + (isNew ? "" : (e.rec && e.rec.f ? '<button type="button" data-edel="one">Delete this one</button><button type="button" data-edel="all">Delete all</button>' : '<button type="button" data-edel="all">Delete</button>') + '<button type="button" data-edup="1">Duplicate</button>') +
@@ -267,6 +267,7 @@
     if ((b = t.closest("[data-cmini]"))) { C.mini = addM(C.mini || C.cur, +b.dataset.cmini); return paint(); }
     if ((b = t.closest("[data-cmonth]"))) { C.cur = b.dataset.cmonth; C.view = "month"; return paint(); }
     if ((b = t.closest("[data-cgo]"))) { C.cur = b.dataset.cgo; if (C.view === "month" || C.view === "year" || C.view === "agenda") C.view = "day"; C.mini = null; return paint(); }
+    if (t.closest("[data-cpdemo]")) { window.StockCal.testPopup(); return; }
     if (t.closest("[data-cnotif]")) { try { Notification.requestPermission().then(paint); } catch (e) {} return; }
     if ((b = t.closest("[data-cnew]"))) { var sl = t.closest("[data-ctime]"); return editor({ date: b.dataset.cnew, time: sl ? sl.dataset.ctime : null }); }
   }
@@ -341,25 +342,70 @@
   function shiftTime(e, tm) { var len = e.end && e.start ? mins(e.end) - mins(e.start) : 60; e.allDay = false; e.start = tm; var en = Math.min(23 * 60 + 59, mins(tm) + len); e.end = pad(Math.floor(en / 60)) + ":" + pad(en % 60); }
 
   /* reminder alerts while the site is open */
+  /* ---------- glass pop-up alerts while Revatour is open ---------- */
+  var PK = "stockspot-cal-pop-v1", P = (function () { try { return JSON.parse(localStorage.getItem(PK) || "{}"); } catch (e) { return {}; } })();
+  P.seen = P.seen || {}; P.snz = P.snz || {};
+  function pSave() { try { var cut = add(today(), -3); Object.keys(P.seen).forEach(function (k) { if (k.split("|")[1] < cut) delete P.seen[k]; }); localStorage.setItem(PK, JSON.stringify(P)); } catch (e) {} }
+  function alertMins(e) { if (e.alert === "none") return null; if (e.alert === "" || e.alert == null) return e.allDay || !e.start ? null : 0; return +e.alert; }
   function tick() {
     if (!C.loaded) return;
-    var now = new Date(), d = ds(now), nm = now.getHours() * 60 + now.getMinutes();
-    [d, add(d, 1)].forEach(function (day) {
+    var now = new Date(), d = ds(now), nowMs = now.getTime();
+    [add(d, -1), d, add(d, 1)].forEach(function (day) {
       C.ev.forEach(function (e) {
-        if (e.alert === "" || e.alert == null || !hits(e, day)) return;
-        var at = (day === d ? 0 : 1440) + (e.allDay || !e.start ? 9 * 60 : mins(e.start)) - (+e.alert), k = e.id + "|" + day;
-        if (at <= nm && nm - at < 5 && !C.notified[k]) {
-          C.notified[k] = 1;
-          var msg = (e.kind === "reminder" ? "Reminder: " : "") + e.t + (e.start && !e.allDay ? " at " + fmtT(e.start) : "") + (day !== d ? " tomorrow" : "");
-          toast("🔔 " + msg);
-          try { if ("Notification" in window && Notification.permission === "granted") new Notification("Revatour calendar", { body: msg }); } catch (er) {}
-        }
+        var am = alertMins(e); if (am == null || !hits(e, day) || (e.dn && e.dn.indexOf(day) >= 0)) return;
+        var k = e.id + "|" + day, startMs = pd(day).getTime() + (e.allDay || !e.start ? 9 * 60 : mins(e.start)) * 6e4, at = startMs - am * 6e4;
+        if (P.snz[k]) { if (P.snz[k] <= nowMs) { delete P.snz[k]; pSave(); popShow(e, day, startMs, true); } return; }
+        if (P.seen[k]) return;
+        if (at <= nowMs && nowMs - at < 2 * 3600e3) { P.seen[k] = 1; pSave(); popShow(e, day, startMs, false); }
       });
     });
+    popRefresh();
   }
+  function whenTxt(startMs, e) {
+    if (e.allDay || !e.start) return "Today";
+    var m = Math.round((startMs - Date.now()) / 6e4);
+    if (m > 1440) return "Tomorrow · " + fmtT(e.start);
+    if (m > 60) return "In " + Math.floor(m / 60) + " h " + (m % 60 ? (m % 60) + " min" : "") + " · " + fmtT(e.start);
+    if (m > 0) return "In " + m + " min · " + fmtT(e.start);
+    if (m > -2) return "Now · " + fmtT(e.start);
+    return "Started " + (-m >= 60 ? Math.floor(-m / 60) + " h " : "") + ((-m) % 60) + " min ago";
+  }
+  function chime() {
+    try { var A = window.AudioContext || window.webkitAudioContext; if (!A) return; var a = chime.ctx || (chime.ctx = new A()), t = a.currentTime;
+      [880, 1318.5].forEach(function (f, i) { var o = a.createOscillator(), g = a.createGain(); o.type = "sine"; o.frequency.value = f; g.gain.setValueAtTime(0, t + i * .14); g.gain.linearRampToValueAtTime(.08, t + i * .14 + .02); g.gain.exponentialRampToValueAtTime(.0001, t + i * .14 + .5); o.connect(g); g.connect(a.destination); o.start(t + i * .14); o.stop(t + i * .14 + .55); });
+    } catch (e) {}
+  }
+  function popBox() {
+    var b = document.getElementById("ccalpop"); if (b) return b;
+    css(); b = document.createElement("div"); b.id = "ccalpop"; b.setAttribute("aria-live", "assertive"); b.setAttribute("role", "region"); b.setAttribute("aria-label", "Calendar alerts");
+    document.body.appendChild(b);
+    b.addEventListener("click", function (ev) {
+      var btn = ev.target.closest("button"); if (!btn) return; var card = btn.closest(".cpop"), k = card.dataset.k, id = k.split("|")[0], day = k.split("|")[1], e = C.ev.find(function (x) { return x.id === id; });
+      if (btn.dataset.pdone) { if (e) { e.dn = e.dn || []; if (e.dn.indexOf(day) < 0) e.dn.push(day); save(); paint(); } popClose(card, "done"); toast("Nice! Checked off ✓"); }
+      else if (btn.dataset.pzz) { card.classList.toggle("open"); }
+      else if (btn.dataset.psn) { var v = btn.dataset.psn, ms; if (v === "tom") { var t = pd(add(today(), 1)); t.setHours(9, 0, 0, 0); ms = t.getTime(); } else ms = Date.now() + (+v) * 6e4; P.snz[k] = ms; pSave(); popClose(card); toast("Snoozed until " + new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) + (v === "tom" ? " tomorrow" : "")); }
+      else if (btn.dataset.px) popClose(card);
+      else if (btn.dataset.popen && e) { popClose(card); editor({ e: e, day: day }); }
+    });
+    return b;
+  }
+  function popClose(card, how) { card.classList.add(how === "done" ? "bye-done" : "bye"); setTimeout(function () { card.remove(); }, 380); }
+  function popShow(e, day, startMs, snoozed) {
+    var b = popBox(), k = e.id + "|" + day; if (b.querySelector('[data-k="' + k + '"]')) return;
+    var kind = e.kind || "event", ic = kind === "todo" ? "&#9745;" : kind === "reminder" ? "&#128276;" : "&#128197;", lab = kind === "todo" ? "To-do" : kind === "reminder" ? "Reminder" : "Event";
+    var c = document.createElement("div"); c.className = "cpop"; c.dataset.k = k; c.dataset.st = startMs; c.style.setProperty("--pc", e.color || "#2F6FE4"); c.setAttribute("role", "alertdialog"); c.setAttribute("aria-label", lab + ": " + e.t);
+    c.innerHTML = '<div class="cpg"></div><div class="cph"><span class="cpi">' + ic + '</span><div class="cpm"><small>' + lab + (snoozed ? " · snoozed" : "") + '</small><b>' + esc(e.t) + '</b><span class="cpw" data-when="1">' + whenTxt(startMs, e) + '</span></div><button type="button" class="cpx" data-px="1" aria-label="Dismiss">&#10005;</button></div>' +
+      (e.notes ? '<p class="cpn">' + esc(e.notes.length > 120 ? e.notes.slice(0, 120) + "…" : e.notes) + '</p>' : '') +
+      '<div class="cpb"><button type="button" class="ok" data-pdone="1">&#10003; Done</button><button type="button" data-pzz="1">&#128164; Snooze</button><button type="button" data-popen="1">Open</button></div>' +
+      '<div class="cps"><span>Remind me in</span>' + [["5", "5 min"], ["10", "10 min"], ["30", "30 min"], ["60", "1 hour"], ["tom", "Tomorrow 9am"]].map(function (x) { return '<button type="button" data-psn="' + x[0] + '">' + x[1] + '</button>'; }).join("") + '</div>';
+    b.appendChild(c); chime();
+    while (b.children.length > 4) b.firstChild.remove();
+    try { if ("Notification" in window && Notification.permission === "granted" && document.hidden) new Notification(lab + ": " + e.t, { body: whenTxt(startMs, e), tag: k }); } catch (er) {}
+  }
+  function popRefresh() { var b = document.getElementById("ccalpop"); if (!b) return; b.querySelectorAll(".cpop").forEach(function (c) { var id = c.dataset.k.split("|")[0], e = C.ev.find(function (x) { return x.id === id; }), w = c.querySelector("[data-when]"); if (e && w) w.textContent = whenTxt(+c.dataset.st, e); }); }
 
   var wired = false, ticking = false;
-  function startTick() { if (ticking) return; ticking = true; setInterval(tick, 30000); }
+  function startTick() { if (ticking) return; ticking = true; setInterval(tick, 15000); }
   function wire() {
     if (wired) return; wired = true;
     document.addEventListener("click", function (ev) { if (host && host.contains(ev.target)) onClick(ev); });
@@ -394,6 +440,18 @@
       ".ccal-year{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}.ccal-year .ymt{border:0;background:none;color:var(--ink);font:inherit;font-weight:700;font-size:15px;cursor:pointer;padding:0 0 6px}.ccal-year .ymg{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;gap:1px}.ccal-year i{font-style:normal;font-size:10px;color:var(--mute)}.ccal-year .ymg button{border:0;background:none;color:var(--ink);font:inherit;font-size:12px;aspect-ratio:1;border-radius:50%;cursor:pointer;padding:0;position:relative}.ccal-year .ymg button:hover{background:var(--line)}.ccal-year .t{background:var(--accent)!important;color:var(--accent-ink,#fff)!important;font-weight:700}.ccal-year .has::after{content:'';position:absolute;bottom:2px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--accent)}",
       ".ccal-agenda .ag{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.ccal-agenda .agd{border:0;background:none;color:var(--ink);text-align:left;cursor:pointer;font:inherit;display:flex;align-items:center;gap:8px}.ccal-agenda .agd b{font-size:22px;width:38px;height:38px;line-height:38px;text-align:center;border-radius:50%}.ccal-agenda .agd.today b{background:var(--accent);color:var(--accent-ink,#fff)}.ccal-agenda .agd small{color:var(--mute);font-size:12px}.ccal-agenda .agr{display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:center;margin-bottom:4px}.ccal-agenda .agt{font-size:13px;color:var(--mute)}",
       ".ccal-keys{font-size:12px;margin-top:10px}",
+      "#ccalpop{position:fixed;right:18px;bottom:18px;z-index:2147482000;display:flex;flex-direction:column;gap:12px;width:min(360px,calc(100vw - 36px));pointer-events:none}",
+      ".cpop{pointer-events:auto;position:relative;overflow:hidden;border-radius:22px;padding:14px 14px 12px;color:#fff;background:rgba(14,17,23,.72);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);border:1px solid rgba(255,255,255,.22);box-shadow:0 18px 40px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.12);font:500 13px/1.35 Inter,system-ui,Segoe UI,sans-serif;animation:cpin .45s cubic-bezier(.2,1.3,.4,1)}",
+      ".cpop .cpg{position:absolute;inset:-40% auto auto -20%;width:70%;height:140%;background:radial-gradient(closest-side,var(--pc),transparent);opacity:.45;filter:blur(20px);pointer-events:none}",
+      ".cpop .cph{position:relative;display:flex;gap:12px;align-items:flex-start}.cpop .cpi{flex:0 0 44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:color-mix(in srgb,var(--pc) 55%,rgba(255,255,255,.08));box-shadow:0 0 0 0 var(--pc);animation:cpring 1.8s ease-out 3}",
+      ".cpop .cpm{flex:1;min-width:0}.cpop small{display:block;font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.7}.cpop .cpm b{display:block;font-size:16px;font-weight:800;margin:1px 0 3px;word-wrap:break-word}.cpop .cpw{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;background:rgba(255,255,255,.14)}",
+      ".cpop .cpx{border:0;background:rgba(255,255,255,.1);color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:12px;flex:0 0 28px}.cpop .cpx:hover{background:rgba(255,255,255,.25)}",
+      ".cpop .cpn{position:relative;margin:8px 0 0 56px;opacity:.8;font-size:12.5px}",
+      ".cpop .cpb{position:relative;display:flex;gap:8px;margin-top:12px}.cpop .cpb button,.cpop .cps button{flex:1;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.1);color:#fff;border-radius:999px;padding:8px 10px;font:700 13px Inter,system-ui,sans-serif;cursor:pointer;transition:background .15s,transform .15s}.cpop .cpb button:hover,.cpop .cps button:hover{background:rgba(255,255,255,.22);transform:translateY(-1px)}.cpop .cpb .ok{background:#17A36A;border-color:#17A36A}.cpop .cpb .ok:hover{background:#1DBB7A}",
+      ".cpop .cps{position:relative;display:none;flex-wrap:wrap;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.14)}.cpop .cps span{flex-basis:100%;font-size:11px;opacity:.7;font-weight:700}.cpop .cps button{flex:0 0 auto;padding:6px 12px;font-size:12px}.cpop.open .cps{display:flex}",
+      ".cpop.bye{animation:cpout .35s forwards}.cpop.bye-done{animation:cpdone .38s forwards}",
+      "@keyframes cpin{from{opacity:0;transform:translateY(24px) scale(.94)}to{opacity:1;transform:none}}@keyframes cpout{to{opacity:0;transform:translateX(60px)}}@keyframes cpdone{30%{transform:scale(1.04)}to{opacity:0;transform:scale(.9)}}@keyframes cpring{0%{box-shadow:0 0 0 0 var(--pc)}100%{box-shadow:0 0 0 14px transparent}}",
+      "@media(prefers-reduced-motion:reduce){.cpop,.cpop .cpi{animation:none!important}}",
       ".ccal-top .mx{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer}.ccal-top .mx[aria-pressed=true]{background:var(--accent);color:var(--accent-ink,#fff);border-color:var(--accent)}",
       ".ccal-max{position:fixed!important;inset:0;z-index:9000;background:var(--bg,#fff);overflow:auto;padding:18px 24px;margin:0!important;max-width:none!important}html.ccal-lock,html.ccal-lock body{overflow:hidden}.ccal-max .ccal-grid .gb{height:calc(100vh - 250px)}.ccal-max .ccal-cell{min-height:calc((100vh - 200px) / 6)}",
       ".ccal-modal{position:fixed;inset:0;background:rgba(10,14,22,.45);display:flex;align-items:center;justify-content:center;z-index:10000;padding:16px}.ccal-ed{background:var(--panel,#fff);color:var(--ink);border-radius:18px;padding:20px;width:min(520px,100%);max-height:92vh;overflow:auto;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 50px rgba(0,0,0,.3)}",
@@ -415,6 +473,7 @@
       paint();
     },
     refresh: function () { paint(); },
+    testPopup: function () { popShow({ id: "demo" + Date.now(), t: "Mega Millions drawing", kind: "reminder", color: "#7C4DCC", start: (function () { var d = new Date(Date.now() + 10 * 6e4); return pad(d.getHours()) + ":" + pad(d.getMinutes()); })(), notes: "Check numbers and log the ticket." }, today(), Date.now() + 10 * 6e4, false); },
     addEvent: async function (o) { await load(); var e = Object.assign({ id: uid(), kind: "event", allDay: !o.start, color: "#2F6FE4", notes: "", alert: "" }, o); if (!e.start) { e.start = ""; e.end = ""; } C.ev.push(e); await save(); paint(); return e; },
     getLink: async function () { await load(); return C.link; },
     setLink: async function (v) { await load(); C.link = !!v; await save(); paint(); },
