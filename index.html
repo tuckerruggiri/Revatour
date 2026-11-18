@@ -528,7 +528,13 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
   <button class="nav" id="navnews" type="button">News</button>
   <button class="nav" id="navrl" type="button">Risk Ladder</button>
   <button class="nav" id="navinv" type="button">Investments</button>
-  <button class="nav" id="navflip" type="button">Flipbook</button>
+  <button class="nav" id="navflip" type="button">My book</button>
+  <button class="nav" id="navfbhome" type="button">Overview</button>
+  <button class="nav" id="navfbex" type="button">Example book</button>
+  <button class="nav" id="navfbbuild" type="button">Build your book</button>
+  <button class="nav" id="navfbclear" type="button">Clear page</button>
+  <button class="nav" id="navfbprice" type="button">Pricing</button>
+  <button class="nav" id="navfbideas" type="button">Ideas checklist</button>
   <button class="nav" id="navgd" type="button">How-To</button>
   <button class="nav" id="navpub" type="button">Publishes <span id="navpubn" class="badge"></span></button>
   <button class="nav" id="navcoach" type="button">AI Coach</button>
@@ -560,6 +566,7 @@ body.grabbing,body.grabbing *{cursor:grabbing!important;user-select:none}
 <div class="wrap" id="dayv" hidden></div>
 <div class="wrap" id="invv" hidden></div>
 <div class="wrap" id="flipv" hidden></div>
+<div class="wrap" id="fbsv" hidden></div>
 <div class="wrap" id="gdv" hidden></div>
 <div class="wrap" id="profilev" hidden></div>
 <div class="wrap" id="pubv" hidden></div>
@@ -2948,6 +2955,9 @@ function showPulse(){hideViews();$("navpulse").classList.add("on");$("pulsev").h
 $("navpulse").addEventListener("click",showPulse);
 function showFlip(){hideViews();$("navflip").classList.add("on");$("flipv").hidden=false;if(window.Flipbook)window.Flipbook.mount($("flipv"));else $("flipv").textContent="Flipbook could not load. Refresh the page."}
 $("navflip").addEventListener("click",showFlip);
+function showFbs(pg){hideViews();$("fbsv").hidden=false;if(window.FbSite)window.FbSite.mount($("fbsv"),pg);else $("fbsv").textContent="Flipbook could not load. Refresh the page.";window.scrollTo(0,0)}
+document.addEventListener("click",function(e){var n=e.target.closest&&e.target.closest("button.nav");if(n&&!/^navfb/.test(n.id||""))$("fbsv").hidden=true},true);
+[["navfbhome","home"],["navfbex","example"],["navfbbuild","build"],["navfbclear","clear"],["navfbprice","pricing"],["navfbideas","ideas"]].forEach(function(x){$(x[0]).addEventListener("click",function(){showFbs(x[1])})});
 $("zonev").addEventListener("change",function(e){var t=e.target,k=t.getAttribute&&t.getAttribute("data-zck");if(k!=null){ZN.ck[k]=t.checked;znRender();return}if(t.id==="znpg"){ZN.pg=t.value;ZN.show=36;znRender();return}if(t.id==="zncat")ZN.cat=t.value});
 $("zonev").addEventListener("input",function(e){if(e.target.id==="znnote")ZN.note=e.target.value});
 $("zonev").addEventListener("click",async function(e){var t=e.target,b;
@@ -3253,8 +3263,8 @@ async function saveProfile(){if(store.db)await store.db.doc("meta/profile").set(
 function myAvUrl(){return prof.src||(prof.aid?blobUrl(prof.aid):"")}
 function avatarHTML(cls,url,name){var A=window.stockspotAuth||{},u=url!=null?url:myAvUrl(),nm=name||A.username||A.email||"?";
  return '<div class="pf-av'+(cls?" "+cls:"")+'">'+(u?'<img alt="" src="'+esc(u)+'">':esc((nm.charAt(0)||"?").toUpperCase()))+'</div>'}
-function hideViews(){["home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","scv","labv","zonev","pracv","futv","optv","trafficv","chartsv","movv","pulsev","invv","flipv","gdv","rlv","newsv","dayv"].forEach(function(i){$(i).hidden=true});
- ["navday","navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navsc","navlab","navzone","navprac","navfut","navopt","navtraffic","navcharts","navmov","navpulse","navflip"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
+function hideViews(){["fbsv","home","studio","entry","pagev","settingsv","profilev","tickerv","pubv","notifv","planv","alv","scv","labv","zonev","pracv","futv","optv","trafficv","chartsv","movv","pulsev","invv","flipv","gdv","rlv","newsv","dayv"].forEach(function(i){$(i).hidden=true});
+ ["navfbhome","navfbex","navfbbuild","navfbclear","navfbprice","navfbideas","navday","navhome","navstudio","navset","navprofile","navpub","navcoach","navnotif","navplan","navinv","navgd","navrl","navnews","navsc","navlab","navzone","navprac","navfut","navopt","navtraffic","navcharts","navmov","navpulse","navflip"].forEach(function(i){$(i).classList.remove("on")});curDate="";curPage=""}
 function paintProfNav(){$("navprofile").classList.toggle("on",profTab!=="coach");$("navcoach").classList.toggle("on",profTab==="coach")}
 function tipTile(v,l,c,tip){return '<div class="hm-tile tipw" tabindex="0"><b'+(c?' class="'+c+'"':'')+'>'+v+'</b><span>'+l+' <i class="tipq" aria-hidden="true">?</i></span><div class="tipb" role="tooltip">'+tip+'</div></div>'}
 function recordBlock(){var all=allTrades();if(!all.length)return '<div class="pf-panel hint" style="margin:8px 0">No saved trades yet. Save a day in Studio and your record shows here.</div>';
@@ -4031,6 +4041,7 @@ restore();try{vidPaint()}catch(e){}loadImgs();showStats();renderImgs();initStore
 <script src="options.js"></script>
 <script src="traffic.js"></script>
 <script src="calendar.js"></script>
+<script src="fbsite.js"></script>
 <script src="charts.js"></script>
 <script src="practice-data.js"></script>
 <script src="practice.js"></script>
