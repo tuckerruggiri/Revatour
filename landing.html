@@ -4,87 +4,304 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Stockspot | Coming soon</title>
-<meta name="description" content="Stockspot is almost here. Leave your email and we'll tell you the day it launches.">
+<meta name="description" content="The all-in-one home for traders: journal, real charts, parabolic movers, market pulse, futures, verified pages and a printed Flipbook of your best trades. Coming soon. Join the waitlist.">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0B0E11">
 <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<meta name="theme-color" content="#000000">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <style>
+:root{--acc:#3BE08A;--bg:#0B0E11;--bg2:#0E1217;--card:#12171D;--line:#1C232C;--line2:#222B35;--ink:#E8EDF3;--mute:#8A94A3;--soft:#B7C0CC;--red:#FF7A7A}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%}
-body{background:#000;color:#fff;font:16px/1.5 'Instrument Sans',system-ui,sans-serif;display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
-a{color:#A1A1AA;text-decoration:none}a:hover{color:#fff}
-header{display:flex;justify-content:space-between;align-items:center;padding:22px clamp(20px,4vw,56px)}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Instrument Sans',system-ui,sans-serif;overflow-x:hidden}
+a{color:#C9D1DC;text-decoration:none}a:hover{color:#fff}
+.mono{font-family:'JetBrains Mono',monospace}
+.w{max-width:1320px;margin:0 auto;padding-left:clamp(18px,3vw,40px);padding-right:clamp(18px,3vw,40px)}
+header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;background:rgba(11,14,17,.86);backdrop-filter:blur(12px)}
+nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding-top:16px;padding-bottom:16px}
 .brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:20px;letter-spacing:-.02em}
-.login{font-size:14px;border:1px solid #27272A;padding:8px 14px;border-radius:999px}
-main{flex:1;display:grid;place-items:center;padding:24px clamp(20px,4vw,56px) 40px;position:relative}
-.grid{position:absolute;inset:0;background-image:linear-gradient(#111 1px,transparent 1px),linear-gradient(90deg,#111 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse at center,#000 20%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,#000 20%,transparent 70%);pointer-events:none}
-.wrap{position:relative;width:100%;max-width:1100px;text-align:center}
-.pill{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#D4D4D8;border:1px solid #27272A;border-radius:999px;padding:7px 14px;margin-bottom:28px}
-.dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:p 1.6s ease-in-out infinite}
-@keyframes p{0%,100%{opacity:1}50%{opacity:.25}}
-h1{font:400 clamp(48px,9vw,120px)/.95 'Instrument Serif',Georgia,serif;letter-spacing:-.02em;margin:0 0 22px}
-h1 em{color:#A1A1AA}
-.lead{font-size:clamp(17px,1.6vw,20px);color:#A1A1AA;max-width:640px;margin:0 auto 36px}
-form{display:flex;gap:8px;max-width:520px;margin:0 auto;background:#0A0A0A;border:1px solid #27272A;border-radius:999px;padding:6px}
-form:focus-within{border-color:#52525B}
-input{flex:1;min-width:0;background:none;border:0;color:#fff;font:inherit;font-size:16px;padding:12px 18px;outline:none}
-input::placeholder{color:#52525B}
-button{border:0;border-radius:999px;background:#fff;color:#000;font:700 15px 'Instrument Sans',sans-serif;padding:12px 22px;cursor:pointer;white-space:nowrap;transition:transform .12s}
-button:hover{transform:translateY(-1px)}button:disabled{opacity:.6;cursor:default;transform:none}
-.msg{min-height:24px;margin-top:14px;font-size:15px;color:#A1A1AA}.msg.ok{color:#fff}.msg.bad{color:#FCA5A5}
-.done{display:none;max-width:520px;margin:0 auto;border:1px solid #27272A;border-radius:20px;padding:22px;background:#0A0A0A}
-.done b{display:block;font-size:20px;margin-bottom:4px}
-.feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:64px;text-align:left}
-.feat{border:1px solid #1F1F23;border-radius:16px;padding:18px 18px 20px;background:#050505}
-.feat i{font-style:normal;font-size:22px}
-.feat b{display:block;margin:8px 0 2px;font-size:16px}
-.feat span{color:#71717A;font-size:14px}
-footer{padding:20px clamp(20px,4vw,56px);color:#52525B;font-size:12px;border-top:1px solid #111}
-@media(max-width:520px){form{flex-direction:column;border-radius:20px}button{width:100%}}
+.links{display:flex;flex-wrap:wrap;align-items:center;gap:26px;font-size:15px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--acc);color:#06140C!important;font-weight:700;padding:10px 18px;border-radius:9px;border:0;font-family:inherit;font-size:15px;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(59,224,138,.25)}
+.btn:disabled{opacity:.6;transform:none;box-shadow:none;cursor:default}
+.ticker{border-bottom:1px solid var(--line);background:var(--bg2);overflow:hidden;white-space:nowrap}
+.ticker .row{display:inline-flex;gap:40px;padding:10px 0;font-size:13px;animation:tk 50s linear infinite}
+.ticker span b{color:var(--acc);font-weight:500}
+@keyframes tk{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.pill{display:inline-flex;align-self:flex-start;align-items:center;gap:9px;border:1px solid #26303B;border-radius:999px;padding:7px 14px;font-size:13px;color:var(--soft);background:#0F1419}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 0 rgba(59,224,138,.6);animation:pu 1.8s infinite}
+@keyframes pu{0%{box-shadow:0 0 0 0 rgba(59,224,138,.55)}70%{box-shadow:0 0 0 10px rgba(59,224,138,0)}100%{box-shadow:0 0 0 0 rgba(59,224,138,0)}}
+.hero{display:flex;flex-wrap:wrap;gap:56px;align-items:center;padding-top:80px;padding-bottom:72px}
+.hero .l{flex:1 1 500px;min-width:0;display:flex;flex-direction:column;gap:24px}
+.hero .r{flex:1 1 440px;min-width:0}
+h1{margin:0;font-size:clamp(42px,6.2vw,76px);line-height:1;letter-spacing:-.04em;font-weight:700}
+h1 .g{color:var(--acc)}
+.lead{margin:0;font-size:19px;line-height:1.55;color:var(--soft);max-width:560px}
+.wl{display:flex;flex-wrap:wrap;gap:10px;max-width:540px}
+.wl input{flex:1 1 240px;min-width:0;height:54px;padding:0 16px;border-radius:10px;border:1px solid #2A3440;background:var(--card);color:var(--ink);font-size:16px;font-family:inherit}
+.wl input:focus{outline:2px solid var(--acc);outline-offset:1px}
+.wl .btn{height:54px;padding:0 24px;font-size:16px}
+.wl-ok{display:none;align-items:center;gap:12px;max-width:540px;border:1px solid var(--acc);background:rgba(59,224,138,.07);border-radius:12px;padding:16px 18px;font-size:16px}
+.wl-ok b{color:var(--acc)}
+.msg{font-size:14px;color:var(--red);min-height:18px;margin:0}
+.small{margin:0;font-size:13px;color:var(--mute)}
+/* app preview */
+.app{background:var(--card);border:1px solid var(--line2);border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.app-top{display:flex;align-items:center;gap:6px;padding:12px 14px;border-bottom:1px solid var(--line2);background:#0F1419}
+.app-top i{width:10px;height:10px;border-radius:50%;background:#2A3440}
+.tabs{display:flex;gap:4px;padding:10px;border-bottom:1px solid var(--line2);overflow-x:auto}
+.tabs button{flex:0 0 auto;border:0;background:none;color:var(--mute);font:600 13px 'Instrument Sans',sans-serif;padding:8px 12px;border-radius:8px;cursor:pointer}
+.tabs button.on{background:#1A222B;color:#fff}
+.pane{display:none;padding:20px;min-height:330px;animation:fd .35s ease}
+.pane.on{display:block}
+@keyframes fd{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.k{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.k div{background:var(--bg2);border-radius:10px;padding:12px}
+.k small{display:block;font-size:12px;color:var(--mute)}
+.k b{font-family:'JetBrains Mono',monospace;font-size:18px}
+.tag{font-size:11px;font-weight:700;letter-spacing:.06em;border-radius:999px;padding:3px 9px;border:1px solid currentColor}
+.mv{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-top:1px solid var(--line)}
+.mv:first-child{border-top:0}
+.mv .t{font-family:'JetBrains Mono',monospace;font-weight:700}
+.mv .why{color:var(--mute);font-size:13px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ex{font-size:11px;color:var(--mute);margin-top:10px}
+/* stats band */
+.band{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg2)}
+.band .w{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:24px;text-align:center;padding-top:28px;padding-bottom:28px}
+.band b{display:block;font-family:'JetBrains Mono',monospace;font-size:30px}
+.band span{font-size:14px;color:var(--mute)}
+section h2{margin:0 0 10px;font-size:clamp(30px,3.6vw,44px);letter-spacing:-.03em;line-height:1.08}
+section .sub{margin:0;color:var(--soft);font-size:17px;line-height:1.6;max-width:640px}
+.sec{padding-top:96px;padding-bottom:40px}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:36px}
+.f{position:relative;background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .2s;overflow:hidden}
+.f:hover{border-color:#34404D;transform:translateY(-3px)}
+.f .ic{width:40px;height:40px;border-radius:10px;background:#1A222B;display:grid;place-items:center;font-size:20px}
+.f h3{margin:4px 0 0;font-size:20px;letter-spacing:-.01em}
+.f p{margin:0;color:var(--soft);line-height:1.55;font-size:15px}
+.f ul{margin:4px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:14px;color:#C9D1DC}
+.f li::before{content:"✓";color:var(--acc);font-weight:700;margin-right:8px}
+.new{position:absolute;top:18px;right:18px;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--acc);border:1px solid var(--acc);border-radius:999px;padding:3px 9px}
+.split{display:flex;flex-wrap:wrap;gap:56px;align-items:center;padding-top:96px;padding-bottom:40px}
+.split>div{flex:1 1 440px;min-width:0}
+.book{position:relative;height:340px;perspective:1200px}
+.page{position:absolute;inset:20px 40px;border-radius:12px;background:#F6F4EF;box-shadow:0 20px 50px rgba(0,0,0,.5);transform-origin:left center;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.page svg{position:absolute;inset:18px;width:calc(100% - 36px);height:calc(100% - 36px)}
+.film{position:absolute;inset:20px 40px;border-radius:12px;background:linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(.5px);transform:translate(26px,-18px) rotate(4deg);transition:transform .7s cubic-bezier(.2,.7,.2,1);cursor:pointer}
+.film svg{position:absolute;inset:18px;width:calc(100% - 36px);height:calc(100% - 36px)}
+.book:hover .film,.book.snap .film{transform:none}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:36px}
+.st{background:var(--card);border:1px solid var(--line2);border-radius:14px;padding:26px}
+.st .n{font-family:'JetBrains Mono',monospace;color:var(--acc);font-size:14px}
+.st h3{margin:8px 0 6px;font-size:20px}.st p{margin:0;color:var(--soft);line-height:1.55}
+.cta{display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;padding-top:110px;padding-bottom:110px}
+.cta .wl{justify-content:center}.cta .pill{align-self:center}
+.faq{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:30px}
+.faq details{background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:16px 18px}
+.faq summary{cursor:pointer;font-weight:600;list-style:none}
+.faq summary::after{content:"+";float:right;color:var(--acc);font-weight:700}
+.faq details[open] summary::after{content:"–"}
+.faq p{margin:10px 0 0;color:var(--soft);line-height:1.55}
+footer{border-top:1px solid var(--line)}
+footer .w{padding-top:32px;padding-bottom:32px;font-size:13px;color:var(--mute);line-height:1.6}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.ticker .row,.pulse{animation:none}.reveal{opacity:1;transform:none}}
+@media(max-width:640px){.links a:not(.btn){display:none}.k{grid-template-columns:1fr 1fr 1fr}}
 </style>
 </head>
 <body>
-<header>
-  <span class="brand"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="6" fill="none" stroke="#fff" stroke-width="2"/><path d="M6 17 L11 12 L14 15 L20 8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Stockspot</span>
-  <a class="login" href="login.html">Member log in</a>
-</header>
-<main>
-  <div class="grid"></div>
-  <div class="wrap">
-    <div class="pill"><span class="dot"></span>Coming soon</div>
-    <h1>Your trading journal,<br><em>built for you.</em></h1>
-    <p class="lead">We're putting the finishing touches on Stockspot. Leave your email and we'll let you know the day it launches. One email, no spam.</p>
-    <form id="wl" novalidate>
-      <input id="em" type="email" autocomplete="email" placeholder="you@email.com" aria-label="Your email" required>
-      <button id="go" type="submit">Notify me</button>
+
+<header><nav class="w" aria-label="Main">
+  <a href="#top" class="brand"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="6" fill="none" stroke="var(--acc)" stroke-width="2"/><path d="M6 17 L11 12 L14 15 L20 8" fill="none" stroke="var(--acc)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Stockspot</a>
+  <div class="links">
+    <a href="#features">Features</a>
+    <a href="#flipbook">Flipbook</a>
+    <a href="#how">How it works</a>
+    <a href="login.html">Member log in</a>
+    <a href="#join" class="btn">Join the waitlist</a>
+  </div>
+</nav></header>
+
+<div class="ticker mono" aria-hidden="true"><div class="row" id="tk"></div></div>
+
+<main id="top">
+<section class="w hero">
+  <div class="l">
+    <div class="pill"><span class="pulse"></span>Coming soon · Waitlist is open</div>
+    <h1>Stop following screenshots.<br>Trade like you <span class="g">mean it.</span></h1>
+    <p class="lead">Stockspot is the all-in-one home for traders. Journal every trade by setup, see it on the real candles, catch parabolic movers before the crowd, and turn your best trades into a printed book.</p>
+    <form class="wl" novalidate>
+      <label for="em1" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Email address</label>
+      <input id="em1" type="email" autocomplete="email" placeholder="you@email.com" required>
+      <button type="submit" class="btn">Get early access</button>
     </form>
-    <div class="done" id="done" role="status"><b>You're on the list. &#127881;</b><span style="color:#A1A1AA">We'll email you the day Stockspot opens.</span></div>
-    <div class="msg" id="msg" role="status" aria-live="polite"></div>
-    <div class="feats">
-      <div class="feat"><i>&#128209;</i><b>Every trade, tracked</b><span>Log trades by setup and see what actually works.</span></div>
-      <div class="feat"><i>&#128200;</i><b>Real charts</b><span>Your entries and exits on the real candles from that day.</span></div>
-      <div class="feat"><i>&#128214;</i><b>Flipbook</b><span>Turn your best trades into a printed book.</span></div>
-      <div class="feat"><i>&#9200;</i><b>Your trading day</b><span>Calendar, to-dos and reminders built around market hours.</span></div>
+    <div class="wl-ok" role="status"><span style="font-size:24px">&#127881;</span><span><b>You're on the list.</b> We'll email you the day Stockspot opens. Waitlist members get in first.</span></div>
+    <p class="msg" role="alert"></p>
+    <p class="small">Free to join the waitlist. One launch email, no spam.</p>
+  </div>
+
+  <div class="r">
+    <div class="app" aria-label="Preview of the Stockspot app">
+      <div class="app-top"><i></i><i></i><i></i><span class="small" style="margin-left:8px">stockspot · preview</span></div>
+      <div class="tabs" role="tablist">
+        <button type="button" class="on" data-p="0" role="tab">&#9889; Trading day</button>
+        <button type="button" data-p="1" role="tab">&#128640; Parabolic movers</button>
+        <button type="button" data-p="2" role="tab">&#128240; Market pulse</button>
+        <button type="button" data-p="3" role="tab">&#128214; Flipbook</button>
+      </div>
+      <div class="pane on">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div><div class="small">Today's P&amp;L</div><div class="mono" style="font-size:38px;font-weight:700;color:var(--acc);letter-spacing:-.02em" id="pnl">+$0</div></div><span class="tag" style="color:var(--acc)">A+ SETUP</span></div>
+        <svg id="heroChart" viewBox="0 0 460 150" width="100%" height="150" role="img" aria-label="Example candlestick chart with entry and exit"></svg>
+        <div class="k" style="margin-top:12px"><div><small>Win rate</small><b>68%</b></div><div><small>Best setup</small><b style="font-size:15px">VWAP reclaim</b></div><div><small>Trades</small><b>4</b></div></div>
+        <div class="ex">Example data</div>
+      </div>
+      <div class="pane">
+        <div class="small" style="margin-bottom:8px">Scanned from the news every morning</div>
+        <div class="mv"><span class="t">AAAA</span><span class="why">Earnings beat + guidance raise, heavy pre-market volume</span><span class="tag" style="color:var(--acc)">DAY</span></div>
+        <div class="mv"><span class="t">BBBB</span><span class="why">FDA decision date this week, low float</span><span class="tag" style="color:#F5B841">SWING</span></div>
+        <div class="mv"><span class="t">CCCC</span><span class="why">New contract win, breaking a 1-year base</span><span class="tag" style="color:#4DA3FF">INVEST</span></div>
+        <div class="mv"><span class="t">DDDD</span><span class="why">Early radar: unusual call buying</span><span class="tag" style="color:#B58CFF">RADAR</span></div>
+        <div class="k" style="margin-top:14px"><div><small>Scorecard</small><b>Tracked</b></div><div><small>Since posted</small><b style="color:var(--acc)">$ + %</b></div><div><small>Penny stocks</small><b>Own tab</b></div></div>
+        <div class="ex">Example tickers. Not investment advice.</div>
+      </div>
+      <div class="pane">
+        <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px"><span class="tag" style="color:var(--red)">BREAKING</span><b style="line-height:1.35">Fed holds rates steady, signals patience</b></div>
+        <div class="small" style="margin-bottom:10px">What it could mean, based on how markets reacted before:</div>
+        <div class="mv"><span>&#127974; Banks</span><span class="why" style="text-align:right">Net interest margins hold up</span><b style="color:var(--acc)">&#9650;</b></div>
+        <div class="mv"><span>&#127968; Homebuilders</span><span class="why" style="text-align:right">Mortgage rates stay high for now</span><b style="color:var(--red)">&#9660;</b></div>
+        <div class="mv"><span>&#128187; Tech</span><span class="why" style="text-align:right">Watch the 10-year yield</span><b style="color:#F5B841">&#9679;</b></div>
+        <div class="ex">Example headline</div>
+      </div>
+      <div class="pane">
+        <div class="small" style="margin-bottom:10px">Your best trades, printed. A clear overlay snaps over each chart.</div>
+        <div class="book snap" style="height:250px"><div class="page"><svg viewBox="0 0 300 160" id="bkC"></svg></div><div class="film"><svg viewBox="0 0 300 160"><line x1="0" y1="62" x2="300" y2="62" stroke="#16A34A" stroke-dasharray="5 4" stroke-width="1.5"/><line x1="0" y1="128" x2="300" y2="128" stroke="#DC2626" stroke-dasharray="5 4" stroke-width="1.5"/><circle cx="90" cy="108" r="6" fill="#2F6FE4"/><circle cx="235" cy="58" r="6" fill="#111"/><text x="4" y="58" font-size="10" fill="#16A34A" font-family="JetBrains Mono">TARGET</text><text x="4" y="124" font-size="10" fill="#DC2626" font-family="JetBrains Mono">STOP</text></svg></div></div>
+      </div>
     </div>
   </div>
+</section>
+
+<div class="band"><div class="w">
+  <div><b>15+</b><span>tools in one place</span></div>
+  <div><b>1 · 2 · 5 · 15</b><span>minute practice charts</span></div>
+  <div><b>Real</b><span>candles from the actual day</span></div>
+  <div><b>0</b><span>edited screenshots</span></div>
+</div></div>
+
+<section id="features" class="w sec reveal">
+  <h2>Everything a trader needs.<br><span style="color:var(--mute)">Nothing you don't.</span></h2>
+  <p class="sub">Built by a trader who got tired of jumping between ten tabs, three spreadsheets and a Discord full of screenshots.</p>
+  <div class="feat-grid">
+    <div class="f"><span class="ic">&#9889;</span><h3>Trading day</h3><p>Plan the day, log every trade and tag it with your setup, so you finally see what actually works.</p><ul><li>Trade plan and pre-market checklist</li><li>Every trade tracked by setup</li><li>P&amp;L calendar and report card</li></ul></div>
+    <div class="f"><span class="new">NEW</span><span class="ic">&#128640;</span><h3>Parabolic movers</h3><p>Stocks with news that could make them run, scanned from the internet every day.</p><ul><li>Day trades, swings and investments</li><li>Early radar and penny stock tabs</li><li>A scorecard that tracks every pick</li></ul></div>
+    <div class="f"><span class="new">NEW</span><span class="ic">&#128240;</span><h3>Market pulse</h3><p>Breaking Fed, rates, banks and economy news, with what it could mean for each sector, based on history.</p><ul><li>FOMC, CPI, jobs and mortgage rates</li><li>Sector-by-sector impact</li><li>Guides today's trading</li></ul></div>
+    <div class="f"><span class="ic">&#128200;</span><h3>Practice charts</h3><p>Four side-by-side charts (1, 2, 5 and 15 min) on gap-up stocks with real setups planted inside. Scroll back and find them.</p><ul><li>Train your eye before the open</li><li>Highlight and replay setups</li><li>New strategies added over time</li></ul></div>
+    <div class="f"><span class="new">NEW</span><span class="ic">&#128214;</span><h3>Flipbook</h3><p>Turn your best trades into a printed coffee-table book. Each page has a clear overlay with your entries, exits and stops.</p><ul><li>Real candles from that day</li><li>VWAP, EMAs, FVGs, supply and demand, Fibonacci</li><li>Draw your own lines</li></ul></div>
+    <div class="f"><span class="ic">&#128202;</span><h3>Futures</h3><p>Funded prop accounts like Apex, NinjaTrader, trade copying and the best (and worst) times to trade, in pictures, not walls of text.</p><ul><li>Prop firm rules made simple</li><li>Common futures setups</li><li>Session timing guide</li></ul></div>
+    <div class="f"><span class="ic">&#127891;</span><h3>Options school</h3><p>Options explained like a game. Calls, puts, expected move and risk, all visual and quick.</p><ul><li>Bite-size lessons</li><li>Risk ladder for sizing</li><li>Key zones and levels</li></ul></div>
+    <div class="f"><span class="new">NEW</span><span class="ic">&#128197;</span><h3>Calendar and reminders</h3><p>A full calendar built around market hours, with to-dos, recurring tasks and alerts you can snooze or check off.</p><ul><li>Day, week and month views</li><li>Link Google or Outlook</li><li>Pop-up alerts over your charts</li></ul></div>
+    <div class="f"><span class="ic">&#128200;</span><h3>Investments and goals</h3><p>See where your retirement and long-term money is heading, with your own growth, contribution and withdrawal assumptions.</p><ul><li>All your accounts in one place</li><li>"Where you're heading" planner</li><li>Monthly report card vs. the S&amp;P 500</li></ul></div>
+    <div class="f"><span class="ic">&#128279;</span><h3>Connect your broker</h3><p>Pull in your real trades from Schwab and other top brokers. Read-only, so we never touch your account.</p><ul><li>Schwab live today, more coming</li><li>Import old trades from Discord</li><li>Notes on every ticker</li></ul></div>
+    <div class="f"><span class="ic">&#128737;</span><h3>Verified trader pages</h3><p>Your P&amp;L, win rate and drawdown come straight from real fills. Publish your best work to your profile wall in one tap.</p><ul><li>Verified badge</li><li>Publish trades, news and pages</li><li>Follow traders who are actually good</li></ul></div>
+    <div class="f"><span class="ic">&#9200;</span><h3>Desktop clock</h3><p>A small always-on-top clock for Windows that sits over your charts and opens the full app in one click.</p><ul><li>Market countdowns</li><li>Alerts while you trade</li><li>Expands to everything</li></ul></div>
+  </div>
+</section>
+
+<section id="flipbook" class="w split reveal">
+  <div>
+    <div class="pill" style="margin-bottom:18px">&#128214; Only on Stockspot</div>
+    <h2>Your best trades,<br>on your coffee table.</h2>
+    <p class="sub">Pick your trades. We print the real chart from that day, plus a clear overlay with your buys, partials, stops and targets that snaps right on top. Add a new page every week, month or quarter, and watch your book grow.</p>
+    <p class="small" style="margin-top:16px">Hover the book to snap the overlay on.</p>
+  </div>
+  <div>
+    <div class="book" id="book"><div class="page"><svg viewBox="0 0 300 160" id="bkC2"></svg></div><div class="film"><svg viewBox="0 0 300 160"><rect x="0" y="40" width="300" height="20" fill="#16A34A" opacity=".12"/><line x1="0" y1="50" x2="300" y2="50" stroke="#16A34A" stroke-dasharray="5 4" stroke-width="1.5"/><line x1="0" y1="132" x2="300" y2="132" stroke="#DC2626" stroke-dasharray="5 4" stroke-width="1.5"/><circle cx="80" cy="112" r="6" fill="#2F6FE4"/><circle cx="180" cy="74" r="6" fill="#F59E0B"/><circle cx="250" cy="52" r="6" fill="#111"/><text x="66" y="128" font-size="9" fill="#2F6FE4" font-family="JetBrains Mono" font-weight="700">BUY</text><text x="160" y="92" font-size="9" fill="#B45309" font-family="JetBrains Mono" font-weight="700">PARTIAL</text><text x="236" y="40" font-size="9" fill="#111" font-family="JetBrains Mono" font-weight="700">SELL</text></svg></div></div>
+  </div>
+</section>
+
+<section id="how" class="band reveal" style="margin-top:80px">
+  <div class="w" style="display:block;text-align:left;padding-top:80px;padding-bottom:80px">
+    <h2 style="text-align:center">How it works</h2>
+    <div class="steps">
+      <div class="st"><div class="n">01</div><h3>Join the waitlist</h3><p>Drop your email. When we open the doors, waitlist members get in first.</p></div>
+      <div class="st"><div class="n">02</div><h3>Connect and import</h3><p>Link your broker or upload your trades. Bring your old Discord screenshots and notes too.</p></div>
+      <div class="st"><div class="n">03</div><h3>Trade with an edge</h3><p>See which setups make you money, catch movers early and build your verified page and Flipbook.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="w sec reveal">
+  <h2 style="text-align:center">Questions</h2>
+  <div class="faq">
+    <details><summary>When does Stockspot launch?</summary><p>Soon. Join the waitlist and you'll get one email the day it opens.</p></details>
+    <details><summary>Is it free?</summary><p>Joining the waitlist is free. Pricing will be shared before launch, and the Flipbook is a separate printed product.</p></details>
+    <details><summary>Can you touch my brokerage account?</summary><p>No. Broker connections are read-only. We can see trades, never place them.</p></details>
+    <details><summary>Is this investment advice?</summary><p>No. Stockspot is a tool for tracking and learning. Nothing on it is investment advice.</p></details>
+  </div>
+</section>
+
+<section id="join" class="w cta reveal">
+  <div class="pill"><span class="pulse"></span>Coming soon</div>
+  <h2 style="max-width:820px;font-size:clamp(34px,5vw,58px)">Be first in the door.</h2>
+  <p class="sub" style="text-align:center">Join the waitlist and we'll email you the moment Stockspot goes live.</p>
+  <form class="wl" novalidate style="width:100%">
+    <label for="em2" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Email address</label>
+    <input id="em2" type="email" autocomplete="email" placeholder="you@email.com" required>
+    <button type="submit" class="btn">Get early access</button>
+  </form>
+  <div class="wl-ok" role="status"><span style="font-size:24px">&#127881;</span><span><b>You're on the list.</b> See you on launch day.</span></div>
+  <p class="msg" role="alert"></p>
+</section>
 </main>
-<footer>Stockspot is not a broker-dealer or investment adviser. Nothing here is investment advice.</footer>
+
+<footer><div class="w">
+  <p style="margin:0;max-width:960px">Stockspot is not a broker-dealer or investment adviser. Content on Stockspot is for informational and educational purposes only and is not investment advice. Past performance does not guarantee future results. Tickers, numbers and charts on this page are examples.</p>
+</div></footer>
+
 <script>
 (function(){
-  var f=document.getElementById("wl"),em=document.getElementById("em"),go=document.getElementById("go"),msg=document.getElementById("msg");
-  try{var q=new URLSearchParams(location.search).get("email");if(q)em.value=q}catch(e){}
-  function say(t,c){msg.textContent=t||"";msg.className="msg "+(c||"")}
-  f.addEventListener("submit",async function(e){
-    e.preventDefault();var v=em.value.trim();
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v))return say("Please enter a real email address.","bad");
-    go.disabled=true;say("");
-    try{
-      var cfg=await (await fetch("/api/config")).json();
-      var r=await fetch(cfg.url+"/rest/v1/ss_waitlist",{method:"POST",headers:{apikey:cfg.anonKey,Authorization:"Bearer "+cfg.anonKey,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({email:v,ref:(document.referrer||"").slice(0,200)||null})});
-      if(!r.ok&&r.status!==409)throw new Error(r.status);
-      f.style.display="none";document.getElementById("done").style.display="block";
-    }catch(err){say("Something went wrong. Please try again in a minute.","bad");go.disabled=false}
+  // ticker strip
+  var items=["Trading day","Parabolic movers","Market pulse","Practice charts","Flipbook","Futures","Options school","Calendar","Verified pages","Schwab connect","Desktop clock","Discord import"];
+  var row=items.map(function(t){return '<span><b>&#9679;</b> '+t+'</span>'}).join("");document.getElementById("tk").innerHTML=row+row;
+
+  // candles
+  function candles(id,n,W,H,seed,marks){var s=seed,r=function(){s=(s*9301+49297)%233280;return s/233280},px=100,C=[];for(var i=0;i<n;i++){var o=px;px+=(r()-.42)*2.2;var h=Math.max(o,px)+r()*1.2,l=Math.min(o,px)-r()*1.2;C.push([o,h,l,px])}
+    var lo=Math.min.apply(null,C.map(function(c){return c[2]})),hi=Math.max.apply(null,C.map(function(c){return c[1]})),bw=W/n,y=function(v){return 8+(1-(v-lo)/(hi-lo))*(H-16)},o="";
+    C.forEach(function(c,i){var x=i*bw+bw/2,up=c[3]>=c[0],col=up?"#16A34A":"#DC2626";o+='<line x1="'+x+'" x2="'+x+'" y1="'+y(c[1])+'" y2="'+y(c[2])+'" stroke="'+col+'"/><rect x="'+(x-bw*.32)+'" y="'+y(Math.max(c[0],c[3]))+'" width="'+bw*.64+'" height="'+Math.max(1,Math.abs(y(c[0])-y(c[3])))+'" fill="'+col+'"/>'});
+    if(marks){var a=Math.floor(n*.3),b=Math.floor(n*.85);o+='<circle cx="'+(a*bw+bw/2)+'" cy="'+y(C[a][2])+'" r="5" fill="#2F6FE4"/><text x="'+(a*bw+bw/2-10)+'" y="'+(y(C[a][2])+16)+'" font-size="10" fill="#4DA3FF" font-family="JetBrains Mono" font-weight="700">BUY</text><circle cx="'+(b*bw+bw/2)+'" cy="'+y(C[b][1])+'" r="5" fill="#E8EDF3"/><text x="'+(b*bw+bw/2-12)+'" y="'+(y(C[b][1])-9)+'" font-size="10" fill="#E8EDF3" font-family="JetBrains Mono" font-weight="700">SELL</text>'}
+    document.getElementById(id).innerHTML=o}
+  candles("heroChart",46,460,150,7,true);candles("bkC",30,300,160,11,false);candles("bkC2",30,300,160,23,false);
+
+  // P&L count-up
+  var pn=document.getElementById("pnl"),t0=null;function cu(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/1400),v=Math.round(1284*(1-Math.pow(1-p,3)));pn.textContent="+$"+v.toLocaleString();if(p<1)requestAnimationFrame(cu)}requestAnimationFrame(cu);
+
+  // preview tabs (auto-rotate until touched)
+  var tabs=[].slice.call(document.querySelectorAll(".tabs button")),panes=[].slice.call(document.querySelectorAll(".pane")),cur=0,auto=true;
+  function show(i){cur=i;tabs.forEach(function(b,j){b.classList.toggle("on",j===i);b.setAttribute("aria-selected",j===i)});panes.forEach(function(p,j){p.classList.toggle("on",j===i)})}
+  tabs.forEach(function(b,i){b.addEventListener("click",function(){auto=false;show(i)})});
+  setInterval(function(){if(auto)show((cur+1)%tabs.length)},4200);
+
+  // flipbook snap on tap (phones)
+  var bk=document.getElementById("book");bk.addEventListener("click",function(){bk.classList.toggle("snap")});
+
+  // reveal on scroll
+  var io="IntersectionObserver" in window?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.12}):null;
+  [].forEach.call(document.querySelectorAll(".reveal"),function(el){io?io.observe(el):el.classList.add("in")});
+
+  // waitlist
+  var cfgP=null;function cfg(){return cfgP||(cfgP=fetch("/api/config").then(function(r){return r.json()}))}
+  var q="";try{q=new URLSearchParams(location.search).get("email")||""}catch(e){}
+  [].forEach.call(document.querySelectorAll("form.wl"),function(f){
+    var inp=f.querySelector("input"),btn=f.querySelector("button"),ok=f.nextElementSibling,msg=ok.nextElementSibling;if(q)inp.value=q;
+    f.addEventListener("submit",async function(e){e.preventDefault();var v=inp.value.trim();msg.textContent="";
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){msg.textContent="Please enter a real email address.";return}
+      btn.disabled=true;
+      try{var c=await cfg();var r=await fetch(c.url+"/rest/v1/ss_waitlist",{method:"POST",headers:{apikey:c.anonKey,Authorization:"Bearer "+c.anonKey,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({email:v,ref:(document.referrer||"").slice(0,200)||null})});
+        if(!r.ok&&r.status!==409)throw new Error(r.status);
+        [].forEach.call(document.querySelectorAll("form.wl"),function(g){g.style.display="none";g.nextElementSibling.style.display="flex"});
+      }catch(err){msg.textContent="Something went wrong. Please try again in a minute.";btn.disabled=false}
+    });
   });
 })();
 </script>
