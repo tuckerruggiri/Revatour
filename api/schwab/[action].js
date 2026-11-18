@@ -1,5 +1,5 @@
 // api/schwab/[action].js — connect a Schwab account (Trader API) and pull executed trades.
-// Routes: /api/schwab/start  /callback  /save  /status  /trades  /quotes  /fund  /chain  /disconnect
+// Routes: /api/schwab/start  /callback  /save  /status  /trades  /quotes  /fund  /chain  /history  /disconnect
 // Vercel env vars: SCHWAB_APP_KEY, SCHWAB_APP_SECRET, SUPABASE_URL, SUPABASE_ANON_KEY
 // Optional: SCHWAB_REDIRECT_URI (must match the callback URL registered with Schwab; default below)
 // The refresh token is encrypted with a key derived from SCHWAB_APP_SECRET and stored in the user's own row (ss_broker, RLS).
@@ -96,7 +96,7 @@ function toFills(txns, fromMs, toMs) {
     else open = !(cur !== 0 && (cur > 0) !== r.buy); // opposite direction of a held position closes it
     pos[r.key] = cur + delta;
     if (r.when < fromMs || r.when >= toMs) return;
-    out.push({ exec: fmtExec(r.when), day: dayOf(r.when), side: r.buy ? 'BUY' : 'SELL', qty: r.qty, effect: open ? 'TO OPEN' : 'TO CLOSE',
+    out.push({ exec: fmtExec(r.when), ms: r.when, day: dayOf(r.when), side: r.buy ? 'BUY' : 'SELL', qty: r.qty, effect: open ? 'TO OPEN' : 'TO CLOSE',
       symbol: r.sym, exp: r.exp, strike: r.strike, type: r.type, price: r.price, order: String(r.order) });
   });
   return out;
@@ -201,6 +201,28 @@ module.exports = async (req, res) => {
       ['TNX', 'TYX', 'FVX', 'IRX'].forEach((y) => { const o = out[y]; if (o) ['p', 'm', 'd', 'pc', 'o', 'h', 'l', 'w52h', 'w52l'].forEach((k) => { if (typeof o[k] === 'number') o[k] = o[k] / 10; }); }); // Schwab quotes these yield indexes as yield x 10 (48.64 = 4.864%)
       res.setHeader('Cache-Control', 'private, max-age=5');
       return res.status(200).json({ configured: true, source: 'schwab', ts: Date.now(), quotes: out });
+    }
+    if (action === 'history') { // candles for one symbol between two times (Flipbook pages). Needs the Market Data product.
+      if (!c || daysLeft <= 0) return res.status(200).json({ configured: true, reconnect: true });
+      const sym = String(req.query.symbol || '').toUpperCase().trim();
+      if (!/^[A-Z]{1,5}([./][A-Z])?$/.test(sym)) return res.status(400).json({ error: 'bad symbol' });
+      const start = Number(req.query.start), end = Number(req.query.end), ft = String(req.query.ft || 'minute'), fq = Number(req.query.fq || 5);
+      if (!isFinite(start) || !isFinite(end) || end <= start || end - start > 6 * 366 * 864e5) return res.status(400).json({ error: 'bad range' });
+      if (!['minute', 'daily', 'weekly'].includes(ft) || (ft === 'minute' && ![1, 5, 10, 15, 30].includes(fq))) return res.status(400).json({ error: 'bad frequency' });
+      let at = atCache.get(u.id);
+      if (!at || at.exp < Date.now() + 60000) {
+        try { const tk = await tokenCall({ grant_type: 'refresh_token', refresh_token: c.rt }); at = { token: tk.access_token, exp: Date.now() + (Number(tk.expires_in) || 1800) * 1000 }; atCache.set(u.id, at); }
+        catch (e) { if (e.status === 400 || e.status === 401) return res.status(200).json({ configured: true, reconnect: true }); throw e; }
+      }
+      const q = { symbol: sym, frequencyType: ft, frequency: String(ft === 'minute' ? fq : 1), startDate: String(start), endDate: String(end), needExtendedHoursData: String(req.query.ext === '1') };
+      q.periodType = ft === 'minute' ? 'day' : ft === 'daily' ? 'month' : 'year';
+      const r = await fetch(MARKET + '/pricehistory?' + new URLSearchParams(q).toString(), { headers: { Authorization: 'Bearer ' + at.token, Accept: 'application/json' } });
+      if (r.status === 401) atCache.delete(u.id);
+      if (!r.ok) return res.status(200).json({ configured: true, noMarket: true, status: r.status });
+      const j = await r.json();
+      const candles = (j.candles || []).map((k) => ({ t: k.datetime, o: k.open, h: k.high, l: k.low, c: k.close, v: k.volume })).filter((k) => isFinite(k.o) && isFinite(k.c));
+      res.setHeader('Cache-Control', 'private, max-age=60');
+      return res.status(200).json({ configured: true, symbol: sym, candles });
     }
     if (action === 'fund') { // slow-changing fundamentals (market cap, beta, ratios), cached 6h per symbol
       if (!c || daysLeft <= 0) return res.status(200).json({ configured: true, reconnect: true });
