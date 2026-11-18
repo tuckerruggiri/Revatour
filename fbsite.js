@@ -88,9 +88,10 @@
   function tdaysFrom(start, end) { var out = [], d = pd(start), e = pd(end); for (var i = 0; i < 2000 && d <= e; i++) { if (d.getDay() > 0 && d.getDay() < 6) out.push(iso(d)); d.setDate(d.getDate() + 1); } return out; }
   function tdaysN(start, n) { var out = [], d = pd(start); while (out.length < n) { if (d.getDay() > 0 && d.getDay() < 6) out.push(iso(d)); d.setDate(d.getDate() + 1); } return out; }
   function backDays(endIso, n) { var out = [], d = pd(endIso); while (out.length < n) { if (d.getDay() > 0 && d.getDay() < 6) out.unshift(iso(d)); d.setDate(d.getDate() - 1); } return out; }
+  function fwdDays(day, n) { var d = tdaysN(day, n), l = lastTradingDay(); return d[d.length - 1] > l ? backDays(l, n) : d; }
   function tkr() { var t = (D.tickers || []).filter(function (x) { return x.t; })[0]; return t || { t: "NVDA", from: lastTradingDay() }; }
   function baseDay() { var f = tkr().from || lastTradingDay(), d = pd(f); while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() - 1); return iso(d); }
-  var STEPS = [1, 2, 3, 5, 10, 15, 30, 60, 120, 240];
+  var STEPS = [1, 2, 3, 5, 10, 15, 30, 60, 120, 240], CSZ = [["auto", "Auto"], [1, "1m"], [2, "2m"], [3, "3m"], [5, "5m"], [10, "10m"], [15, "15m"], [30, "30m"], [60, "1h"], [120, "2h"], [240, "4h"], ["D", "Daily"]];
   function frame() {
     var F = { times: [], intra: true, step: 5, days: [], label: "", long: false, ext: false };
     var addDay = function (day, a, b, st) { var d = pd(day); for (var m = a; m < b; m += st) F.times.push(d.getTime() + m * 6e4); };
@@ -102,23 +103,28 @@
       F.label = (wk ? "Weekly" : "Daily") + " candles · " + F.times.length + " candles";
       return F;
     }
-    var day = baseDay(), r = D.range;
-    if (r === "rth") { F.days = [day]; F.step = 5; addDay(day, 570, 960, 5); }
-    else if (r === "ext") { F.days = [day]; F.step = 10; F.ext = true; addDay(day, 240, 1200, 10); }
-    else if (r === "multi") { F.days = tdaysN(day, 3); F.step = 15; F.days.forEach(function (x) { addDay(x, 570, 960, 15); }); }
-    else if (r === "swing") { F.days = tdaysN(day, 15); F.step = 60; F.days.forEach(function (x) { addDay(x, 570, 960, 60); }); }
+    var day = baseDay(), r = D.range, wins, auto;
+    if (r === "rth") { F.days = [day]; wins = [[day, 570, 960]]; auto = 5; }
+    else if (r === "ext") { F.days = [day]; F.ext = true; wins = [[day, 240, 1200]]; auto = 10; }
+    else if (r === "multi") { F.days = fwdDays(day, 3); wins = F.days.map(function (x) { return [x, 570, 960]; }); auto = 15; }
+    else if (r === "swing") { F.days = fwdDays(day, 15); wins = F.days.map(function (x) { return [x, 570, 960]; }); auto = 60; }
     else {
       var a = String(D.cFrom || day + "T09:30"), b = String(D.cTo || day + "T16:00"); if (b < a) { var t = a; a = b; b = t; }
       var ad = a.slice(0, 10), bd = b.slice(0, 10), am = +a.slice(11, 13) * 60 + +a.slice(14, 16), bm = +b.slice(11, 13) * 60 + +b.slice(14, 16);
       var s0 = D.cExt ? 240 : 570, s1 = D.cExt ? 1200 : 960; F.ext = !!D.cExt || am < 570 || bm > 960;
       F.days = tdaysFrom(ad, bd); if (!F.days.length) F.days = [ad];
-      var wins = F.days.map(function (x, i) { var lo = i === 0 ? Math.max(Math.min(am, s1), F.ext ? 240 : 0) : s0, hi = i === F.days.length - 1 ? Math.min(Math.max(bm, lo + 1), 1200) : s1; if (F.days.length === 1) { lo = am; hi = Math.max(bm, am + 5); } return [x, lo, hi]; });
-      var mins = wins.reduce(function (t, w) { return t + Math.max(0, w[2] - w[1]); }, 0);
-      F.long = F.days.length > 20;
-      var st = STEPS.filter(function (s) { return mins / s <= 150; })[0];
-      if (!st || F.long) { F.intra = false; F.step = "D"; F.days.forEach(function (x) { F.times.push(pd(x).getTime()); }); }
-      else { F.step = st; wins.forEach(function (w) { addDay(w[0], w[1], w[2], st); }); }
+      wins = F.days.map(function (x, i) { var lo = i === 0 ? Math.max(Math.min(am, s1), F.ext ? 240 : 0) : s0, hi = i === F.days.length - 1 ? Math.min(Math.max(bm, lo + 1), 1200) : s1; if (F.days.length === 1) { lo = am; hi = Math.max(bm, am + 5); } return [x, lo, hi]; });
     }
+    var mins = wins.reduce(function (t, w) { return t + Math.max(0, w[2] - w[1]); }, 0);
+    F.long = F.days.length > 20;
+    if (!auto) auto = STEPS.filter(function (s) { return mins / s <= 150; })[0] || "D";
+    var cs = D.cs && D.cs !== "auto" ? (D.cs === "D" ? "D" : +D.cs) : auto;
+    if (F.long && cs !== "D" && mins / cs > 1200) cs = "D";
+    if (typeof cs === "number" && mins / cs > 1200) cs = STEPS.filter(function (s) { return mins / s <= 1200; })[0] || "D";
+    F.auto = auto; F.cs = cs;
+    if (cs === "D") { F.intra = false; F.step = "D"; F.days.forEach(function (x) { F.times.push(pd(x).getTime()); }); }
+    else { F.step = cs; wins.forEach(function (w) { addDay(w[0], w[1], w[2], cs); }); }
+    F.pages = Math.max(1, Math.ceil(F.times.length / 160));
     var a0 = new Date(F.times[0]), b0 = new Date(F.times[F.times.length - 1] + (typeof F.step === "number" ? F.step * 6e4 : 0));
     F.label = (F.intra ? (F.days.length > 1 ? F.days.length + " trading days · " : "") + fmtStep(F.step) + " candles · " + fmtClock(a0.getHours() * 60 + a0.getMinutes()) + " – " + fmtClock(b0.getHours() * 60 + b0.getMinutes()) : "Daily candles") + " · " + F.times.length + " candles";
     return F;
@@ -534,8 +540,9 @@
       '<p class="fbx-lab2">Time frame</p><div class="fbx-chips">' + (T ? R.map(function (r) { return chip("range", r[0], '<b>' + r[1] + '</b> <small>' + r[2] + '</small>', D.range === r[0]); }) : RI.map(function (r) { return chip("iRange", r[0], '<b>' + r[1] + '</b>', D.iRange === r[0]); })).join("") + '</div>' +
       (custom && T ? '<div class="fbx-custom"><label>Start<input type="datetime-local" data-fbin="cFrom" value="' + esc(D.cFrom) + '"></label><label>End<input type="datetime-local" data-fbin="cTo" value="' + esc(D.cTo) + '"></label><label class="fbx-tg"><input type="checkbox" data-fbin="cExt"' + (D.cExt ? " checked" : "") + '> Include pre-market &amp; after hours</label>' +
         '<div class="fbx-quick">' + [["open", "Opening hour"], ["power", "Power hour"], ["pre", "Pre-market only"], ["day", "Full day"], ["3d", "Last 3 days"], ["2w", "Last 2 weeks"]].map(function (q) { return '<button type="button" data-fbq="' + q[0] + '">' + q[1] + '</button>'; }).join("") + '</div></div>' : '') +
+      (T ? '<p class="fbx-lab2">Candle size</p><div class="fbx-chips fbx-cs">' + CSZ.map(function (c) { var on = String(D.cs || "auto") === String(c[0]); return chip("cs", c[0], c[0] === "auto" ? "Auto (" + fmtStep(F.auto) + ")" : c[1], on); }).join("") + '</div>' : '') +
       (custom && !T ? '<div class="fbx-custom"><label>From<input type="date" data-fbin="iFrom" value="' + esc(D.iFrom) + '"></label><label>To<input type="date" data-fbin="iTo" value="' + esc(D.iTo) + '"></label></div>' : '') +
-      '<div class="fbx-frame"><div class="fbx-fhead"><div><b>$' + esc(tkr().t || "NVDA") + '</b> <span>' + esc(frameRange(F)) + '</span></div><span class="fbx-badge">' + esc(F.label) + '</span>' + (T && F.long ? '<span class="fbx-badge warn">Longer than 4 weeks: this prints in your Investing book <button type="button" data-fbset="style" data-v="investing">Switch</button></span>' : T ? '<span class="fbx-badge ok">&#10003; Fits the Trading book</span>' : '') + '</div>' + pageChart({ F: F, C: fitToExecs(CC.C, F), ind: [], W: 980, H: 200, demo: false }) + '</div></div>' +
+      '<div class="fbx-frame"><div class="fbx-fhead"><div><b>$' + esc(tkr().t || "NVDA") + '</b> <span>' + esc(frameRange(F)) + '</span></div><span class="fbx-badge">' + esc(F.label) + '</span>' + (F.pages > 1 ? '<span class="fbx-badge warn">' + F.times.length + ' candles: prints across ' + F.pages + ' pages so they stay sharp</span>' : '') + (T && F.long ? '<span class="fbx-badge warn">Longer than 4 weeks: this prints in your Investing book <button type="button" data-fbset="style" data-v="investing">Switch</button></span>' : T ? '<span class="fbx-badge ok">&#10003; Fits the Trading book</span>' : '') + '</div>' + pageChart({ F: F, C: fitToExecs(CC.C, F), ind: [], W: 980, H: 200, demo: false }) + '</div></div>' +
       '<div class="fbx-blk"><h3><b>3</b> Tickers and dates</h3><p class="fbx-mut">The first ticker is the one you design next. Add as many as you want printed, or paste lines like <code>NVDA, 2026-10-14</code>.</p><div class="fbx-tk">' +
       D.tickers.map(function (t) { return '<div class="fbx-tkr" data-tk="' + t.id + '"><input data-tkf="t" value="' + esc(t.t) + '" placeholder="Ticker (NVDA, ES)" maxlength="12" aria-label="Ticker"><input type="date" data-tkf="from" value="' + esc(t.from) + '" aria-label="Date"><input type="date" data-tkf="to" value="' + esc(t.to) + '" aria-label="End date (optional)"><select data-tkf="asset" aria-label="Type">' + A.map(function (a) { return '<option value="' + a[0] + '"' + (t.asset === a[0] ? " selected" : "") + '>' + a[1].replace(/&#\d+; /, "").replace("&amp;", "&") + '</option>'; }).join("") + '</select><button type="button" class="fbx-x" data-tkdel="' + t.id + '" aria-label="Remove">&#10005;</button></div>'; }).join("") +
       '</div><div class="fbx-cta sm"><button type="button" class="fbx-btn ghost sm" data-tkadd="1">+ Add a ticker</button><label class="fbx-btn ghost sm fbx-up">&#11014; Upload CSV<input type="file" accept=".csv,.txt" data-tkcsv="1" hidden></label></div>' +
@@ -581,6 +588,7 @@
       (D.spy !== "off" ? '<label class="fbx-tg"><input type="checkbox" data-fbin="spyMarks"' + (D.spyMarks ? " checked" : "") + '> Mark my trades on the SPY chart</label>' : '') + '</div>' +
       '</div><div class="fbx-prev"><div class="fbx-prevcard"><div class="fbx-pgh"><b>$' + esc(sym) + '</b><span>' + esc(frameRange(F)) + ' · ' + esc(F.label) + '</span><em class="' + (CC.real ? "real" : "") + '">' + (CC.real ? "&#9679; Real Schwab data" : "Sample candles") + '</em></div>' +
       (D.strat.name ? '<div class="fbx-stratbar">&#9733; ' + esc(D.strat.name) + (D.strat.entry ? ' · <span>' + esc(D.strat.entry.slice(0, 80)) + '</span>' : '') + '</div>' : '') +
+      (D.style === "trading" ? '<div class="fbx-csbar"><span>Candles</span>' + CSZ.map(function (c) { var on = String(D.cs || "auto") === String(c[0]); return '<button type="button" data-fbset="cs" data-v="' + c[0] + '" class="' + (on ? "on" : "") + '">' + (c[0] === "auto" ? "Auto" : c[1]) + '</button>'; }).join("") + '</div>' : '') +
       '<div class="fbx-tools" role="toolbar" aria-label="Drawing tools">' + TOOLS.map(function (t) { return '<button type="button" data-fbtool="' + t[0] + '" class="' + (tool === t[0] ? "on" : "") + '" title="' + t[2] + '"><span>' + t[1] + '</span>' + t[2] + '</button>'; }).join("") +
       '<span class="fbx-cols">' + ["#2F6FE4", "#16A34A", "#DC2626", "#F59E0B", "#7C4DCC", "#0B0B0C"].map(function (c) { return '<button type="button" data-fbcol="' + c + '" class="' + (dcol === c ? "on" : "") + '" style="background:' + c + '" aria-label="Color"></button>'; }).join("") + '</span><input class="fbx-dlab" data-fbdlab="1" placeholder="Label" maxlength="24" aria-label="Label for new lines">' + (D.draw.length ? '<button type="button" class="fbx-link" data-drawclear="1">Clear lines</button>' : '') + '</div>' +
       '<div class="fbx-cwrap">' + pageChart({ F: F, C: C, ind: sel, W: 980, H: 380 }) + '</div><p class="fbx-hint">' + (tool === "h" ? "Click the chart to drop a line." : tool === "t" || tool === "z" ? "Press and drag on the chart." : tool === "n" ? "Click where the note goes." : tool === "erase" ? "Click a line or zone to erase it." : "Drag your own lines up or down to move them.") + '</p></div>' +
@@ -849,6 +857,7 @@
       ".fbx-pnl>input,.fbx-pnl>textarea{margin-bottom:8px!important}.fbx-mystrat{display:inline-flex;align-items:center;gap:6px;background:#F6F2EA;color:#7A5B2A;border-radius:999px;padding:4px 4px 4px 12px;font:600 12px Inter,sans-serif}.fbx-mystrat button{border:0;background:none;color:#7A5B2A;cursor:pointer}",
       ".fbx-pgh em{margin-left:auto;font-style:normal;font:700 11px Inter,sans-serif;padding:4px 10px;border-radius:999px;background:#F2F3F5;color:var(--g)}.fbx-pgh em.real{background:#EAF7EF;color:#15803D}.fbx-pgh{flex-wrap:wrap}.fbx-stratbar{font:700 13px Inter,sans-serif;color:#7A5B2A;background:#F6F2EA;border-radius:10px;padding:6px 10px;margin:4px 0 8px}.fbx-stratbar span{font-weight:500}",
       ".fbx-tools{display:flex;gap:4px;flex-wrap:wrap;align-items:center;padding:6px;border-radius:14px;background:#F7F8FA;margin:6px 0 8px}.fbx-tools>button{border:0;background:none;border-radius:10px;padding:6px 10px;font:600 12px Inter,sans-serif;cursor:pointer;color:var(--k);display:flex;align-items:center;gap:5px}.fbx-tools>button span{font-size:15px}.fbx-tools>button.on{background:#0B0B0C;color:#fff}.fbx-cols{display:flex;gap:4px;margin-left:6px}.fbx-cols button{width:20px;height:20px;border-radius:50%;border:2px solid #fff;cursor:pointer;box-shadow:0 0 0 1px #E2E4E8}.fbx-cols .on{box-shadow:0 0 0 2px #0B0B0C}.fbx-dlab{width:110px!important;padding:6px 10px!important;font-size:12px!important;margin-left:6px!important}",
+      ".fbx-csbar{display:flex;gap:2px;flex-wrap:wrap;align-items:center;background:#F2F3F5;border-radius:12px;padding:4px;margin:4px 0 2px}.fbx-csbar span{font:700 11px Inter,sans-serif;color:var(--g);padding:0 8px;text-transform:uppercase;letter-spacing:.08em}.fbx-csbar button{border:0;background:none;border-radius:8px;padding:5px 9px;font:600 12px Inter,sans-serif;cursor:pointer;color:var(--g)}.fbx-csbar button.on{background:#fff;color:var(--k);box-shadow:0 1px 4px rgba(0,0,0,.12)}",
       ".fbx-cwrap{border-radius:14px;overflow:hidden}.fbx-big.drawing{cursor:crosshair}.fbx-big.t-erase [data-dw]{cursor:not-allowed}.fbx-big:not(.drawing) [data-dw]{cursor:ns-resize}.fbx-big .hit{pointer-events:stroke}.fbx-ax.b{font-weight:800;fill:#3D4048}",
       ".fbx-cap2{display:block;color:var(--g);font-size:13px;margin:-4px 0 10px}.fbx-capbar{position:relative;height:22px;border-radius:999px;background:#F2F3F5;margin-bottom:12px;overflow:hidden}.fbx-capbar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#D9C4A0,#B08D57)}.fbx-capbar span{position:relative;font:700 11px Inter,sans-serif;line-height:22px;padding-left:10px;color:#3D2E14}",
       ".fbx-addon{margin-top:12px;padding:14px 18px;border-radius:16px;background:#F7F8FA;font-size:14px;color:#3D4048}",
