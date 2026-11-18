@@ -5,7 +5,7 @@
   "use strict";
   var D = window.FLIPBOOK_DATA;
   var KEY = "flipbook", LKEY = "ss-flipbook";
-  var ST = { tab: "book", page: 0, clear: false, cfg: null, acct: null, loaded: false, years: 30, extra: 100, rate: 7, wr: 4, wmode: "pct", wamt: 4000, ry: 30 };
+  var LAST = null, ST = { tab: "book", page: 0, clear: false, pv: "book", plift: false, cfg: null, acct: null, loaded: false, years: 30, extra: 100, rate: 7, wr: 4, wmode: "pct", wamt: 4000, ry: 30 };
   var MN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   var CAT = { "Market": "#2F6BD8", "Economy": "#7046C2", "Companies": "#C45A1C", "World": "#0F7C7C", "Hedge funds": "#B02E56", "Crypto": "#8A5A10" };
   var INK = "#1B2333", MUT = "#586172", GRN = "#17845B", RED = "#C93A30", ORG = "#E0672B", BLU = "#2F6BD8", YEL = "#F5C543";
@@ -184,6 +184,7 @@
       '<circle cx="' + xe + '" cy="' + Y(P[P.length - 1]).toFixed(1) + '" r="7" fill="' + BLU + '" stroke="#fff" stroke-width="3"/><text x="' + (xe - 12) + '" y="' + yY.toFixed(1) + '" text-anchor="end" class="ll" fill="' + BLU + '">You ' + pct(you) + '</text>' +
       '<text x="' + (xe - 12) + '" y="' + yM.toFixed(1) + '" text-anchor="end" class="ll" fill="' + INK + '">Market ' + pct(mkt) + '</text>' +
       '<rect x="18" y="12" width="270" height="30" rx="15" fill="' + BLU + '"/><text x="153" y="32" text-anchor="middle" class="dl">CLEAR PAGE · YOU VS. THE MARKET</text>' + (A().lineNote ? '<text x="' + (W - 22) + '" y="34" text-anchor="end" class="ax">' + esc(A().lineNote) + '</text>' : '') + '</g>';
+    LAST = { W: W, H: H, s: s, clear: clear, you: you, mkt: mkt };
     var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="fb-svg" role="img" aria-label="Daily S&amp;P 500 candles for ' + esc(month().label) + (ST.clear ? " with your 401(k) line on top" : "") + '">' + s + (ST.clear ? clear : "") + '</svg>';
     var best = { v: -99 }, worst = { v: 99 }, pc = base; C.forEach(function (c) { var ch = (c[4] / pc - 1) * 100; if (ch > best.v) best = { v: ch, d: c[0] }; if (ch < worst.v) worst = { v: ch, d: c[0] }; pc = c[4]; });
     var right = '<div class="fb-g3 tight">' + stat("The market (SPY)", pct(mkt, 2), "$" + base + " → $" + Sp[Sp.length - 1], mkt >= 0 ? GRN : RED) + stat("Best day", mShort() + " " + (+best.d.slice(3)), pct(best.v, 2) + " in one day", GRN) + stat("Worst day", mShort() + " " + (+worst.d.slice(3)), pct(worst.v, 2) + " in one day", RED) + '</div>';
@@ -357,6 +358,23 @@
     var S = [["Quarterly poster", "A fold-out report card every 3 months", "#2F6BD8"], ["Year in review", "12 tiny candle charts, your best and worst moments (December)", "#17845B"], ["Tax-time page", "Pre-tax vs. Roth explained with your own numbers (spring)", "#E0672B"], ["Letter to future you", "Write it, seal it, open it at your next milestone", "#8A5BA8"]];
     return paper("Specials", "Coming a few times a year", "Surprise pages that make the book feel like yours.", '<div class="fb-g4">' + S.map(function (s) { return '<div class="fb-spec" style="--sc:' + s[2] + '"><b>' + s[0] + '</b><p>' + s[1] + '</p></div>'; }).join("") + '</div>');
   }
+  function pgPrinted() {
+    var keepClear = ST.clear; ST.clear = false; chartPage(); ST.clear = keepClear;
+    var L = LAST, a = A(), M = month();
+    var base = '<svg viewBox="0 0 ' + L.W + ' ' + L.H + '" class="fb-svg" role="img" aria-label="Printed chart page">' + L.s + '</svg>';
+    var film = '<svg viewBox="0 0 ' + L.W + ' ' + L.H + '" class="fb-svg" role="img" aria-label="Clear page">' + L.clear + '</svg>';
+    var left = '<div class="fbp-notes"><p class="fbp-k">' + esc(M.label || "") + '</p><h3>Your ' + esc(mFull()) + '</h3>' +
+      '<div class="fbp-big"><small>Total saved</small><b>' + money(total()) + '</b></div>' +
+      '<div class="fbp-stats"><span><b>You</b>' + pct(L.you) + '</span><span><b>Market</b>' + pct(L.mkt) + '</span>' + (a.monthly ? '<span><b>Monthly</b>' + money(a.monthly) + '</span>' : '') + (a.rate ? '<span><b>Saving</b>' + a.rate + '%</span>' : '') + '</div>' +
+      '<p class="fbp-quote">' + esc(M.mood || "One more month of steady saving.") + '</p>' +
+      '<p class="fbp-foot">Flipbook · Retirement · Volume I</p></div>';
+    var views = [["book", "In the book"], ["together", "Chart + clear page"], ["base", "Chart only"], ["film", "Clear page only"]], v = ST.pv || "book", stage;
+    if (v === "book") stage = '<div class="fbp-room"><div class="fbp-book' + (ST.plift ? " lifted" : "") + '"><div class="fbp-cover"></div><div class="fbp-spread"><div class="fbp-page fbp-left">' + left + '</div><div class="fbp-gutter"></div><div class="fbp-page fbp-right"><div class="fbp-chart">' + base + '</div><div class="fbp-film"><div class="fbp-fin">' + film + '</div><i class="fbp-shine"></i></div></div></div><span class="fbp-ribbon"></span></div></div>' +
+      '<div class="fb-row" style="margin-top:14px;align-items:center;gap:14px"><button type="button" class="fb-btn pri" data-act="plift">' + (ST.plift ? "Lay the clear page back on" : "Lift the clear page") + '</button><span class="fb-mut">The clear page flips over to the left, just like the real book.</span></div>';
+    else stage = '<div class="fbp-flat"><div class="fbp-sheet' + (v === "film" ? " chk" : "") + '">' + (v !== "film" ? base : "") + (v !== "base" ? '<div class="fbp-ov' + (v === "film" ? " solo" : "") + '">' + film + '</div>' : "") + '</div><p class="fb-mut">' + (v === "base" ? "The printed chart page: the market's month, one candle per day." : v === "film" ? "The clear page on its own: your 401(k) line, buys and earnings, printed on clear film." : "The clear page laid over the chart: exactly how it reads in your book.") + '</p></div>';
+    var tabs = '<div class="fbp-tabs" role="tablist">' + views.map(function (x) { return '<button type="button" role="tab" aria-selected="' + (v === x[0]) + '" class="' + (v === x[0] ? "on" : "") + '" data-act="pv" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join("") + '</div>';
+    return paper("Your finished pages", "See it printed", "What this month looks like in your book: the chart page, the clear page, and both together inside a linen hardcover.", sampleNote() + tabs + stage);
+  }
   function pages() {
     var L = [];
     if (on("big")) L.push(["You started here", pgBig]);
@@ -372,6 +390,7 @@
     if (on("stickers")) L.push(["Stickers", pgStickers]);
     if (on("learn")) L.push(["Learn-it card", pgLearn]);
     if (on("specials")) L.push(["Specials", pgSpecials]);
+    L.push(["See it printed", pgPrinted]);
     return L;
   }
 
@@ -425,6 +444,8 @@
     else if (a === "prev") { ST.page--; ST.clear = false; }
     else if (a === "next") { ST.page++; ST.clear = false; }
     else if (a === "clear") ST.clear = !ST.clear;
+    else if (a === "pv") ST.pv = v;
+    else if (a === "plift") { ST.plift = !ST.plift; var bk = root.querySelector(".fbp-book"); if (bk) { bk.classList.toggle("lifted", ST.plift); t.textContent = ST.plift ? "Lay the clear page back on" : "Lift the clear page"; } return; }
     else if (a === "yrs") ST.years = +v; else if (a === "rate") ST.rate = +v; else if (a === "extra") ST.extra = +v;
     else if (a === "wr") ST.wr = +v; else if (a === "wamt") ST.wamt = +v; else if (a === "ry") ST.ry = +v; else if (a === "wmode") ST.wmode = v;
     else if (/^(yrsc|ratec|extrac|wrc|wamtc|ryc)$/.test(a)) { var nv = parseFloat(t.value), lim = { yrsc: [1, 60, "years"], ratec: [0, 20, "rate"], extrac: [0, 100000, "extra"], wrc: [0, 20, "wr"], wamtc: [0, 1000000, "wamt"], ryc: [1, 60, "ry"] }[a]; if (!isFinite(nv)) return; nv = Math.max(lim[0], Math.min(lim[1], nv)); if (a === "yrsc" || a === "ryc") nv = Math.round(nv); ST[lim[2]] = nv; }
@@ -443,7 +464,21 @@
     if (e.key === "ArrowRight") { ST.page++; ST.clear = false; render(); } else if (e.key === "ArrowLeft") { ST.page--; ST.clear = false; render(); }
   }
 
-  var CSS = '#flipv{max-width:none;width:100%;box-sizing:border-box;padding:0 28px 40px}#flipv *{box-sizing:border-box}' +
+  var CSS = '.fbp-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 16px}.fbp-tabs button{min-height:42px;padding:0 18px;border:1.5px solid #E2E4E8;border-radius:999px;background:#fff;font:700 13.5px Inter,sans-serif;cursor:pointer;color:#1B2333}.fbp-tabs button.on{background:#0B0B0C;border-color:#0B0B0C;color:#fff}' +
+    '.fbp-room{position:relative;border-radius:20px;padding:54px 22px 62px;background:radial-gradient(120% 90% at 50% 0%,#7A5538 0%,#5B3D29 55%,#3F2A1D 100%);overflow:hidden;perspective:2200px}' +
+    '.fbp-book{position:relative;margin:0 auto;max-width:1180px;transform:rotateX(14deg);transform-style:preserve-3d}.fbp-cover{position:absolute;inset:-14px -16px -16px -16px;border-radius:10px;background:#1B355A;box-shadow:0 40px 80px rgba(0,0,0,.55)}' +
+    '.fbp-spread{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);background:#FBF8F1;border-radius:4px;box-shadow:0 2px 0 #E9E2D2,0 4px 0 #E2DACA,0 6px 0 #D9D0BE;transform-style:preserve-3d}' +
+    '.fbp-page{position:relative;aspect-ratio:9/7}.fbp-left{background:linear-gradient(90deg,#FBF8F1 80%,#EFE8DA)}.fbp-right{background:linear-gradient(270deg,#FBF8F1 80%,#EFE8DA);transform-style:preserve-3d}.fbp-gutter{background:linear-gradient(90deg,#E6DDCB,#CFC4AE 50%,#E6DDCB)}' +
+    '.fbp-chart,.fbp-fin{position:absolute;left:5%;right:4%;top:50%;transform:translateY(-50%)}.fbp-film{position:absolute;inset:3% 1% 3% 0;border-radius:3px;transform-origin:left center;transition:transform 1.2s cubic-bezier(.3,.9,.3,1);background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(210,226,255,.07));box-shadow:0 0 0 1px rgba(15,23,42,.1),0 10px 30px rgba(0,0,0,.1)}' +
+    '.fbp-fin{left:5.05%;right:3.03%}.fbp-shine{position:absolute;inset:0;border-radius:3px;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.32) 45%,transparent 60%);pointer-events:none}.fbp-book.lifted .fbp-film{transform:translateZ(2px) rotateY(-178deg)}' +
+    '.fbp-notes{position:absolute;inset:9% 10% 8% 10%;display:flex;flex-direction:column;gap:12px;color:#1B355A;overflow:hidden}.fbp-k{margin:0;font:700 11px Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#B8893B}.fbp-notes h3{margin:0;font:400 clamp(28px,3.4vw,46px)/1 "Instrument Serif",Georgia,serif;color:#0F172A}' +
+    '.fbp-big small{display:block;font:700 10px Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#8A8F98}.fbp-big b{font:800 clamp(22px,2.4vw,32px) Inter,sans-serif;color:#0F172A}' +
+    '.fbp-stats{display:flex;gap:18px;flex-wrap:wrap}.fbp-stats span{display:flex;flex-direction:column;font:700 15px Inter,sans-serif;color:#0F172A}.fbp-stats b{font:700 10px Inter,sans-serif;letter-spacing:.12em;color:#8A8F98;text-transform:uppercase}' +
+    '.fbp-quote{margin:0;font:italic 400 clamp(15px,1.5vw,19px)/1.4 "Instrument Serif",Georgia,serif;color:#334155}.fbp-foot{margin:auto 0 0;font:italic 400 13px "Instrument Serif",Georgia,serif;color:#A39A88}' +
+    '.fbp-ribbon{position:absolute;left:calc(50% + 40px);bottom:-46px;width:12px;height:60px;background:#8E1B2B;clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%)}' +
+    '.fbp-flat .fbp-sheet{position:relative;border-radius:14px;padding:18px;background:#fff;box-shadow:0 1px 0 #E6E8EC,0 20px 40px rgba(15,23,42,.08)}.fbp-ov{position:absolute;inset:18px}.fbp-ov.solo{position:relative;inset:auto}' +
+    '.fbp-sheet.chk{background-color:#fff;background-image:linear-gradient(45deg,#EEF0F3 25%,transparent 25%),linear-gradient(-45deg,#EEF0F3 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#EEF0F3 75%),linear-gradient(-45deg,transparent 75%,#EEF0F3 75%);background-size:22px 22px;background-position:0 0,0 11px,11px -11px,-11px 0}' +
+    '@media(max-width:820px){.fbp-spread{grid-template-columns:1fr}.fbp-gutter,.fbp-left{display:none}.fbp-book{transform:none}.fbp-room{padding:30px 14px 50px}}' + '#flipv{max-width:none;width:100%;box-sizing:border-box;padding:0 28px 40px}#flipv *{box-sizing:border-box}' +
     '.fb-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;margin:4px 0 16px}.fb-top h2{margin:0;font-size:30px;letter-spacing:-.01em}.fb-top p{margin:4px 0 0;color:var(--mute);font-size:14px}' +
     '.fb-tabs{display:flex;gap:6px;flex-wrap:wrap}.fb-tab{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:10px 18px;min-height:44px;font:inherit;font-weight:600;cursor:pointer}.fb-tab.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}' +
     '.fb-nav{display:flex;align-items:center;gap:8px;margin:0 0 14px}.fb-ths{display:flex;gap:6px;overflow-x:auto;flex:1;padding:2px}.fb-th{flex:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:12px;padding:8px 12px;min-height:44px;font:inherit;font-size:13px;cursor:pointer;display:flex;gap:8px;align-items:center}.fb-th span{width:22px;height:22px;border-radius:11px;background:var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}.fb-th.on{border-color:#E0672B;box-shadow:0 0 0 2px #E0672B inset}.fb-th.on span{background:#E0672B;color:#fff}' +
