@@ -291,6 +291,13 @@
   }
 
   /* ---------- the big chart (time axis, indicators, your trade, your drawings) ---------- */
+  function rrOut(R) { return R ? '<span class="fbx-rrout"><b>1 : ' + (R.risk > 0 ? (R.rew / R.risk).toFixed(2) : "–") + '</b><small>Risk ' + R.risk.toFixed(2) + ' · Reward ' + R.rew.toFixed(2) + '</small></span>' : '<span class="fbx-rrout" hidden></span>'; }
+  function softPreview() {
+    var w = host && host.querySelector(".fbx-cwrap"); if (!w || cur !== "clear") return false;
+    var CC = getCandles(frame()); w.innerHTML = pageChart({ F: CC.F, C: CC.C, ind: D.ind.filter(function (id) { var d = indDef(id); return d && fitsAsset(d); }), W: 980, H: 380 });
+    var o = host.querySelector(".fbx-rrout"); if (o && D.rr) { var tmp = document.createElement("div"); tmp.innerHTML = rrOut(rrVals(0, execList(), CC.F)); o.replaceWith(tmp.firstChild); }
+    return true;
+  }
   function rrVals(e0, ex, F) {
     var first = (ex || []).filter(function (e) { return +e.price > 0; })[0], entry = +D.rrEntry || (first ? +first.price : e0); if (!(entry > 0)) return null;
     var stop = +D.stop || +(entry * 0.985).toFixed(2), tgt = +((D.targets || [])[0]) || +(entry + 2 * (entry - stop)).toFixed(2), i = first && F ? idxAt(F, first.time) : null;
@@ -301,9 +308,18 @@
     var hitC = function (x0, x1, y0, y1) { var a = Math.max(0, Math.floor((x0 - G2.pl) / bw) - 1), b = Math.min(n - 1, Math.ceil((x1 - G2.pl) / bw) + 1), mn = Infinity, mx = -Infinity, hit = false; for (var i = a; i <= b; i++) { var cx = X(i); if (cx + bw / 2 < x0 || cx - bw / 2 > x1) continue; var ch = Y(C[i].h), cl = Y(C[i].l); mn = Math.min(mn, ch); mx = Math.max(mx, cl); if (ch < y1 && cl > y0) hit = true; } return { hit: hit, mn: mn, mx: mx }; };
     var hitL = function (b) { return placed.some(function (p) { return b.x0 < p.x1 && b.x1 > p.x0 && b.y0 < p.y1 && b.y1 > p.y0; }); };
     return svg.replace(/<text x="([\d.\-]+)" y="([\d.\-]+)"((?: dy="[\d.\-]+")?)((?: text-anchor="(?:start|middle|end)")?) class="fbx-lab" fill="([^"]+)">([^<]*)<\/text>/g, function (m, xs, ys, dys, anc, col, txt) {
-      var x = +xs, y = +ys + (dys ? +dys.replace(/[^\d.\-]/g, "") : 0); if (y < top + 2 || y > bot + 2) return m;
-      var len = txt.replace(/&[a-z#0-9]+;/gi, "x").length, w = len * 5.7 + 4, a = /middle/.test(anc) ? "m" : /end/.test(anc) ? "e" : "s";
-      var x0 = a === "s" ? x - 2 : a === "e" ? x - w + 2 : x - w / 2, x1 = x0 + w, B = function (yy) { return { x0: x0, x1: x1, y0: yy - 9, y1: yy + 2 }; };
+      var x = +xs, y = +ys + (dys ? +dys.replace(/[^\d.\-]/g, "") : 0);
+      var pill = /^PILL\|/.test(txt), dotY = 0; if (pill) { var pp = txt.split("|"); dotY = +pp[1]; txt = pp.slice(2).join("|"); }
+      if (!pill && (y < top + 2 || y > bot + 2)) return m;
+      var len = txt.replace(/&[a-z#0-9]+;/gi, "x").length, w = pill ? len * 5.8 + 12 : len * 5.7 + 4, a = /middle/.test(anc) ? "m" : /end/.test(anc) ? "e" : "s";
+      var x0 = a === "s" ? x - 2 : a === "e" ? x - w + 2 : x - w / 2; if (pill) x0 = Math.max(G2.pl + 2, Math.min(G2.W - G2.pr - w - 2, x0)); var x1 = x0 + w, B = function (yy) { return pill ? { x0: x0, x1: x1, y0: yy - 12, y1: yy + 6 } : { x0: x0, x1: x1, y0: yy - 9, y1: yy + 2 }; };
+      if (pill) {
+        var hp = hitC(x0, x1, top, bot), up = y < dotY, cs = [y].concat(up ? [hp.mn - 9, hp.mx + 18, hp.mn - 28, hp.mx + 38] : [hp.mx + 18, hp.mn - 9, hp.mx + 38, hp.mn - 28]).filter(function (v) { return v > top + 12 && v < bot - 6; });
+        var py = null; for (var q = 0; q < cs.length; q++) { var pb = B(cs[q]); if (!hitC(x0, x1, pb.y0, pb.y1).hit && !hitL(pb)) { py = cs[q]; break; } }
+        if (py == null) { py = cs[0] != null ? cs[0] : y; for (var z = 0; z < 6 && hitL(B(py)); z++) py += up ? -20 : 20; }
+        placed.push(B(py)); var cx = (x0 + x1) / 2, ex2 = py < dotY ? py + 6 : py - 12;
+        return '<line x1="' + x.toFixed(1) + '" y1="' + dotY.toFixed(1) + '" x2="' + cx.toFixed(1) + '" y2="' + ex2.toFixed(1) + '" stroke="' + col + '" stroke-width="1.2" stroke-dasharray="2 2" opacity=".8"/><g transform="translate(' + cx.toFixed(1) + ',' + py.toFixed(1) + ')"><rect x="' + (-w / 2).toFixed(1) + '" y="-11" width="' + w.toFixed(1) + '" height="16" rx="8" fill="' + col + '"/><text text-anchor="middle" y="1" class="fbx-tag" fill="#fff">' + txt + '</text></g>';
+      }
       var h = hitC(x0, x1, y - 9, y + 2);
       if (!h.hit && !hitL(B(y))) { placed.push(B(y)); return m; }
       var cands = [h.mn - 5, h.mx + 12, h.mn - 18, h.mx + 25].filter(function (v) { return v > top + 9 && v < bot - 1; }).sort(function (p, q) { return Math.abs(p - y) - Math.abs(q - y); });
@@ -449,15 +465,16 @@
     var COLS = { buy: "#2F6FE4", sell: "#0B0B0C", short: "#7C4DCC", cover: "#E0662B" }, posQ = 0;
     var demo = useDemo ? [{ side: "buy", qty: 100, price: e0, i: Math.floor(n * 0.3) }, { side: "sell", qty: 50, price: C[Math.floor(n * 0.55)].c, i: Math.floor(n * 0.55) }, { side: "sell", qty: 50, price: C[Math.floor(n * 0.75)].c, i: Math.floor(n * 0.75) }] : ex.map(function (e) { return { side: e.side, qty: +e.qty || 0, price: +e.price, i: idxAt(F, e.time) }; }).filter(function (e) { return e.i != null; });
     if (useDemo && !D.rr) { s += hline(e0 * 0.985, "#DC2626", "STOP (example)", "5 3", 1.6) + hline(e0 * 1.03, "#16A34A", "TARGET (example)", "5 3", 1.6); }
-    var M = D.marks || {};
+    var M = D.marks || {}, pills = [];
     demo.forEach(function (e, k) {
       var before = posQ; posQ += (e.side === "buy" || e.side === "cover" ? 1 : -1) * (e.qty || 0);
       var closing = (e.side === "sell" && before > 0) || (e.side === "cover" && before < 0), partial = closing && (e.qty || 0) < Math.abs(before);
       var lab = (partial ? "PARTIAL " : "") + (e.side === "buy" ? "BUY" : e.side === "sell" ? "SELL" : e.side === "short" ? "SHORT" : "COVER") + (e.qty ? " " + e.qty : "") + " @ " + (+e.price).toFixed(2);
       var show = partial ? M.partial : (e.side === "buy" || e.side === "short") ? M.entry : M.exit; if (!show) return;
       var x = X(e.i), y = Y(e.price), col = partial ? "#E0662B" : COLS[e.side] || "#111", up = e.side === "buy" || e.side === "cover", ty = up ? y + 24 : y - 16;
-      s += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="6.5" fill="' + col + '" stroke="#fff" stroke-width="2"/><g transform="translate(' + x.toFixed(1) + ',' + ty.toFixed(1) + ')"><rect x="' + (-lab.length * 2.9 - 6) + '" y="-11" width="' + (lab.length * 5.8 + 12) + '" height="16" rx="8" fill="' + col + '"/><text text-anchor="middle" y="1" class="fbx-tag" fill="#fff">' + lab + '</text></g>';
+      s += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="6.5" fill="' + col + '" stroke="#fff" stroke-width="2"/>'; pills.push('<text x="' + x.toFixed(1) + '" y="' + ty.toFixed(1) + '" text-anchor="middle" class="fbx-lab" fill="' + col + '">PILL|' + y.toFixed(1) + '|' + lab + '</text>');
     });
+    s += pills.join("");
     if (M.notes && (D.note || useDemo)) { var nt = (D.note || "Waited for the VWAP reclaim. Stop under the flag.").slice(0, 90); s += '<g transform="translate(' + (pl + 8) + ',' + (pt + 8) + ')"><rect width="' + Math.min(W * 0.5, nt.length * 5.4 + 20) + '" height="24" rx="8" fill="#FFF8D6" stroke="#EAD98A"/><text x="10" y="16" class="fbx-note">&#128221; ' + esc(nt) + '</text></g>'; }
     // lower panels
     osc.forEach(function (id, k) {
@@ -651,7 +668,8 @@
     var X = function (i) { return pl + (i + 0.5) * (W - pl - pr) / n; }, Y = function (v) { return pt + (1 - (v - lo) / (hi - lo)) * (H - pt - pb); }, bw = Math.max(1, (W - pl - pr) / n * 0.62);
     var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" class="fbx-svg" role="img" aria-label="SPY daily candles">';
     for (var g = 0; g <= 3; g++) { var gy = pt + g * (H - pt - pb) / 3; s += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + gy + '" y2="' + gy + '" stroke="#EEF0F3"/><text x="' + (W - pr + 6) + '" y="' + (gy + 3) + '" class="fbx-ax">' + (hi - (hi - lo) * g / 3).toFixed(0) + '</text>'; }
-    if (markA) { var a = -1, b = -1; C.forEach(function (c, i) { if (c.t >= markA - 864e5 && c.t <= markB + 864e5) { if (a < 0) a = i; b = i; } }); if (a < 0) { C.forEach(function (c, i) { if (c.t <= markA) a = b = i; }); } if (a >= 0) s += '<rect x="' + (X(a) - bw) + '" y="' + pt + '" width="' + Math.max(4, X(b) - X(a) + bw * 2) + '" height="' + (H - pt - pb) + '" fill="#2F6FE4" opacity=".12"/><text x="' + X(a) + '" y="' + (pt + 10) + '" text-anchor="' + (X(a) > W - 140 ? "end" : "start") + '" class="fbx-tag" fill="#2F6FE4">&#9660; YOUR TRADE</text>'; }
+    if (markA) { var a = -1, b = -1, ny = function (t) { try { return new Date(t).toLocaleDateString("en-CA", { timeZone: "America/New_York" }); } catch (e) { return iso(new Date(t)); } }, dA = iso(new Date(markA)), dB = iso(new Date(markB)), weekly = n > 1 && (C[1].t - C[0].t) > 3 * 864e5;
+      C.forEach(function (c, i) { var dc = ny(c.t); if (weekly) { var nx = C[i + 1] ? ny(C[i + 1].t) : "9999"; if (dc <= dB && nx > dA) { if (a < 0) a = i; b = i; } } else if (dc >= dA && dc <= dB) { if (a < 0) a = i; b = i; } }); if (a >= 0) s += '<rect x="' + (X(a) - bw) + '" y="' + pt + '" width="' + Math.max(4, X(b) - X(a) + bw * 2) + '" height="' + (H - pt - pb) + '" fill="#2F6FE4" opacity=".12"/><text x="' + X(a) + '" y="' + (pt + 10) + '" text-anchor="' + (X(a) > W - 140 ? "end" : "start") + '" class="fbx-tag" fill="#2F6FE4">&#9660; YOUR TRADE</text>'; }
     C.forEach(function (c, i) { var up = c.c >= c.o, col = up ? "#16A34A" : "#DC2626"; s += '<line x1="' + X(i).toFixed(1) + '" x2="' + X(i).toFixed(1) + '" y1="' + Y(c.h).toFixed(1) + '" y2="' + Y(c.l).toFixed(1) + '" stroke="' + col + '"/><rect x="' + (X(i) - bw / 2).toFixed(1) + '" y="' + Y(Math.max(c.o, c.c)).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(1, Math.abs(Y(c.o) - Y(c.c))).toFixed(1) + '" fill="' + col + '"/>'; });
     var used = []; for (var k = 0; k < n; k += Math.max(1, Math.round(n / 7))) { var d = new Date(C[k].t), x = X(k); if (used.some(function (u) { return Math.abs(u - x) < 70; })) continue; used.push(x); s += '<text x="' + x + '" y="' + (H - 6) + '" text-anchor="' + (k === 0 ? "start" : "middle") + '" class="fbx-ax">' + MN[d.getMonth()] + ' ' + (n > 260 ? "'" + String(d.getFullYear()).slice(2) : d.getDate()) + '</text>'; }
     return s + '</svg>';
@@ -677,7 +695,7 @@
       '<div class="fbx-exh"><span>Side</span><span>Qty</span><span>Price</span><span></span></div>' + (execRows || '<p class="fbx-hint">No prices yet: the preview shows an example trade. Add your buys and sells below.</p>') +
       '<div class="fbx-cta sm"><button type="button" class="fbx-btn ghost sm" data-exadd="buy">+ Buy</button><button type="button" class="fbx-btn ghost sm" data-exadd="sell">+ Sell</button><button type="button" class="fbx-btn ghost sm" data-exadd="short">+ Short</button><button type="button" class="fbx-btn ghost sm" data-exadd="cover">+ Cover</button></div>' +
       '<div class="fbx-row3"><label for="fbxstop"><span class="fbx-lt">' + cdot("stop", "#DC2626") + ' Stop</span><input id="fbxstop" type="number" step="any" min="0" data-fbin="stop" value="' + esc(D.stop) + '" placeholder="e.g. 179.50"></label>' + D.targets.map(function (t, i) { return '<label for="fbxtg' + i + '"><span class="fbx-lt">' + (i ? "" : cdot("target", "#16A34A")) + ' Target ' + (D.targets.length > 1 ? i + 1 : "") + '</span><span class="fbx-inl"><input id="fbxtg' + i + '" type="number" step="any" min="0" data-tg="' + i + '" value="' + esc(t) + '" placeholder="e.g. 188">' + (i ? '<button type="button" class="fbx-x sm" data-tgdel="' + i + '" aria-label="Remove target">&#10005;</button>' : '') + '</span></label>'; }).join("") + '<button type="button" class="fbx-link" data-tgadd="1">+ another target</button></div>' +
-      '<div class="fbx-rr"><label class="fbx-tg"><input type="checkbox" data-fbin="rr"' + (D.rr ? " checked" : "") + '> &#128208; Risk / reward box</label>' + (D.rr ? (function () { var R = rrVals(0, execList(), F); return '<div class="fbx-rrrow"><label>Entry<input type="number" step="any" min="0" data-fbin="rrEntry" value="' + esc(D.rrEntry) + '" placeholder="' + (R ? R.entry.toFixed(2) : "e.g. 182") + '"></label>' + (R ? '<span class="fbx-rrout"><b>1 : ' + (R.risk > 0 ? (R.rew / R.risk).toFixed(2) : "–") + '</b><small>Risk ' + R.risk.toFixed(2) + ' · Reward ' + R.rew.toFixed(2) + '</small></span>' : '') + '</div><p class="fbx-hint">Type Entry, Stop and Target, or drag the three lines on the chart.</p>'; })() : '') + '</div>' +
+      '<div class="fbx-rr"><label class="fbx-tg"><input type="checkbox" data-fbin="rr"' + (D.rr ? " checked" : "") + '> &#128208; Risk / reward box</label>' + (D.rr ? (function () { var R = rrVals(0, execList(), F); return '<div class="fbx-rrrow"><label>Entry<input type="number" step="any" min="0" data-fbin="rrEntry" value="' + esc(D.rrEntry) + '" placeholder="' + (R ? R.entry.toFixed(2) : "e.g. 182") + '"></label>' + rrOut(R) + '</div><p class="fbx-hint">Type Entry, Stop and Target, or drag the three lines on the chart.</p>'; })() : '') + '</div>' +
       '<label class="fbx-full">&#128221; Note on the page<input data-fbin="note" maxlength="90" value="' + esc(D.note) + '" placeholder="Why you took it, in one line"></label></div>' +
       '<div class="fbx-pnl"><h3><span>2</span> Indicators <small>' + sel.length + ' on' + (sel.length > 6 ? ' · 6 or fewer reads cleanest' : '') + '</small></h3>' +
       '<p class="fbx-lab2" style="margin-top:0!important">Start from a style <small class="fbx-hint">one tap</small></p><div class="fbx-pregrid">' + PRESETS.concat((D.strats || []).map(function (s) { return ["my:" + s.id, "&#9733; " + esc(s.name), s.ind]; })).map(function (p) { var on = p[2].length === sel.length && p[2].every(function (x) { return sel.indexOf(x) >= 0; }); return '<button type="button" class="fbx-pre' + (on ? " on" : "") + '" data-fbpre="' + p[0] + '"><b>' + p[1] + '</b><small>' + p[2].map(function (x) { var d = indDef(x); return d ? esc(d[1]) : ""; }).filter(Boolean).slice(0, 4).join(" · ") + '</small></button>'; }).join("") + '</div>' +
@@ -864,7 +882,7 @@
     if (d.idel) { if (!confirm("Delete this idea?")) return; I.items = I.items.filter(function (z) { return z.id !== d.idel; }); saveI(); return render(); }
   }
   var rT = 0;
-  function later() { clearTimeout(rT); rT = setTimeout(function () { var a = document.activeElement, sel = a && a.dataset ? Object.keys(a.dataset)[0] : null, key = sel ? '[data-' + sel.replace(/[A-Z]/g, function (m) { return "-" + m.toLowerCase(); }) + '="' + a.dataset[sel] + '"]' : null, row = a && a.closest && a.closest("[data-ex],[data-tk]"), rk = row ? (row.dataset.ex ? '[data-ex="' + row.dataset.ex + '"] ' : '[data-tk="' + row.dataset.tk + '"] ') : "", pos = a && a.selectionStart; render(); if (key) { var n = host.querySelector(rk + key); if (n) { n.focus(); try { if (pos != null) n.setSelectionRange(pos, pos); } catch (e) {} } } }, 450); }
+  function later() { clearTimeout(rT); var a0 = document.activeElement; if (cur === "clear" && a0 && a0.closest && a0.closest(".fbx-ctrl") && /^(number|text|search|datetime-local|date|time)$/.test(a0.type || "")) { rT = setTimeout(function () { if (!softPreview()) render(); }, 250); return; } rT = setTimeout(function () { var a = document.activeElement, sel = a && a.dataset ? Object.keys(a.dataset)[0] : null, key = sel ? '[data-' + sel.replace(/[A-Z]/g, function (m) { return "-" + m.toLowerCase(); }) + '="' + a.dataset[sel] + '"]' : null, row = a && a.closest && a.closest("[data-ex],[data-tk]"), rk = row ? (row.dataset.ex ? '[data-ex="' + row.dataset.ex + '"] ' : '[data-tk="' + row.dataset.tk + '"] ') : "", pos = a && a.selectionStart; render(); if (key) { var n = host.querySelector(rk + key); if (n) { n.focus(); try { if (pos != null) n.setSelectionRange(pos, pos); else if (n.type === "number") { var vv = n.value; n.type = "text"; n.setSelectionRange(vv.length, vv.length); n.type = "number"; } } catch (e) {} } } }, 450); }
   function onInput(ev) {
     var t = ev.target; if (!host || !host.contains(t)) return;
     var row = t.closest("[data-tk]");
