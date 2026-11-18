@@ -5,7 +5,7 @@
   "use strict";
   var D = window.FLIPBOOK_DATA;
   var KEY = "flipbook", LKEY = "ss-flipbook";
-  var LAST = null, ST = { tab: "book", page: 0, clear: false, pv: "book", plift: false, cfg: null, acct: null, loaded: false, years: 30, extra: 100, rate: 7, wr: 4, wmode: "pct", wamt: 4000, ry: 30 };
+  var LAST = null, ST = { tab: "book", page: 0, clear: false, pv: "book", plift: false, psp: 0, pclear: true, cfg: null, acct: null, loaded: false, years: 30, extra: 100, rate: 7, wr: 4, wmode: "pct", wamt: 4000, ry: 30 };
   var MN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   var CAT = { "Market": "#2F6BD8", "Economy": "#7046C2", "Companies": "#C45A1C", "World": "#0F7C7C", "Hedge funds": "#B02E56", "Crypto": "#8A5A10" };
   var INK = "#1B2333", MUT = "#586172", GRN = "#17845B", RED = "#C93A30", ORG = "#E0672B", BLU = "#2F6BD8", YEL = "#F5C543";
@@ -369,8 +369,15 @@
       '<p class="fbp-quote">' + esc(M.mood || "One more month of steady saving.") + '</p>' +
       '<p class="fbp-foot">Flipbook · Retirement · Volume I</p></div>';
     var views = [["book", "In the book"], ["together", "Chart + clear page"], ["base", "Chart only"], ["film", "Clear page only"]], v = ST.pv || "book", stage;
-    if (v === "book") stage = '<div class="fbp-room"><div class="fbp-book' + (ST.plift ? " lifted" : "") + '"><div class="fbp-cover"></div><div class="fbp-spread"><div class="fbp-page fbp-left">' + left + '</div><div class="fbp-gutter"></div><div class="fbp-page fbp-right"><div class="fbp-chart">' + base + '</div><div class="fbp-film"><div class="fbp-fin">' + film + '</div><i class="fbp-shine"></i></div></div></div><span class="fbp-ribbon"></span></div></div>' +
-      '<div class="fb-row" style="margin-top:14px;align-items:center;gap:14px"><button type="button" class="fb-btn pri" data-act="plift">' + (ST.plift ? "Lay the clear page back on" : "Lift the clear page") + '</button><span class="fb-mut">The clear page flips over to the left, just like the real book.</span></div>';
+    if (v === "book") {
+      var all = pages().filter(function (p) { return p[1] !== pgPrinted; }), nSp = Math.ceil(all.length / 2); ST.psp = Math.max(0, Math.min(nSp - 1, ST.psp || 0));
+      var side = function (p, k) { if (!p) return '<div class="fbp-page ' + k + ' fbp-blank"><p class="fbp-foot" style="position:absolute;left:10%;bottom:8%">Flipbook · Retirement · Volume I</p></div>'; var keep = ST.clear; ST.clear = p[1] === chartPage && on("clear") && ST.pclear; var html = p[1](); ST.clear = keep; return '<div class="fbp-page ' + k + '"><div class="fbp-fit"><div class="fbp-fitin">' + html + '</div></div><span class="fbp-pno">' + (all.indexOf(p) + 1) + '</span></div>'; };
+      var L2 = all[ST.psp * 2], R2 = all[ST.psp * 2 + 1], hasChart = L2 && L2[1] === chartPage || R2 && R2[1] === chartPage;
+      var thumbs = all.map(function (p, i) { var sp = Math.floor(i / 2); return '<button type="button" class="' + (sp === ST.psp ? "on" : "") + '" data-act="psp" data-v="' + sp + '">' + (i + 1) + ' · ' + esc(p[0]) + '</button>'; }).join("");
+      stage = '<div class="fbp-pnav"><button type="button" class="fb-arrow" data-act="psp" data-v="' + (ST.psp - 1) + '"' + (ST.psp ? "" : " disabled") + ' aria-label="Previous pages">‹</button><div class="fbp-ths">' + thumbs + '</div><button type="button" class="fb-arrow" data-act="psp" data-v="' + (ST.psp + 1) + '"' + (ST.psp < nSp - 1 ? "" : " disabled") + ' aria-label="Next pages">›</button></div>' +
+        '<div class="fbp-room"><div class="fbp-book multi"><div class="fbp-cover"></div><div class="fbp-spread">' + side(L2, "fbp-left") + '<div class="fbp-gutter"></div>' + side(R2, "fbp-right") + '</div><span class="fbp-ribbon"></span></div></div>' +
+        '<div class="fb-row" style="margin-top:14px;align-items:center;gap:14px">' + (hasChart && on("clear") ? '<button type="button" class="fb-btn pri" data-act="pclear">' + (ST.pclear ? "Lift the clear page" : "Lay the clear page on") + '</button>' : '') + '<span class="fb-mut">Pages ' + (ST.psp * 2 + 1) + (R2 ? "–" + (ST.psp * 2 + 2) : "") + ' of ' + all.length + '. Use the arrows or tap a page above to flip through the whole book.</span></div>';
+    }
     else stage = '<div class="fbp-flat"><div class="fbp-sheet' + (v === "film" ? " chk" : "") + '">' + (v !== "film" ? base : "") + (v !== "base" ? '<div class="fbp-ov' + (v === "film" ? " solo" : "") + '">' + film + '</div>' : "") + '</div><p class="fb-mut">' + (v === "base" ? "The printed chart page: the market's month, one candle per day." : v === "film" ? "The clear page on its own: your 401(k) line, buys and earnings, printed on clear film." : "The clear page laid over the chart: exactly how it reads in your book.") + '</p></div>';
     var tabs = '<div class="fbp-tabs" role="tablist">' + views.map(function (x) { return '<button type="button" role="tab" aria-selected="' + (v === x[0]) + '" class="' + (v === x[0] ? "on" : "") + '" data-act="pv" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join("") + '</div>';
     return paper("Your finished pages", "See it printed", "What this month looks like in your book: the chart page, the clear page, and both together inside a linen hardcover.", sampleNote() + tabs + stage);
@@ -433,7 +440,10 @@
     var tabs = msel + [["book", "My book"], ["build", "Build my book"], ["acct", "My accounts"]].map(function (t) { return '<button type="button" class="fb-tab' + (ST.tab === t[0] ? " on" : "") + '" data-act="tab" data-v="' + t[0] + '">' + t[1] + '</button>'; }).join("");
     root.innerHTML = '<div class="fb-top"><div><h2>Flipbook</h2><p>Your retirement, page by page. A new set of pages every month to snap into your book.</p></div><div class="fb-tabs">' + tabs + '</div></div>' +
       (ST.tab === "book" ? viewBook() : ST.tab === "build" ? viewBuild() : viewAcct());
+    fitPages();
   }
+  function fitPages() { if (!root) return; [].forEach.call(root.querySelectorAll('.fbp-fit'), function (f) { var inn = f.firstChild; if (!inn) return; inn.style.transform = 'none'; var cw = f.clientWidth, ch = f.clientHeight, iw = inn.offsetWidth, ih = inn.scrollHeight; if (!cw || !iw) return; var sc = Math.min(cw / iw, ch / ih); inn.style.transform = 'scale(' + sc + ')'; inn.style.left = Math.max(0, (cw - iw * sc) / 2) + 'px'; }); }
+  window.addEventListener('resize', function () { clearTimeout(fitPages.t); fitPages.t = setTimeout(fitPages, 120); });
   function act(e) {
     var t = e.target.closest("[data-act]"); if (!t || !root.contains(t)) return;
     var a = t.getAttribute("data-act"), v = t.getAttribute("data-v");
@@ -445,6 +455,8 @@
     else if (a === "next") { ST.page++; ST.clear = false; }
     else if (a === "clear") ST.clear = !ST.clear;
     else if (a === "pv") ST.pv = v;
+    else if (a === "psp") ST.psp = +v;
+    else if (a === "pclear") ST.pclear = !ST.pclear;
     else if (a === "plift") { ST.plift = !ST.plift; var bk = root.querySelector(".fbp-book"); if (bk) { bk.classList.toggle("lifted", ST.plift); t.textContent = ST.plift ? "Lay the clear page back on" : "Lift the clear page"; } return; }
     else if (a === "yrs") ST.years = +v; else if (a === "rate") ST.rate = +v; else if (a === "extra") ST.extra = +v;
     else if (a === "wr") ST.wr = +v; else if (a === "wamt") ST.wamt = +v; else if (a === "ry") ST.ry = +v; else if (a === "wmode") ST.wmode = v;
@@ -464,7 +476,10 @@
     if (e.key === "ArrowRight") { ST.page++; ST.clear = false; render(); } else if (e.key === "ArrowLeft") { ST.page--; ST.clear = false; render(); }
   }
 
-  var CSS = '.fbp-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 16px}.fbp-tabs button{min-height:42px;padding:0 18px;border:1.5px solid #E2E4E8;border-radius:999px;background:#fff;font:700 13.5px Inter,sans-serif;cursor:pointer;color:#1B2333}.fbp-tabs button.on{background:#0B0B0C;border-color:#0B0B0C;color:#fff}' +
+  var CSS = '.fbp-pnav{display:flex;align-items:center;gap:8px;margin:0 0 12px}.fbp-ths{display:flex;gap:6px;overflow-x:auto;flex:1;padding:2px}.fbp-ths button{flex:none;border:1px solid #E2E4E8;background:#fff;border-radius:10px;padding:8px 12px;font:600 12.5px Inter,sans-serif;cursor:pointer;color:#1B2333;white-space:nowrap}.fbp-ths button.on{background:#1B355A;border-color:#1B355A;color:#fff}' +
+    '.fbp-book.multi{transform:rotateX(10deg)}.fbp-fit{position:absolute;inset:4% 4% 6% 5%;overflow:hidden}.fbp-fitin{position:absolute;top:0;left:0;width:1000px;transform-origin:0 0}.fbp-fitin .fb-paper{box-shadow:none;background:transparent;border-radius:0;padding:10px 6px 10px 10px;min-height:0}.fbp-fitin .fb-holes,.fbp-fitin .fb-flip,.fbp-fitin .fb-samp{display:none}' +
+    '.fbp-pno{position:absolute;bottom:2.5%;font:italic 400 13px "Instrument Serif",Georgia,serif;color:#A39A88}.fbp-left .fbp-pno{left:6%}.fbp-right .fbp-pno{right:6%}' +
+'.fbp-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 16px}.fbp-tabs button{min-height:42px;padding:0 18px;border:1.5px solid #E2E4E8;border-radius:999px;background:#fff;font:700 13.5px Inter,sans-serif;cursor:pointer;color:#1B2333}.fbp-tabs button.on{background:#0B0B0C;border-color:#0B0B0C;color:#fff}' +
     '.fbp-room{position:relative;border-radius:20px;padding:54px 22px 62px;background:radial-gradient(120% 90% at 50% 0%,#7A5538 0%,#5B3D29 55%,#3F2A1D 100%);overflow:hidden;perspective:2200px}' +
     '.fbp-book{position:relative;margin:0 auto;max-width:1180px;transform:rotateX(14deg);transform-style:preserve-3d}.fbp-cover{position:absolute;inset:-14px -16px -16px -16px;border-radius:10px;background:#1B355A;box-shadow:0 40px 80px rgba(0,0,0,.55)}' +
     '.fbp-spread{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);background:#FBF8F1;border-radius:4px;box-shadow:0 2px 0 #E9E2D2,0 4px 0 #E2DACA,0 6px 0 #D9D0BE;transform-style:preserve-3d}' +

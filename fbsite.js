@@ -179,7 +179,7 @@
       var mx = Math.max.apply(null, out.map(function (b) { return b.v; })) || 1; out.forEach(function (b) { b.v = b.v / mx * 1.6 + 0.05; });
       RC[key] = { st: "ok", C: out, src: r.source || "market data", note: pk[1], name: r.name || "" }; done();
     }).catch(function () { RC[key] = { st: "err", msg: "Could not load real candles. Try again." }; done(); });
-    function done() { if (host && !host.hidden && (cur === "build" || cur === "clear")) render(); }
+    function done() { if (host && !host.hidden && (cur === "build" || cur === "clear" || cur === "proof")) render(); }
   }
   function getCandles(F) {
     var sym = tkr().t || "NVDA", key = sym + "|" + F.times[0] + "|" + F.times.length + "|" + F.step;
@@ -750,28 +750,46 @@
   /* ---------- pricing ---------- */
   var TIERS = [["starter", "Starter", 79, 150, "1.5\" ring binder, linen hardcover", ["Holds up to 150 pages", "20 page sleeves + 10 clear pages to start", "Name and year on the cover", "First month of pages included"]], ["pro", "Pro", 129, 350, "3\" D-ring, vegan leather, gold foil", ["Holds up to 350 pages (a full year)", "40 page sleeves + 25 clear pages", "Numbered spine, ribbon marker", "First month of pages included"]], ["archive", "Archive", 199, 700, "2-volume slipcase set", ["Holds up to 700 pages", "Two Pro volumes in an archival slipcase", "Year tabs + index pages", "First month of pages included"]]];
   var CAD = { weekly: [12, "/week", "5 trade pages + 5 clear pages every Friday", 260], monthly: [29, "/month", "12 trade pages + month report card + SPY page + 12 clear pages", 168], quarterly: [79, "/quarter", "36 trade pages + quarter report + SPY pages + 36 clear pages · save 9%", 160] };
-  var pfView = "book", pfLift = false;
+  var pfView = "book", pfLift = false, pfSp = 0;
+  function withTicker(i, fn) {
+    var T = D.tickers.filter(function (x) { return x.t; }); if (!T.length || i === 0) return fn(true);
+    var k = { tk: D.tickers, ex: D.execs, st: D.stop, tg: D.targets, nt: D.note, rr: D.rr, re: D.rrEntry, R: REAL }, t = T[i];
+    D.tickers = [t].concat(D.tickers.filter(function (x) { return x !== t; })); D.execs = []; D.stop = ""; D.targets = [""]; D.note = ""; D.rr = false; D.rrEntry = ""; REAL = null;
+    try { return fn(false); } finally { D.tickers = k.tk; D.execs = k.ex; D.stop = k.st; D.targets = k.tg; D.note = k.nt; D.rr = k.rr; D.rrEntry = k.re; REAL = k.R; }
+  }
+  function proofPage(i) {
+    return withTicker(i, function (isCur) {
+      var CC = getCandles(frame()), F = CC.F, C = CC.C, sel = D.ind.filter(function (id) { var d = indDef(id); return d && fitsAsset(d); }), t = tkr(), sym = t.t || "NVDA";
+      var opts = function (layer) { return pageChart({ F: F, C: C, ind: sel, W: 980, H: 380, layer: layer, demo: isCur ? undefined : false }); };
+      var base = opts("base"), film = opts("film");
+      var ex = execList(), fmtD = function (d) { if (!d) return ""; var x = pd(d); return MN[x.getMonth()] + " " + x.getDate() + ", " + x.getFullYear(); };
+      var rows = ex.map(function (e) { return '<tr><td>' + esc(String(e.side).toUpperCase()) + '</td><td>' + esc(e.qty) + '</td><td>$' + (+e.price).toFixed(2) + '</td></tr>'; }).join("");
+      var R = D.rr ? rrVals(0, ex, F) : null;
+      var notes = '<div class="pf-notes"><p class="pf-k">Trade ' + (i + 1) + (t.from ? ' · ' + esc(fmtD(t.from)) : '') + '</p><h3>$' + esc(sym) + '</h3>' +
+        (D.strat && D.strat.name ? '<p class="pf-strat">' + esc(D.strat.name) + '</p>' : '') +
+        (isCur ? '<p class="pf-quote">' + esc(D.note || "Waited for the VWAP reclaim. Partial at the flag, rest at target.") + '</p>' : '<div class="pf-lines"><i></i><i></i><i></i></div><p class="pf-mut">Design this trade on the Clear page to fill in your note, buys and sells.</p>') +
+        (rows ? '<table class="pf-t"><thead><tr><th>Side</th><th>Qty</th><th>Price</th></tr></thead><tbody>' + rows + '</tbody></table>' : (isCur ? '<p class="pf-mut">Your buys and sells print here.</p>' : '')) +
+        '<div class="pf-stats">' + (D.stop ? '<span><b>Stop</b>' + esc(D.stop) + '</span>' : '') + ((D.targets || [])[0] ? '<span><b>Target</b>' + esc(D.targets[0]) + '</span>' : '') + (R ? '<span><b>R:R</b>1 : ' + (R.risk > 0 ? (R.rew / R.risk).toFixed(2) : "–") + '</span>' : '') + '</div>' +
+        '<p class="pf-foot">Flipbook · Volume I · ' + new Date().getFullYear() + '</p></div>';
+      return { base: base, film: film, notes: notes, sym: sym, label: CC.loading ? "Loading real candles…" : "" };
+    });
+  }
   function pProof() {
-    var CC = getCandles(frame()), F = CC.F, C = CC.C, sel = D.ind.filter(function (id) { var d = indDef(id); return d && fitsAsset(d); }), t = tkr(), sym = t.t || "NVDA";
-    var opts = function (layer) { return pageChart({ F: F, C: C, ind: sel, W: 980, H: 380, layer: layer }); };
-    var base = opts("base"), film = opts("film");
-    var ex = execList(), fmtD = function (d) { if (!d) return ""; var x = pd(d); return MN[x.getMonth()] + " " + x.getDate() + ", " + x.getFullYear(); };
-    var rows = ex.map(function (e) { return '<tr><td>' + esc(String(e.side).toUpperCase()) + '</td><td>' + esc(e.qty) + '</td><td>$' + (+e.price).toFixed(2) + '</td></tr>'; }).join("");
-    var R = D.rr ? rrVals(0, ex, F) : null;
-    var notes = '<div class="pf-notes"><p class="pf-k">Trade ' + (D.tickers.indexOf(t) + 1) + (t.from ? ' · ' + esc(fmtD(t.from)) : '') + '</p><h3>$' + esc(sym) + '</h3>' +
-      (D.strat && D.strat.name ? '<p class="pf-strat">' + esc(D.strat.name) + '</p>' : '') +
-      '<p class="pf-quote">' + esc(D.note || "Waited for the VWAP reclaim. Partial at the flag, rest at target.") + '</p>' +
-      (rows ? '<table class="pf-t"><thead><tr><th>Side</th><th>Qty</th><th>Price</th></tr></thead><tbody>' + rows + '</tbody></table>' : '<p class="pf-mut">Your buys and sells print here.</p>') +
-      '<div class="pf-stats">' + (D.stop ? '<span><b>Stop</b>' + esc(D.stop) + '</span>' : '') + ((D.targets || [])[0] ? '<span><b>Target</b>' + esc(D.targets[0]) + '</span>' : '') + (R ? '<span><b>R:R</b>1 : ' + (R.risk > 0 ? (R.rew / R.risk).toFixed(2) : "–") + '</span>' : '') + '</div>' +
-      (D.strat && (D.strat.entry || D.strat.exit) ? '<p class="pf-rules"><b>Rules</b> ' + esc(((D.strat.entry || "") + (D.strat.exit ? " · " + D.strat.exit : "")).slice(0, 220)) + '</p>' : '') +
-      '<p class="pf-foot">Flipbook · Volume I · ' + new Date().getFullYear() + '</p></div>';
+    var T = D.tickers.filter(function (x) { return x.t; }); if (!T.length) T = [tkr()];
+    var hasSpy = D.spy !== "off", nSp = T.length + (hasSpy ? 1 : 0); pfSp = Math.max(0, Math.min(nSp - 1, pfSp));
+    var isSpy = hasSpy && pfSp === T.length, P = isSpy ? null : proofPage(pfSp), SPd = isSpy ? spyData(frame()) : null;
+    var spySvg = isSpy ? (SPd.C ? spyChart(SPd.C, D.spyMarks ? frame().times[0] : null, frame().times[frame().times.length - 1]) : '<p class="fbx-src load">' + (SPd.loading ? "Loading real SPY candles…" : esc(SPd.msg || "Could not load SPY")) + '</p>') : "";
+    var spyNotes = '<div class="pf-notes"><p class="pf-k">Market context</p><h3>The S&amp;P 500</h3><p class="pf-quote">What the whole market was doing around your trades. Your trade days are shaded.</p><p class="pf-foot">Flipbook · Volume I · ' + new Date().getFullYear() + '</p></div>';
+    var thumbs = T.map(function (t, i) { return '<button type="button" class="' + (i === pfSp ? "on" : "") + '" data-pfsp="' + i + '">' + (i + 1) + ' · $' + esc(t.t) + '</button>'; }).join("") + (hasSpy ? '<button type="button" class="' + (isSpy ? "on" : "") + '" data-pfsp="' + T.length + '">' + (T.length + 1) + ' · SPY</button>' : '');
+    var pnav = '<div class="pf-pnav"><button type="button" class="pf-arr" data-pfsp="' + (pfSp - 1) + '"' + (pfSp ? "" : " disabled") + ' aria-label="Previous page">&lsaquo;</button><div class="pf-ths">' + thumbs + '</div><button type="button" class="pf-arr" data-pfsp="' + (pfSp + 1) + '"' + (pfSp < nSp - 1 ? "" : " disabled") + ' aria-label="Next page">&rsaquo;</button></div>';
     var views = [["book", "In the book"], ["together", "Chart + overlay"], ["base", "Chart only"], ["film", "Overlay only"]];
     var stage;
-    if (pfView === "book") stage = '<div class="pf-room"><div class="pf-book' + (pfLift ? " lifted" : "") + '"><div class="pf-cover"></div><div class="pf-spread"><div class="pf-page pf-left">' + notes + '</div><div class="pf-gutter"></div><div class="pf-page pf-right"><div class="pf-chart">' + base + '</div><div class="pf-film">' + film + '<i class="pf-shine"></i></div></div></div><span class="pf-ribbon"></span></div></div>' +
-      '<div class="pf-ctl"><button type="button" class="fbx-btn" data-pflift="1">' + (pfLift ? "Lay the overlay back on" : "Lift the clear overlay") + '</button><span class="fbx-hint">The clear film flips over to the left page, just like the real book.</span></div>';
-    else stage = '<div class="pf-flat ' + pfView + '"><div class="pf-sheet">' + (pfView === "film" ? '<div class="pf-checker"></div>' : '') + (pfView !== "film" ? base : '') + (pfView !== "base" ? '<div class="pf-filmflat">' + film + '</div>' : '') + '</div><p class="fbx-hint">' + (pfView === "base" ? "The printed chart page: real candles, no markings." : pfView === "film" ? "The clear overlay on its own: everything you marked, printed on clear film." : "Overlay laid on the chart: exactly how it reads in your book.") + '</p></div>';
-    return shell("proof", '<section class="fbx-sec"><p class="fbx-kick">Your finished page</p><h1 class="fbx-h1">See it printed.</h1><p class="fbx-lead">This is exactly what lands in your book: the chart page, the clear overlay, and both together inside a linen hardcover.</p>' +
-      '<div class="pf-tabs" role="tablist">' + views.map(function (v) { return '<button type="button" role="tab" aria-selected="' + (pfView === v[0]) + '" class="' + (pfView === v[0] ? "on" : "") + '" data-pfview="' + v[0] + '">' + v[1] + '</button>'; }).join("") + '</div>' + stage +
+    if (pfView === "book") stage = '<div class="pf-room"><div class="pf-book' + (pfLift && !isSpy ? " lifted" : "") + '"><div class="pf-cover"></div><div class="pf-spread"><div class="pf-page pf-left">' + (isSpy ? spyNotes : P.notes) + '<span class="pf-pno">' + (pfSp * 2 + 1) + '</span></div><div class="pf-gutter"></div><div class="pf-page pf-right">' + (isSpy ? '<div class="pf-chart pf-spy">' + spySvg + '</div>' : '<div class="pf-chart">' + P.base + '</div><div class="pf-film">' + P.film + '<i class="pf-shine"></i></div>') + '<span class="pf-pno">' + (pfSp * 2 + 2) + '</span></div></div><span class="pf-ribbon"></span></div></div>' +
+      '<div class="pf-ctl">' + (isSpy ? '' : '<button type="button" class="fbx-btn" data-pflift="1">' + (pfLift ? "Lay the overlay back on" : "Lift the clear overlay") + '</button>') + '<span class="fbx-hint">Pages ' + (pfSp * 2 + 1) + '–' + (pfSp * 2 + 2) + ' of ' + nSp * 2 + '. Use the arrows or tap a trade above to flip through your whole book.</span></div>';
+    else if (isSpy) stage = '<div class="pf-flat"><div class="pf-sheet">' + spySvg + '</div><p class="fbx-hint">The S&amp;P 500 context page has no overlay.</p></div>';
+    else stage = '<div class="pf-flat ' + pfView + '"><div class="pf-sheet">' + (pfView === "film" ? '<div class="pf-checker"></div>' : '') + (pfView !== "film" ? P.base : '') + (pfView !== "base" ? '<div class="pf-filmflat">' + P.film + '</div>' : '') + '</div><p class="fbx-hint">' + (pfView === "base" ? "The printed chart page: real candles, no markings." : pfView === "film" ? "The clear overlay on its own: everything you marked, printed on clear film." : "Overlay laid on the chart: exactly how it reads in your book.") + '</p></div>';
+    return shell("proof", '<section class="fbx-sec"><p class="fbx-kick">Your finished book</p><h1 class="fbx-h1">See it printed.</h1><p class="fbx-lead">Flip through every page exactly as it lands in your book: each trade on its own spread, with its clear overlay, inside a linen hardcover.</p>' +
+      pnav + '<div class="pf-tabs" role="tablist">' + views.map(function (v) { return '<button type="button" role="tab" aria-selected="' + (pfView === v[0]) + '" class="' + (pfView === v[0] ? "on" : "") + '" data-pfview="' + v[0] + '">' + v[1] + '</button>'; }).join("") + '</div>' + stage +
       '<div class="pf-edit"><button type="button" class="fbx-btn ghost" data-fbgo="clear">&larr; Change something on the clear page</button><button type="button" class="fbx-btn" data-fbgo="pricing">Love it? See pricing &rarr;</button></div></section>');
   }
   function pPricing() {
@@ -892,6 +910,7 @@
     var d = b.dataset;
     if (d.fbgo) return go(d.fbgo);
     if (d.pfview) { pfView = d.pfview; return render(); }
+    if (d.pfsp != null) { pfSp = +d.pfsp; return render(); }
     if (d.pflift) { pfLift = !pfLift; var bk = host.querySelector('.pf-book'); if (bk) { bk.classList.toggle('lifted', pfLift); b.textContent = pfLift ? 'Lay the overlay back on' : 'Lift the clear overlay'; } return; }
     if (d.fbflip) { flipAt += +d.fbflip; return render(); }
     if (d.fbpage) { flipAt = +d.fbpage; return render(); }
@@ -1063,6 +1082,8 @@
       ".pf-flat .pf-sheet{position:relative;border-radius:14px;padding:18px;background:#fff;box-shadow:0 1px 0 #E6E8EC,0 20px 40px rgba(15,23,42,.08)}",
       ".pf-checker{position:absolute;inset:0;border-radius:14px;background-color:#fff;background-image:linear-gradient(45deg,#EEF0F3 25%,transparent 25%),linear-gradient(-45deg,#EEF0F3 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#EEF0F3 75%),linear-gradient(-45deg,transparent 75%,#EEF0F3 75%);background-size:22px 22px;background-position:0 0,0 11px,11px -11px,-11px 0}",
       ".pf-flat.together .pf-filmflat{position:absolute;inset:18px}.pf-flat.film .pf-filmflat{position:relative}.pf-filmflat svg{width:100%;height:auto;display:block}",
+      ".pf-pnav{display:flex;align-items:center;gap:8px;margin:0 0 12px}.pf-ths{display:flex;gap:6px;overflow-x:auto;flex:1;padding:2px}.pf-ths button{flex:none;border:1px solid #E2E4E8;background:#fff;border-radius:10px;padding:9px 14px;font:700 13px Inter,sans-serif;cursor:pointer;color:var(--k);white-space:nowrap}.pf-ths button.on{background:#1B355A;border-color:#1B355A;color:#fff}.pf-arr{flex:none;width:46px;height:46px;border-radius:50%;border:1px solid #E2E4E8;background:#fff;font-size:26px;line-height:1;cursor:pointer}.pf-arr:disabled{opacity:.35;cursor:default}",
+      ".pf-pno{position:absolute;bottom:2.5%;font:italic 400 13px 'Instrument Serif',Georgia,serif;color:#A39A88}.pf-left .pf-pno{left:6%}.pf-right .pf-pno{right:6%}.pf-lines{display:flex;flex-direction:column;gap:12px;margin:4px 0}.pf-lines i{display:block;height:1px;background:#E2D9C6}.pf-spy{display:flex;align-items:center}",
       ".pf-edit{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:26px}",
       "@media(max-width:820px){.pf-spread{grid-template-columns:1fr}.pf-gutter,.pf-left{display:none}.pf-book{transform:none}.pf-room{padding:30px 14px 50px}}",
 
