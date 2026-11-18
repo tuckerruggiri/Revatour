@@ -40,8 +40,9 @@
     el.innerHTML = top + '<div class="tr-k"><div class="tr-kp"><span>Visitors today</span><b>' + nf(td.visitors) + '</b><small>' + nf(td.views) + ' page views</small></div><div class="tr-kp"><span>Visitors, ' + tf + ' days</span><b>' + nf(t.visitors) + '</b><small>' + nf(t.views) + ' page views</small></div><div class="tr-kp"><span>Total sign-ups</span><b>' + nf(sg.total) + '</b><small>' + nf(sg.period) + ' in the last ' + tf + ' days</small></div></div>' +
       '<div class="tr-box" id="trbox">' + c.svg + '<div class="tr-tip" id="trtip"></div></div><p class="tr-note">Bars = people per day. Line = page views. Green dots = a day someone signed up. Days are in New York time.</p>' +
       '<div class="tr-g"><div class="pl-card"><h2>Top pages</h2>' + tbl(data.pages || [], "Page") + '</div><div class="pl-card"><h2>Where visitors come from</h2>' + tbl(data.refs || [], "Source") + '</div><div class="pl-card"><h2>Phone or computer</h2>' + tbl(data.devs || [], "Device") + '</div>' +
-      '<div class="pl-card"><h2>Newest sign-ups</h2><table class="tr-t"><tbody>' + ((sg.recent || []).length ? sg.recent.map(function (r) { return '<tr><td>' + esc(r.who) + '</td><td class="r">' + esc(String(r.at).slice(0, 10)) + '</td></tr>'; }).join("") : '<tr><td style="color:var(--mute)">No sign-ups yet</td></tr>') + '</tbody></table></div></div>' +
-      '<p class="tr-note"><label><input type="checkbox" id="trskip"' + (localStorage.getItem("ss-notrack") === "1" ? " checked" : "") + '> Don\'t count my own visits from this browser</label><br>Visitors are counted by a random id in the browser, so the same person on two devices counts twice. No names, emails or IP addresses are stored. Emails above are partly hidden.</p>';
+      '<div class="pl-card"><h2>Newest sign-ups</h2><table class="tr-t"><tbody>' + ((sg.recent || []).length ? sg.recent.map(function (r) { return '<tr><td>' + esc(r.who) + '</td><td class="r">' + esc(String(r.at).slice(0, 10)) + '</td></tr>'; }).join("") : '<tr><td style="color:var(--mute)">No sign-ups yet</td></tr>') + '</tbody></table></div>' + wlCard() + '</div>' +
+      '<p class="tr-note"><label><input type="checkbox" id="trskip"' + (localStorage.getItem("ss-notrack") === "1" ? " checked" : "") + '> Don\'t count my own visits from this browser</label><br>Visitors are counted by a random id in the browser, so the same person on two devices counts twice. No names, emails or IP addresses are stored for visitors. Sign-up emails above are partly hidden. Waitlist emails are shown in full because people gave them to you to be emailed at launch.</p>';
+    var cp = $("trwlcopy"); if (cp) cp.onclick = function () { var t = (wl || []).map(function (r) { return r.email; }).join(", "); try { navigator.clipboard.writeText(t).then(function () { cp.textContent = "Copied ✓"; }); } catch (e) { prompt("Copy these emails:", t); } };
     var box = $("trbox"), tip = $("trtip"); if (!box) return;
     box.addEventListener("pointermove", function (e) { var svg = box.querySelector("svg"), r = svg.getBoundingClientRect(), x = (e.clientX - r.left) * c.geo.W / r.width, i = Math.floor((x - c.geo.L) / c.geo.bw); if (i < 0 || i >= c.days.length) { tip.style.opacity = 0; return; } var d = c.days[i]; tip.innerHTML = '<b>' + lab(d.d) + '</b><br>' + d.v + ' visitors<br>' + d.w + ' views' + (d.s ? '<br>' + d.s + ' sign-up' + (d.s > 1 ? "s" : "") : ""); var bx = box.getBoundingClientRect(); tip.style.left = Math.min(bx.width - 130, Math.max(4, e.clientX - bx.left + 12)) + "px"; tip.style.top = "10px"; tip.style.opacity = 1; });
     box.addEventListener("pointerleave", function () { tip.style.opacity = 0; });
@@ -56,7 +57,17 @@
   }
   function loadVis() { hid = null; if (!root.stockspotRPC) { paint(); return; } root.stockspotRPC("ss_get_hidden").then(function (l) { hid = {}; (l || []).forEach(function (i) { hid[i] = 1; }); paint(); }).catch(function () { hid = {}; hmsg = "Could not load the saved choices. Run the visibility database step first."; paint(); }); }
   function $(id) { return document.getElementById(id); }
-  function load() { busy = true; data = null; paint(); if (!root.stockspotRPC) { busy = false; paint(); return; } root.stockspotRPC("ss_traffic", { days: tf }).then(function (d) { data = d; busy = false; paint(); }).catch(function () { busy = false; paint(); }); }
+  var wl = null, wlErr = false;
+  function wlCard() {
+    var rows = wl || [];
+    return '<div class="pl-card"><h2>Launch waitlist <span style="color:var(--mute);font-weight:500">' + (wl ? nf(rows.length) : "") + '</span></h2>' +
+      (wlErr ? '<p class="hint" style="margin:0">Run the waitlist database step (supabase/waitlist.sql) to start collecting emails.</p>' :
+      !wl ? '<p class="hint" style="margin:0">Loading…</p>' :
+      '<table class="tr-t"><tbody>' + (rows.length ? rows.slice(0, 50).map(function (r) { return '<tr><td>' + esc(r.email) + '</td><td class="r">' + esc(String(r.at).slice(0, 10)) + '</td></tr>'; }).join("") : '<tr><td style="color:var(--mute)">No emails yet. People join on the coming-soon page.</td></tr>') + '</tbody></table>' +
+      (rows.length ? '<button type="button" id="trwlcopy" style="margin-top:10px">Copy all ' + rows.length + ' emails</button>' : '')) + '</div>';
+  }
+  function loadWl() { if (!root.stockspotRPC) return; root.stockspotRPC("ss_waitlist_list").then(function (l) { wl = l || []; wlErr = false; paint(); }).catch(function () { wl = []; wlErr = true; paint(); }); }
+  function load() { busy = true; data = null; loadWl(); paint(); if (!root.stockspotRPC) { busy = false; paint(); return; } root.stockspotRPC("ss_traffic", { days: tf }).then(function (d) { data = d; busy = false; paint(); }).catch(function () { busy = false; paint(); }); }
   function mount(h) {
     host = h; if (!document.getElementById("tr-css")) { var s = document.createElement("style"); s.id = "tr-css"; s.textContent = CSS; document.head.appendChild(s); }
     if (!h._wired) { h._wired = 1; h.addEventListener("click", function (e) {

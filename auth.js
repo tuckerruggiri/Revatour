@@ -53,11 +53,13 @@
   });
 
   $('tabin').onclick = function () { setMode('in'); };
-  $('tabup').onclick = function () { setMode('up'); };
+  // Sign-ups are closed until launch (waitlist on landing.html). Set SIGNUPS_OPEN to true to reopen.
+  var SIGNUPS_OPEN = false;
+  $('tabup').onclick = function () { if (SIGNUPS_OPEN) setMode('up'); };
   try {
     var qp = new URLSearchParams(location.search);
     if (qp.get('email')) $('email').value = qp.get('email');
-    if (location.hash === '#signup') setMode('up');
+    if (location.hash === '#signup') { if (SIGNUPS_OPEN) setMode('up'); else location.replace('landing.html' + (qp.get('email') ? '?email=' + encodeURIComponent(qp.get('email')) : '')); }
   } catch (e) {}
   $('showpw').onclick = function () {
     var p = $('pw'); var show = p.type === 'password';
@@ -78,6 +80,7 @@
     if (!email || !pw) return say('Enter your email and password.', 'bad');
     $('go').disabled = true; say('');
     try {
+      if (mode === 'up' && !SIGNUPS_OPEN) throw new Error('New sign-ups are closed until launch.');
       if (mode === 'up') {
         if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) throw new Error('Pick a username: 3–20 letters, numbers or underscores.');
         if (pw.length < 8) throw new Error('Password must be at least 8 characters.');
