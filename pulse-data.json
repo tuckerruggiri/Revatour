@@ -1,820 +1,798 @@
 {
- "asof": "Nov 12, 2026 (premarket)",
- "headline": "Stocks rebounded Wednesday (S&P 500 +1.31%, Nasdaq +1.60%) on CoreWeave's beat, but Nvidia fell about 6.5% after hours on a report its board is weighing CEO Jensen Huang's future; the 10-year sits near 5% after a hot CPI.",
- "regime": "Hiking regime: the Fed funds target is 3.75-4.00% and a December hike is the base case (the only FedWatch figure found this run is 76.3% after the Nov 6 jobs report; no post-CPI reading found). The 10-year is about 5.00% (bonds were closed Nov 11), the VIX about 18.3 and Waller backs a 25bp December hike.",
- "lean": [
-  {
-   "h": "Today",
-   "sub": "day trades",
-   "s": -10,
-   "t": "AI-chip leader under a cloud",
-   "why": "Nasdaq-100 futures were about -0.9% and S&P -0.4% early Thursday after Nvidia's after-hours drop; Barr speaks at 10 am ET and Cisco and AMAT report after the close."
-  },
-  {
-   "h": "Next 2-4 weeks",
-   "sub": "swing trades",
-   "s": -10,
-   "t": "Cautious, data and earnings heavy",
-   "why": "PPI (Nov 13; forecast +0.4% headline, +0.3% core per Continuum Economics), Nvidia earnings (Nov 17), FOMC minutes (Nov 18) and PCE (Nov 25) are ahead with a hike expected."
-  },
-  {
-   "h": "6-12 months",
-   "sub": "investing",
-   "s": 10,
-   "t": "Constructive, rate risk high",
-   "why": "AI demand data is strong (CoreWeave backlog about $132.5B, TSMC October revenue +60%), but a 5% 10-year and a hiking Fed pressure valuations."
-  }
- ],
- "rates": [
-  {
-   "l": "Fed funds target",
-   "v": "3.75-4.00%",
-   "n": "Per Deutsche Bank via Investing.com, Nov 10; next FOMC Dec 8-9"
-  },
-  {
-   "l": "Dec hike odds",
-   "v": "~76%+",
-   "n": "76.3% per CME FedWatch after the Nov 6 jobs report (Zacks); earlier Investing.com read of ~99% was Nov 10; no newer figure found"
-  },
-  {
-   "l": "10-year yield",
-   "v": "~5.00%",
-   "n": "5.00% Nov 10 (TheStreet); 4.998% on Yahoo's Nov 11 ticker while bonds were closed"
-  },
-  {
-   "l": "30-yr mortgage",
-   "v": "7.18%",
-   "n": "Freddie Mac survey of Nov 5 (older); Nov 12 release not found this run"
-  },
-  {
-   "l": "Dollar index",
-   "v": "~102.3",
-   "n": "102.29 on Nov 11 (Reuters via Yahoo); 102.45 per another page; +0.5% Tuesday"
-  },
-  {
-   "l": "Gold",
-   "v": "~$4,031",
-   "n": "Sources conflict: about $4,038 (TheStreet futures, Nov 11 morning) vs $3,930 (Yahoo ticker); older Nov 10 read ~$4,031"
-  },
-  {
-   "l": "WTI oil",
-   "v": "~$86.3",
-   "n": "$86.27 early Nov 12 (TipRanks); Brent about $92.5; US-Iran de-escalation talks"
-  },
-  {
-   "l": "VIX",
-   "v": "~18.3",
-   "n": "18.32 on Yahoo's Nov 11 ticker (time of quote not stated); 25.64 on Nov 6 (Zacks)"
-  }
- ],
- "sectors": [
-  {
-   "s": "Clean energy",
-   "etf": "ICLN TAN",
-   "d": [
-    0,
-    1,
-    0
-   ],
-   "why": "(Nov 9 read, not updated.) First Solar fell about 5% Monday as oil dropped; higher yields are a headwind for rate-sensitive builders."
-  },
-  {
-   "s": "Health insurers and hospitals",
-   "etf": "IHF XLV",
-   "d": [
-    0,
-    0,
-    1
-   ],
-   "why": "(Nov 5-9 read.) Moderna closed Nov 9 at $269.00 on its first profitable quarter in two years; an analyst on TheStreet pointed to rotation toward healthcare and financials Nov 10; Hims & Hers fell 16.6%."
-  },
-  {
-   "s": "Defense",
-   "etf": "ITA",
-   "d": [
-    -1,
-    0,
-    0
-   ],
-   "why": "(Nov 4 read, not updated.) Lockheed -7%, L3Harris -6%; industrials slipped 0.08% on Nov 10."
-  },
-  {
-   "s": "AI chips and data centers",
-   "etf": "SMH XLK",
-   "d": [
-    -1,
-    0,
-    1
-   ],
-   "why": "Nasdaq +1.60% Nov 11 on CoreWeave (+24.7% to $60.77); Micron, Sandisk and SK Hynix +10% or more; but Nvidia fell about 6.5% after hours on the CEO report (Yahoo, FinWire)."
-  },
-  {
-   "s": "Banks",
-   "etf": "XLF KRE",
-   "d": [
-    1,
-    1,
-    1
-   ],
-   "why": "Financials led Nov 10, up 0.49% (TheStreet); a hiking Fed helps margins but raises credit worries. No bank-specific news was found."
-  },
-  {
-   "s": "Homebuilders and mortgage",
-   "etf": "ITB XHB",
-   "d": [
-    -1,
-    -1,
-    0
-   ],
-   "why": "The 10-year at about 4.99% pushes mortgage rates back up from 7.18%; Thursday's Freddie Mac survey is the test."
-  },
-  {
-   "s": "Gold and miners",
-   "etf": "GLD GDX",
-   "d": [
-    -1,
-    0,
-    1
-   ],
-   "why": "Gold fell 2.6% to about $4,032 and silver 3.55%; McEwen fell 16.5%."
-  },
-  {
-   "s": "Energy",
-   "etf": "XLE",
-   "d": [
-    0,
-    0,
-    0
-   ],
-   "why": "Energy rose 0.41% on Nov 10 even as WTI settled at $86.04, the lowest since Aug 31; Iran talks drive crude."
-  },
-  {
-   "s": "Small caps",
-   "etf": "IWM",
-   "d": [
-    -1,
-    0,
-    1
-   ],
-   "why": "The Russell 2000 opened +3.15% but closed -0.68% at 2,821.38; a 5% 10-year hurts borrowers."
-  },
-  {
-   "s": "Musk and Trump-linked",
-   "etf": "TSLA DJT",
-   "d": [
-    0,
-    0,
-    0
-   ],
-   "why": "(Nov 9 read, not updated.) Tesla rose about 5% Monday on robotaxi expansion (Yahoo)."
-  },
-  {
-   "s": "Utilities and power",
-   "etf": "XLU CEG VST",
-   "d": [
-    0,
-    0,
-    1
-   ],
-   "why": "Utilities fell 0.23% on Nov 10; Constellation closed Nov 9 at $276.09 after a Q3 beat; GE Vernova and Vertiv rose premarket on JPMorgan notes."
-  },
-  {
-   "s": "Private prisons",
-   "etf": "GEO CXW",
-   "d": [
-    -1,
-    -1,
-    0
-   ],
-   "why": "(Nov 4 read, not updated.) GEO -6.7% and CoreCivic -5.2% on the new Congress."
-  }
- ],
- "news": [
-  {
-   "id": "nvda-ceo",
-   "cat": "stocks",
-   "head": "Nvidia falls after-hours as board reportedly weighs CEO Huang's future",
-   "when": "Nov 11-12",
-   "src": "https://finwire.io/news/economy-news/nvidia-said-to-preparing-huang-ouster-alibaba-slumps-whats-moving-markets",
-   "srcN": "FinWire/Investing.com, Nov 12; Yahoo Finance, Nov 11",
-   "mean": "Nvidia closed Wednesday at $173.73 (+2.9%) then fell about 6.5% after hours to about $162 on a WSJ report that the board is preparing to oust CEO Jensen Huang, with an independent investigation under way; Baird cut it to Neutral. The stock was down about 14% in November. Other sources cited -7% to -8% after hours.",
-   "react": [
-    [
-     "NVDA",
-     -1,
-     "Governance and key-person risk before Nov 17 earnings"
-    ],
-    [
-     "Nasdaq-100 futures",
-     -1,
-     "About -0.9% early Thursday"
-    ],
-    [
-     "Alibaba",
-     -1,
-     "Fell over 6% in Hong Kong on chip-access scrutiny"
-    ],
-    [
-     "AI chip peers",
-     0,
-     "Mixed; CoreWeave and memory names rallied Wednesday"
-    ]
-   ],
-   "hist": "Rule of thumb: sudden leadership uncertainty at a mega-cap leader tends to widen swings in the stock and its index until the board gives clarity.",
-   "histN": "",
-   "histU": "",
-   "today": "Expect wide NVDA and Nasdaq swings at the open; confirmations or denials from the company would be the catalyst.",
-   "later": "Investors may weigh the Nov 17 earnings report and any board announcement against the AI demand data.",
-   "conf": 2
-  },
-  {
-   "id": "cpi",
-   "cat": "economy",
-   "head": "October CPI runs hot: headline +0.4%, core +0.3%",
-   "when": "Nov 10",
-   "src": "https://finance.yahoo.com/economy/article/not-great-october-cpi-inflation-data-comes-in-hotter-than-expected-as-food-and-rent-costs-spike-142323507.html",
-   "srcN": "Yahoo Finance, Nov 10; Tickmill, Nov 11",
-   "mean": "Headline CPI rose 0.4% vs 0.3% expected and core 0.3% vs 0.2% (September headline was +0.6%). Rents rose 0.2%, food 0.5% and energy 0.7%. A year-over-year figure was not published because October 2025 prices were not collected during the shutdown.",
-   "react": [
-    [
-     "Fed hike odds",
-     -1,
-     "December hike seen as nearly locked"
-    ],
-    [
-     "10-yr yield",
-     -1,
-     "Up about 11-12bp toward 5%"
-    ],
-    [
-     "Growth stocks",
-     -1,
-     "Hurt by higher yields"
-    ],
-    [
-     "Gold",
-     -1,
-     "Pressured by yields and dollar"
-    ]
-   ],
-   "hist": "Rule of thumb: a core print above consensus during a hiking cycle tends to push yields up and hurt long-duration stocks the same day.",
-   "histN": "",
-   "histU": "",
-   "today": "Stay small into PPI on Nov 13; yields near 5% are the pressure point.",
-   "later": "Investors tend to watch core inflation trend (core path 0.3, 0.3, 0.3 over Aug-Oct per Stocktitan) and the Dec 8-9 FOMC.",
-   "conf": 3
-  },
-  {
-   "id": "waller",
-   "cat": "fed",
-   "head": "Fed's Waller backs a December hike, would consider 50bp; Logan sees two more",
-   "when": "Nov 10",
-   "src": "https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-nov-10-2026",
-   "srcN": "TheStreet, Nov 10; Saxo, Nov 11",
-   "mean": "Governor Waller supports at least 25bp in December and would consider 50bp if core CPI was 0.3% or higher. Dallas Fed's Logan said two more hikes are needed. Goldman expects a December and a March hike, peaking at 4.25-4.5% (Saxo).",
-   "react": [
-    [
-     "Fed hike odds",
-     -1,
-     "About 99% for December (CME FedWatch via Investing.com)"
-    ],
-    [
-     "2-yr yield",
-     -1,
-     "Largest one-day rise in 19 months"
-    ],
-    [
-     "Banks",
-     0,
-     "Margin help vs credit worries"
-    ]
-   ],
-   "hist": "Rule of thumb: officials floating a bigger move right after a hot print raise the odds that markets price a steeper path.",
-   "histN": "",
-   "histU": "",
-   "today": "Fed speakers keep yields in focus; Veterans Day thins bond trading today.",
-   "later": "A hiking cycle is a rate-and-valuation story; investors tend to watch the Dec 8-9 meeting and Nov 18 minutes.",
-   "conf": 3
-  },
-  {
-   "id": "tenyr",
-   "cat": "fed",
-   "head": "10-year Treasury yield back near 5%",
-   "when": "Nov 10",
-   "src": "https://www.investing.com/news/economy-news/us-treasury-yields-surge-as-hot-cpi-revives-fed-tightening-bets-93CH-5016707",
-   "srcN": "Investing.com, Nov 10; Saxo, Nov 11",
-   "mean": "The 10-year closed about 4.99% (touching 5.00-5.02% intraday) and the 2-year about 4.73%, up roughly 17-18bp. Treasury cash markets are closed Nov 11 for Veterans Day.",
-   "react": [
-    [
-     "Homebuilders",
-     -1,
-     "Mortgage-rate pressure"
-    ],
-    [
-     "Small caps",
-     -1,
-     "Hurt by higher borrowing costs"
-    ],
-    [
-     "Gold",
-     -1,
-     "Higher real yields"
-    ]
-   ],
-   "hist": "Rule of thumb: a 10-year yield at or above 5% has tended to weigh on housing, small caps and unprofitable growth first.",
-   "histN": "",
-   "histU": "",
-   "today": "Watch whether 5% holds when bond trading is thin today.",
-   "later": "Investors tend to compare equity valuations with a 5% risk-free rate.",
-   "conf": 2
-  },
-  {
-   "id": "nvda",
-   "cat": "stocks",
-   "head": "Nvidia falls 5.47% to $168.89 as board probes CEO reports",
-   "when": "Nov 10",
-   "src": "https://abc7news.com/story/nvidia-stock-falls-company-opens-probe-ceo-jensen-huang-alleged-affair-chinese-spy/20026775/",
-   "srcN": "ABC7 (AP), Nov 9; HeyGoTrade, Nov 11",
-   "mean": "Independent directors hired Wachtell Lipton to investigate reports about CEO Jensen Huang. The stock fell 4.27% on Nov 9 and 5.47% on Nov 10 to $168.89 on 429.3M shares, about 2.8% above its 52-week low. It rose about 3.5% premarket Nov 11 and reports Nov 17.",
-   "react": [
-    [
-     "NVDA",
-     -1,
-     "Two-day slide, bounce premarket"
-    ],
-    [
-     "Semiconductors",
-     -1,
-     "Tech was the weakest sector Nov 10"
-    ],
-    [
-     "Nasdaq",
-     -1,
-     "Index fell 0.74%"
-    ]
-   ],
-   "hist": "Rule of thumb: headline-driven drops into earnings can reverse quickly or extend; the earnings call is the next test.",
-   "histN": "",
-   "histU": "",
-   "today": "Premarket bounce vs the $164.27 low; Nov 17 earnings are the next catalyst.",
-   "later": "Investors tend to separate the probe from AI demand data in the Nov 17 report.",
-   "conf": 2
-  },
-  {
-   "id": "oil",
-   "cat": "commodities",
-   "head": "Oil settles at lowest since Aug 31 as Iran tensions ease",
-   "when": "Nov 10",
-   "src": "https://www.khaleejtimes.com/business/oil-falls-almost-5-as-trump-signals-restraint-on-iran",
-   "srcN": "Khaleej Times, Nov 9; Eurasia Business News, Nov 11",
-   "mean": "WTI (Dec) settled at $86.04 (-0.93%) and Brent (Jan) at $91.49 (-1.17%), both the lowest settlements since Aug 31. Trump said new Iran attacks are unlikely while talks progress; Brent fell 4.65% on Nov 9. AAA gasoline fell below $4 for the first time since July (Stocktitan).",
-   "react": [
-    [
-     "Airlines",
-     1,
-     "Lower fuel costs"
-    ],
-    [
-     "Energy stocks",
-     0,
-     "Energy sector still rose 0.41% Nov 10"
-    ],
-    [
-     "Inflation",
-     1,
-     "Eases headline pressure if it holds"
-    ]
-   ],
-   "hist": "Rule of thumb: falling crude helps fuel-heavy industries and headline inflation with a lag; Hormuz shipping risk can reverse it quickly.",
-   "histN": "",
-   "histU": "",
-   "today": "Brent rebounded to about $91.6-92.2 on Nov 11 after an overnight dip.",
-   "later": "Investors tend to watch Iran talks and shipping risk near Hormuz.",
-   "conf": 2
-  },
-  {
-   "id": "gold",
-   "cat": "commodities",
-   "head": "Gold drops 2.6% to about $4,032 on yields and the dollar",
-   "when": "Nov 10",
-   "src": "https://eurasiabusinessnews.com/2026/11/11/stock-market-today-dow-jones-nasdaq-sp-500-fall-on-november-10-2026-oil-and-gold-retreat/",
-   "srcN": "Eurasia Business News, Nov 11; Stocktitan, Nov 10",
-   "mean": "Spot gold fell about 2.6% to roughly $4,032 and silver 3.55% to about $51.41 as yields and the dollar rose. McEwen Mining fell 16.5% (Stocktitan).",
-   "react": [
-    [
-     "Gold",
-     -1,
-     "Hurt by higher yields"
-    ],
-    [
-     "Miners",
-     -1,
-     "McEwen -16.5%"
-    ],
-    [
-     "Dollar",
-     1,
-     "Index gained 0.5% Tuesday"
-    ]
-   ],
-   "hist": "Rule of thumb: gold tends to weaken when real yields and the dollar rise together.",
-   "histN": "",
-   "histU": "",
-   "today": "Gold readings vary by source ($4,030-$4,055 on Nov 11).",
-   "later": "Investors tend to watch the 10-year yield and hike odds as gold's drivers.",
-   "conf": 2
-  },
-  {
-   "id": "coreweave",
-   "cat": "stocks",
-   "head": "CoreWeave beats and raises; shares jump premarket",
-   "when": "Nov 11",
-   "src": "https://thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-nov-11-2026",
-   "srcN": "TheStreet, Nov 11; Yahoo Finance, Nov 11",
-   "mean": "CoreWeave closed Wednesday at $60.77, up 24.7%, after raising its revenue outlook and citing about $9B in customer prepayments; it slipped about 5% after hours. The Nasdaq gained 1.60% and memory and photonics names rose 10% or more.",
-   "react": [
-    [
-     "CRWV",
-     1,
-     "Beat and raise"
-    ],
-    [
-     "Nebius",
-     1,
-     "Up about 11% overnight in sympathy"
-    ],
-    [
-     "Nasdaq",
-     1,
-     "Futures up premarket"
-    ]
-   ],
-   "hist": "Rule of thumb: an AI-infrastructure beat often lifts peers the same day; debt burdens are the recurring caveat.",
-   "histN": "",
-   "histU": "",
-   "today": "Premarket gains can fade at the open; Nebius reports Nov 12.",
-   "later": "Investors tend to weigh backlog growth against $46.9B of debt.",
-   "conf": 3
-  },
-  {
-   "id": "anthropic",
-   "cat": "stocks",
-   "head": "Anthropic IPO range set at $70-78; chip makers among buyers",
-   "when": "Nov 10",
-   "src": "https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-nov-10-2026",
-   "srcN": "TheStreet, Nov 10; Stocktwits, Nov 11",
-   "mean": "The range is $70-78 for 825M shares, with a $26B private placement that includes buyers such as Nvidia, AMD, Google and Microsoft. TSMC's board approved up to $500M of Anthropic stock. The listing date is reported as next Thursday (Nov 19) but is not independently confirmed, and TheStreet flags inconsistencies in the proceeds figures.",
-   "react": [
-    [
-     "TSMC",
-     1,
-     "Rose about 5% premarket"
-    ],
-    [
-     "AI chips",
-     1,
-     "Strategic buyers named"
-    ],
-    [
-     "AI sentiment",
-     1,
-     "Analysts call it a core driver of the AI trade"
-    ]
-   ],
-   "hist": "Rule of thumb: large IPOs can pull money from other growth names around the pricing date.",
-   "histN": "",
-   "histU": "",
-   "today": "Details are still being reported; treat figures as preliminary.",
-   "later": "Investors tend to watch how the IPO prices against the $70-78 range.",
-   "conf": 1
-  },
-  {
-   "id": "jobs",
-   "cat": "economy",
-   "head": "October payrolls +165,000 vs 59,000 expected",
-   "when": "Nov 6",
-   "src": "https://www.wbtv.com/2026/11/06/us-adds-165000-jobs-october-hiring-rebounds/?outputType=amp",
-   "srcN": "WBTV (AP), Nov 6",
-   "mean": "Payrolls rose 165,000 vs 59,000 expected, unemployment fell to 4.1% from 4.2%, and average hourly earnings rose 3.1% y/y.",
-   "react": [
-    [
-     "Fed hike odds",
-     -1,
-     "Adds to the case for a hike"
-    ],
-    [
-     "10-yr yield",
-     -1,
-     "Higher"
-    ],
-    [
-     "Cyclicals",
-     1,
-     "Stronger economy"
-    ]
-   ],
-   "hist": "Rule of thumb: strong jobs during a hiking cycle tends to support the hawkish case and the dollar.",
-   "histN": "",
-   "histU": "",
-   "today": "Old news today; it is the backdrop for the CPI reaction.",
-   "later": "Investors tend to watch labor data alongside core inflation.",
-   "conf": 3
-  },
-  {
-   "id": "mortgage",
-   "cat": "housing",
-   "head": "Mortgage rate fell to 7.18% in the Nov 5 survey, third straight decline",
-   "when": "Nov 5",
-   "src": "https://www.wcax.com/2026/11/05/average-us-30-year-mortgage-rate-falls-718-this-week-its-third-straight-decline/",
-   "srcN": "WCAX (AP), Nov 5",
-   "mean": "Freddie Mac's 30-year rate was 7.18% (prior week 7.24%, a year ago 6.22%) and the 15-year 6.57%. The 10-year has since risen to about 4.99%, so the Nov 12 survey could reverse the decline.",
-   "react": [
-    [
-     "Homebuilders",
-     -1,
-     "Higher yields since the survey"
-    ],
-    [
-     "Mortgage lenders",
-     0,
-     "Mixed"
-    ]
-   ],
-   "hist": "Rule of thumb: mortgage rates tend to follow the 10-year yield with a short lag.",
-   "histN": "",
-   "histU": "",
-   "today": "Watch Thursday's Freddie Mac release.",
-   "later": "Housing is rate-sensitive; investors tend to watch the 10-year yield.",
-   "conf": 2
-  },
-  {
-   "id": "earnings",
-   "cat": "stocks",
-   "head": "Earnings movers: AAON +19%, ZipRecruiter +54%, Hims -17%, Groupon -23%",
-   "when": "Nov 10",
-   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-10-2026",
-   "srcN": "Stocktitan, Nov 10",
-   "mean": "AAON rose 19.3% (Q3 sales +84.1%), PepGen 92.9%, and ZipRecruiter 53.6%. Hims & Hers fell 16.6% on a lower EBITDA outlook, Digital Turbine 35.8% and Groupon 23%.",
-   "react": [
-    [
-     "AAON",
-     1,
-     "Data-center cooling demand"
-    ],
-    [
-     "Hims & Hers",
-     -1,
-     "Outlook cut"
-    ],
-    [
-     "Small caps",
-     0,
-     "Russell opened +3.15% but closed -0.68%"
-    ]
-   ],
-   "hist": "Rule of thumb: big single-day earnings gaps are often followed by high volatility.",
-   "histN": "",
-   "histU": "",
-   "today": "Gap-and-fade is common; manage size.",
-   "later": "Investors tend to read guidance changes, not only the quarter.",
-   "conf": 2
-  },
-  {
-   "id": "costco",
-   "cat": "stocks",
-   "head": "Costco declares a $30 special dividend",
-   "when": "Nov 10",
-   "src": "https://www.sec.gov/Archives/edgar/data/0000909832/000090983226000134/costex9918-k111026.htm",
-   "srcN": "Costco 8-K exhibit, Nov 10; Stocktitan, Nov 10",
-   "mean": "The special dividend is $30 per share, about $13.3B in total, with a Nov 24 record date and Dec 4 payment. The stock rose 1.58% after hours (Stocktitan).",
-   "react": [
-    [
-     "COST",
-     1,
-     "Cash return to holders"
-    ],
-    [
-     "Retailers",
-     0,
-     "No read-through stated"
-    ]
-   ],
-   "hist": "Rule of thumb: a special dividend usually lowers the share price by about the payout on the ex-date.",
-   "histN": "",
-   "histU": "",
-   "today": "Record date Nov 24; the price adjusts on the ex-date.",
-   "later": "Taxes on special dividends differ from ordinary ones; investors tend to check them.",
-   "conf": 3
-  }
- ],
- "cats": [
-  [
-   "all",
-   "All"
+  "asof": "Nov 18, 2026 (premarket)",
+  "headline": "Stocks fell for a fourth straight day (S&P 500 -1.03% to 7,341, its lowest close since late July; Dow -1.64%) with the 10-year at 5.11% and a December Fed hike nearly priced, but Nvidia beat and guided to about $130B and rose after hours.",
+  "regime": "Hiking regime: the Fed funds target is 3.75-4.00% after a 10-2 hold in October, and a 25bp December hike is nearly fully priced (95-96% per KuCoin Nov 18; 100% per futures on Nov 12). The 10-year closed at 5.11%, the VIX was about 25.5 before the Nov 17 open and the FOMC minutes arrive today.",
+  "lean": [
+    {
+      "h": "Today",
+      "sub": "day trades",
+      "s": 0,
+      "t": "Nvidia beat vs a falling tape",
+      "why": "Nvidia rose about 4.8% after hours, but the S&P has lost four days in a row and the FOMC minutes plus Target, Lowe's, TJX and Palo Alto (after the close) all land today."
+    },
+    {
+      "h": "Next 2-4 weeks",
+      "sub": "swing trades",
+      "s": -15,
+      "t": "Cautious, rates dominate",
+      "why": "A December hike is nearly priced, the 10-year is above 5% and the VIX is about 25; PCE (Nov 25) and the Dec 8-9 FOMC are ahead."
+    },
+    {
+      "h": "6-12 months",
+      "sub": "investing",
+      "s": 10,
+      "t": "Constructive but rate-sensitive",
+      "why": "Nvidia guides to about $130B next quarter, but a hiking Fed and software worries (Salesforce -9.5%) weigh on valuations."
+    }
   ],
-  [
-   "fed",
-   "Fed and rates"
+  "rates": [
+    {
+      "l": "Fed funds target",
+      "v": "3.75-4.00%",
+      "n": "Held 10-2 at the Oct 27-28 meeting (KuCoin, Nov 18); next FOMC Dec 8-9"
+    },
+    {
+      "l": "Dec hike odds",
+      "v": "~95%+",
+      "n": "95-96% for 25bp per KuCoin Nov 18 (data date not stated); 100% on Nov 12 per Motley Fool; 88.8% on Nov 10 per Investing.com"
+    },
+    {
+      "l": "10-year yield",
+      "v": "5.11%",
+      "n": "Nov 17 close, -3bp (Motley Fool)"
+    },
+    {
+      "l": "30-yr mortgage",
+      "v": "7.18%",
+      "n": "Freddie Mac survey of Nov 5 (older); newer releases not found this run"
+    },
+    {
+      "l": "Dollar index",
+      "v": "~103.7",
+      "n": "103.727 on an undated Investing.com page of Nov 10 (older)"
+    },
+    {
+      "l": "Gold",
+      "v": "~$3,849",
+      "n": "$3,849.20 Nov 17 settle (Motley Fool); pre-open tickers showed $3,780-3,786"
+    },
+    {
+      "l": "WTI oil",
+      "v": "~$84.5",
+      "n": "December crude $84.48 before the Nov 17 open (Investing.com via Yahoo); Brent $92.73 on Nov 10 (older)"
+    },
+    {
+      "l": "VIX",
+      "v": "~25.5",
+      "n": "25.46 before the Nov 17 open (Yahoo ticker); 24.30 on an undated Nov 10 page"
+    }
   ],
-  [
-   "housing",
-   "Mortgage and housing"
+  "sectors": [
+    {
+      "s": "Clean energy",
+      "etf": "ICLN TAN",
+      "d": [
+        0,
+        1,
+        0
+      ],
+      "why": "(Older read, not updated this run.) First Solar fell about 5% Monday as oil dropped; higher yields are a headwind for rate-sensitive builders."
+    },
+    {
+      "s": "Health insurers and hospitals",
+      "etf": "IHF XLV",
+      "d": [
+        -1,
+        0,
+        1
+      ],
+      "why": "UnitedHealth -5.42% on Medicare/Medicaid anti-fraud proposals (Motley Fool, Nov 17); Ardent -14.6% after hours on a secondary offering."
+    },
+    {
+      "s": "Defense",
+      "etf": "ITA",
+      "d": [
+        -1,
+        0,
+        0
+      ],
+      "why": "(Older read, not updated this run.) Nov 4 read, not updated.) Lockheed -7%, L3Harris -6%; industrials slipped 0.08% on Nov 10."
+    },
+    {
+      "s": "AI chips and data centers",
+      "etf": "SMH XLK",
+      "d": [
+        1,
+        0,
+        1
+      ],
+      "why": "Nvidia beat (revenue $115.8B, Q4 guide about $130B) and rose 4.8% after hours; Micron +4.6% and Credo +7.5% after hours (StockTitan, Nov 17)."
+    },
+    {
+      "s": "Banks",
+      "etf": "XLF KRE",
+      "d": [
+        1,
+        1,
+        1
+      ],
+      "why": "Higher rates help margins; Coinbase -4.0% and Robinhood -4.0% on Nov 17 (Motley Fool)."
+    },
+    {
+      "s": "Homebuilders and mortgage",
+      "etf": "ITB XHB",
+      "d": [
+        -1,
+        -1,
+        0
+      ],
+      "why": "10-year at 5.11%; Home Depot -2.45% despite a sales beat; housing starts and Lowe's report Nov 18."
+    },
+    {
+      "s": "Gold and miners",
+      "etf": "GLD GDX",
+      "d": [
+        -1,
+        0,
+        1
+      ],
+      "why": "Gold settled at $3,849.20 (-0.18%) Nov 17; pressured by yields above 5% and a hiking Fed."
+    },
+    {
+      "s": "Energy",
+      "etf": "XLE",
+      "d": [
+        0,
+        0,
+        0
+      ],
+      "why": "December crude about $84.5 before the Nov 17 open, down 1.78%."
+    },
+    {
+      "s": "Small caps",
+      "etf": "IWM",
+      "d": [
+        -1,
+        0,
+        1
+      ],
+      "why": "IWM fell 1.43% on Nov 17 (StockTitan); a hike is near fully priced."
+    },
+    {
+      "s": "Musk and Trump-linked",
+      "etf": "TSLA DJT",
+      "d": [
+        0,
+        0,
+        0
+      ],
+      "why": "(Older read, not updated this run.) Tesla rose about 5% Monday on robotaxi expansion (Yahoo)."
+    },
+    {
+      "s": "Utilities and power",
+      "etf": "XLU CEG VST",
+      "d": [
+        0,
+        0,
+        1
+      ],
+      "why": "(Older read, not updated this run.) Utilities fell 0.23% on Nov 10; Constellation closed Nov 9 at $276.09 after a Q3 beat; GE Vernova and Vertiv rose premarket on JPMorgan notes."
+    },
+    {
+      "s": "Private prisons",
+      "etf": "GEO CXW",
+      "d": [
+        -1,
+        -1,
+        0
+      ],
+      "why": "(Older read, not updated this run.) Nov 4 read, not updated.) GEO -6.7% and CoreCivic -5.2% on the new Congress."
+    },
+    {
+      "s": "Software and cloud",
+      "etf": "IGV XLK",
+      "d": [
+        -1,
+        -1,
+        0
+      ],
+      "why": "Salesforce -9.45% to $194.52 on security and AI-replacement worries (Motley Fool, Nov 17)."
+    }
   ],
-  [
-   "banks",
-   "Banks"
+  "news": [
+    {
+      "id": "nvda-q3",
+      "cat": "stocks",
+      "head": "Nvidia beats and guides to about $130B; shares rise after hours",
+      "when": "Nov 17",
+      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-17-2026",
+      "srcN": "StockTitan, Nov 17 (updated 8:30 PM ET); Motley Fool/Yahoo, Nov 17",
+      "mean": "Fiscal Q3 revenue was $115.8B (+103%), net income $64.9B and data center revenue $107.6B; Q4 guidance is about $130B plus or minus 3%. The stock closed $155.46 (-0.44%) and was up 4.81% (about $162.94) at 7:59 PM ET; Motley Fool cited a smaller early gain of about 1.3%.",
+      "react": [
+        [
+          "NVDA",
+          1,
+          "Beat and guide; after-hours gain"
+        ],
+        [
+          "Micron",
+          1,
+          "Up 4.62% after hours"
+        ],
+        [
+          "Credo",
+          1,
+          "Up 7.5% after hours on a Marvell patent deal"
+        ],
+        [
+          "Nasdaq-100",
+          0,
+          "Direction at the open depends on whether the gain holds"
+        ]
+      ],
+      "hist": "Rule of thumb: a strong print from the AI-chip leader tends to lift the group at the open, but gains often fade if the broader market is falling.",
+      "histN": "",
+      "histU": "",
+      "today": "Watch whether the after-hours gain holds after Nov 17's fourth straight S&P 500 loss.",
+      "later": "Investors may weigh the ~$130B guide against rate risk with the 10-year above 5%.",
+      "conf": 3
+    },
+    {
+      "id": "selloff",
+      "cat": "stocks",
+      "head": "S&P 500 posts a fourth straight loss, lowest close since late July",
+      "when": "Nov 17",
+      "src": "https://www.fool.com/coverage/stock-market-today/2026/11/17/stock-market-today-nov-17-stocks-slide-on-ai-chip-and-tech-pressures-salesforce-plummets-9/",
+      "srcN": "Motley Fool, Nov 17; StockTitan citing CNBC, Nov 17",
+      "mean": "The S&P 500 fell 1.03% to 7,341, the Dow 1.64% to 50,759 and the Nasdaq Composite 0.74% to 24,328 (it was down about 2.1% intraday, its lowest level since April, per CNBC via StockTitan). The IWM small-cap fund fell 1.43%. The VIX was 25.46 before the open.",
+      "react": [
+        [
+          "S&P 500",
+          -1,
+          "Four straight losses"
+        ],
+        [
+          "Dow",
+          -1,
+          "Worst of the majors, -1.64%"
+        ],
+        [
+          "Small caps (IWM)",
+          -1,
+          "-1.43%"
+        ],
+        [
+          "VIX",
+          1,
+          "About 25.5"
+        ]
+      ],
+      "hist": "Rule of thumb: streaks of losses into a major earnings report often end with a sharp relief or follow-through move; the direction is not predictable.",
+      "histN": "",
+      "histU": "",
+      "today": "Expect wide swings around Nvidia's reaction, FOMC minutes and retail earnings.",
+      "later": "Investors may note the S&P is at its lowest close since late July while the Fed is expected to hike.",
+      "conf": 3
+    },
+    {
+      "id": "crm",
+      "cat": "stocks",
+      "head": "Salesforce drops 9.5% as software sells off on AI-replacement fears",
+      "when": "Nov 17",
+      "src": "https://www.fool.com/coverage/stock-market-today/2026/11/17/stock-market-today-nov-17-stocks-slide-on-ai-chip-and-tech-pressures-salesforce-plummets-9/",
+      "srcN": "Motley Fool, Nov 17",
+      "mean": "Salesforce fell 9.45% to $194.52 as software shares sold off on security concerns and fears that AI will replace software.",
+      "react": [
+        [
+          "CRM",
+          -1,
+          "-9.45% to $194.52"
+        ],
+        [
+          "Software peers",
+          -1,
+          "Sector pressure cited"
+        ],
+        [
+          "AI infrastructure",
+          0,
+          "Not directly affected; Nvidia beat"
+        ]
+      ],
+      "hist": "Rule of thumb: sector-wide software selloffs on a narrative can overshoot or extend; earnings reports are what usually settle them.",
+      "histN": "",
+      "histU": "",
+      "today": "Palo Alto Networks reports after the close Nov 18 and may move the cyber and software group.",
+      "later": "Investors may watch whether software earnings back up or contradict the AI-replacement worry.",
+      "conf": 2
+    },
+    {
+      "id": "hike-odds",
+      "cat": "fed",
+      "head": "December hike odds sit near a lock; FOMC minutes due today",
+      "when": "Nov 16-18",
+      "src": "https://www.kucoin.com/news/flash/fomc-minutes-today-fed-rate-hike-clues-put-crypto-on-alert",
+      "srcN": "KuCoin, Nov 18; Motley Fool, Nov 16; Investing.com, Nov 10",
+      "mean": "KuCoin (Nov 18) cites 95-96% for a 25bp hike at the Dec 8-9 meeting and about 5% for 50bp; Motley Fool (Nov 16) cited 100% per fed funds futures as of Nov 12, and Investing.com showed 88.8% on Nov 10. The target is 3.75-4.00% after a 10-2 hold in October (Cook and Hammack favored a hike). KuCoin also shows traders at 67% for a January hike.",
+      "react": [
+        [
+          "Fed funds futures",
+          -1,
+          "Hike essentially priced"
+        ],
+        [
+          "Banks",
+          1,
+          "Higher rates help margins"
+        ],
+        [
+          "Homebuilders",
+          -1,
+          "Pressure from rates"
+        ],
+        [
+          "Dollar",
+          1,
+          "Supported"
+        ]
+      ],
+      "hist": "Rule of thumb: when a hike is already fully priced, the minutes and the guidance on pace matter more than the decision itself.",
+      "histN": "",
+      "histU": "",
+      "today": "Watch the minutes for the split between a 25bp and a 50bp move.",
+      "later": "Investors may plan for a higher-for-longer path, with KuCoin showing at least three hikes priced by end-2027.",
+      "conf": 2
+    },
+    {
+      "id": "fed-speakers",
+      "cat": "fed",
+      "head": "Fed officials split on pace: Waller floats 50bp, Williams sees no major increase",
+      "when": "Nov 10-17",
+      "src": "https://www.kucoin.com/news/flash/fomc-minutes-today-fed-rate-hike-clues-put-crypto-on-alert",
+      "srcN": "KuCoin, Nov 18; Motley Fool, Nov 16",
+      "mean": "Waller said on Nov 10 a 50bp hike should be considered in December if inflation stays high; Musalem sees several more hikes before spring; Logan may want to move faster; Williams said Nov 17 conditions do not support a major increase; Bowman favors smaller, gradual steps; Chair Warsh gave no clear December signal on Nov 16.",
+      "react": [
+        [
+          "Rate-sensitive stocks",
+          -1,
+          "More hikes possible"
+        ],
+        [
+          "Banks",
+          1,
+          "Margin help"
+        ],
+        [
+          "2-year yield",
+          -1,
+          "Pressure upward"
+        ]
+      ],
+      "hist": "Rule of thumb: a divided committee tends to raise rate volatility around data releases.",
+      "histN": "",
+      "histU": "",
+      "today": "Today's minutes can reveal how many members wanted a larger move.",
+      "later": "Investors may weigh the path of rates into 2027.",
+      "conf": 2
+    },
+    {
+      "id": "tenyr",
+      "cat": "fed",
+      "head": "10-year yield 5.11% on Nov 17 after a hot CPI week",
+      "when": "Nov 17",
+      "src": "https://www.fool.com/coverage/stock-market-today/2026/11/17/stock-market-today-nov-17-stocks-slide-on-ai-chip-and-tech-pressures-salesforce-plummets-9/",
+      "srcN": "Motley Fool, Nov 17; Investing.com, Nov 10",
+      "mean": "The 10-year closed at 5.11%, down 3 basis points. Investing.com's Nov 10 page showed the 30-year at 5.447% and 5-year at 4.915% (undated snapshot). October CPI on Nov 10 was hotter than expected at +0.4% headline and +0.3% core per KuCoin.",
+      "react": [
+        [
+          "Homebuilders",
+          -1,
+          "Mortgage costs high"
+        ],
+        [
+          "Utilities and REITs",
+          -1,
+          "Bond-proxy pressure"
+        ],
+        [
+          "Banks",
+          1,
+          "Steeper curve helps"
+        ]
+      ],
+      "hist": "Rule of thumb: yields above 5% have tended to cap valuations for long-duration growth.",
+      "histN": "",
+      "histU": "",
+      "today": "A move below 5% would be notable.",
+      "later": "Investors may weigh bonds at 5%+ against stock valuations.",
+      "conf": 2
+    },
+    {
+      "id": "commodities",
+      "cat": "commodities",
+      "head": "Gold near $3,849, crude in the mid-$80s",
+      "when": "Nov 17",
+      "src": "https://www.fool.com/coverage/stock-market-today/2026/11/17/stock-market-today-nov-17-stocks-slide-on-ai-chip-and-tech-pressures-salesforce-plummets-9/",
+      "srcN": "Motley Fool, Nov 17; Investing.com via Yahoo, Nov 17",
+      "mean": "Gold settled at $3,849.20 (-0.18%) per Motley Fool, while pre-open tickers showed $3,780 to $3,786 (timing not stated). December crude was about $84.5-84.7 before the open (-1.78%).",
+      "react": [
+        [
+          "Gold and miners",
+          0,
+          "Sources differ on level"
+        ],
+        [
+          "Energy",
+          0,
+          "Crude in the mid-$80s"
+        ],
+        [
+          "Airlines",
+          1,
+          "Lower crude helps costs"
+        ]
+      ],
+      "hist": "Rule of thumb: gold tends to struggle when real yields rise.",
+      "histN": "",
+      "histU": "",
+      "today": "Gold quotes differ by source and time; check the contract month.",
+      "later": "Investors may view gold as a hedge but rate-sensitive.",
+      "conf": 1
+    },
+    {
+      "id": "retail",
+      "cat": "economy",
+      "head": "October retail sales +0.2%, industrial production -0.4%",
+      "when": "Nov 17",
+      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-17-2026",
+      "srcN": "StockTitan citing Census, Fed and BLS, Nov 17",
+      "mean": "Retail sales rose 0.2% to $748.2B after +0.8% in September; industrial production fell 0.4% (utilities -4.3%) after +0.7%; import prices rose 1.1%.",
+      "react": [
+        [
+          "Consumer stocks",
+          0,
+          "Slower but positive spending"
+        ],
+        [
+          "Industrials",
+          -1,
+          "Output decline"
+        ],
+        [
+          "Treasury yields",
+          -1,
+          "Import prices add to inflation concern"
+        ]
+      ],
+      "hist": "Rule of thumb: a soft retail print with hot import prices keeps the stagflation debate alive.",
+      "histN": "",
+      "histU": "",
+      "today": "Watch Target, Lowe's and TJX for consumer color.",
+      "later": "Investors may follow the PCE inflation data on Nov 25.",
+      "conf": 2
+    },
+    {
+      "id": "hd",
+      "cat": "housing",
+      "head": "Home Depot beats on sales, names new CEO",
+      "when": "Nov 17",
+      "src": "https://finance.yahoo.com/markets/stocks/articles/premarket-movers-nvidia-red-cat-124832112.html",
+      "srcN": "Investing.com via Yahoo Finance, Nov 17; StockTitan, Nov 17",
+      "mean": "Q3 sales were $43.4B (+4.9%) versus about $42.8B expected; FY2026 sales growth guidance is about 4.5%; Richard McPhail becomes CEO Nov 23. Shares closed -2.45%. Housing starts print today at 8:30 ET.",
+      "react": [
+        [
+          "HD",
+          -1,
+          "-2.45% despite the beat"
+        ],
+        [
+          "Lowe's",
+          0,
+          "Reports Nov 18"
+        ],
+        [
+          "Homebuilders",
+          -1,
+          "Yields above 5%"
+        ]
+      ],
+      "hist": "Rule of thumb: housing-related stocks tend to track mortgage rates more than single earnings beats.",
+      "histN": "",
+      "histU": "",
+      "today": "Lowe's call at 9:00 AM ET and housing starts at 8:30 AM ET are the next reads.",
+      "later": "Investors may watch mortgage rates (last survey on file 7.18%).",
+      "conf": 2
+    },
+    {
+      "id": "unh",
+      "cat": "politics",
+      "head": "UnitedHealth falls 5.4% on Medicare and Medicaid anti-fraud proposals",
+      "when": "Nov 17",
+      "src": "https://www.fool.com/coverage/stock-market-today/2026/11/17/stock-market-today-nov-17-stocks-slide-on-ai-chip-and-tech-pressures-salesforce-plummets-9/",
+      "srcN": "Motley Fool, Nov 17",
+      "mean": "UnitedHealth fell 5.42% on anti-fraud proposals for Medicare and Medicaid.",
+      "react": [
+        [
+          "UNH",
+          -1,
+          "-5.42%"
+        ],
+        [
+          "Health insurers",
+          -1,
+          "Policy risk"
+        ]
+      ],
+      "hist": "Rule of thumb: policy headlines hit insurers fast, and details often matter more than the first reaction.",
+      "histN": "",
+      "histU": "",
+      "today": "Watch for follow-up detail on the proposals.",
+      "later": "Investors may track how any rules would affect reimbursement.",
+      "conf": 1
+    },
+    {
+      "id": "nvda-china",
+      "cat": "politics",
+      "head": "Nvidia to stop selling chips to data centers renting most GPUs to Chinese firms",
+      "when": "Nov 17",
+      "src": "https://finance.yahoo.com/markets/stocks/articles/premarket-movers-nvidia-red-cat-124832112.html",
+      "srcN": "Investing.com via Yahoo Finance, Nov 17 (citing CNBC)",
+      "mean": "Nvidia told customers it will stop selling to data center operators that rent more than half their GPUs to Chinese companies; the premarket article also says Nvidia has lost about $410B in value since CEO Jensen Huang resigned and that its board created a national security and export control committee (StockTitan).",
+      "react": [
+        [
+          "NVDA",
+          0,
+          "Compliance move; earnings beat offsets"
+        ],
+        [
+          "Chip peers",
+          0,
+          "Possible read-through"
+        ]
+      ],
+      "hist": "Rule of thumb: export-control news can change addressable markets for chip suppliers.",
+      "histN": "",
+      "histU": "",
+      "today": "Watch for Chinese response headlines.",
+      "later": "Investors may weigh export rules as a structural risk.",
+      "conf": 1
+    },
+    {
+      "id": "china-earn",
+      "cat": "stocks",
+      "head": "JD.com and Tencent Music report; Red Cat pulls its revenue target",
+      "when": "Nov 17",
+      "src": "https://finance.yahoo.com/markets/stocks/articles/premarket-movers-nvidia-red-cat-124832112.html",
+      "srcN": "Investing.com via Yahoo Finance, Nov 17; StockTitan, Nov 17",
+      "mean": "JD.com Q3 revenue was RMB309.6B versus 311.48B expected (stock -7.66%); Tencent Music revenue was RMB8.94B versus 9.14B expected (stock +6.64%); Red Cat fell 31.73% after withdrawing its 2026 revenue target.",
+      "react": [
+        [
+          "JD",
+          -1,
+          "Revenue miss"
+        ],
+        [
+          "TME",
+          1,
+          "Closed +6.64%"
+        ],
+        [
+          "RCAT",
+          -1,
+          "Guidance withdrawn"
+        ]
+      ],
+      "hist": "Rule of thumb: earnings misses at smaller names tend to produce outsized one-day moves.",
+      "histN": "",
+      "histU": "",
+      "today": "Watch for follow-through in China ADRs.",
+      "later": "Investors may separate company-specific from macro drivers.",
+      "conf": 1
+    }
   ],
-  [
-   "economy",
-   "Economy"
+  "cats": [
+    [
+      "all",
+      "All"
+    ],
+    [
+      "fed",
+      "Fed and rates"
+    ],
+    [
+      "housing",
+      "Mortgage and housing"
+    ],
+    [
+      "banks",
+      "Banks"
+    ],
+    [
+      "economy",
+      "Economy"
+    ],
+    [
+      "stocks",
+      "Stocks"
+    ],
+    [
+      "commodities",
+      "Gold and oil"
+    ],
+    [
+      "politics",
+      "Politics and policy"
+    ]
   ],
-  [
-   "stocks",
-   "Stocks"
+  "calendar": [
+    {
+      "d": "2026-11-18",
+      "t": "FOMC minutes; housing starts (8:30 ET); Target, Lowe's, TJX earnings; Palo Alto Networks after the close (webcast 4:30 PM ET)",
+      "usual": "Minutes can move hike-path expectations; retailers read the consumer."
+    },
+    {
+      "d": "2026-11-19",
+      "t": "Walmart earnings (per an earlier read, not re-confirmed this run)",
+      "usual": "A read on the consumer."
+    },
+    {
+      "d": "2026-11-23",
+      "t": "Home Depot CEO change takes effect",
+      "usual": "Little market effect expected."
+    },
+    {
+      "d": "2026-11-25",
+      "t": "PCE inflation and Q3 GDP second estimate (per an earlier read)",
+      "usual": "The Fed's preferred inflation gauge, two weeks before the FOMC."
+    },
+    {
+      "d": "2026-11-26",
+      "t": "Thanksgiving: US markets closed",
+      "usual": "Thin pre-holiday trading."
+    },
+    {
+      "d": "2026-12-09",
+      "t": "FOMC decision (Dec 8-9 meeting)",
+      "usual": "A 25bp hike is nearly priced; focus is on 50bp odds and guidance."
+    }
   ],
-  [
-   "commodities",
-   "Gold and oil"
-  ],
-  [
-   "politics",
-   "Politics and policy"
+  "scen": {
+    "title": "What if the PCE report (Nov 25) is... (no forecast found this run)",
+    "opts": [
+      {
+        "k": "hot",
+        "l": "Hot (above expectations)",
+        "out": [
+          [
+            "10-year yield",
+            -1,
+            "Likely rises above 5.1%"
+          ],
+          [
+            "Dec hike odds",
+            -1,
+            "50bp odds rise"
+          ],
+          [
+            "Stocks",
+            -1,
+            "Growth and small caps worst"
+          ],
+          [
+            "Homebuilders",
+            -1,
+            "Down with yields"
+          ],
+          [
+            "Banks",
+            1,
+            "Margin tailwind"
+          ],
+          [
+            "Gold",
+            -1,
+            "Pressured"
+          ]
+        ]
+      },
+      {
+        "k": "mid",
+        "l": "In line",
+        "out": [
+          [
+            "10-year yield",
+            0,
+            "Little change"
+          ],
+          [
+            "Dec hike odds",
+            0,
+            "About the same"
+          ],
+          [
+            "Stocks",
+            1,
+            "Relief"
+          ],
+          [
+            "Homebuilders",
+            0,
+            "Flat"
+          ],
+          [
+            "Banks",
+            0,
+            "Flat"
+          ],
+          [
+            "Gold",
+            0,
+            "Holds"
+          ]
+        ]
+      },
+      {
+        "k": "cold",
+        "l": "Cold (below expectations)",
+        "out": [
+          [
+            "10-year yield",
+            1,
+            "Down"
+          ],
+          [
+            "Dec hike odds",
+            1,
+            "50bp odds fall"
+          ],
+          [
+            "Stocks",
+            1,
+            "Growth and small caps rally"
+          ],
+          [
+            "Homebuilders",
+            1,
+            "Bounce"
+          ],
+          [
+            "Banks",
+            -1,
+            "Margin worries"
+          ],
+          [
+            "Gold",
+            1,
+            "Gains"
+          ]
+        ]
+      }
+    ]
+  },
+  "playbook": [
+    [
+      "10-year yield rises over 5%",
+      "Homebuilders, REITs, utilities, small caps and unprofitable growth are pressured first. Banks and the dollar hold up better."
+    ],
+    [
+      "10-year yield falls toward 4.5%",
+      "Housing, small caps, growth and gold benefit. Mortgage rates ease a few weeks later."
+    ],
+    [
+      "Dollar keeps falling",
+      "Gold and miners, emerging markets and big multinationals gain. Importers lose."
+    ],
+    [
+      "Oil keeps falling",
+      "Airlines, cruise lines and shippers win. Energy stocks lose. Headline inflation eases."
+    ],
+    [
+      "Hike odds drop below 50%",
+      "A growth and small-cap rally is the usual response. Banks lose some margin tailwind."
+    ],
+    [
+      "Jobs weaken sharply",
+      "Bonds rally, defensives (healthcare, staples, utilities) lead. Cyclicals and banks get hit by recession worries."
+    ]
   ]
- ],
- "calendar": [
-  {
-   "d": "2026-11-12",
-   "t": "Nebius (before open); Cisco, Applied Materials and Intuitive Machines (after close); jobless claims; existing home sales; Barr speaks 10 am; Freddie Mac mortgage rates",
-   "usual": "AI infrastructure read-through; the last mortgage survey was 7.18%."
-  },
-  {
-   "d": "2026-11-13",
-   "t": "October PPI (8:30 ET; forecast +0.4% headline, +0.3% core per Continuum Economics); Bowman 10:50 am",
-   "usual": "Follows CPI; can move yields if it surprises."
-  },
-  {
-   "d": "2026-11-17",
-   "t": "Retail sales; Home Depot and Disney (before open); Nvidia earnings (after close, call 5 pm ET)",
-   "usual": "Nvidia sets the tone for AI chips and the Nasdaq-100."
-  },
-  {
-   "d": "2026-11-18",
-   "t": "FOMC minutes; Target, Lowe's and TJX earnings; US-China summit reported Nov 18-19",
-   "usual": "Minutes can move hike-path expectations."
-  },
-  {
-   "d": "2026-11-19",
-   "t": "Walmart earnings; Anthropic listing reported for 'next Thursday' (unconfirmed)",
-   "usual": "Walmart is a read on the consumer."
-  },
-  {
-   "d": "2026-11-25",
-   "t": "PCE inflation and Q3 GDP second estimate",
-   "usual": "The Fed's preferred inflation gauge, two weeks before the FOMC."
-  },
-  {
-   "d": "2026-11-26",
-   "t": "Thanksgiving: US markets closed",
-   "usual": "Thin pre-holiday trading."
-  }
- ],
- "scen": {
-  "title": "What if Friday's PPI is... (forecast +0.4% headline, +0.3% core)",
-  "opts": [
-   {
-    "k": "hot",
-    "l": "Hot (above expectations)",
-    "out": [
-     [
-      "10-year yield",
-      -1,
-      "Likely holds or rises above 5%"
-     ],
-     [
-      "Dec hike odds",
-      -1,
-      "Stay near a lock; 50bp odds rise"
-     ],
-     [
-      "Stocks",
-      -1,
-      "Growth and small caps worst"
-     ],
-     [
-      "Homebuilders",
-      -1,
-      "Down with yields"
-     ],
-     [
-      "Banks",
-      1,
-      "Margin tailwind"
-     ],
-     [
-      "Gold",
-      -1,
-      "Pressured by yields and dollar"
-     ]
-    ]
-   },
-   {
-    "k": "mid",
-    "l": "In line",
-    "out": [
-     [
-      "10-year yield",
-      0,
-      "Little change near 5%"
-     ],
-     [
-      "Dec hike odds",
-      0,
-      "About the same"
-     ],
-     [
-      "Stocks",
-      1,
-      "Relief; focus moves to Nvidia on Nov 17"
-     ],
-     [
-      "Homebuilders",
-      0,
-      "Flat"
-     ],
-     [
-      "Banks",
-      0,
-      "Flat"
-     ],
-     [
-      "Gold",
-      0,
-      "Holds near $4,030"
-     ]
-    ]
-   },
-   {
-    "k": "cold",
-    "l": "Cold (below expectations)",
-    "out": [
-     [
-      "10-year yield",
-      1,
-      "Down"
-     ],
-     [
-      "Dec hike odds",
-      1,
-      "50bp odds fall"
-     ],
-     [
-      "Stocks",
-      1,
-      "Growth and small caps rally"
-     ],
-     [
-      "Homebuilders",
-      1,
-      "Bounce with yields"
-     ],
-     [
-      "Banks",
-      -1,
-      "Margin worries"
-     ],
-     [
-      "Gold",
-      1,
-      "Gains"
-     ]
-    ]
-   }
-  ]
- },
- "playbook": [
-  [
-   "10-year yield rises over 5%",
-   "Homebuilders, REITs, utilities, small caps and unprofitable growth are pressured first. Banks and the dollar hold up better."
-  ],
-  [
-   "10-year yield falls toward 4.5%",
-   "Housing, small caps, growth and gold benefit. Mortgage rates ease a few weeks later."
-  ],
-  [
-   "Dollar keeps falling",
-   "Gold and miners, emerging markets and big multinationals gain. Importers lose."
-  ],
-  [
-   "Oil keeps falling",
-   "Airlines, cruise lines and shippers win. Energy stocks lose. Headline inflation eases."
-  ],
-  [
-   "Hike odds drop below 50%",
-   "A growth and small-cap rally is the usual response. Banks lose some margin tailwind."
-  ],
-  [
-   "Jobs weaken sharply",
-   "Bonds rally, defensives (healthcare, staples, utilities) lead. Cyclicals and banks get hit by recession worries."
-  ]
- ]
 }
