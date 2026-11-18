@@ -4,7 +4,7 @@
 (function () {
   "use strict";
   var KEY = "stockspot-calendar-v1";
-  var C = { ev: [], link: true, view: "month", cur: today(), loaded: false, q: "", notified: {} };
+  var C = { ev: [], feeds: [], ext: {}, link: true, view: "month", cur: today(), loaded: false, q: "", notified: {} };
   var COLORS = [["#2F6FE4", "Blue"], ["#17845B", "Green"], ["#E0662B", "Orange"], ["#C2364A", "Red"], ["#7C4DCC", "Purple"], ["#0F8A8A", "Teal"], ["#8A93A3", "Gray"]];
   var MN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   var DN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -36,12 +36,12 @@
       var d = null, s = db();
       if (s) { var r = await s.doc("calendar/main").get(); if (r && r.exists) d = r.data(); }
       else d = JSON.parse(localStorage.getItem(KEY) || "null");
-      if (d) { C.ev = d.ev || []; C.link = d.link !== false; C.view = d.view || "month"; }
+      if (d) { C.ev = d.ev || []; C.feeds = d.feeds || []; C.link = d.link !== false; C.view = d.view || "month"; }
     } catch (e) {}
     C.loaded = true;
   }
   async function save() {
-    var o = { ev: C.ev.slice(0, 3000), link: C.link, view: C.view, updated: Date.now() };
+    var o = { ev: C.ev.slice(0, 3000), feeds: C.feeds, link: C.link, view: C.view, updated: Date.now() };
     try { var s = db(); if (s) await s.doc("calendar/main").set(o); else localStorage.setItem(KEY, JSON.stringify(o)); }
     catch (e) { toast("Could not save your calendar"); }
   }
@@ -80,6 +80,7 @@
   function itemsOn(day) {
     var q = C.q.toLowerCase(), out = [];
     C.ev.forEach(function (e) { if (hits(e, day) && (!q || (e.t + " " + (e.notes || "")).toLowerCase().indexOf(q) >= 0)) out.push({ src: "cal", e: e, day: day, done: !!(e.dn && e.dn.indexOf(day) >= 0) }); });
+    C.feeds.forEach(function (f) { if (f.off) return; (C.ext[f.id] || []).forEach(function (e) { if (hits(e, day) && (!q || e.t.toLowerCase().indexOf(q) >= 0)) out.push({ src: "ext", e: e, day: day, done: false, feed: f }); }); });
     var T = TDx();
     if (T && T.items) T.items.forEach(function (i) {
       if (!i.due || i.cal === false) return;
@@ -94,7 +95,7 @@
     var e = it.e, k = e.kind || "event";
     return '<button type="button" class="ccal-chip ' + (cls || "") + (it.done ? " done" : "") + (k !== "event" ? " k-" + k : "") + '" style="--c:' + esc(e.color || "#2F6FE4") + '" data-cev="' + esc(e.id) + '" data-csrc="' + it.src + '" data-cday="' + it.day + '" draggable="false" title="' + esc(e.t) + '">' +
       (k !== "event" ? '<span class="ck" data-ctoggle="1" role="checkbox" aria-checked="' + it.done + '" aria-label="Mark done">' + (it.done ? "&#9745;" : (k === "reminder" ? "&#128276;" : "&#9744;")) + '</span>' : '') +
-      (!e.allDay && e.start ? '<b class="tm">' + fmtT(e.start) + (cls === "tall" && e.end ? " – " + fmtT(e.end) : "") + '</b>' : '') + '<span class="tt">' + esc(e.t) + (e.rec && e.rec.f ? ' <i class="rp" aria-label="Repeats">&#8635;</i>' : '') + '</span></button>';
+      (!e.allDay && e.start ? '<b class="tm">' + fmtT(e.start) + (cls === "tall" && e.end ? " – " + fmtT(e.end) : "") + '</b>' : '') + '<span class="tt">' + esc(e.t) + (e.rec && e.rec.f ? ' <i class="rp" aria-label="Repeats">&#8635;</i>' : '') + (it.src === "ext" ? ' <i class="rp" aria-label="From a linked calendar">&#128279;</i>' : '') + '</span></button>';
   }
 
   /* ---------- views ---------- */
@@ -258,6 +259,7 @@
     }
     if ((b = t.closest("[data-cev]"))) {
       if (b.dataset.csrc === "td") { toast("This is from your To-do list. Edit it there, or check it off here."); return; }
+      if (b.dataset.csrc === "ext") { var fe = null; C.feeds.forEach(function (f) { (C.ext[f.id] || []).forEach(function (x) { if (x.id === b.dataset.cev) fe = [f, x]; }); }); if (fe) toast("From " + fe[0].name + ": " + fe[1].t + (fe[1].loc ? " · " + fe[1].loc : "") + ". Edit it in " + fe[0].name + "."); return; }
       var e = C.ev.find(function (x) { return x.id === b.dataset.cev; }); if (e) editor({ e: e, day: b.dataset.cday }); return;
     }
     if (t.closest("[data-cmax]")) { C.max = !C.max; return paint(); }
@@ -297,7 +299,7 @@
   function onDown(ev) {
     var rz = ev.target.closest("[data-crz]");
     if (rz) { var e0 = C.ev.find(function (x) { return x.id === rz.dataset.crz; }); if (!e0) return; ev.preventDefault(); drag = { rz: true, e: e0, box: rz.parentNode, col: rz.closest(".gcol"), moved: false, end: e0.end }; return; }
-    var c = ev.target.closest("[data-cev]"); if (!c || ev.target.closest("[data-ctoggle]") || ev.button > 0) return;
+    var c = ev.target.closest("[data-cev]"); if (!c || c.dataset.csrc === "ext" || ev.target.closest("[data-ctoggle]") || ev.button > 0) return;
     drag = { el: c, x: ev.clientX, y: ev.clientY, moved: false, ghost: null };
   }
   function onMove(ev) {
@@ -342,6 +344,67 @@
   function shiftTime(e, tm) { var len = e.end && e.start ? mins(e.end) - mins(e.start) : 60; e.allDay = false; e.start = tm; var en = Math.min(23 * 60 + 59, mins(tm) + len); e.end = pad(Math.floor(en / 60)) + ":" + pad(en % 60); }
 
   /* reminder alerts while the site is open */
+  /* ---------- linked calendars (Google / Outlook / Apple .ics) ---------- */
+  function tzParts(ms, tz) { var o = {}; new Intl.DateTimeFormat("en-US", { timeZone: tz, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" }).formatToParts(new Date(ms)).forEach(function (p) { o[p.type] = +p.value; }); return Date.UTC(o.year, o.month - 1, o.day, o.hour % 24, o.minute, o.second); }
+  function icsTime(v, params) {
+    var m = /^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?(Z)?)?$/.exec(v || ""); if (!m) return null;
+    if (!m[4]) return { date: m[1] + "-" + m[2] + "-" + m[3], allDay: true };
+    var ms;
+    if (m[7]) ms = Date.UTC(+m[1], m[2] - 1, +m[3], +m[4], +m[5], +(m[6] || 0));
+    else { var tz = (/TZID=([^;:]+)/.exec(params || "") || [])[1], guess = Date.UTC(+m[1], m[2] - 1, +m[3], +m[4], +m[5], +(m[6] || 0));
+      if (tz) { try { ms = guess - (tzParts(guess, tz.replace(/"/g, "")) - guess); } catch (e) { ms = new Date(+m[1], m[2] - 1, +m[3], +m[4], +m[5]).getTime(); } }
+      else ms = new Date(+m[1], m[2] - 1, +m[3], +m[4], +m[5]).getTime(); }
+    var d = new Date(ms); return { date: ds(d), start: pad(d.getHours()) + ":" + pad(d.getMinutes()), allDay: false };
+  }
+  function parseIcs(text, fid, color) {
+    var lines = text.replace(/\r\n[ \t]/g, "").replace(/\n[ \t]/g, "").split(/\r?\n/), out = [], cur = null, cut = add(today(), -120);
+    var un = function (s) { return String(s || "").replace(/\\n/gi, "\n").replace(/\\([,;\\])/g, "$1"); };
+    lines.forEach(function (ln) {
+      if (ln === "BEGIN:VEVENT") { cur = {}; return; }
+      if (ln === "END:VEVENT") {
+        if (cur && cur.DTSTART && cur.STATUS !== "CANCELLED") {
+          var s = icsTime(cur.DTSTART.v, cur.DTSTART.p), en = cur.DTEND ? icsTime(cur.DTEND.v, cur.DTEND.p) : null;
+          if (s) {
+            var e = { id: fid + ":" + (cur.UID ? cur.UID.v : out.length) + ":" + s.date + (cur["RECURRENCE-ID"] ? ":r" : ""), t: un(cur.SUMMARY ? cur.SUMMARY.v : "(no title)"), kind: "event", date: s.date, allDay: s.allDay, start: s.start || "", end: en && !en.allDay && en.date === s.date ? en.start : "", color: color, notes: un(cur.DESCRIPTION ? cur.DESCRIPTION.v : "").slice(0, 400), loc: un(cur.LOCATION ? cur.LOCATION.v : ""), ro: true, alert: "" };
+            if (cur.RRULE) {
+              var R = {}; cur.RRULE.v.split(";").forEach(function (kv) { var p = kv.split("="); R[p[0]] = p[1]; });
+              var f = { DAILY: "daily", WEEKLY: "weekly", MONTHLY: "monthly", YEARLY: "yearly" }[R.FREQ];
+              if (f) { e.rec = { f: f, n: +R.INTERVAL || 1, until: R.UNTIL ? (icsTime(R.UNTIL) || {}).date || "" : "", days: [] };
+                if (f === "weekly" && R.BYDAY) e.rec.days = R.BYDAY.split(",").map(function (x) { return ["SU", "MO", "TU", "WE", "TH", "FR", "SA"].indexOf(x.slice(-2)); }).filter(function (x) { return x >= 0; });
+                if (R.COUNT && !e.rec.until) { var n = +R.COUNT, c = 0, dd = e.date; for (var i = 0; i < 3660 && c < n; i++) { var d2 = add(e.date, i); if (hits({ date: e.date, rec: e.rec }, d2)) { c++; dd = d2; } } e.rec.until = dd; } }
+            }
+            if (cur.EXDATE) e.ex = cur.EXDATE.map(function (x) { return x.v.split(",").map(function (v) { var t = icsTime(v, x.p); return t ? t.date : ""; }); }).reduce(function (a, b) { return a.concat(b); }, []);
+            if (e.rec || e.date >= cut) out.push(e);
+          }
+        }
+        cur = null; return;
+      }
+      if (!cur) return;
+      var i = ln.indexOf(":"); if (i < 0) return;
+      var head = ln.slice(0, i), val = ln.slice(i + 1), j = head.indexOf(";"), name = (j < 0 ? head : head.slice(0, j)).toUpperCase(), prm = j < 0 ? "" : head.slice(j + 1);
+      if (name === "EXDATE") (cur.EXDATE = cur.EXDATE || []).push({ v: val, p: prm }); else cur[name] = { v: val, p: prm };
+    });
+    return out.slice(0, 5000);
+  }
+  async function feedLoad(f) {
+    var So = window.stockspotSocial; if (!So || !So.ics) { f.err = "Sign in to load linked calendars."; return; }
+    try { var r = await So.ics(f.url); if (r.error) { f.err = r.error; return; } C.ext[f.id] = parseIcs(r.ics, f.id, f.color); f.err = ""; f.n = C.ext[f.id].length; f.at = Date.now(); }
+    catch (e) { f.err = "Could not load. Try again in a minute."; }
+  }
+  async function feedsAll() { await load(); await Promise.all(C.feeds.filter(function (f) { return !f.off; }).map(feedLoad)); paint(); }
+  function toIcs() {
+    var L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Revatour//Calendar//EN", "CALSCALE:GREGORIAN"], st = new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";
+    var esc2 = function (x) { return String(x || "").replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/([,;])/g, "\\$1"); };
+    C.ev.forEach(function (e) {
+      var d = e.date.replace(/-/g, ""); L.push("BEGIN:VEVENT", "UID:" + e.id + "@revatour.com", "DTSTAMP:" + st, "SUMMARY:" + esc2(e.t));
+      if (e.allDay || !e.start) L.push("DTSTART;VALUE=DATE:" + d); else { L.push("DTSTART:" + d + "T" + e.start.replace(":", "") + "00"); if (e.end) L.push("DTEND:" + d + "T" + e.end.replace(":", "") + "00"); }
+      if (e.rec && e.rec.f) { var f = e.rec.f === "weekdays" ? "WEEKLY;BYDAY=MO,TU,WE,TH,FR" : e.rec.f.toUpperCase() + (e.rec.f === "weekly" && e.rec.days && e.rec.days.length ? ";BYDAY=" + e.rec.days.map(function (x) { return ["SU", "MO", "TU", "WE", "TH", "FR", "SA"][x]; }).join(",") : ""); L.push("RRULE:FREQ=" + f + ((e.rec.n || 1) > 1 ? ";INTERVAL=" + e.rec.n : "") + (e.rec.until ? ";UNTIL=" + e.rec.until.replace(/-/g, "") : "")); }
+      if (e.notes) L.push("DESCRIPTION:" + esc2(e.notes));
+      L.push("END:VEVENT");
+    });
+    L.push("END:VCALENDAR"); return L.join("\r\n");
+  }
+
   /* ---------- glass pop-up alerts while Revatour is open ---------- */
   var PK = "stockspot-cal-pop-v1", P = (function () { try { return JSON.parse(localStorage.getItem(PK) || "{}"); } catch (e) { return {}; } })();
   P.seen = P.seen || {}; P.snz = P.snz || {};
@@ -350,8 +413,9 @@
   function tick() {
     if (!C.loaded) return;
     var now = new Date(), d = ds(now), nowMs = now.getTime();
+    var all = C.ev.slice(); C.feeds.forEach(function (f) { if (!f.off && f.alerts !== false) all = all.concat(C.ext[f.id] || []); });
     [add(d, -1), d, add(d, 1)].forEach(function (day) {
-      C.ev.forEach(function (e) {
+      all.forEach(function (e) {
         var am = alertMins(e); if (am == null || !hits(e, day) || (e.dn && e.dn.indexOf(day) >= 0)) return;
         var k = e.id + "|" + day, startMs = pd(day).getTime() + (e.allDay || !e.start ? 9 * 60 : mins(e.start)) * 6e4, at = startMs - am * 6e4;
         if (P.snz[k]) { if (P.snz[k] <= nowMs) { delete P.snz[k]; pSave(); popShow(e, day, startMs, true); } return; }
@@ -381,6 +445,7 @@
     document.body.appendChild(b);
     b.addEventListener("click", function (ev) {
       var btn = ev.target.closest("button"); if (!btn) return; var card = btn.closest(".cpop"), k = card.dataset.k, id = k.split("|")[0], day = k.split("|")[1], e = C.ev.find(function (x) { return x.id === id; });
+      if (!e && btn.dataset.popen) { popClose(card); toast("This one is from a linked calendar. Edit it there."); return; }
       if (btn.dataset.pdone) { if (e) { e.dn = e.dn || []; if (e.dn.indexOf(day) < 0) e.dn.push(day); save(); paint(); } popClose(card, "done"); toast("Nice! Checked off ✓"); }
       else if (btn.dataset.pzz) { card.classList.toggle("open"); }
       else if (btn.dataset.psn) { var v = btn.dataset.psn, ms; if (v === "tom") { var t = pd(add(today(), 1)); t.setHours(9, 0, 0, 0); ms = t.getTime(); } else ms = Date.now() + (+v) * 6e4; P.snz[k] = ms; pSave(); popClose(card); toast("Snoozed until " + new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) + (v === "tom" ? " tomorrow" : "")); }
@@ -402,7 +467,8 @@
     while (b.children.length > 4) b.firstChild.remove();
     try { if ("Notification" in window && Notification.permission === "granted" && document.hidden) new Notification(lab + ": " + e.t, { body: whenTxt(startMs, e), tag: k }); } catch (er) {}
   }
-  function popRefresh() { var b = document.getElementById("ccalpop"); if (!b) return; b.querySelectorAll(".cpop").forEach(function (c) { var id = c.dataset.k.split("|")[0], e = C.ev.find(function (x) { return x.id === id; }), w = c.querySelector("[data-when]"); if (e && w) w.textContent = whenTxt(+c.dataset.st, e); }); }
+  function extFind(id) { var r = null; C.feeds.forEach(function (f) { (C.ext[f.id] || []).forEach(function (x) { if (x.id === id) r = x; }); }); return r; }
+  function popRefresh() { var b = document.getElementById("ccalpop"); if (!b) return; b.querySelectorAll(".cpop").forEach(function (c) { var id = c.dataset.k.split("|")[0], e = C.ev.find(function (x) { return x.id === id; }) || extFind(id), w = c.querySelector("[data-when]"); if (e && w) w.textContent = whenTxt(+c.dataset.st, e); }); }
 
   var wired = false, ticking = false;
   function startTick() { if (ticking) return; ticking = true; setInterval(tick, 15000); }
@@ -471,15 +537,22 @@
       el.innerHTML = '<p class="hint">Loading your calendar…</p>';
       await Promise.all([load(), tdReady()]);
       paint();
+      if (C.feeds.length && (!C.fAt || Date.now() - C.fAt > 10 * 60e3)) { C.fAt = Date.now(); feedsAll(); }
     },
     refresh: function () { paint(); },
     testPopup: function () { popShow({ id: "demo" + Date.now(), t: "Mega Millions drawing", kind: "reminder", color: "#7C4DCC", start: (function () { var d = new Date(Date.now() + 10 * 6e4); return pad(d.getHours()) + ":" + pad(d.getMinutes()); })(), notes: "Check numbers and log the ticket." }, today(), Date.now() + 10 * 6e4, false); },
     addEvent: async function (o) { await load(); var e = Object.assign({ id: uid(), kind: "event", allDay: !o.start, color: "#2F6FE4", notes: "", alert: "" }, o); if (!e.start) { e.start = ""; e.end = ""; } C.ev.push(e); await save(); paint(); return e; },
+    feeds: async function () { await load(); return C.feeds.map(function (f) { return Object.assign({}, f); }); },
+    addFeed: async function (o) { await load(); var f = { id: uid(), name: o.name || "Calendar", url: o.url, color: o.color || "#0F8A8A", kind: o.kind || "other" }; await feedLoad(f); if (f.err) return { error: f.err }; C.feeds.push(f); await save(); paint(); return { ok: true, n: f.n }; },
+    removeFeed: async function (id) { await load(); C.feeds = C.feeds.filter(function (f) { return f.id !== id; }); delete C.ext[id]; await save(); paint(); },
+    toggleFeed: async function (id, on) { await load(); C.feeds.forEach(function (f) { if (f.id === id) f.off = !on; }); await save(); if (on) await feedsAll(); else paint(); },
+    refreshFeeds: feedsAll,
+    exportIcs: async function () { await load(); return toIcs(); },
     getLink: async function () { await load(); return C.link; },
     setLink: async function (v) { await load(); C.link = !!v; await save(); paint(); },
     nextAfter: nextAfter,
     recLabel: recLabel
   };
   /* start alert checks even before the tab is opened, once signed in */
-  setTimeout(function boot() { if (!db()) return setTimeout(boot, 5000); load().then(function () { startTick(); tick(); }).catch(function () {}); }, 4000);
+  setTimeout(function boot() { if (!db()) return setTimeout(boot, 5000); load().then(function () { startTick(); tick(); if (C.feeds.length) { C.fAt = Date.now(); feedsAll().then(tick); } setInterval(function () { if (C.feeds.length) feedsAll(); }, 15 * 60e3); }).catch(function () {}); }, 4000);
 })();
