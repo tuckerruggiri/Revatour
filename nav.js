@@ -53,7 +53,7 @@
     navmov: ["zap", "Parabolic movers"], navpulse: ["pulse", "Market pulse"], navnews: ["news", "News"], navzone: ["layers", "Zones"],
     navinv: ["pie", "Investments"], navflip: ["book", "My book"], navfbhome: ["star", "Overview"], navfbex: ["book", "Example book"], navfbbuild: ["pencil", "Build your book"], navfbclear: ["layers", "Clear page"], navfbproof: ["book", "See it printed"], navfbcoach: ["user", "For coaches"], navfbprop: ["award", "For prop firms"], navfbprice: ["dollar", "Pricing"], navfbgoals: ["target", "Goals"], navfbideas: ["check", "Ideas checklist"], navrl: ["ladder", "Risk Ladder"],
     navstudio: ["book", "Studio"], navsc: ["award", "Scorecard"], navlab: ["flask", "Setup Lab"], navprac: ["play", "Practice charts"], navcoach: ["spark", "AI Coach"],
-    navprofile: ["user", "Profile"], navpub: ["send", "Publishes"], navnotif: ["inbox", "Notifications"], navgd: ["help", "How-To"], navset: ["gear", "Settings"], navtraffic: ["pulse", "Visitors"]
+    navprofile: ["user", "Profile"], navpub: ["send", "Publishes"], navnotif: ["inbox", "Notifications"], navgd: ["help", "How-To"], navset: ["gear", "Settings"], navtraffic: ["pulse", "Visitors"], navguru: ["trend", "Mark Minervini"]
   };
   P.sun = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
   P.cal = '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M8 15h3"/>';
@@ -67,6 +67,7 @@
     ["Investing", "#1f9d55", "pie", ["navinv", "navrl", "navopt", "navhome"]],
     ["Flipbook", "#b08d57", "book", ["navfbhome", "navfbex", "navfbbuild", "navfbclear", "navfbproof", "navfbprice", "navfbgoals", "navflip", "navfbideas", "navfbcoach", "navfbprop"]],
     ["Research", "#2b7de0", "search", ["navpulse", "navnews", "navzone", "navmov"]],
+    ["Gurus", "#16a34a", "award", ["navguru"]],
     ["Review & practice", "#8b4fe0", "book", ["navstudio", "navsc", "navlab", "navprac", "navcoach"]],
     ["You", "#7d8793", "user", YOU]
   ];
@@ -115,7 +116,7 @@
   var KEY = "ss-navlayout-v3", CKEY = "ss-navsec-v3", RKEY = "ss-navrecent", layout, editing = false, pp = null, arm = null, dragId = null, dragFrom = null, pushT = null;
   function sanitize(L) {
     if (!L || !Array.isArray(L.sections)) return defaults();
-    var out = { ts: +L.ts || 0, rec: L.rec !== false, pg: L.pg === "top" ? "top" : "bottom", v: 11, sections: [] };
+    var out = { ts: +L.ts || 0, rec: L.rec !== false, pg: L.pg === "top" ? "top" : "bottom", v: 12, sections: [] };
     L.sections.slice(0, 14).forEach(function (s) {
       var seen = {}, ids = (s.ids || []).filter(function (i) { if (!ITEMS[i] || seen[i]) return false; seen[i] = 1; return true; });
       out.sections.push({ id: String(s.id || uid()), n: String(s.n || "Section").slice(0, 24), c: hex(s.c), ic: P[s.ic] ? s.ic : "", ids: ids });
@@ -141,6 +142,10 @@
     if (!(L.v >= 10) && !out.sections.some(function (s) { return s.ids.indexOf("navfbproof") > -1; })) {
       var fc = out.sections.filter(function (s) { return s.ids.indexOf("navfbclear") > -1; })[0];
       if (fc) fc.ids.splice(fc.ids.indexOf("navfbclear") + 1, 0, "navfbproof");
+    }
+    if (!(L.v >= 12) && !out.sections.some(function (s) { return s.ids.indexOf("navguru") > -1; })) {
+      var ra = out.sections.findIndex(function (s) { return s.ids.indexOf("navpulse") > -1; });
+      out.sections.splice(ra < 0 ? Math.max(0, out.sections.length - 1) : ra + 1, 0, { id: uid(), n: "Gurus", c: "#16a34a", ic: "award", ids: ["navguru"] });
     }
     return out;
   }
