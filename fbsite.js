@@ -574,8 +574,9 @@
   /* ---------- shared bits ---------- */
   function shell(id, body) {
     var ix = PAGES.findIndex(function (p) { return p[0] === id; }), prev = PAGES[ix - 1], next = PAGES[ix + 1];
+    if (ix < 0) { var xi = XPAGES.findIndex(function (p) { return p[0] === id; }); prev = xi > 0 ? XPAGES[xi - 1] : PAGES[0]; next = XPAGES[xi + 1] || null; }
     return '<div class="fbx">' +
-      '<nav class="fbx-top"><span class="fbx-logo"><i></i>Flipbook</span><div class="fbx-steps">' + PAGES.map(function (p, i) { return '<button type="button" data-fbgo="' + p[0] + '" class="' + (p[0] === id ? "on" : i < ix ? "done" : "") + '"><b>' + (i + 1) + '</b>' + p[1] + '</button>'; }).join("") + '</div></nav>' +
+      '<nav class="fbx-top"><span class="fbx-logo"><i></i>Flipbook</span><div class="fbx-steps">' + PAGES.map(function (p, i) { return '<button type="button" data-fbgo="' + p[0] + '" class="' + (p[0] === id ? "on" : i < ix ? "done" : "") + '"><b>' + (i + 1) + '</b>' + p[1] + '</button>'; }).join("") + XPAGES.map(function (p) { return '<button type="button" data-fbgo="' + p[0] + '" class="b2-x' + (p[0] === id ? " on" : "") + '">' + p[1] + '</button>'; }).join("") + '</div></nav>' +
       body +
       '<footer class="fbx-nav">' + (prev ? '<button type="button" class="fbx-btn ghost" data-fbgo="' + prev[0] + '">&larr; ' + prev[1] + '</button>' : '<span></span>') + (next ? '<button type="button" class="fbx-btn" data-fbgo="' + next[0] + '">Next: ' + next[1] + ' &rarr;</button>' : '<span></span>') + '</footer>' +
       '<p class="fbx-legal">Flipbook is a keepsake and learning tool. Charts show your own history. Nothing here is investment advice.</p></div>';
@@ -583,6 +584,55 @@
   function cdot(k, def) { var c = ucol(k, def); return '<span class="fbx-cdot" style="background:' + c + '" title="Change color"><input type="color" data-icol="' + esc(k) + '" value="' + c + '" aria-label="Change color"></span>'; }
   function chip(group, v, label, on, extra) { return '<button type="button" class="fbx-chip' + (on ? " on" : "") + '" data-fbset="' + group + '" data-v="' + esc(v) + '" aria-pressed="' + !!on + '">' + (extra || "") + label + '</button>'; }
 
+  var XPAGES = [["coach", "For coaches", "navfbcoach"], ["prop", "For prop firms", "navfbprop"]], quizOn = false;
+  function leadForm(kind, fields) {
+    return '<form class="b2-form" data-fblead="' + kind + '" novalidate><h3>' + (kind === "coach" ? "Get a free sample playbook" : "Get a sample for your firm") + '</h3><p class="fbx-mut">Tell us a little about you. We reply within 2 business days.</p>' +
+      '<div class="b2-fg">' + fields.map(function (f) { return '<label>' + f[1] + '<input name="' + f[0] + '" ' + (f[2] || "") + ' maxlength="80"></label>'; }).join("") + '</div>' +
+      '<button type="submit" class="fbx-btn big">' + (kind === "coach" ? "Send me a sample" : "Request a sample") + ' &rarr;</button><p class="b2-msg" role="status" aria-live="polite"></p></form>';
+  }
+  function quizDemo() {
+    var CC = getCandles(frame()), sel = D.ind.filter(function (id) { var d = indDef(id); return d && fitsAsset(d); });
+    var base = pageChart({ F: CC.F, C: CC.C, ind: sel, W: 980, H: 380, layer: "base" }), film = pageChart({ F: CC.F, C: CC.C, ind: sel, W: 980, H: 380, layer: "film" });
+    return '<div class="b2-quiz' + (quizOn ? " on" : "") + '"><div class="b2-qhead"><span class="b2-q">Setup #7 · VWAP reclaim</span><b>' + (quizOn ? "Here’s how the coach traded it." : "Where would you enter?") + '</b></div><div class="b2-qchart">' + base + '<div class="b2-qfilm">' + film + '</div></div>' +
+      '<button type="button" class="fbx-btn" data-quiz="1">' + (quizOn ? "Hide the answer" : "Flip the overlay to see the answer") + '</button></div>';
+  }
+  function pCoach() {
+    return shell("coach",
+      '<section class="fbx-hero b2-hero"><div class="fbx-hero-t"><p class="fbx-kick">For trading coaches, Discord owners &amp; course creators</p><h1>Your playbook,<br><em>bound.</em></h1>' +
+      '<p class="fbx-lead">Turn your best setups into a printed playbook your members can hold. Real charts from the actual days, with a clear overlay showing exactly where you got in, where you got out and where your stop was. Your name on the cover. Your price.</p>' +
+      '<div class="fbx-cta"><a class="fbx-btn big" href="#b2-lead">Get a free sample &rarr;</a><button type="button" class="fbx-btn ghost big" data-fbgo="proof">See a printed page</button></div></div>' + quizDemo() + '</section>' +
+      '<section class="fbx-sec"><h2>Why coaches love it</h2><div class="fbx-who">' +
+      [["&#128176;", "A new product to sell", "Premium merch members actually want. You set the retail price and keep the difference."], ["&#127891;", "It teaches", "Members cover the overlay, call their entry, then flip it to check. The fastest way to learn a setup."], ["&#11088;", "Rewards your top tier", "Bundle it with annual or VIP memberships. Something real in the mail beats another PDF."], ["&#128248;", "Members post it", "A linen book with your name on it gets photographed and shared. Free marketing for your community."]]
+        .map(function (w) { return '<div class="fbx-card"><span class="fbx-em">' + w[0] + '</span><h3>' + w[1] + '</h3><p>' + w[2] + '</p></div>'; }).join("") + '</div></section>' +
+      '<section class="fbx-sec"><h2>How it works</h2><div class="fbx-how">' +
+      [["1", "Send your setups", "Tickers and dates, a broker export, or your chart screenshots and rules."], ["2", "We design every page", "Real candles from that day, your entries, exits, stops, targets and indicators on a clear overlay."], ["3", "Your brand on the cover", "Your logo and community name in gold foil on a linen hardcover."], ["4", "Sell it or bundle it", "Members order through your link. Printed and shipped for you."]]
+        .map(function (s) { return '<div class="fbx-step"><b>' + s[0] + '</b><h3>' + s[1] + '</h3><p>' + s[2] + '</p></div>'; }).join("") + '</div></section>' +
+      '<section class="fbx-sec fbx-split"><div><h2>What’s inside</h2><p class="fbx-mut">Every playbook is built around how you teach.</p></div><div class="b2-list">' +
+      [["Setup pages", "Each setup on a real chart, with its clear overlay."], ["Rules pages", "Your entry, exit and risk rules next to each setup."], ["Quiz pages", "Call the entry yourself, then flip the overlay to check."], ["Your story", "A short intro from you on page one."], ["Member name", "Optional: each member’s name in foil on their copy."]]
+        .map(function (r) { return '<div class="b2-li"><b>' + r[0] + '</b><span>' + r[1] + '</span></div>'; }).join("") + '</div></section>' +
+      '<section class="fbx-sec b2-price"><h2>Simple pricing</h2><div class="b2-tiers">' +
+      [["Sample", "Free", "One printed playbook with 10 of your setups, so you can hold it before you commit."], ["Wholesale", "[YOUR PRICE] per book", "You set the retail price for members and keep the difference."], ["Bundle", "[YOUR PRICE] per member", "Included with your VIP or annual tier. We ship straight to members."]]
+        .map(function (t) { return '<div class="b2-tier"><small>' + t[0] + '</small><b>' + t[1] + '</b><p>' + t[2] + '</p></div>'; }).join("") + '</div></section>' +
+      '<section class="fbx-sec" id="b2-lead">' + leadForm("coach", [["name", "Your name", 'autocomplete="name"'], ["community", "Community or brand"], ["size", "How many members?", 'inputmode="numeric"'], ["link", "Discord, X or website link"], ["email", "Email", 'type="email" autocomplete="email" required']]) + '</section>');
+  }
+  function pProp() {
+    var CC = getCandles(frame()), base = pageChart({ F: CC.F, C: CC.C, ind: [], W: 980, H: 380, layer: "base" });
+    var frameMock = '<div class="b2-frame"><div class="b2-mat"><div class="b2-fhead"><span>[YOUR FIRM]</span><em>Funded Trader</em></div><div class="b2-fchart">' + base + '</div><div class="b2-ffoot"><div><small>First payout</small><b>[AMOUNT]</b></div><div><small>Trader</small><b>[TRADER NAME]</b></div><div><small>Date</small><b>[DATE]</b></div></div><div class="b2-seal">FUNDED</div></div></div>';
+    return shell("prop",
+      '<section class="fbx-hero b2-hero"><div class="fbx-hero-t"><p class="fbx-kick">For prop firms</p><h1>Funded.<br><em>Framed.</em></h1>' +
+      '<p class="fbx-lead">Reward every funded trader with a framed first-payout page or a linen “Funded” book, branded with your firm and shipped straight to their door. They’ll post it. Their followers will see your name.</p>' +
+      '<div class="fbx-cta"><a class="fbx-btn big" href="#b2-lead">Request a sample &rarr;</a><button type="button" class="fbx-btn ghost big" data-fbgo="coach">For coaches</button></div></div>' + frameMock + '</section>' +
+      '<section class="fbx-sec"><h2>Why firms do it</h2><div class="fbx-who">' +
+      [["&#128227;", "Free marketing", "Traders already post payout certificates. A framed page with your logo gets posted, shared and remembered."], ["&#129309;", "Loyalty", "A real gift at their proudest moment keeps funded traders trading with you."], ["&#127942;", "Stand out", "Every firm sends a PDF certificate. You send something they hang on the wall."], ["&#9889;", "Zero work", "Send us a list or connect once. We design, print and ship."]]
+        .map(function (w) { return '<div class="fbx-card"><span class="fbx-em">' + w[0] + '</span><h3>' + w[1] + '</h3><p>' + w[2] + '</p></div>'; }).join("") + '</div></section>' +
+      '<section class="fbx-sec"><h2>How it works</h2><div class="fbx-how">' +
+      [["1", "Send the payout list", "Name, shipping address, payout amount and date. Weekly, or connect once."], ["2", "We design it", "Their payout and journey on a page with your logo and colors."], ["3", "We print & ship", "Framed page or linen book, gift-boxed, straight to the trader."], ["4", "They post it", "Unboxing photos and videos with your name front and center."]]
+        .map(function (s) { return '<div class="fbx-step"><b>' + s[0] + '</b><h3>' + s[1] + '</h3><p>' + s[2] + '</p></div>'; }).join("") + '</div></section>' +
+      '<section class="fbx-sec b2-price"><h2>Options</h2><div class="b2-tiers">' +
+      [["Framed first payout", "[YOUR PRICE] per trader", "One framed page: their payout, the date, your logo, a gold Funded seal."], ["Funded book", "[YOUR PRICE] per trader", "A linen book of their evaluation journey and first payout, with clear overlays."], ["Milestone series", "[YOUR PRICE] per page", "New pages at $10K, $25K, $50K and $100K in payouts that snap into the same book."]]
+        .map(function (t) { return '<div class="b2-tier"><small>' + t[0] + '</small><b>' + t[1] + '</b><p>' + t[2] + '</p></div>'; }).join("") + '</div></section>' +
+      '<section class="fbx-sec" id="b2-lead">' + leadForm("prop", [["name", "Your name", 'autocomplete="name"'], ["firm", "Firm name"], ["size", "Funded payouts per month", 'inputmode="numeric"'], ["role", "Your role"], ["email", "Work email", 'type="email" autocomplete="email" required']]) + '</section>');
+  }
   function pHome() {
     return shell("home",
       '<section class="fbx-hero"><div class="fbx-hero-t"><p class="fbx-kick">For traders &amp; investors</p><h1>Your trades,<br><em>bound.</em></h1>' +
@@ -619,8 +669,9 @@
   /* ---------- shared bits ---------- */
   function shell(id, body) {
     var ix = PAGES.findIndex(function (p) { return p[0] === id; }), prev = PAGES[ix - 1], next = PAGES[ix + 1];
+    if (ix < 0) { var xi = XPAGES.findIndex(function (p) { return p[0] === id; }); prev = xi > 0 ? XPAGES[xi - 1] : PAGES[0]; next = XPAGES[xi + 1] || null; }
     return '<div class="fbx">' +
-      '<nav class="fbx-top"><span class="fbx-logo"><i></i>Flipbook</span><div class="fbx-steps">' + PAGES.map(function (p, i) { return '<button type="button" data-fbgo="' + p[0] + '" class="' + (p[0] === id ? "on" : i < ix ? "done" : "") + '"><b>' + (i + 1) + '</b>' + p[1] + '</button>'; }).join("") + '</div></nav>' +
+      '<nav class="fbx-top"><span class="fbx-logo"><i></i>Flipbook</span><div class="fbx-steps">' + PAGES.map(function (p, i) { return '<button type="button" data-fbgo="' + p[0] + '" class="' + (p[0] === id ? "on" : i < ix ? "done" : "") + '"><b>' + (i + 1) + '</b>' + p[1] + '</button>'; }).join("") + XPAGES.map(function (p) { return '<button type="button" data-fbgo="' + p[0] + '" class="b2-x' + (p[0] === id ? " on" : "") + '">' + p[1] + '</button>'; }).join("") + '</div></nav>' +
       body +
       '<footer class="fbx-nav">' + (prev ? '<button type="button" class="fbx-btn ghost" data-fbgo="' + prev[0] + '">&larr; ' + prev[1] + '</button>' : '<span></span>') + (next ? '<button type="button" class="fbx-btn" data-fbgo="' + next[0] + '">Next: ' + next[1] + ' &rarr;</button>' : '<span></span>') + '</footer>' +
       '<p class="fbx-legal">Flipbook is a keepsake and learning tool. Charts show your own history. Nothing here is investment advice.</p></div>';
@@ -822,7 +873,7 @@
   /* ---------- render + events ---------- */
   function render() {
     if (!host) return;
-    var f = { home: pHome, example: pExample, build: pBuild, clear: pClear, proof: pProof, pricing: pPricing, goals: pGoals, ideas: pIdeas }[cur] || pHome;
+    var f = { coach: pCoach, prop: pProp, home: pHome, example: pExample, build: pBuild, clear: pClear, proof: pProof, pricing: pPricing, goals: pGoals, ideas: pIdeas }[cur] || pHome;
     var keep = host.querySelector(".fbx-ctrl"), sc = keep ? keep.scrollTop : 0;
     host.innerHTML = f();
     PAGES.forEach(function (p) { var b = document.getElementById(p[2]); if (b) b.classList.toggle("on", p[0] === cur); });
@@ -909,6 +960,7 @@
     var b = ev.target.closest("button"); if (!b || !host.contains(b)) return;
     var d = b.dataset;
     if (d.fbgo) return go(d.fbgo);
+    if (d.quiz) { quizOn = !quizOn; var qz = host.querySelector('.b2-quiz'); if (qz) { qz.classList.toggle('on', quizOn); qz.querySelector('.b2-qhead b').textContent = quizOn ? 'Here’s how the coach traded it.' : 'Where would you enter?'; b.textContent = quizOn ? 'Hide the answer' : 'Flip the overlay to see the answer'; } return; }
     if (d.pfview) { pfView = d.pfview; return render(); }
     if (d.pfsp != null) { pfSp = +d.pfsp; return render(); }
     if (d.pflift) { pfLift = !pfLift; var bk = host.querySelector('.pf-book'); if (bk) { bk.classList.toggle('lifted', pfLift); b.textContent = pfLift ? 'Lay the overlay back on' : 'Lift the clear overlay'; } return; }
@@ -974,8 +1026,18 @@
     if (t.dataset.tkpaste != null && t.value.trim()) { var v = t.value; t.value = ""; setTimeout(function () { addTickers(v); }, 0); return; }
     if (t.matches("[data-iacat]") && t.value === "New category…") { var n = prompt("New category name"); if (n) { var o = document.createElement("option"); o.textContent = n.slice(0, 30); t.insertBefore(o, t.lastChild); t.value = o.textContent; } else t.selectedIndex = 0; }
   }
+  function sendLead(f) {
+    var msg = f.querySelector(".b2-msg"), btn = f.querySelector("button[type=submit]"), v = {}; [].forEach.call(f.querySelectorAll("input"), function (i) { v[i.name] = i.value.trim().replace(/[|]/g, "/"); });
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.email || "")) { msg.className = "b2-msg bad"; msg.textContent = "Please enter a real email address."; return; }
+    var ref = (f.dataset.fblead + "|" + Object.keys(v).filter(function (k) { return k !== "email"; }).map(function (k) { return v[k]; }).join("|")).slice(0, 200);
+    btn.disabled = true; msg.className = "b2-msg"; msg.textContent = "Sending…";
+    fetch("/api/config").then(function (r) { return r.json(); }).then(function (c) { return fetch(c.url + "/rest/v1/ss_waitlist", { method: "POST", headers: { apikey: c.anonKey, Authorization: "Bearer " + c.anonKey, "Content-Type": "application/json", Prefer: "return=minimal" }, body: JSON.stringify({ email: v.email, ref: ref }) }); })
+      .then(function (r) { if (!r.ok && r.status !== 409) throw new Error(r.status); msg.textContent = "Thanks! We got it and will reach out within 2 business days."; f.reset(); })
+      .catch(function () { msg.className = "b2-msg bad"; msg.textContent = "Something went wrong. Please try again in a minute."; }).then(function () { btn.disabled = false; });
+  }
   function onSubmit(ev) {
-    var f = ev.target; if (!host || !host.contains(f) || !f.dataset.fbiadd) return; ev.preventDefault();
+    var f = ev.target; if (host && host.contains(f) && f.dataset.fblead) { ev.preventDefault(); return sendLead(f); }
+    if (!host || !host.contains(f) || !f.dataset.fbiadd) return; ev.preventDefault();
     var tx = f.querySelector("[data-iatxt]").value.trim(); if (!tx) return;
     I.items.push({ id: uid(), c: f.querySelector("[data-iacat]").value, t: tx, s: "open", why: "" }); saveI(); render(); toast("Idea added");
   }
@@ -1059,6 +1121,15 @@
       ".fbx-zlen{flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:6px;font:600 11.5px Inter,sans-serif}.fbx-zlen span{color:var(--g);margin-right:4px}.fbx-zlen button{border:1px solid #E2E4E8;background:#fff;border-radius:999px;padding:5px 10px;font:600 11.5px Inter,sans-serif;cursor:pointer;color:var(--k)}.fbx-zlen button.on{background:#0B0B0C;color:#fff;border-color:#0B0B0C}",
       ".fbx-rr{margin-top:12px;padding:10px 12px;border:1px solid #EEF0F3;border-radius:12px;background:#FCFCFD}.fbx-rrrow{display:flex;gap:12px;align-items:flex-end;margin-top:8px;flex-wrap:wrap}.fbx-rrrow label{flex:1 1 120px}.fbx-rrout{display:flex;flex-direction:column;background:#0B0B0C;color:#fff;border-radius:10px;padding:6px 12px}.fbx-rrout b{font:800 16px Inter,sans-serif}.fbx-rrout small{font-size:11px;color:#C7C9CF}",
       ".fbx{padding-bottom:110px}.fbx-lt{display:inline-flex;align-items:center;gap:7px}",
+      ".b2-hero{align-items:center}.b2-quiz{position:relative;border-radius:22px;background:#fff;padding:18px;box-shadow:0 1px 0 #E6E8EC,0 30px 60px rgba(15,23,42,.12);display:flex;flex-direction:column;gap:12px}.b2-qhead{display:flex;flex-direction:column;gap:4px}.b2-q{font:700 11px Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#B8893B}.b2-qhead b{font:400 28px/1.1 'Instrument Serif',Georgia,serif}",
+      ".b2-qchart{position:relative}.b2-qchart svg{width:100%;height:auto;display:block}.b2-qfilm{position:absolute;inset:0;opacity:0;transform:translateX(-24px) rotateY(-12deg);transition:opacity .5s ease,transform .6s cubic-bezier(.2,1.1,.3,1);pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.1),rgba(210,226,255,.12));border-radius:8px}.b2-quiz.on .b2-qfilm{opacity:1;transform:none}.b2-quiz .fbx-btn{align-self:flex-start}",
+      ".b2-list{display:grid;gap:10px}.b2-li{display:grid;grid-template-columns:160px 1fr;gap:14px;padding:14px 16px;border:1px solid var(--h);border-radius:14px;background:#fff}.b2-li b{font:700 15px Inter,sans-serif}.b2-li span{color:var(--g);font:400 14.5px/1.5 Inter,sans-serif}",
+      ".b2-tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}.b2-tier{padding:22px;border-radius:20px;border:1px solid var(--h);background:#fff;display:flex;flex-direction:column;gap:6px}.b2-tier small{font:700 11px Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#B8893B}.b2-tier b{font:800 22px Inter,sans-serif}.b2-tier p{margin:0;color:var(--g);font:400 14.5px/1.5 Inter,sans-serif}",
+      ".b2-form{padding:28px;border-radius:24px;background:#0B0B0C;color:#fff;display:flex;flex-direction:column;gap:14px}.b2-form h3{margin:0;font:400 34px/1.05 'Instrument Serif',Georgia,serif;color:#fff!important}.b2-form .fbx-mut{color:#A1A1AA}.b2-fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.b2-fg label{display:flex;flex-direction:column;gap:6px;font:600 12.5px Inter,sans-serif;color:#D4D4D8}.b2-fg input{min-height:46px;border-radius:12px!important;border:1px solid #3F3F46!important;background:#151517!important;color:#fff!important;padding:0 14px!important;font:500 15px Inter,sans-serif!important;width:100%}.b2-fg input:focus{outline:2px solid #B8893B;outline-offset:1px}.b2-form .fbx-btn{align-self:flex-start;background:#fff;color:#0B0B0C;border-color:#fff}.b2-msg{margin:0!important;font:600 14px Inter,sans-serif;color:#86EFAC}.b2-msg.bad{color:#FCA5A5}",
+      ".b2-frame{padding:22px;border-radius:10px;background:linear-gradient(145deg,#2A2116,#120D08);box-shadow:0 30px 60px rgba(0,0,0,.35),inset 0 0 0 2px #B8893B}.b2-mat{position:relative;background:#FBF8F1;padding:22px 22px 18px;display:flex;flex-direction:column;gap:12px;box-shadow:inset 0 0 0 1px #E6DDCB}.b2-fhead{display:flex;justify-content:space-between;align-items:baseline}.b2-fhead span{font:800 13px Inter,sans-serif;letter-spacing:.14em;color:#1B355A}.b2-fhead em{font:italic 400 26px 'Instrument Serif',Georgia,serif;color:#1B355A}",
+      ".b2-fchart svg{width:100%;height:auto;display:block}.b2-ffoot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;border-top:1px solid #E6DDCB;padding-top:10px}.b2-ffoot small{display:block;font:700 10px Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#8A8F98}.b2-ffoot b{font:700 15px Inter,sans-serif;color:#0F172A}.b2-seal{position:absolute;right:18px;top:54px;width:84px;height:84px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#E8C77A,#B8893B 70%);color:#3A2A0A;font:800 13px Inter,sans-serif;letter-spacing:.14em;box-shadow:0 6px 16px rgba(0,0,0,.25);transform:rotate(-12deg)}",
+      ".fbx-steps .b2-x{margin-left:6px;border-style:dashed}",
+
       ".pf-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 18px}.pf-tabs button{min-height:42px;padding:0 18px;border:1.5px solid #E2E4E8;border-radius:999px;background:#fff;font:700 13.5px Inter,sans-serif;cursor:pointer;color:var(--k)}.pf-tabs button.on{background:#0B0B0C;border-color:#0B0B0C;color:#fff}",
       ".lay-base *:not(g):not(defs):not(defs *):not(.L-base *){display:none}.lay-film .L-base{display:none}",
       ".pf-room{position:relative;border-radius:22px;padding:56px 24px 64px;background:radial-gradient(120% 90% at 50% 0%,#7A5538 0%,#5B3D29 55%,#3F2A1D 100%);overflow:hidden;perspective:2200px}",
