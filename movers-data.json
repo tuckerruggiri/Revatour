@@ -1,1306 +1,1497 @@
 {
-  "asof": "Nov 18, 2026",
-  "tape": [
+ "asof": "Nov 19, 2026",
+ "tape": [
+  {
+   "l": "Dow",
+   "v": "50,198",
+   "d": -1.11
+  },
+  {
+   "l": "S&P 500",
+   "v": "7,324",
+   "d": -0.23
+  },
+  {
+   "l": "Nasdaq",
+   "v": "24,430",
+   "d": 0.42
+  },
+  {
+   "l": "10-yr yield",
+   "v": "5.07%"
+  },
+  {
+   "l": "Gold",
+   "v": "$3,742"
+  }
+ ],
+ "tapeSrc": "https://www.stocktitan.net/articles/stock-market-today-live-november-18-2026",
+ "events": [
+  {
+   "d": "2026-11-19",
+   "l": "Walmart (before the open), Alibaba, Intuit (after the close); Fed Vice Chair Jefferson speaks; Anthropic Nasdaq debut"
+  },
+  {
+   "d": "2026-11-23",
+   "l": "Home Depot CEO change takes effect"
+  },
+  {
+   "d": "2026-11-25",
+   "l": "PCE inflation (BEA, confirmed per financecalendar)"
+  },
+  {
+   "d": "2026-11-26",
+   "l": "Thanksgiving: US markets closed (standard holiday, not confirmed in an article)"
+  },
+  {
+   "d": "2026-12-02",
+   "l": "Salesforce earnings"
+  },
+  {
+   "d": "2026-12-04",
+   "l": "November jobs report (per a calendar site)"
+  },
+  {
+   "d": "2026-12-09",
+   "l": "FOMC decision (Dec 8-9 meeting)"
+  },
+  {
+   "d": "2026-12-10",
+   "l": "November CPI"
+  }
+ ],
+ "picks": [
+  {
+   "kind": "radar",
+   "t": "TXO",
+   "n": "TXO Partners",
+   "theme": "Director and 10% owner buying",
+   "cat": "No date set",
+   "setup": "Chairman-director buying units daily at rising prices",
+   "stage": 2,
+   "stageN": "Buying is ongoing; the source gives no price trend beyond the buy prices.",
+   "v": {
+    "inst": -1,
+    "ins": 1,
+    "vol": -1,
+    "base": -1,
+    "cat": -1
+   },
+   "why": "Director and 10% owner Bob R. Simpson bought 232,839 units (about $3.08M) over Nov 6-10 at weighted averages of $12.97, $13.15 and $13.49, and now holds 9,732,839 units.",
+   "risk": "Prices rose with each purchase, one buyer already controls a large stake, and this is a digest read: the Form 4 itself was not opened and no volume or valuation data was found.",
+   "src": "https://www.investing.com/news/insider-trading-news/txo-partners-director-bob-simpson-buys-308m-in-common-units-93CH-5017880",
+   "srcN": "Investing.com, Nov 11",
+   "ins": "Bob R. Simpson, director and 10% owner: 67,111 units Nov 6 at $12.9733, 78,932 Nov 9 at $13.1454, 86,796 Nov 10 at $13.4857 (Investing.com digest, Nov 11)",
+   "dd": [
     {
-      "l": "Dow",
-      "v": "50,759",
-      "d": -1.64
-    },
-    {
-      "l": "S&P 500",
-      "v": "7,341",
-      "d": -1.03
-    },
-    {
-      "l": "Nasdaq",
-      "v": "24,328",
-      "d": -0.74
-    },
-    {
-      "l": "10-yr yield",
-      "v": "5.11%"
-    },
-    {
-      "l": "Gold",
-      "v": "$3,849"
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
     }
-  ],
-  "tapeSrc": "https://www.fool.com/coverage/stock-market-today/2026/11/17/stock-market-today-nov-17-stocks-slide-on-ai-chip-and-tech-pressures-salesforce-plummets-9/",
-  "events": [
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "radar",
+   "t": "ENOV",
+   "n": "Enovis",
+   "theme": "Small director buys",
+   "cat": "No date set",
+   "setup": "Director open-market buys Nov 6 and 9",
+   "stage": 1,
+   "stageN": "Early: one small insider buy, nothing else lined up in the source.",
+   "v": {
+    "inst": -1,
+    "ins": 1,
+    "vol": -1,
+    "base": -1,
+    "cat": -1
+   },
+   "why": "Director Sharon Wienbar bought 1,831 shares for $49,917 on Nov 6 (907 shares) and Nov 9 (924 shares) at $26.98-$27.55 and holds 43,777 shares directly.",
+   "risk": "The purchase is small and from one director; the source gives no volume, valuation or catalyst, and the Form 4 was not opened.",
+   "src": "https://www.investing.com/news/insider-trading-news/enovis-director-sharon-wienbar-buys-49917-of-company-stock-93CH-5017471",
+   "srcN": "Investing.com, Nov 10",
+   "ins": "Director Sharon Wienbar: 1,831 shares, $49,917, Nov 6 and Nov 9 (Investing.com digest, Nov 10)",
+   "dd": [
     {
-      "d": "2026-11-18",
-      "l": "FOMC minutes; housing starts; Target, Lowe's, TJX; Palo Alto Networks after close"
-    },
-    {
-      "d": "2026-11-19",
-      "l": "Walmart earnings (per earlier read, not re-confirmed)"
-    },
-    {
-      "d": "2026-11-23",
-      "l": "Home Depot CEO change takes effect"
-    },
-    {
-      "d": "2026-11-25",
-      "l": "PCE inflation and Q3 GDP second estimate (per earlier read)"
-    },
-    {
-      "d": "2026-11-26",
-      "l": "Thanksgiving: US markets closed"
-    },
-    {
-      "d": "2026-12-09",
-      "l": "FOMC decision (Dec 8-9 meeting)"
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
     }
-  ],
-  "picks": [
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "radar",
+   "t": "FUN",
+   "n": "Six Flags Entertainment",
+   "theme": "Earnings beat plus insider buying",
+   "cat": "Q3 results (Nov 5)",
+   "setup": "Beat after a six-month run of insider buys and no sales",
+   "stage": 2,
+   "stageN": "Earnings were a beat; the source gives no price reaction.",
+   "v": {
+    "inst": -1,
+    "ins": 1,
+    "vol": -1,
+    "base": -1,
+    "cat": 1
+   },
+   "why": "Q3 EPS was $2.70 vs $1.97 expected on revenue of $1.173B. Quiver Quant counts 5 open-market insider buys and no sales in six months, including Rehan Jaffer 250,000 shares (about $5.89M) and CEO John Reilly 15,713 shares (about $248K).",
+   "risk": "The insider-buy tally comes from a digest and no price or volume data was stated; a MarketBeat headline from Nov 10 mentions a $3.801M director purchase that could not be opened.",
+   "src": "https://www.quiverquant.com/news/SIX+FLAGS+ENTERTAINMENT+%28%24FUN%29+Releases+Q3+2026+Earnings",
+   "srcN": "Quiver Quant, around Nov 5",
+   "ins": "5 open-market buys, no sales in six months: Jaffer 250,000 sh (~$5.89M), CEO Reilly 15,713 sh (~$248K), Exec. Chair Haddrill 10,000 sh (~$191K), Spiegel 2,500 sh (~$48K) (Quiver Quant)",
+   "dd": [
     {
-      "kind": "radar",
-      "t": "TXO",
-      "n": "TXO Partners",
-      "theme": "Director and 10% owner buying",
-      "cat": "No date set",
-      "setup": "Chairman-director buying units daily at rising prices",
-      "stage": 2,
-      "stageN": "Buying is ongoing; the source gives no price trend beyond the buy prices.",
-      "v": {
-        "inst": -1,
-        "ins": 1,
-        "vol": -1,
-        "base": -1,
-        "cat": -1
-      },
-      "why": "Director and 10% owner Bob R. Simpson bought 232,839 units (about $3.08M) over Nov 6-10 at weighted averages of $12.97, $13.15 and $13.49, and now holds 9,732,839 units.",
-      "risk": "Prices rose with each purchase, one buyer already controls a large stake, and this is a digest read: the Form 4 itself was not opened and no volume or valuation data was found.",
-      "src": "https://www.investing.com/news/insider-trading-news/txo-partners-director-bob-simpson-buys-308m-in-common-units-93CH-5017880",
-      "srcN": "Investing.com, Nov 11",
-      "ins": "Bob R. Simpson, director and 10% owner: 67,111 units Nov 6 at $12.9733, 78,932 Nov 9 at $13.1454, 86,796 Nov 10 at $13.4857 (Investing.com digest, Nov 11)",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "radar",
-      "t": "ENOV",
-      "n": "Enovis",
-      "theme": "Small director buys",
-      "cat": "No date set",
-      "setup": "Director open-market buys Nov 6 and 9",
-      "stage": 1,
-      "stageN": "Early: one small insider buy, nothing else lined up in the source.",
-      "v": {
-        "inst": -1,
-        "ins": 1,
-        "vol": -1,
-        "base": -1,
-        "cat": -1
-      },
-      "why": "Director Sharon Wienbar bought 1,831 shares for $49,917 on Nov 6 (907 shares) and Nov 9 (924 shares) at $26.98-$27.55 and holds 43,777 shares directly.",
-      "risk": "The purchase is small and from one director; the source gives no volume, valuation or catalyst, and the Form 4 was not opened.",
-      "src": "https://www.investing.com/news/insider-trading-news/enovis-director-sharon-wienbar-buys-49917-of-company-stock-93CH-5017471",
-      "srcN": "Investing.com, Nov 10",
-      "ins": "Director Sharon Wienbar: 1,831 shares, $49,917, Nov 6 and Nov 9 (Investing.com digest, Nov 10)",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "radar",
-      "t": "FUN",
-      "n": "Six Flags Entertainment",
-      "theme": "Earnings beat plus insider buying",
-      "cat": "Q3 results (Nov 5)",
-      "setup": "Beat after a six-month run of insider buys and no sales",
-      "stage": 2,
-      "stageN": "Earnings were a beat; the source gives no price reaction.",
-      "v": {
-        "inst": -1,
-        "ins": 1,
-        "vol": -1,
-        "base": -1,
-        "cat": 1
-      },
-      "why": "Q3 EPS was $2.70 vs $1.97 expected on revenue of $1.173B. Quiver Quant counts 5 open-market insider buys and no sales in six months, including Rehan Jaffer 250,000 shares (about $5.89M) and CEO John Reilly 15,713 shares (about $248K).",
-      "risk": "The insider-buy tally comes from a digest and no price or volume data was stated; a MarketBeat headline from Nov 10 mentions a $3.801M director purchase that could not be opened.",
-      "src": "https://www.quiverquant.com/news/SIX+FLAGS+ENTERTAINMENT+%28%24FUN%29+Releases+Q3+2026+Earnings",
-      "srcN": "Quiver Quant, around Nov 5",
-      "ins": "5 open-market buys, no sales in six months: Jaffer 250,000 sh (~$5.89M), CEO Reilly 15,713 sh (~$248K), Exec. Chair Haddrill 10,000 sh (~$191K), Spiegel 2,500 sh (~$48K) (Quiver Quant)",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "radar",
-      "t": "MP",
-      "n": "MP Materials",
-      "theme": "Rare-earth magnets, Q4 production start",
-      "cat": "Q4 magnet shipments, dysprosium/terbium start",
-      "setup": "Upgrade after a revenue surge, stock down 27% YTD",
-      "stage": 2,
-      "stageN": "Up about 2.3% overnight after the upgrade.",
-      "v": {
-        "inst": -1,
-        "ins": -1,
-        "vol": -1,
-        "base": 1,
-        "cat": 1
-      },
-      "why": "Freedom Broker upgraded to Buy with a $51 target (from $57), about 40% upside. Q3 revenue was $147.7M (+176%) and adjusted EBITDA $41.1M vs a $12.6M loss a year earlier; adjusted EPS $0.04 vs a $0.01 loss expected.",
-      "risk": "The stock is down 27% YTD, the target was cut from $57, and the Q4 production start has no firm date in the source.",
-      "src": "https://stocktwits.com/news-articles/markets/equity/mp-stock-freedom-broker-upgrade-upside-price-target-magnet-production/cNGD0paR9BT",
-      "srcN": "Stocktwits, Nov 11",
-      "soc": "Stocktwits sentiment slipped to 'bullish' from 'extremely bullish' (Stocktwits, Nov 11)",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "radar",
-      "t": "GLW",
-      "n": "Corning",
-      "theme": "AI optical, analyst initiation",
-      "cat": "No date set",
-      "setup": "Jefferies Buy after a 40% six-month drop",
-      "stage": 2,
-      "stageN": "Early move on the initiation, premarket only.",
-      "v": {
-        "inst": -1,
-        "ins": -1,
-        "vol": -1,
-        "base": 0,
-        "cat": 0
-      },
-      "why": "Jefferies initiated at Buy with a $134 target (about 19% upside from Tuesday's close) and sees the optical business scaling in 2028. Q3 adjusted EPS was $0.91 vs $0.88 and revenue $5.08B (+19%); shares are down about 40% over six months and rose as much as 7% premarket.",
-      "risk": "Other targets are mixed (Bernstein $120 Market Perform, Morgan Stanley $155 Equalweight) and the payoff Jefferies describes is years away.",
-      "src": "https://stocktwits.com/news-articles/markets/equity/glw-stock-could-ride-the-ai-data-center-buildout-jefferies-says-sees-corning-s-optical-business-scaling-in-2028/cNGDFNGR9BK",
-      "srcN": "Stocktwits, Nov 11",
-      "soc": "Stocktwits sentiment 'neutral'; message volume not stated (Stocktwits, Nov 11)",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "radar",
-      "t": "AAON",
-      "n": "AAON",
-      "theme": "Data-center cooling, already ran",
-      "pxN": "Nov 10 session move (Stocktitan)",
-      "chg": 19.31,
-      "cat": "Q3 results (Nov 9)",
-      "setup": "Too late: +19% on Nov 10 with an accounting caveat",
-      "stage": 4,
-      "stageN": "Already up 19.31% on Nov 10; chasing now is the risk.",
-      "v": {
-        "inst": -1,
-        "ins": -1,
-        "vol": -1,
-        "base": 0,
-        "cat": 1
-      },
-      "why": "AAON jumped 19.31% on Nov 10 after Q3 revenue of $707.43M (+84.1%) vs $602M expected and adjusted EPS of $0.83 vs $0.58. The data-center cooling unit BASX grew 218% and 2026 sales growth guidance rose to 72-75% from 55-60%.",
-      "risk": "Labeled too late. It restated Q1 and Q2 and disclosed a material weakness in internal controls (no fraud found), and backlog fell 5.9% sequentially.",
-      "src": "https://247wallst.com/cards/aaon-q3-2026-earnings-aaon-01m71243rr8tth39js1gskaswb",
-      "srcN": "24/7 Wall St., Nov 9; Stocktitan, Nov 10",
-      "dd": [
-        {
-          "f": "10-Q / restatement (digest)",
-          "d": "Nov 9",
-          "s": "24/7 Wall St. reports restated Q1 and Q2 results and a material weakness in internal controls; the filing itself was not opened this run."
-        }
-      ],
-      "ddv": "red"
-    },
-    {
-      "kind": "day",
-      "t": "NVDA",
-      "n": "Nvidia",
-      "theme": "AI chips",
-      "px": 155.46,
-      "pxN": "Nov 17 close (Alpha Vantage)",
-      "chg": -0.44,
-      "cat": "Q3 results Nov 17 after the close",
-      "catDate": "2026-11-17",
-      "setup": "Beat and ~$130B guide; shares higher after hours",
-      "v": {
-        "news": 1,
-        "gap": 1,
-        "vol": 1,
-        "iv": -1,
-        "liq": 1
-      },
-      "why": "Fiscal Q3 revenue was $115.8B (+103% y/y), net income $64.9B and data center revenue $107.6B; Q4 guidance is about $130B, plus or minus 3%. The stock closed $155.46 (-0.44%) on volume of 345.4M shares (about 127% above its 3-month average) and was up 4.81% after hours at 7:59 PM ET (StockTitan).",
-      "risk": "After-hours reads conflict (about +1.3% early per Motley Fool, +4.81% per StockTitan), the Investing.com premarket piece says Nvidia has lost about $410B of market value since CEO Jensen Huang resigned, and Nvidia said it will stop selling chips to data center operators that rent over half their GPUs to Chinese companies.",
-      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-17-2026",
-      "srcN": "StockTitan, Nov 17 (updated 8:30 PM ET); Motley Fool/Yahoo, Nov 17; Investing.com, Nov 17",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 18",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "day",
-      "t": "SLS",
-      "n": "SELLAS Life Sciences",
-      "theme": "Biotech trial data",
-      "px": 19.15,
-      "pxN": "Nov 17 close (Alpha Vantage)",
-      "chg": 156.36,
-      "hi": 24.89,
-      "lo": 16.7,
-      "hiN": "Nov 17 day range (Alpha Vantage)",
-      "cat": "Phase 3 REGAL met its main goal (Nov 17); $150M offering proposed",
-      "catDate": "2026-11-17",
-      "setup": "Cancer-vaccine win, then an equity offering",
-      "v": {
-        "news": 1,
-        "gap": 1,
-        "vol": 1,
-        "iv": -1,
-        "liq": -1
-      },
-      "why": "SLS closed +156.36% at $19.15 (day range $16.70-$24.89) on 118M shares after its Phase 3 REGAL trial of cancer vaccine GPS met its primary goal (median 24.0 vs 14.7 months). A proposed $150.0M underwritten public offering was announced at 4:01 PM ET and shares fell 10.57% after hours.",
-      "risk": "Dilution: the $150.0M offering is large against the stock's size, spikes on trial data often fade, and the filing itself was not opened (StockTitan live blog digest only).",
-      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-17-2026",
-      "srcN": "StockTitan, Nov 17 (updated 8:30 PM ET)",
-      "dd": [
-        {
-          "f": "Offering (press-release digest)",
-          "d": "Nov 17",
-          "s": "StockTitan reports a proposed $150.0M underwritten public offering of common stock announced 4:01 PM ET; the 424B5 / 8-K itself was not opened."
-        },
-        {
-          "f": "Filings",
-          "d": "Nov 18",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "red"
-    },
-    {
-      "kind": "day",
-      "t": "RCAT",
-      "n": "Red Cat Holdings",
-      "theme": "Drones",
-      "px": 2.41,
-      "pxN": "Nov 17 close (Alpha Vantage)",
-      "chg": -31.73,
-      "hi": 2.72,
-      "lo": 2.3,
-      "hiN": "Nov 17 day range (Alpha Vantage)",
-      "cat": "Withdrew FY2026 revenue target (Nov 16, 4:05 PM ET)",
-      "catDate": "2026-11-16",
-      "setup": "Guidance pulled; stock down about 32%",
-      "v": {
-        "news": 1,
-        "gap": 1,
-        "vol": -1,
-        "iv": -1,
-        "liq": -1
-      },
-      "why": "RCAT closed -31.73% at $2.41 on 31.8M shares after it withdrew its full-year 2026 revenue target. Q3 revenue was $11.8M (+22%) versus about $42M expected, with an adjusted loss of $0.26 a share versus $0.20 expected (Investing.com).",
-      "risk": "A pulled forecast and a large revenue miss; analysts' next moves and any financing are unknown and the filings were not opened.",
-      "src": "https://finance.yahoo.com/markets/stocks/articles/premarket-movers-nvidia-red-cat-124832112.html",
-      "srcN": "Investing.com via Yahoo Finance, Nov 17; StockTitan, Nov 17",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 18",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "day",
-      "t": "CRM",
-      "n": "Salesforce",
-      "theme": "Software",
-      "px": 194.52,
-      "pxN": "Nov 17 close (Alpha Vantage)",
-      "chg": -9.45,
-      "hi": 211.0,
-      "lo": 193.41,
-      "hiN": "Nov 17 day range (Alpha Vantage)",
-      "cat": "No date set",
-      "setup": "Software selloff; shares -9.45%",
-      "v": {
-        "news": 1,
-        "gap": 1,
-        "vol": -1,
-        "iv": -1,
-        "liq": 1
-      },
-      "why": "Salesforce fell 9.45% to $194.52 on Nov 17 (day range $193.41-$211.00) in a software selloff tied to security concerns and fears that AI will replace software, per Motley Fool.",
-      "risk": "The drivers are broad worries rather than a company-specific print, and the move could extend or reverse with the sector.",
-      "src": "https://www.fool.com/coverage/stock-market-today/2026/11/17/stock-market-today-nov-17-stocks-slide-on-ai-chip-and-tech-pressures-salesforce-plummets-9/",
-      "srcN": "Motley Fool, Nov 17",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 18",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "day",
-      "t": "CRDO",
-      "n": "Credo Technology",
-      "theme": "AI networking",
-      "px": 123.95,
-      "pxN": "Nov 17 close (Alpha Vantage)",
-      "chg": 2.68,
-      "cat": "Patent agreement with Marvell (Nov 17)",
-      "catDate": "2026-11-17",
-      "setup": "Up after hours on a patent deal",
-      "v": {
-        "news": 1,
-        "gap": 1,
-        "vol": -1,
-        "iv": -1,
-        "liq": 1
-      },
-      "why": "CRDO closed +2.68% at $123.95 and rose 7.50% after hours on a patent agreement with Marvell (StockTitan).",
-      "risk": "Terms of the agreement were not read, and after-hours moves often change by the open.",
-      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-17-2026",
-      "srcN": "StockTitan, Nov 17 (updated 8:30 PM ET)",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 18",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "day",
-      "t": "ENR",
-      "n": "Energizer Holdings",
-      "theme": "Consumer goods",
-      "chg": 12.57,
-      "cat": "Fiscal Q4 results (Nov 17)",
-      "catDate": "2026-11-17",
-      "setup": "Earnings beat, stock +12.6%",
-      "v": {
-        "news": 1,
-        "gap": 1,
-        "vol": -1,
-        "iv": -1,
-        "liq": -1
-      },
-      "why": "ENR rose 12.57% on Nov 17 after fiscal Q4 adjusted EPS of $1.37 (+30%) and an outlook for about $300M of free cash flow in FY2027 (StockTitan).",
-      "risk": "A one-day gap after earnings can fade; the price and volume were not stated in the source.",
-      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-17-2026",
-      "srcN": "StockTitan, Nov 17",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 18",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "day",
-      "t": "ARDT",
-      "n": "Ardent Health",
-      "theme": "Hospitals",
-      "chg": -14.61,
-      "cat": "Secondary offering by shareholders (Nov 17)",
-      "catDate": "2026-11-17",
-      "setup": "Down after hours on a share sale",
-      "v": {
-        "news": 1,
-        "gap": 1,
-        "vol": -1,
-        "iv": -1,
-        "liq": -1
-      },
-      "why": "ARDT fell 14.61% after hours on a proposed secondary sale of 8,000,000 shares by two shareholders; the company may buy back up to 1,500,000 (StockTitan).",
-      "risk": "Shareholder selling adds supply even if the company issues no new shares; price and volume were not stated.",
-      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-17-2026",
-      "srcN": "StockTitan, Nov 17 (updated 8:30 PM ET)",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 18",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "swing",
-      "t": "PANW",
-      "n": "Palo Alto Networks",
-      "theme": "Cybersecurity",
-      "cat": "Fiscal Q1 results after the close, Nov 18",
-      "catDate": "2026-11-18",
-      "setup": "Dated earnings report tonight",
-      "v": {
-        "cat": 1,
-        "low": -1,
-        "sel": -1,
-        "mom": -1,
-        "thm": -1
-      },
-      "why": "Palo Alto Networks reports fiscal Q1 results after the close on Nov 18 with a 4:30 PM ET webcast; Benzinga's Nov 18 premarket note lists it among stocks in focus (title only; the page did not load).",
-      "risk": "No estimates or price data were read this run, and software shares fell sharply on Nov 17.",
-      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-17-2026",
-      "srcN": "StockTitan, Nov 17 (what to watch tomorrow)",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 18",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "swing",
-      "t": "HD",
-      "n": "Home Depot",
-      "theme": "Housing and retail",
-      "px": 339.01,
-      "pxN": "Nov 17 close (Alpha Vantage)",
-      "chg": -2.45,
-      "hi": 346.9,
-      "lo": 334.44,
-      "hiN": "Nov 17 day range (Alpha Vantage)",
-      "cat": "New CEO Richard McPhail starts Nov 23",
-      "catDate": "2026-11-23",
-      "setup": "Beat on sales, CEO change ahead",
-      "v": {
-        "cat": 1,
-        "low": 0,
-        "sel": -1,
-        "mom": -1,
-        "thm": -1
-      },
-      "why": "HD closed -2.45% at $339.01 (day range $334.44-$346.90) after Q3 sales of $43.4B (+4.9%) beat about $42.8B expected; FY2026 sales growth guidance is about 4.5% and Richard McPhail becomes CEO Nov 23.",
-      "risk": "Rates near 5% pressure housing demand, and the source gives no valuation or earnings-per-share detail.",
-      "src": "https://finance.yahoo.com/markets/stocks/articles/premarket-movers-nvidia-red-cat-124832112.html",
-      "srcN": "Investing.com via Yahoo Finance, Nov 17; StockTitan, Nov 17",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 18",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "swing",
-      "t": "UNH",
-      "n": "UnitedHealth Group",
-      "theme": "Health insurers",
-      "chg": -5.42,
-      "cat": "No date set",
-      "setup": "Down 5.4% on anti-fraud proposals",
-      "v": {
-        "cat": -1,
-        "low": 1,
-        "sel": -1,
-        "mom": -1,
-        "thm": -1
-      },
-      "why": "UnitedHealth fell 5.42% on Nov 17 on anti-fraud proposals for Medicare and Medicaid, per Motley Fool.",
-      "risk": "The proposals' details and timing were not read; policy risk can continue.",
-      "src": "https://www.fool.com/coverage/stock-market-today/2026/11/17/stock-market-today-nov-17-stocks-slide-on-ai-chip-and-tech-pressures-salesforce-plummets-9/",
-      "srcN": "Motley Fool, Nov 17",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 18",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "swing",
-      "t": "NXT",
-      "n": "Nextpower",
-      "theme": "Solar and power equipment",
-      "chg": -12.13,
-      "cat": "Capital markets day (Nov 17)",
-      "catDate": "2026-11-17",
-      "setup": "Fell 12% despite a higher long-term target",
-      "v": {
-        "cat": 1,
-        "low": 1,
-        "sel": -1,
-        "mom": -1,
-        "thm": -1
-      },
-      "why": "NXT fell 12.13% on Nov 17 even though it raised its fiscal 2030 revenue target to over $7.5B at a capital markets day (StockTitan).",
-      "risk": "The reason for the drop was not stated; price and volume were not read.",
-      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-17-2026",
-      "srcN": "StockTitan, Nov 17",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 18",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "swing",
-      "t": "ACM",
-      "n": "AECOM",
-      "theme": "Infrastructure",
-      "chg": 11.08,
-      "cat": "No date set",
-      "setup": "Record backlog and first FY2027 guidance",
-      "v": {
-        "cat": -1,
-        "low": 0,
-        "sel": -1,
-        "mom": 1,
-        "thm": -1
-      },
-      "why": "ACM rose 11.08% on Nov 17 after backlog grew 13% to a record $28.0B and it gave first fiscal 2027 guidance (StockTitan).",
-      "risk": "After an 11% one-day jump, a pullback is possible; no price or valuation data were read.",
-      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-17-2026",
-      "srcN": "StockTitan, Nov 17",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 18",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "swing",
-      "t": "AS",
-      "n": "Amer Sports",
-      "theme": "Consumer brands",
-      "chg": 3.92,
-      "cat": "No date set",
-      "setup": "Raised 2026 guide, $1B buyback",
-      "v": {
-        "cat": -1,
-        "low": 0,
-        "sel": -1,
-        "mom": 1,
-        "thm": -1
-      },
-      "why": "AS rose 3.92% on Nov 17 as Q3 revenue rose 24% to $2.17B, 2026 guidance was raised and a $1B buyback was announced (StockTitan).",
-      "risk": "No price, valuation or volume data were read this run.",
-      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-17-2026",
-      "srcN": "StockTitan, Nov 17",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 18",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "invest",
-      "t": "TSM",
-      "n": "Taiwan Semiconductor",
-      "theme": "AI chip foundry",
-      "px": 396.48,
-      "pxN": "Last close in source (date not stated)",
-      "cat": "October revenue +60%",
-      "setup": "Growth and a raised dividend",
-      "v": {
-        "gro": 1,
-        "moat": -1,
-        "val": -1,
-        "mar": -1,
-        "dur": 1
-      },
-      "why": "October revenue rose 60% to NT$586.9B (about $17.9B), the Q3 dividend was raised to NT$9.0 from NT$7.0, and the capex plan is $40.9B.",
-      "risk": "Valuation, margins and the 52-week range were not stated, and its Anthropic and OpenAI investments add exposure to the AI trade.",
-      "src": "https://stocktwits.com/news-articles/markets/equity/tsm-stock-jumps-premarket-after-board-approves-1-b-investment-in-anthropic-and-open-ai-dividend-raise/cNGDjFbR9BE",
-      "srcN": "Stocktwits, Nov 11",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "invest",
-      "t": "GLW",
-      "n": "Corning",
-      "theme": "Optical and specialty glass",
-      "cat": "Jefferies initiation",
-      "setup": "Beaten-down AI optical play",
-      "v": {
-        "gro": 1,
-        "moat": -1,
-        "val": -1,
-        "mar": -1,
-        "dur": -1
-      },
-      "why": "Consensus target is $177.35 (Koyfin) with 14 of 18 analysts at Buy; Jefferies initiated at Buy with a $134 target. Q3 revenue was $5.08B (+19%).",
-      "risk": "Targets range from $120 to $192 and shares are down about 40% over six months; the 52-week range was not stated.",
-      "src": "https://stocktwits.com/news-articles/markets/equity/glw-stock-could-ride-the-ai-data-center-buildout-jefferies-says-sees-corning-s-optical-business-scaling-in-2028/cNGDFNGR9BK",
-      "srcN": "Stocktwits, Nov 11",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "invest",
-      "t": "GEV",
-      "n": "GE Vernova",
-      "theme": "Grid and power equipment",
-      "cat": "JPMorgan Overweight",
-      "setup": "Power demand theme",
-      "v": {
-        "gro": -1,
-        "moat": -1,
-        "val": -1,
-        "mar": -1,
-        "dur": 1
-      },
-      "why": "JPMorgan is Overweight with a $1,000 target, about 25.5% upside, and the stock is up 22% YTD.",
-      "risk": "JPMorgan cut the target from $1,035 and is cautious on the group; growth and margin data were not in the source.",
-      "src": "https://stocktwits.com/news-articles/markets/equity/gev-vrt-hubb-in-focus-jp-morgan-sees-potential-ai-stock-rebound-but-remains-cautious-on-electrical-equipment-sector/cNGDnGoR9B0",
-      "srcN": "Stocktwits, Nov 11",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "invest",
-      "t": "CSCO",
-      "n": "Cisco Systems",
-      "theme": "Networking, AI infrastructure",
-      "cat": "Earnings Nov 12",
-      "setup": "Steady compounder with margin questions",
-      "v": {
-        "gro": -1,
-        "moat": -1,
-        "val": 1,
-        "mar": 0,
-        "dur": 1
-      },
-      "why": "Consensus is Moderate Buy (11 Buy, 8 Hold) with a $137.50 average target; the stock trades at about 19x forward earnings and is +43% over 12 months.",
-      "risk": "Morgan Stanley downgraded to Hold on gross-margin pressure from the AI business and high expectations.",
-      "src": "https://www.tipranks.com/news/cisco-stock-csco-falls-as-morgan-stanley-downgrades-to-hold-ahead-of-q1-earnings",
-      "srcN": "TipRanks, Nov 5",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "penny",
-      "t": "OPEN",
-      "n": "Opendoor Technologies",
-      "theme": "Housing, earnings reaction",
-      "px": 1.41,
-      "pxN": "Nov 9 close (Alpha Vantage)",
-      "chg": 0.71,
-      "cat": "Q3 results out Nov 5",
-      "setup": "Post-earnings drop after a run-up",
-      "stage": 3,
-      "stageN": "Ran 13.8% into earnings on Nov 4, then fell 9.6% on Nov 5.",
-      "v": {
-        "news": 1,
-        "vol": -1,
-        "list": 1,
-        "cash": -1,
-        "dil": -1
-      },
-      "why": "Q3 revenue was $1,022M (+12%) with a net loss of $0.23 per share vs $0.12 a year ago. The Q4 guide calls for at least 40% revenue growth and an adjusted EBITDA loss of $70M-$85M. Alpha Vantage shows a $1.79 close on 43.1M shares.",
-      "risk": "The per-share loss widened from a year ago, cash and share count were not checked, and mortgage rates are still above 7%. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
-      "src": "https://www.sec.gov/Archives/edgar/data/0001801169/000180116926000027/q32026formxex991earningsre.htm",
-      "srcN": "Opendoor 8-K exhibit, Nov 5; Alpha Vantage, Nov 5",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "penny",
-      "t": "CRIS",
-      "n": "Curis",
-      "theme": "Biotech, cash-strapped",
-      "px": 0.6976,
-      "pxN": "Nov 9 close (Alpha Vantage)",
-      "chg": -23.04,
-      "cat": "Proxy filing (routine)",
-      "setup": "Spike on a routine filing, now fading",
-      "stage": 4,
-      "stageN": "Spiked 55.5% on Nov 4, then gave back 23.4% on Nov 5 on 11.9M shares.",
-      "v": {
-        "news": 0,
-        "vol": 1,
-        "list": 0,
-        "cash": 0,
-        "dil": 0
-      },
-      "why": "Curis jumped as much as 142% premarket on Nov 4 after a routine proxy filing, closed at $1.11, then fell to $0.85 on Nov 5 (volume 11.9M).",
-      "risk": "Cash was about $5.6M against a quarterly loss near $8.6M, so it will probably need to raise money. A study example of a trap. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
-      "src": "https://www.timothysykes.com/news/curis-inc-cris-news-2026_11_04/",
-      "srcN": "Timothy Sykes, Nov 4; Alpha Vantage, Nov 5",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "penny",
-      "t": "FISN",
-      "n": "Deep Fission",
-      "theme": "Big gainer, cause unconfirmed",
-      "px": 2.12,
-      "pxN": "Nov 10 close (Alpha Vantage)",
-      "chg": -25.09,
-      "cat": "No news found for the move",
-      "setup": "Spike with no sourced reason",
-      "stage": 3,
-      "stageN": "Spike already ran; cause unconfirmed.",
-      "v": {
-        "news": -1,
-        "vol": -1,
-        "list": -1,
-        "cash": -1,
-        "dil": -1
-      },
-      "why": "Deep Fission rose 52.97% to $2.83 on 6.3 million shares with a market cap of about $167M. It is a Nasdaq-listed company developing an underground nuclear reactor for AI data centers. I did not find an article explaining the move, which is a common pattern before these spikes fade. Nov 10 close from Alpha Vantage: $2.12 (-25.09%).",
-      "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
-      "src": "https://stockanalysis.com/markets/gainers/",
-      "srcN": "StockAnalysis gainers, Nov 9",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "penny",
-      "t": "TVRD",
-      "n": "Tvardi Therapeutics",
-      "theme": "Big gainer, cause unconfirmed",
-      "px": 1.41,
-      "pxN": "Nov 10 close (Alpha Vantage)",
-      "chg": 0.0,
-      "cat": "No news found for the move",
-      "setup": "Spike with no sourced reason",
-      "stage": 3,
-      "stageN": "Spike already ran; cause unconfirmed.",
-      "v": {
-        "news": -1,
-        "vol": -1,
-        "list": -1,
-        "cash": -1,
-        "dil": -1
-      },
-      "why": "Tvardi Therapeutics rose 47.21% to $1.41 on 4.6 million shares with a market cap of about $19M. I did not find an article explaining the move, which is a common pattern before these spikes fade. Nov 10 close from Alpha Vantage: $1.41 (+0.00%).",
-      "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
-      "src": "https://stockanalysis.com/markets/gainers/",
-      "srcN": "StockAnalysis gainers, Nov 9",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "penny",
-      "t": "NCPL",
-      "n": "Netcapital",
-      "theme": "Big gainer, cause unconfirmed",
-      "px": 1.97,
-      "pxN": "Nov 10 close (Alpha Vantage)",
-      "chg": 8.24,
-      "cat": "No news found for the move",
-      "setup": "Spike with no sourced reason",
-      "stage": 3,
-      "stageN": "Spike already ran; cause unconfirmed.",
-      "v": {
-        "news": -1,
-        "vol": -1,
-        "list": -1,
-        "cash": -1,
-        "dil": -1
-      },
-      "why": "Netcapital rose 44.44% to $1.82 on 12.3 million shares with a market cap of about $14M. I did not find an article explaining the move, which is a common pattern before these spikes fade. Nov 10 close from Alpha Vantage: $1.97 (+8.24%).",
-      "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
-      "src": "https://stockanalysis.com/markets/gainers/",
-      "srcN": "StockAnalysis gainers, Nov 9",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "penny",
-      "t": "EDSA",
-      "n": "Edesa Biotech",
-      "theme": "Study example: no-news volume spike",
-      "px": 2.63,
-      "pxN": "Nov 9 close (MarketBeat via DailyPolitical)",
-      "cat": "No reason found",
-      "setup": "Study example: 81M shares traded vs a 1.8M average, no news found",
-      "stage": 4,
-      "stageN": "Likely trap: huge volume with no cause found.",
-      "v": {
-        "news": 0,
-        "vol": 1,
-        "list": 1,
-        "cash": -1,
-        "dil": -1
-      },
-      "why": "EDSA (Nasdaq) closed at $2.63, up $0.49, on volume of about 81.3M vs a 1.79M average, with a market cap near $25.4M (MarketBeat list, Nov 9). I found no article explaining the move.",
-      "risk": "A spike with no news on a tiny market cap is a classic fade; cash and dilution were not checked. (Kept from the prior run: the penny and micro scans could not be refreshed on Nov 11 because mover-list pages were blocked.)",
-      "src": "https://www.dailypolitical.com/2026/11/09/penny-stocks-to-research-november-9th.html",
-      "srcN": "DailyPolitical citing MarketBeat, Nov 9",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "penny",
-      "t": "NWGL",
-      "n": "NWGL (Nasdaq)",
-      "theme": "Study example: no-news volume spike",
-      "px": 3.23,
-      "pxN": "Nov 9 close (MarketBeat via DailyPolitical)",
-      "cat": "No reason found",
-      "hi": 158.4,
-      "lo": 2.09,
-      "hiN": "12-month range (MarketBeat, Nov 9)",
-      "setup": "Study example: 53.5M shares vs a 339K average, no news found",
-      "stage": 4,
-      "stageN": "Likely trap: volume 150x average, no cause found, 12-month high of $158.40.",
-      "v": {
-        "news": 0,
-        "vol": 1,
-        "list": 1,
-        "cash": -1,
-        "dil": -1
-      },
-      "why": "NWGL closed at $3.23, up $0.70, on volume of about 53.5M vs a 339K average; its 12-month range is $2.09-$158.40 (MarketBeat list, Nov 9). I found no article explaining the move.",
-      "risk": "The wide range suggests heavy past price destruction, and a no-news spike can reverse fast; cash and dilution were not checked. (Kept from the prior run: the penny and micro scans could not be refreshed on Nov 11 because mover-list pages were blocked.)",
-      "src": "https://www.dailypolitical.com/2026/11/09/penny-stocks-to-research-november-9th.html",
-      "srcN": "DailyPolitical citing MarketBeat, Nov 9",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "micro",
-      "t": "LABT",
-      "n": "Lakewood-Amedex Biotherapeutics",
-      "theme": "Biotech, antimicrobials",
-      "px": 0.418,
-      "pxN": "Nov 9 close (Alpha Vantage)",
-      "chg": 8.21,
-      "cat": "Series C preferred fully redeemed (Nov 5 release)",
-      "setup": "One-day spike on capital-structure news",
-      "stage": 3,
-      "stageN": "Up about 181% in one session; the spike may already be priced in.",
-      "v": {
-        "news": 1,
-        "vol": -1,
-        "buzz": -1,
-        "buy": -1,
-        "dil": 1
-      },
-      "why": "On Nov 5 the company said it redeemed the last 127,097 Series C preferred shares for $1,270,970 cash (agreement dated Nov 2), so no preferred stock or borrowed-money debt remains and no more conversion shares can be issued. It has a Phase 2a trial of Nu-3 in infected diabetic foot ulcers (first patient dosed Sep 24). On Nov 9 it closed at $0.418, below the $0.54 first logged.",
-      "soc": "Not checked.",
-      "opt": "Not stated.",
-      "ins": "Not stated.",
-      "risk": "The release gives no cash balance or runway, and says the redemption may shorten runway. A 181% one-day move in a sub-$1 name often fades. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
-      "src": "https://finviz.com/news/417213/lakewood-amedex-biotherapeutics-announces-completion-of-series-c-convertible-preferred-stock-redemption",
-      "srcN": "Company press release, Nov 5; price from screener",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "micro",
-      "t": "SDA",
-      "n": "SunCar Technology Group",
-      "theme": "Unexplained spike",
-      "px": 0.44,
-      "pxN": "Nov 9 close (Alpha Vantage)",
-      "chg": 16.87,
-      "cat": "None found",
-      "setup": "Big gain with no news found",
-      "stage": 3,
-      "stageN": "Up about 145% in one session.",
-      "v": {
-        "news": 0,
-        "vol": -1,
-        "buzz": -1,
-        "buy": -1,
-        "dil": -1
-      },
-      "why": "The stock jumped about 145% and no company news explaining it was found in dated sources.",
-      "soc": "Not checked.",
-      "opt": "Not stated.",
-      "ins": "Not stated.",
-      "risk": "A spike with no stated reason is the classic pump-and-fade pattern. Treat it as a study example, not a setup. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
-      "src": "https://www.marketbeat.com/",
-      "srcN": "Screener data, Nov 5",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "micro",
-      "t": "RCT",
-      "n": "RedCloud Holdings",
-      "theme": "Delisting appeal, consolidation",
-      "px": 0.0424,
-      "pxN": "Nov 5 close",
-      "chg": 41.33,
-      "cat": "Share consolidation expected about Nov 13",
-      "setup": "Bounce before a reverse split",
-      "stage": 4,
-      "stageN": "Price already jumped ahead of the consolidation date.",
-      "v": {
-        "news": 1,
-        "vol": -1,
-        "buzz": -1,
-        "buy": 0,
-        "dil": 0
-      },
-      "why": "The company is appealing a delisting notice and a share consolidation is expected around Nov 13. Another source listed the price near $0.25, so the quote needs checking before use.",
-      "soc": "Not checked.",
-      "opt": "Not stated.",
-      "ins": "Not stated.",
-      "risk": "Reverse splits usually reset the price and then it keeps falling. This is the trap most sub-$1 buyers fall into. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
-      "src": "https://www.marketbeat.com/",
-      "srcN": "Screener and filings summaries, Nov 5",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "micro",
-      "t": "VIVK",
-      "n": "Vivakor",
-      "theme": "Going concern, retail chatter",
-      "px": 0.3793,
-      "pxN": "Nov 9 close (Alpha Vantage)",
-      "chg": -23.56,
-      "cat": "Retail sentiment on Stocktwits",
-      "setup": "Social-driven bounce",
-      "stage": 4,
-      "stageN": "Three reverse splits already.",
-      "v": {
-        "news": 0,
-        "vol": -1,
-        "buzz": 1,
-        "buy": -1,
-        "dil": 0
-      },
-      "why": "The stock rose 34% on Stocktwits buzz. Reports describe a going-concern warning and three prior reverse splits.",
-      "soc": "Stocktwits sentiment was elevated on the day.",
-      "opt": "Not stated.",
-      "ins": "Not stated.",
-      "risk": "Going-concern language plus repeated reverse splits point to ongoing dilution. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
-      "src": "https://stocktwits.com/",
-      "srcN": "Stocktwits coverage, Nov 5",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "micro",
-      "t": "GPUS",
-      "n": "Hyperscale Data",
-      "theme": "Big gainer, cause unconfirmed",
-      "px": 0.1873,
-      "pxN": "Nov 10 close (Alpha Vantage)",
-      "chg": -1.16,
-      "cat": "No news found for the move",
-      "setup": "Spike with no sourced reason",
-      "stage": 3,
-      "stageN": "Spike already ran; cause unconfirmed.",
-      "v": {
-        "news": -1,
-        "vol": -1,
-        "buzz": -1,
-        "buy": -1,
-        "dil": -1
-      },
-      "why": "Hyperscale Data rose 32.61% to $0.19 on 130.6 million shares with a market cap of about $32M. I did not find an article explaining the move, which is a common pattern before these spikes fade. Nov 10 close from Alpha Vantage: $0.1873 (-1.16%).",
-      "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
-      "src": "https://stockanalysis.com/markets/gainers/",
-      "srcN": "StockAnalysis gainers, Nov 9",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "micro",
-      "t": "XHLD",
-      "n": "TEN Holdings",
-      "theme": "Big gainer, cause unconfirmed",
-      "px": 0.858,
-      "pxN": "Nov 10 close (Alpha Vantage)",
-      "chg": -1.38,
-      "cat": "No news found for the move",
-      "setup": "Spike with no sourced reason",
-      "stage": 3,
-      "stageN": "Spike already ran; cause unconfirmed.",
-      "v": {
-        "news": -1,
-        "vol": -1,
-        "buzz": -1,
-        "buy": -1,
-        "dil": -1
-      },
-      "why": "TEN Holdings rose 49.48% to $0.87 on 68.3 million shares with a market cap of about $10M. I did not find an article explaining the move, which is a common pattern before these spikes fade. Nov 10 close from Alpha Vantage: $0.858 (-1.38%).",
-      "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
-      "src": "https://stockanalysis.com/markets/gainers/",
-      "srcN": "StockAnalysis gainers, Nov 9",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "micro",
-      "t": "ESLA",
-      "n": "Estrella Immunopharma",
-      "theme": "Big gainer, cause unconfirmed",
-      "px": 0.7472,
-      "pxN": "Nov 10 close (Alpha Vantage)",
-      "chg": 45.4,
-      "cat": "No news found for the move",
-      "setup": "Spike with no sourced reason",
-      "stage": 3,
-      "stageN": "Spike already ran; cause unconfirmed.",
-      "v": {
-        "news": -1,
-        "vol": -1,
-        "buzz": -1,
-        "buy": -1,
-        "dil": -1
-      },
-      "why": "Estrella Immunopharma rose 36.93% to $0.514 on 6.6 million shares with a market cap of about $22M. I did not find an article explaining the move, which is a common pattern before these spikes fade. Nov 10 close from Alpha Vantage: $0.7472 (+45.40%).",
-      "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
-      "src": "https://stockanalysis.com/markets/gainers/",
-      "srcN": "StockAnalysis gainers, Nov 9",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "micro",
-      "t": "AKBA",
-      "n": "Akebia Therapeutics",
-      "theme": "Big gainer, cause unconfirmed",
-      "px": 0.5418,
-      "pxN": "Nov 10 close (Alpha Vantage)",
-      "chg": 1.69,
-      "cat": "No news found for the move",
-      "setup": "Spike with no sourced reason",
-      "stage": 3,
-      "stageN": "Spike already ran; cause unconfirmed.",
-      "v": {
-        "news": -1,
-        "vol": -1,
-        "buzz": -1,
-        "buy": -1,
-        "dil": -1
-      },
-      "why": "Akebia Therapeutics rose 32.77% to $0.533 on 16.9 million shares with a market cap of about $148M. I did not find an article explaining the move, which is a common pattern before these spikes fade. Nov 10 close from Alpha Vantage: $0.5418 (+1.69%).",
-      "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
-      "src": "https://stockanalysis.com/markets/gainers/",
-      "srcN": "StockAnalysis gainers, Nov 9",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "micro",
-      "t": "SOC",
-      "n": "Sable Offshore",
-      "theme": "Study example: sharp drop on high volume",
-      "px": 0.81,
-      "pxN": "Nov 9 close (MarketBeat via DailyPolitical)",
-      "chg": -57.8,
-      "cat": "No reason confirmed",
-      "setup": "Study example: fell $1.11 on 220M shares",
-      "stage": 4,
-      "stageN": "Likely trap: a sub-$1 name collapsing on huge volume; cause not confirmed.",
-      "v": {
-        "news": 0,
-        "vol": 1,
-        "buzz": -1,
-        "buy": -1,
-        "dil": -1
-      },
-      "why": "SOC (NYSE) closed at $0.81, down $1.11 (about -58%, my arithmetic), on about 220M shares vs an 8.7M average. Current ratio is 0.24, debt/equity 1.85 and the 52-week range $0.51-$19.25 (MarketBeat list, Nov 9). I did not confirm the cause.",
-      "risk": "Weak liquidity ratios and a collapsing price; I found no dated article stating dilution, so that check is not stated. (Kept from the prior run: the penny and micro scans could not be refreshed on Nov 11 because mover-list pages were blocked.)",
-      "src": "https://www.dailypolitical.com/2026/11/09/penny-stocks-to-research-november-9th.html",
-      "srcN": "DailyPolitical citing MarketBeat, Nov 9",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
-    },
-    {
-      "kind": "micro",
-      "t": "SLQT",
-      "n": "SelectQuote",
-      "theme": "Insurance distributor, director buy",
-      "px": 0.46,
-      "pxN": "Price at publication, Nov 11",
-      "cat": "Fiscal Q1 2027 results",
-      "setup": "Director bought 409,836 shares near $0.49",
-      "stage": 2,
-      "stageN": "Insider buy and a loss narrower than expected, but revenue missed.",
-      "v": {
-        "news": 1,
-        "vol": -1,
-        "buzz": -1,
-        "buy": 1,
-        "dil": -1
-      },
-      "why": "Director Raymond Weldon bought 409,836 shares on Nov 6 at a weighted average of $0.49 ($200,819). The stock was $0.46 at publication, down 67.6% YTD, with price-to-book of 0.26. Fiscal Q1 adjusted EPS was -$0.21 vs -$0.34 expected.",
-      "risk": "Revenue was $280M vs $326.17M expected, the stock is down two-thirds YTD, and sub-$1 listings can face exchange-compliance notices; the filing was not opened.",
-      "src": "https://www.investing.com/news/insider-trading-news/selectquote-director-raymond-weldon-buys-200819-in-stock-93CH-5018035",
-      "srcN": "Investing.com, Nov 11",
-      "ins": "Director Raymond Weldon: 409,836 shares at $0.49 weighted average, $200,819, Nov 6 (Investing.com digest)",
-      "dd": [
-        {
-          "f": "Filings",
-          "d": "Nov 11",
-          "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
-        }
-      ],
-      "ddv": "watch"
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
     }
-  ]
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "radar",
+   "t": "MP",
+   "n": "MP Materials",
+   "theme": "Rare-earth magnets, Q4 production start",
+   "cat": "Q4 magnet shipments, dysprosium/terbium start",
+   "setup": "Upgrade after a revenue surge, stock down 27% YTD",
+   "stage": 2,
+   "stageN": "Up about 2.3% overnight after the upgrade.",
+   "v": {
+    "inst": -1,
+    "ins": -1,
+    "vol": -1,
+    "base": 1,
+    "cat": 1
+   },
+   "why": "Freedom Broker upgraded to Buy with a $51 target (from $57), about 40% upside. Q3 revenue was $147.7M (+176%) and adjusted EBITDA $41.1M vs a $12.6M loss a year earlier; adjusted EPS $0.04 vs a $0.01 loss expected.",
+   "risk": "The stock is down 27% YTD, the target was cut from $57, and the Q4 production start has no firm date in the source.",
+   "src": "https://stocktwits.com/news-articles/markets/equity/mp-stock-freedom-broker-upgrade-upside-price-target-magnet-production/cNGD0paR9BT",
+   "srcN": "Stocktwits, Nov 11",
+   "soc": "Stocktwits sentiment slipped to 'bullish' from 'extremely bullish' (Stocktwits, Nov 11)",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "radar",
+   "t": "GLW",
+   "n": "Corning",
+   "theme": "AI optical, analyst initiation",
+   "cat": "No date set",
+   "setup": "Jefferies Buy after a 40% six-month drop",
+   "stage": 2,
+   "stageN": "Early move on the initiation, premarket only.",
+   "v": {
+    "inst": -1,
+    "ins": -1,
+    "vol": -1,
+    "base": 0,
+    "cat": 0
+   },
+   "why": "Jefferies initiated at Buy with a $134 target (about 19% upside from Tuesday's close) and sees the optical business scaling in 2028. Q3 adjusted EPS was $0.91 vs $0.88 and revenue $5.08B (+19%); shares are down about 40% over six months and rose as much as 7% premarket.",
+   "risk": "Other targets are mixed (Bernstein $120 Market Perform, Morgan Stanley $155 Equalweight) and the payoff Jefferies describes is years away.",
+   "src": "https://stocktwits.com/news-articles/markets/equity/glw-stock-could-ride-the-ai-data-center-buildout-jefferies-says-sees-corning-s-optical-business-scaling-in-2028/cNGDFNGR9BK",
+   "srcN": "Stocktwits, Nov 11",
+   "soc": "Stocktwits sentiment 'neutral'; message volume not stated (Stocktwits, Nov 11)",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "radar",
+   "t": "AAON",
+   "n": "AAON",
+   "theme": "Data-center cooling, already ran",
+   "pxN": "Nov 10 session move (Stocktitan)",
+   "chg": 19.31,
+   "cat": "Q3 results (Nov 9)",
+   "setup": "Too late: +19% on Nov 10 with an accounting caveat",
+   "stage": 4,
+   "stageN": "Already up 19.31% on Nov 10; chasing now is the risk.",
+   "v": {
+    "inst": -1,
+    "ins": -1,
+    "vol": -1,
+    "base": 0,
+    "cat": 1
+   },
+   "why": "AAON jumped 19.31% on Nov 10 after Q3 revenue of $707.43M (+84.1%) vs $602M expected and adjusted EPS of $0.83 vs $0.58. The data-center cooling unit BASX grew 218% and 2026 sales growth guidance rose to 72-75% from 55-60%.",
+   "risk": "Labeled too late. It restated Q1 and Q2 and disclosed a material weakness in internal controls (no fraud found), and backlog fell 5.9% sequentially.",
+   "src": "https://247wallst.com/cards/aaon-q3-2026-earnings-aaon-01m71243rr8tth39js1gskaswb",
+   "srcN": "24/7 Wall St., Nov 9; Stocktitan, Nov 10",
+   "dd": [
+    {
+     "f": "10-Q / restatement (digest)",
+     "d": "Nov 9",
+     "s": "24/7 Wall St. reports restated Q1 and Q2 results and a material weakness in internal controls; the filing itself was not opened this run."
+    }
+   ],
+   "ddv": "red"
+  },
+  {
+   "kind": "day",
+   "t": "SLS",
+   "n": "SELLAS Life Sciences",
+   "theme": "Biotech trial data",
+   "px": 17.95,
+   "pxN": "Nov 18 close (Alpha Vantage)",
+   "chg": -6.27,
+   "hi": 24.89,
+   "lo": 16.7,
+   "hiN": "Nov 17 day range (Alpha Vantage)",
+   "cat": "Phase 3 REGAL met its main goal (Nov 17); $150M offering proposed",
+   "catDate": "2026-11-17",
+   "setup": "Cancer-vaccine win, then an equity offering",
+   "v": {
+    "news": 1,
+    "gap": 1,
+    "vol": 1,
+    "iv": -1,
+    "liq": -1
+   },
+   "why": "Nov 18 update: SLS closed $17.95 (-6.27%) on 35.8M shares after the Nov 17 spike (Alpha Vantage). SLS closed +156.36% at $19.15 (day range $16.70-$24.89) on 118M shares after its Phase 3 REGAL trial of cancer vaccine GPS met its primary goal (median 24.0 vs 14.7 months). A proposed $150.0M underwritten public offering was announced at 4:01 PM ET and shares fell 10.57% after hours.",
+   "risk": "Dilution: the $150.0M offering is large against the stock's size, spikes on trial data often fade, and the filing itself was not opened (StockTitan live blog digest only).",
+   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-17-2026",
+   "srcN": "StockTitan, Nov 17 (updated 8:30 PM ET)",
+   "dd": [
+    {
+     "f": "Offering (press-release digest)",
+     "d": "Nov 17",
+     "s": "StockTitan reports a proposed $150.0M underwritten public offering of common stock announced 4:01 PM ET; the 424B5 / 8-K itself was not opened."
+    },
+    {
+     "f": "Filings",
+     "d": "Nov 18",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "red"
+  },
+  {
+   "kind": "day",
+   "t": "RCAT",
+   "n": "Red Cat Holdings",
+   "theme": "Drones",
+   "px": 2.25,
+   "pxN": "Nov 18 close (Alpha Vantage)",
+   "chg": -6.64,
+   "hi": 2.72,
+   "lo": 2.3,
+   "hiN": "Nov 17 day range (Alpha Vantage)",
+   "cat": "Withdrew FY2026 revenue target (Nov 16, 4:05 PM ET)",
+   "catDate": "2026-11-16",
+   "setup": "Guidance pulled; stock down about 32%",
+   "v": {
+    "news": 1,
+    "gap": 1,
+    "vol": -1,
+    "iv": -1,
+    "liq": -1
+   },
+   "why": "RCAT closed -31.73% at $2.41 on 31.8M shares after it withdrew its full-year 2026 revenue target. Q3 revenue was $11.8M (+22%) versus about $42M expected, with an adjusted loss of $0.26 a share versus $0.20 expected (Investing.com).",
+   "risk": "A pulled forecast and a large revenue miss; analysts' next moves and any financing are unknown and the filings were not opened.",
+   "src": "https://finance.yahoo.com/markets/stocks/articles/premarket-movers-nvidia-red-cat-124832112.html",
+   "srcN": "Investing.com via Yahoo Finance, Nov 17; StockTitan, Nov 17",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 18",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "swing",
+   "t": "HD",
+   "n": "Home Depot",
+   "theme": "Housing and retail",
+   "px": 339.01,
+   "pxN": "Nov 17 close (Alpha Vantage)",
+   "chg": -2.45,
+   "hi": 346.9,
+   "lo": 334.44,
+   "hiN": "Nov 17 day range (Alpha Vantage)",
+   "cat": "New CEO Richard McPhail starts Nov 23",
+   "catDate": "2026-11-23",
+   "setup": "Beat on sales, CEO change ahead",
+   "v": {
+    "cat": 1,
+    "low": 0,
+    "sel": -1,
+    "mom": -1,
+    "thm": -1
+   },
+   "why": "HD closed -2.45% at $339.01 (day range $334.44-$346.90) after Q3 sales of $43.4B (+4.9%) beat about $42.8B expected; FY2026 sales growth guidance is about 4.5% and Richard McPhail becomes CEO Nov 23.",
+   "risk": "Rates near 5% pressure housing demand, and the source gives no valuation or earnings-per-share detail.",
+   "src": "https://finance.yahoo.com/markets/stocks/articles/premarket-movers-nvidia-red-cat-124832112.html",
+   "srcN": "Investing.com via Yahoo Finance, Nov 17; StockTitan, Nov 17",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 18",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "swing",
+   "t": "ACM",
+   "n": "AECOM",
+   "theme": "Infrastructure",
+   "chg": 11.08,
+   "cat": "No date set",
+   "setup": "Record backlog and first FY2027 guidance",
+   "v": {
+    "cat": -1,
+    "low": 0,
+    "sel": -1,
+    "mom": 1,
+    "thm": -1
+   },
+   "why": "ACM rose 11.08% on Nov 17 after backlog grew 13% to a record $28.0B and it gave first fiscal 2027 guidance (StockTitan).",
+   "risk": "After an 11% one-day jump, a pullback is possible; no price or valuation data were read.",
+   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-17-2026",
+   "srcN": "StockTitan, Nov 17",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 18",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "swing",
+   "t": "AS",
+   "n": "Amer Sports",
+   "theme": "Consumer brands",
+   "chg": 3.92,
+   "cat": "No date set",
+   "setup": "Raised 2026 guide, $1B buyback",
+   "v": {
+    "cat": -1,
+    "low": 0,
+    "sel": -1,
+    "mom": 1,
+    "thm": -1
+   },
+   "why": "AS rose 3.92% on Nov 17 as Q3 revenue rose 24% to $2.17B, 2026 guidance was raised and a $1B buyback was announced (StockTitan).",
+   "risk": "No price, valuation or volume data were read this run.",
+   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-17-2026",
+   "srcN": "StockTitan, Nov 17",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 18",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "invest",
+   "t": "TSM",
+   "n": "Taiwan Semiconductor",
+   "theme": "AI chip foundry",
+   "px": 396.48,
+   "pxN": "Last close in source (date not stated)",
+   "cat": "October revenue +60%",
+   "setup": "Growth and a raised dividend",
+   "v": {
+    "gro": 1,
+    "moat": -1,
+    "val": -1,
+    "mar": -1,
+    "dur": 1
+   },
+   "why": "October revenue rose 60% to NT$586.9B (about $17.9B), the Q3 dividend was raised to NT$9.0 from NT$7.0, and the capex plan is $40.9B.",
+   "risk": "Valuation, margins and the 52-week range were not stated, and its Anthropic and OpenAI investments add exposure to the AI trade.",
+   "src": "https://stocktwits.com/news-articles/markets/equity/tsm-stock-jumps-premarket-after-board-approves-1-b-investment-in-anthropic-and-open-ai-dividend-raise/cNGDjFbR9BE",
+   "srcN": "Stocktwits, Nov 11",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "invest",
+   "t": "GLW",
+   "n": "Corning",
+   "theme": "Optical and specialty glass",
+   "cat": "Jefferies initiation",
+   "setup": "Beaten-down AI optical play",
+   "v": {
+    "gro": 1,
+    "moat": -1,
+    "val": -1,
+    "mar": -1,
+    "dur": -1
+   },
+   "why": "Consensus target is $177.35 (Koyfin) with 14 of 18 analysts at Buy; Jefferies initiated at Buy with a $134 target. Q3 revenue was $5.08B (+19%).",
+   "risk": "Targets range from $120 to $192 and shares are down about 40% over six months; the 52-week range was not stated.",
+   "src": "https://stocktwits.com/news-articles/markets/equity/glw-stock-could-ride-the-ai-data-center-buildout-jefferies-says-sees-corning-s-optical-business-scaling-in-2028/cNGDFNGR9BK",
+   "srcN": "Stocktwits, Nov 11",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "invest",
+   "t": "GEV",
+   "n": "GE Vernova",
+   "theme": "Grid and power equipment",
+   "cat": "JPMorgan Overweight",
+   "setup": "Power demand theme",
+   "v": {
+    "gro": -1,
+    "moat": -1,
+    "val": -1,
+    "mar": -1,
+    "dur": 1
+   },
+   "why": "JPMorgan is Overweight with a $1,000 target, about 25.5% upside, and the stock is up 22% YTD.",
+   "risk": "JPMorgan cut the target from $1,035 and is cautious on the group; growth and margin data were not in the source.",
+   "src": "https://stocktwits.com/news-articles/markets/equity/gev-vrt-hubb-in-focus-jp-morgan-sees-potential-ai-stock-rebound-but-remains-cautious-on-electrical-equipment-sector/cNGDnGoR9B0",
+   "srcN": "Stocktwits, Nov 11",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "invest",
+   "t": "CSCO",
+   "n": "Cisco Systems",
+   "theme": "Networking, AI infrastructure",
+   "cat": "Earnings Nov 12",
+   "setup": "Steady compounder with margin questions",
+   "v": {
+    "gro": -1,
+    "moat": -1,
+    "val": 1,
+    "mar": 0,
+    "dur": 1
+   },
+   "why": "Consensus is Moderate Buy (11 Buy, 8 Hold) with a $137.50 average target; the stock trades at about 19x forward earnings and is +43% over 12 months.",
+   "risk": "Morgan Stanley downgraded to Hold on gross-margin pressure from the AI business and high expectations.",
+   "src": "https://www.tipranks.com/news/cisco-stock-csco-falls-as-morgan-stanley-downgrades-to-hold-ahead-of-q1-earnings",
+   "srcN": "TipRanks, Nov 5",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "penny",
+   "t": "OPEN",
+   "n": "Opendoor Technologies",
+   "theme": "Housing, earnings reaction",
+   "px": 1.41,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": 0.71,
+   "cat": "Q3 results out Nov 5",
+   "setup": "Post-earnings drop after a run-up",
+   "stage": 3,
+   "stageN": "Ran 13.8% into earnings on Nov 4, then fell 9.6% on Nov 5.",
+   "v": {
+    "news": 1,
+    "vol": -1,
+    "list": 1,
+    "cash": -1,
+    "dil": -1
+   },
+   "why": "Q3 revenue was $1,022M (+12%) with a net loss of $0.23 per share vs $0.12 a year ago. The Q4 guide calls for at least 40% revenue growth and an adjusted EBITDA loss of $70M-$85M. Alpha Vantage shows a $1.79 close on 43.1M shares.",
+   "risk": "The per-share loss widened from a year ago, cash and share count were not checked, and mortgage rates are still above 7%. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
+   "src": "https://www.sec.gov/Archives/edgar/data/0001801169/000180116926000027/q32026formxex991earningsre.htm",
+   "srcN": "Opendoor 8-K exhibit, Nov 5; Alpha Vantage, Nov 5",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "penny",
+   "t": "CRIS",
+   "n": "Curis",
+   "theme": "Biotech, cash-strapped",
+   "px": 0.6976,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": -23.04,
+   "cat": "Proxy filing (routine)",
+   "setup": "Spike on a routine filing, now fading",
+   "stage": 4,
+   "stageN": "Spiked 55.5% on Nov 4, then gave back 23.4% on Nov 5 on 11.9M shares.",
+   "v": {
+    "news": 0,
+    "vol": 1,
+    "list": 0,
+    "cash": 0,
+    "dil": 0
+   },
+   "why": "Curis jumped as much as 142% premarket on Nov 4 after a routine proxy filing, closed at $1.11, then fell to $0.85 on Nov 5 (volume 11.9M).",
+   "risk": "Cash was about $5.6M against a quarterly loss near $8.6M, so it will probably need to raise money. A study example of a trap. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
+   "src": "https://www.timothysykes.com/news/curis-inc-cris-news-2026_11_04/",
+   "srcN": "Timothy Sykes, Nov 4; Alpha Vantage, Nov 5",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "penny",
+   "t": "FISN",
+   "n": "Deep Fission",
+   "theme": "Big gainer, cause unconfirmed",
+   "px": 2.71,
+   "pxN": "Nov 18 close (Alpha Vantage)",
+   "chg": 0.37,
+   "cat": "No news found for the move",
+   "setup": "Spike with no sourced reason",
+   "stage": 3,
+   "stageN": "Spike already ran; cause unconfirmed.",
+   "v": {
+    "news": -1,
+    "vol": -1,
+    "list": -1,
+    "cash": -1,
+    "dil": -1
+   },
+   "why": "Deep Fission rose 52.97% to $2.83 on 6.3 million shares with a market cap of about $167M. It is a Nasdaq-listed company developing an underground nuclear reactor for AI data centers. I did not find an article explaining the move, which is a common pattern before these spikes fade. Nov 10 close from Alpha Vantage: $2.12 (-25.09%).",
+   "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
+   "src": "https://stockanalysis.com/markets/gainers/",
+   "srcN": "StockAnalysis gainers, Nov 9",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "penny",
+   "t": "TVRD",
+   "n": "Tvardi Therapeutics",
+   "theme": "Big gainer, cause unconfirmed",
+   "px": 1.04,
+   "pxN": "Nov 18 close (Alpha Vantage)",
+   "chg": 2.97,
+   "cat": "No news found for the move",
+   "setup": "Spike with no sourced reason",
+   "stage": 3,
+   "stageN": "Spike already ran; cause unconfirmed.",
+   "v": {
+    "news": -1,
+    "vol": -1,
+    "list": -1,
+    "cash": -1,
+    "dil": -1
+   },
+   "why": "Tvardi Therapeutics rose 47.21% to $1.41 on 4.6 million shares with a market cap of about $19M. I did not find an article explaining the move, which is a common pattern before these spikes fade. Nov 10 close from Alpha Vantage: $1.41 (+0.00%).",
+   "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
+   "src": "https://stockanalysis.com/markets/gainers/",
+   "srcN": "StockAnalysis gainers, Nov 9",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "penny",
+   "t": "NCPL",
+   "n": "Netcapital",
+   "theme": "Big gainer, cause unconfirmed",
+   "px": 2.89,
+   "pxN": "Nov 18 close (Alpha Vantage)",
+   "chg": 21.94,
+   "cat": "No news found for the move",
+   "setup": "Spike with no sourced reason",
+   "stage": 3,
+   "stageN": "Spike already ran; cause unconfirmed.",
+   "v": {
+    "news": -1,
+    "vol": -1,
+    "list": -1,
+    "cash": -1,
+    "dil": -1
+   },
+   "why": "Netcapital rose 44.44% to $1.82 on 12.3 million shares with a market cap of about $14M. I did not find an article explaining the move, which is a common pattern before these spikes fade. Nov 10 close from Alpha Vantage: $1.97 (+8.24%). Nov 18 update: it rose 21.94% to $2.89 on 9.28M shares (Alpha Vantage); no cause was found.",
+   "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
+   "src": "https://stockanalysis.com/markets/gainers/",
+   "srcN": "StockAnalysis gainers, Nov 9",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "penny",
+   "t": "EDSA",
+   "n": "Edesa Biotech",
+   "theme": "Study example: no-news volume spike",
+   "px": 2.06,
+   "pxN": "Nov 18 close (Alpha Vantage)",
+   "cat": "No reason found",
+   "setup": "Study example: 81M shares traded vs a 1.8M average, no news found",
+   "stage": 4,
+   "stageN": "Likely trap: huge volume with no cause found.",
+   "v": {
+    "news": 0,
+    "vol": 1,
+    "list": 1,
+    "cash": -1,
+    "dil": -1
+   },
+   "why": "EDSA (Nasdaq) closed at $2.63, up $0.49, on volume of about 81.3M vs a 1.79M average, with a market cap near $25.4M (MarketBeat list, Nov 9). I found no article explaining the move.",
+   "risk": "A spike with no news on a tiny market cap is a classic fade; cash and dilution were not checked. (Kept from the prior run: the penny and micro scans could not be refreshed on Nov 11 because mover-list pages were blocked.)",
+   "src": "https://www.dailypolitical.com/2026/11/09/penny-stocks-to-research-november-9th.html",
+   "srcN": "DailyPolitical citing MarketBeat, Nov 9",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch",
+   "chg": 5.1
+  },
+  {
+   "kind": "penny",
+   "t": "NWGL",
+   "n": "NWGL (Nasdaq)",
+   "theme": "Study example: no-news volume spike",
+   "px": 2.06,
+   "pxN": "Nov 18 close (Alpha Vantage)",
+   "cat": "No reason found",
+   "hi": 158.4,
+   "lo": 2.09,
+   "hiN": "12-month range (MarketBeat, Nov 9)",
+   "setup": "Study example: 53.5M shares vs a 339K average, no news found",
+   "stage": 4,
+   "stageN": "Likely trap: volume 150x average, no cause found, 12-month high of $158.40.",
+   "v": {
+    "news": 0,
+    "vol": 1,
+    "list": 1,
+    "cash": -1,
+    "dil": -1
+   },
+   "why": "NWGL closed at $3.23, up $0.70, on volume of about 53.5M vs a 339K average; its 12-month range is $2.09-$158.40 (MarketBeat list, Nov 9). I found no article explaining the move.",
+   "risk": "The wide range suggests heavy past price destruction, and a no-news spike can reverse fast; cash and dilution were not checked. (Kept from the prior run: the penny and micro scans could not be refreshed on Nov 11 because mover-list pages were blocked.)",
+   "src": "https://www.dailypolitical.com/2026/11/09/penny-stocks-to-research-november-9th.html",
+   "srcN": "DailyPolitical citing MarketBeat, Nov 9",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch",
+   "chg": -5.07
+  },
+  {
+   "kind": "micro",
+   "t": "LABT",
+   "n": "Lakewood-Amedex Biotherapeutics",
+   "theme": "Biotech, antimicrobials",
+   "px": 0.418,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": 8.21,
+   "cat": "Series C preferred fully redeemed (Nov 5 release)",
+   "setup": "One-day spike on capital-structure news",
+   "stage": 3,
+   "stageN": "Up about 181% in one session; the spike may already be priced in.",
+   "v": {
+    "news": 1,
+    "vol": -1,
+    "buzz": -1,
+    "buy": -1,
+    "dil": 1
+   },
+   "why": "On Nov 5 the company said it redeemed the last 127,097 Series C preferred shares for $1,270,970 cash (agreement dated Nov 2), so no preferred stock or borrowed-money debt remains and no more conversion shares can be issued. It has a Phase 2a trial of Nu-3 in infected diabetic foot ulcers (first patient dosed Sep 24). On Nov 9 it closed at $0.418, below the $0.54 first logged.",
+   "soc": "Not checked.",
+   "opt": "Not stated.",
+   "ins": "Not stated.",
+   "risk": "The release gives no cash balance or runway, and says the redemption may shorten runway. A 181% one-day move in a sub-$1 name often fades. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
+   "src": "https://finviz.com/news/417213/lakewood-amedex-biotherapeutics-announces-completion-of-series-c-convertible-preferred-stock-redemption",
+   "srcN": "Company press release, Nov 5; price from screener",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "micro",
+   "t": "SDA",
+   "n": "SunCar Technology Group",
+   "theme": "Unexplained spike",
+   "px": 0.44,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": 16.87,
+   "cat": "None found",
+   "setup": "Big gain with no news found",
+   "stage": 3,
+   "stageN": "Up about 145% in one session.",
+   "v": {
+    "news": 0,
+    "vol": -1,
+    "buzz": -1,
+    "buy": -1,
+    "dil": -1
+   },
+   "why": "The stock jumped about 145% and no company news explaining it was found in dated sources.",
+   "soc": "Not checked.",
+   "opt": "Not stated.",
+   "ins": "Not stated.",
+   "risk": "A spike with no stated reason is the classic pump-and-fade pattern. Treat it as a study example, not a setup. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
+   "src": "https://www.marketbeat.com/",
+   "srcN": "Screener data, Nov 5",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "micro",
+   "t": "RCT",
+   "n": "RedCloud Holdings",
+   "theme": "Delisting appeal, consolidation",
+   "px": 0.0424,
+   "pxN": "Nov 5 close",
+   "chg": 41.33,
+   "cat": "Share consolidation expected about Nov 13",
+   "setup": "Bounce before a reverse split",
+   "stage": 4,
+   "stageN": "Price already jumped ahead of the consolidation date.",
+   "v": {
+    "news": 1,
+    "vol": -1,
+    "buzz": -1,
+    "buy": 0,
+    "dil": 0
+   },
+   "why": "The company is appealing a delisting notice and a share consolidation is expected around Nov 13. Another source listed the price near $0.25, so the quote needs checking before use.",
+   "soc": "Not checked.",
+   "opt": "Not stated.",
+   "ins": "Not stated.",
+   "risk": "Reverse splits usually reset the price and then it keeps falling. This is the trap most sub-$1 buyers fall into. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
+   "src": "https://www.marketbeat.com/",
+   "srcN": "Screener and filings summaries, Nov 5",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "micro",
+   "t": "VIVK",
+   "n": "Vivakor",
+   "theme": "Going concern, retail chatter",
+   "px": 0.3793,
+   "pxN": "Nov 9 close (Alpha Vantage)",
+   "chg": -23.56,
+   "cat": "Retail sentiment on Stocktwits",
+   "setup": "Social-driven bounce",
+   "stage": 4,
+   "stageN": "Three reverse splits already.",
+   "v": {
+    "news": 0,
+    "vol": -1,
+    "buzz": 1,
+    "buy": -1,
+    "dil": 0
+   },
+   "why": "The stock rose 34% on Stocktwits buzz. Reports describe a going-concern warning and three prior reverse splits.",
+   "soc": "Stocktwits sentiment was elevated on the day.",
+   "opt": "Not stated.",
+   "ins": "Not stated.",
+   "risk": "Going-concern language plus repeated reverse splits point to ongoing dilution. (Not refreshed Nov 9: price-screener and penny-stock sources could not be opened this run, so this is the Nov 5-6 read.)",
+   "src": "https://stocktwits.com/",
+   "srcN": "Stocktwits coverage, Nov 5",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "micro",
+   "t": "GPUS",
+   "n": "Hyperscale Data",
+   "theme": "Big gainer, cause unconfirmed",
+   "px": 0.1873,
+   "pxN": "Nov 10 close (Alpha Vantage)",
+   "chg": -1.16,
+   "cat": "No news found for the move",
+   "setup": "Spike with no sourced reason",
+   "stage": 3,
+   "stageN": "Spike already ran; cause unconfirmed.",
+   "v": {
+    "news": -1,
+    "vol": -1,
+    "buzz": -1,
+    "buy": -1,
+    "dil": -1
+   },
+   "why": "Hyperscale Data rose 32.61% to $0.19 on 130.6 million shares with a market cap of about $32M. I did not find an article explaining the move, which is a common pattern before these spikes fade. Nov 10 close from Alpha Vantage: $0.1873 (-1.16%).",
+   "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
+   "src": "https://stockanalysis.com/markets/gainers/",
+   "srcN": "StockAnalysis gainers, Nov 9",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "micro",
+   "t": "XHLD",
+   "n": "TEN Holdings",
+   "theme": "Big gainer, cause unconfirmed",
+   "px": 0.858,
+   "pxN": "Nov 10 close (Alpha Vantage)",
+   "chg": -1.38,
+   "cat": "No news found for the move",
+   "setup": "Spike with no sourced reason",
+   "stage": 3,
+   "stageN": "Spike already ran; cause unconfirmed.",
+   "v": {
+    "news": -1,
+    "vol": -1,
+    "buzz": -1,
+    "buy": -1,
+    "dil": -1
+   },
+   "why": "TEN Holdings rose 49.48% to $0.87 on 68.3 million shares with a market cap of about $10M. I did not find an article explaining the move, which is a common pattern before these spikes fade. Nov 10 close from Alpha Vantage: $0.858 (-1.38%).",
+   "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
+   "src": "https://stockanalysis.com/markets/gainers/",
+   "srcN": "StockAnalysis gainers, Nov 9",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "micro",
+   "t": "ESLA",
+   "n": "Estrella Immunopharma",
+   "theme": "Big gainer, cause unconfirmed",
+   "px": 0.7472,
+   "pxN": "Nov 10 close (Alpha Vantage)",
+   "chg": 45.4,
+   "cat": "No news found for the move",
+   "setup": "Spike with no sourced reason",
+   "stage": 3,
+   "stageN": "Spike already ran; cause unconfirmed.",
+   "v": {
+    "news": -1,
+    "vol": -1,
+    "buzz": -1,
+    "buy": -1,
+    "dil": -1
+   },
+   "why": "Estrella Immunopharma rose 36.93% to $0.514 on 6.6 million shares with a market cap of about $22M. I did not find an article explaining the move, which is a common pattern before these spikes fade. Nov 10 close from Alpha Vantage: $0.7472 (+45.40%).",
+   "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
+   "src": "https://stockanalysis.com/markets/gainers/",
+   "srcN": "StockAnalysis gainers, Nov 9",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "micro",
+   "t": "AKBA",
+   "n": "Akebia Therapeutics",
+   "theme": "Big gainer, cause unconfirmed",
+   "px": 0.5418,
+   "pxN": "Nov 10 close (Alpha Vantage)",
+   "chg": 1.69,
+   "cat": "No news found for the move",
+   "setup": "Spike with no sourced reason",
+   "stage": 3,
+   "stageN": "Spike already ran; cause unconfirmed.",
+   "v": {
+    "news": -1,
+    "vol": -1,
+    "buzz": -1,
+    "buy": -1,
+    "dil": -1
+   },
+   "why": "Akebia Therapeutics rose 32.77% to $0.533 on 16.9 million shares with a market cap of about $148M. I did not find an article explaining the move, which is a common pattern before these spikes fade. Nov 10 close from Alpha Vantage: $0.5418 (+1.69%).",
+   "risk": "No confirmed catalyst, thin liquidity and possible dilution. Study example, not a recommendation.",
+   "src": "https://stockanalysis.com/markets/gainers/",
+   "srcN": "StockAnalysis gainers, Nov 9",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "micro",
+   "t": "SOC",
+   "n": "Sable Offshore",
+   "theme": "Study example: sharp drop on high volume",
+   "px": 0.81,
+   "pxN": "Nov 9 close (MarketBeat via DailyPolitical)",
+   "chg": -57.8,
+   "cat": "No reason confirmed",
+   "setup": "Study example: fell $1.11 on 220M shares",
+   "stage": 4,
+   "stageN": "Likely trap: a sub-$1 name collapsing on huge volume; cause not confirmed.",
+   "v": {
+    "news": 0,
+    "vol": 1,
+    "buzz": -1,
+    "buy": -1,
+    "dil": -1
+   },
+   "why": "SOC (NYSE) closed at $0.81, down $1.11 (about -58%, my arithmetic), on about 220M shares vs an 8.7M average. Current ratio is 0.24, debt/equity 1.85 and the 52-week range $0.51-$19.25 (MarketBeat list, Nov 9). I did not confirm the cause.",
+   "risk": "Weak liquidity ratios and a collapsing price; I found no dated article stating dilution, so that check is not stated. (Kept from the prior run: the penny and micro scans could not be refreshed on Nov 11 because mover-list pages were blocked.)",
+   "src": "https://www.dailypolitical.com/2026/11/09/penny-stocks-to-research-november-9th.html",
+   "srcN": "DailyPolitical citing MarketBeat, Nov 9",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "micro",
+   "t": "SLQT",
+   "n": "SelectQuote",
+   "theme": "Insurance distributor, director buy",
+   "px": 0.46,
+   "pxN": "Price at publication, Nov 11",
+   "cat": "Fiscal Q1 2027 results",
+   "setup": "Director bought 409,836 shares near $0.49",
+   "stage": 2,
+   "stageN": "Insider buy and a loss narrower than expected, but revenue missed.",
+   "v": {
+    "news": 1,
+    "vol": -1,
+    "buzz": -1,
+    "buy": 1,
+    "dil": -1
+   },
+   "why": "Director Raymond Weldon bought 409,836 shares on Nov 6 at a weighted average of $0.49 ($200,819). The stock was $0.46 at publication, down 67.6% YTD, with price-to-book of 0.26. Fiscal Q1 adjusted EPS was -$0.21 vs -$0.34 expected.",
+   "risk": "Revenue was $280M vs $326.17M expected, the stock is down two-thirds YTD, and sub-$1 listings can face exchange-compliance notices; the filing was not opened. Nov 18 note: Alpha Vantage showed $6.32, inconsistent with the $0.46 earlier read (possible reverse split or data mismatch; not verified).",
+   "src": "https://www.investing.com/news/insider-trading-news/selectquote-director-raymond-weldon-buys-200819-in-stock-93CH-5018035",
+   "srcN": "Investing.com, Nov 11",
+   "ins": "Director Raymond Weldon: 409,836 shares at $0.49 weighted average, $200,819, Nov 6 (Investing.com digest)",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 11",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "day",
+   "t": "TJX",
+   "n": "TJX Companies",
+   "theme": "Off-price retail",
+   "px": 140.3,
+   "pxN": "Nov 18 close (Alpha Vantage)",
+   "chg": 8.05,
+   "cat": "Q3 results Nov 18 (premarket)",
+   "catDate": "2026-11-18",
+   "setup": "Beat-and-raise gap up",
+   "v": {
+    "news": 1,
+    "gap": 1,
+    "vol": -1,
+    "iv": -1,
+    "liq": 1
+   },
+   "why": "TJX rose 8.05% to $140.30 on 18.1M shares after Q3 EPS of $1.39 ($1.34 excluding tariff refunds), comps up 4% and a raised full-year outlook (Stock Titan; CappNotes). It opened at $137.01 versus a $129.85 prior close (Alpha Vantage).",
+   "risk": "Sources differ on some figures and the stock already jumped 8%; average volume was not stated.",
+   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-18-2026",
+   "srcN": "Stock Titan, Nov 18; CappNotes, Nov 18",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 19",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "day",
+   "t": "TGT",
+   "n": "Target",
+   "theme": "Retail",
+   "px": 165.93,
+   "pxN": "Nov 18 close (Alpha Vantage)",
+   "chg": 4.01,
+   "cat": "Q3 results Nov 18",
+   "catDate": "2026-11-18",
+   "setup": "Earnings beat, reversed premarket dip",
+   "v": {
+    "news": 1,
+    "gap": 0,
+    "vol": -1,
+    "iv": -1,
+    "liq": 1
+   },
+   "why": "Target rose 4.01% to $165.93 on 12.2M shares after Q3 net sales rose 7.1% to $27.1B and EPS was $2.65 including about $0.50 of tariff refunds; comps rose 5.6% (Yahoo Finance live blog; Stock Titan). It was down 0.93% premarket before reversing.",
+   "risk": "The EPS beat includes a one-time tariff-refund benefit, and sources disagreed on the full-year guide so none is quoted.",
+   "src": "https://finance.yahoo.com/markets/live/stock-market-today-wednesday-november-18-dow-sp-500-nasdaq-nvidia-anthropic-ipo-090613569.html",
+   "srcN": "Yahoo Finance, Nov 18; Stock Titan, Nov 18",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 19",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "day",
+   "t": "PANW",
+   "n": "Palo Alto Networks",
+   "theme": "Cybersecurity",
+   "chg": 10.2,
+   "pxN": "Nov 19 premarket, per Stocktwits/TradingView",
+   "cat": "Fiscal Q1 results after the close Nov 18",
+   "catDate": "2026-11-18",
+   "setup": "Post-earnings gap up",
+   "v": {
+    "news": 1,
+    "gap": 1,
+    "vol": -1,
+    "iv": -1,
+    "liq": 1
+   },
+   "why": "PANW was up about 10.2% premarket after revenue rose 39% to $3.44B (estimate $3.31B), next-gen security ARR rose 66% to $9.73B and the FY27 revenue guide was raised to $14.52-14.57B (Stock Titan; CoinCentral). CappNotes also reports a $4.5B all-stock acquisition.",
+   "risk": "A roughly 10% gap leaves less room if the premarket gain fades; the all-stock deal adds dilution and volume was not stated.",
+   "src": "https://coincentral.com/todays-market-movers-anthropic-google-palo-alto-walmart-and-more",
+   "srcN": "CoinCentral, Nov 19; Stock Titan, Nov 18",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 19",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "day",
+   "t": "BRBR",
+   "n": "BellRing Brands",
+   "theme": "Packaged food",
+   "chg": 24.07,
+   "pxN": "Nov 18 close",
+   "cat": "Q4 results and FY27 sales outlook (Nov 18)",
+   "catDate": "2026-11-18",
+   "setup": "Earnings pop",
+   "v": {
+    "news": 1,
+    "gap": -1,
+    "vol": -1,
+    "iv": -1,
+    "liq": -1
+   },
+   "why": "BellRing rose 24.07% on Nov 18 after Q4 net sales grew 7% and the company gave a fiscal 2027 sales forecast (Stock Titan).",
+   "risk": "Guidance details, price and volume were not stated, so this is a headline read only.",
+   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-18-2026",
+   "srcN": "Stock Titan, Nov 18",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 19",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "day",
+   "t": "UNH",
+   "n": "UnitedHealth Group",
+   "theme": "Health insurers",
+   "pxN": "Nov 17 close $389.68 (Stock Titan)",
+   "chg": -10.21,
+   "cat": "CMS Medicare Advantage audit proposal (Nov 16)",
+   "catDate": "2026-11-16",
+   "setup": "Sector sell-off on a regulatory proposal",
+   "v": {
+    "news": 1,
+    "gap": -1,
+    "vol": -1,
+    "iv": -1,
+    "liq": -1
+   },
+   "why": "UnitedHealth fell 10.21% on Nov 18 (Humana -12.98%, Elevance -7.63%, Centene -7.03%) after a CMS proposal to widen Medicare Advantage audit extrapolation; the comment period runs to Jan 19, 2027 (CappNotes, Nov 18). UNH is down about 14% over two days (Rock & Turner).",
+   "risk": "The final rule is unknown and a stock down this far in two days can keep falling or bounce sharply.",
+   "src": "https://cappnotes.substack.com/p/closing-look-wednesday-november-18",
+   "srcN": "CappNotes, Nov 18; Stock Titan, Nov 18",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 19",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "day",
+   "t": "P",
+   "n": "Everpure",
+   "theme": "Data storage",
+   "chg": 5.0,
+   "pxN": "Nov 18 after hours (approx.)",
+   "cat": "Q3 FY27 results Nov 18 after the close",
+   "catDate": "2026-11-18",
+   "setup": "Raised guidance, after-hours gain",
+   "v": {
+    "news": 1,
+    "gap": -1,
+    "vol": -1,
+    "iv": -1,
+    "liq": -1
+   },
+   "why": "Everpure was up about 5% after hours after Q3 revenue of $1.5B (+51%), product revenue +77% and a raised FY27 revenue guide of $5.20-5.21B (from $5.03-5.07B), per its 8-K press release; the 5% move is from Rock & Turner.",
+   "risk": "Guidance raises can already be priced in and the move was after hours only.",
+   "src": "https://rockandturner.substack.com/p/wed-nov-18-2026-the-market-today",
+   "srcN": "Rock & Turner, Nov 18; company 8-K, Nov 18",
+   "dd": [
+    {
+     "f": "8-K Ex. 99.1",
+     "d": "Nov 18",
+     "s": "Press release reports Q3 FY27 revenue of $1.5B and raises FY27 revenue guidance to $5.20-5.21B; only the press release was read, not the 10-Q.",
+     "u": "https://www.sec.gov/Archives/edgar/data/0001474432/000147443226000110/everpure-ex991q3fy2027xpre.htm"
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "swing",
+   "t": "INTU",
+   "n": "Intuit",
+   "theme": "Software",
+   "cat": "Fiscal Q1 results Nov 19 after the close",
+   "catDate": "2026-11-19",
+   "setup": "Earnings with call-heavy options",
+   "v": {
+    "cat": 1,
+    "low": -1,
+    "sel": -1,
+    "mom": -1,
+    "thm": -1
+   },
+   "why": "Intuit reports Nov 19 after the close; consensus EPS is $2.64 and revenue $4.31B, with 27 downward versus 8 upward estimate revisions in 30 days (Tradestie, Nov 12; AI-generated).",
+   "risk": "Guidance on small business and tax could move it either way; the source is AI-generated and the price was unclear.",
+   "src": "https://tradestie.com/news/intu-earnings-nov-19-33-implied-move-264-eps-expected-20261119/",
+   "srcN": "Tradestie, Nov 12; Digrin calendar",
+   "opt": "Implied move about 3.3%, ATM IV about 63%, call wall $350, put wall $300 (Tradestie, Nov 12, AI-generated)",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 19",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "swing",
+   "t": "MDT",
+   "n": "Medtronic",
+   "theme": "Medical devices",
+   "cat": "Investor meeting Dec 11",
+   "catDate": "2026-12-11",
+   "setup": "Analyst upgrade ahead of an investor meeting",
+   "v": {
+    "cat": 1,
+    "low": -1,
+    "sel": -1,
+    "mom": -1,
+    "thm": -1
+   },
+   "why": "Piper Sandler upgraded Medtronic from Neutral to Overweight and raised its target from $85 to $120 on Nov 17; an investor meeting is set for Dec 11 (Insider Monkey, Nov 19).",
+   "risk": "The same source puts average analyst upside at only about 5%, and the catalyst is more than two weeks out.",
+   "src": "https://www.insidermonkey.com/news/analysts-turned-bullish-on-these-10-stocks-on-tuesday-1867377/",
+   "srcN": "Insider Monkey, Nov 19",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 19",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "swing",
+   "t": "CRM",
+   "n": "Salesforce",
+   "theme": "Software",
+   "px": 190.4,
+   "pxN": "Nov 18 close (Alpha Vantage)",
+   "chg": -2.12,
+   "cat": "Earnings Dec 2",
+   "catDate": "2026-12-02",
+   "setup": "Pullback into earnings",
+   "v": {
+    "cat": 1,
+    "low": -1,
+    "sel": -1,
+    "mom": 0,
+    "thm": -1
+   },
+   "why": "Salesforce fell 2.12% to $190.40 on Nov 18 (Alpha Vantage), after a 9.45% drop on Nov 17 to $194.52, and reports Dec 2 (Rock & Turner, Nov 18).",
+   "risk": "Software and AI-replacement worries drove the Nov 17 drop and could continue before the print.",
+   "src": "https://rockandturner.substack.com/p/wed-nov-18-2026-the-market-today",
+   "srcN": "Rock & Turner, Nov 18; Alpha Vantage",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 19",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "invest",
+   "t": "MU",
+   "n": "Micron Technology",
+   "theme": "Memory and AI servers",
+   "cat": "Analyst Strong Buy ratings (WallStreetZen, Nov 16)",
+   "setup": "Data center and AI server demand",
+   "v": {
+    "gro": 1,
+    "moat": -1,
+    "val": -1,
+    "mar": -1,
+    "dur": -1
+   },
+   "why": "WallStreetZen lists Zen Rating A with 16 Strong Buy, 7 Buy and 1 Hold ratings; Needham and Rosenblatt reiterated Buy on data center and AI server orders. A $778.31 recent price and a $3,000 top forecast were cited (price date unclear).",
+   "risk": "Memory is cyclical and the extreme top forecast is one analyst; analyst targets are not guarantees.",
+   "src": "https://www.wallstreetzen.com/news/3-new-strong-buy-ratings-from-top-rated-analysts-11-17-2026",
+   "srcN": "WallStreetZen, Nov 16",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 19",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "invest",
+   "t": "DELL",
+   "n": "Dell Technologies",
+   "theme": "AI servers",
+   "cat": "Analyst Buy ratings (WallStreetZen, Nov 16)",
+   "setup": "AI server demand",
+   "v": {
+    "gro": 1,
+    "moat": -1,
+    "val": -1,
+    "mar": -1,
+    "dur": -1
+   },
+   "why": "WallStreetZen cites a recent price of $344.53, a top forecast of $735 and Buy or Strong Buy ratings from Citi and Evercore ISI, with next-year EPS seen near $17.40 to $26.46 (price date unclear).",
+   "risk": "Results lean on AI server demand, and the wide EPS range shows high uncertainty.",
+   "src": "https://www.wallstreetzen.com/news/3-new-strong-buy-ratings-from-top-rated-analysts-11-17-2026",
+   "srcN": "WallStreetZen, Nov 16",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 19",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "radar",
+   "t": "OFRM",
+   "n": "Once Upon a Farm",
+   "theme": "Insider buying",
+   "cat": "Q3 results (net sales +34.9%)",
+   "setup": "CEO bought shares after results",
+   "stage": 2,
+   "stageN": "Up 11.8% in a week but down nearly 46% year to date.",
+   "v": {
+    "inst": -1,
+    "ins": -1,
+    "vol": -1,
+    "base": -1,
+    "cat": -1
+   },
+   "why": "CEO John Foraker bought 10,000 shares on Nov 16 at $10.43 (about $104,300) and holds 679,933 directly; Q3 sales rose 34.9% to $89.1M with cash of $106.4M and no debt.",
+   "risk": "The article does not state the transaction code or 10b5-1 box, a recall may cost up to $30M, and the buy is small.",
+   "src": "https://www.investing.com/news/insider-trading-news/once-upon-a-farm-ceo-john-foraker-buys-104300-in-stock-93CH-5038378",
+   "srcN": "Investing.com, Nov 19",
+   "ins": "John Foraker, CEO/Chair: 10,000 shares Nov 16 at $10.43 (code not stated; Investing.com, Nov 19)",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 19",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "radar",
+   "t": "TISI",
+   "n": "TEAM Inc.",
+   "theme": "Insider buying",
+   "px": 24.77,
+   "pxN": "Per Investing.com article, Nov 18",
+   "cat": "Q3 results; cost-savings target raised",
+   "setup": "CEO bought after a strong week",
+   "stage": 3,
+   "stageN": "Up about 19% in a week and 68% year to date, so it is extended.",
+   "v": {
+    "inst": -1,
+    "ins": -1,
+    "vol": -1,
+    "base": -1,
+    "cat": -1
+   },
+   "why": "CEO Gary Hill bought 4,200 shares on Nov 16 at $22.88 (about $96,096) and holds 55,887 directly; adjusted EBITDA rose 8.2% to $15.7M and the cost-savings target rose to $30-38M.",
+   "risk": "Revenue fell 2%, guidance was adjusted, it is a micro-cap and the transaction code was not stated.",
+   "src": "https://www.investing.com/news/insider-trading-news/team-ceo-gary-hill-buys-96096-in-company-stock-93CH-5036786",
+   "srcN": "Investing.com, Nov 18",
+   "ins": "Gary Hill, CEO: 4,200 shares Nov 16 at $22.88 (code not stated; Investing.com, Nov 18)",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 19",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  },
+  {
+   "kind": "radar",
+   "t": "MTDR",
+   "n": "Matador Resources",
+   "theme": "Insider buying (weak)",
+   "px": 52.81,
+   "pxN": "Per Investing.com article, Nov 12",
+   "cat": "Q3 beat; Truist target $66",
+   "setup": "CEO ESPP purchase, earnings beat",
+   "stage": 2,
+   "stageN": "Up 28% year to date.",
+   "v": {
+    "inst": -1,
+    "ins": 0,
+    "vol": -1,
+    "base": -1,
+    "cat": -1
+   },
+   "why": "Chairman/CEO Joseph Foran bought 2,500 shares at $49.29 (about $123,225) through the employee stock purchase plan, so it is not a clean open-market buy; Q3 adjusted EPS was $2.08 vs $1.82 expected and Truist raised its target to $66.",
+   "risk": "ESPP purchases are weak signals and oil prices (Nov 18 WTI -3.2%) can swing the stock.",
+   "src": "https://www.investing.com/news/insider-trading-news/matador-resources-chairman-and-ceo-buys-123225-in-stock-93CH-5023996",
+   "srcN": "Investing.com, Nov 12",
+   "ins": "Joseph Foran, Chairman/CEO: 2,500 shares via ESPP at $49.29 on Nov 10 (not open-market; Investing.com)",
+   "dd": [
+    {
+     "f": "Filings",
+     "d": "Nov 19",
+     "s": "Could not open the SEC filings this run (sec.gov fetch was blocked); digest only."
+    }
+   ],
+   "ddv": "watch"
+  }
+ ]
 }
