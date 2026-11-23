@@ -1,9 +1,9 @@
 {
  "started": "2026-11-04",
- "asof": "2026-11-20",
+ "asof": "2026-11-23",
  "bench": "SPY",
- "spyLast": 715.87,
- "spyLastD": "2026-11-19",
+ "spyLast": 689.81,
+ "spyLastD": "2026-11-20",
  "horizon": {
   "day": 1,
   "radar": 10,
@@ -23,7 +23,10 @@
    "spy": 766.81,
    "last": 13.78,
    "lastD": "2026-11-09",
-   "status": "open"
+   "status": "closed",
+   "closed": 13.78,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "radar-PRTA-20261104",
@@ -35,7 +38,10 @@
    "spy": 766.81,
    "last": 8.15,
    "lastD": "2026-11-04",
-   "status": "open"
+   "status": "closed",
+   "closed": 8.15,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "radar-ARQT-20261104",
@@ -47,7 +53,10 @@
    "spy": 766.81,
    "last": 33.46,
    "lastD": "2026-11-04",
-   "status": "open"
+   "status": "closed",
+   "closed": 33.46,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "radar-TTMI-20261104",
@@ -59,7 +68,10 @@
    "spy": 766.81,
    "last": 73.38,
    "lastD": "2026-11-04",
-   "status": "open"
+   "status": "closed",
+   "closed": 73.38,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "radar-MRNA-20261104",
@@ -71,7 +83,10 @@
    "spy": 766.81,
    "last": 269,
    "lastD": "2026-11-09",
-   "status": "open"
+   "status": "closed",
+   "closed": 269,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-CRCT-20261104",
@@ -173,7 +188,10 @@
    "spy": 766.81,
    "last": 123.62,
    "lastD": "2026-11-05",
-   "status": "open"
+   "status": "closed",
+   "closed": 123.62,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "swing-MU-20261104",
@@ -200,7 +218,10 @@
    "spy": null,
    "last": null,
    "lastD": "2026-11-04",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "swing-PLTR-20261104",
@@ -299,7 +320,10 @@
    "spy": 766.81,
    "last": 2.38,
    "lastD": "2026-11-09",
-   "status": "open"
+   "status": "closed",
+   "closed": 2.38,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "penny-OPEN-20261104",
@@ -341,7 +365,10 @@
    "spy": 766.81,
    "last": 2.35,
    "lastD": "2026-11-05",
-   "status": "open"
+   "status": "closed",
+   "closed": 2.35,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "penny-PARA-20261104",
@@ -353,7 +380,10 @@
    "spy": 766.81,
    "last": 0.0875,
    "lastD": "2026-11-09",
-   "status": "open"
+   "status": "closed",
+   "closed": 0.0875,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "penny-MERC-20261104",
@@ -365,7 +395,10 @@
    "spy": 766.81,
    "last": 0.25,
    "lastD": "2026-11-04",
-   "status": "open"
+   "status": "closed",
+   "closed": 0.25,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "radar-SIRI-20261105",
@@ -377,7 +410,10 @@
    "spy": 766.81,
    "last": 33.4,
    "lastD": "2026-11-04",
-   "status": "open"
+   "status": "closed",
+   "closed": 33.4,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "radar-LRN-20261105",
@@ -389,7 +425,10 @@
    "spy": 766.81,
    "last": 75.17,
    "lastD": "2026-11-04",
-   "status": "open"
+   "status": "closed",
+   "closed": 75.17,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "radar-INTC-20261105",
@@ -401,7 +440,10 @@
    "spy": 766.81,
    "last": 52.25,
    "lastD": "2026-11-05",
-   "status": "open"
+   "status": "closed",
+   "closed": 52.25,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "radar-LSTR-20261105",
@@ -413,7 +455,10 @@
    "spy": 766.81,
    "last": 151.25,
    "lastD": "2026-11-04",
-   "status": "open"
+   "status": "closed",
+   "closed": 151.25,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "radar-BA-20261105",
@@ -425,7 +470,10 @@
    "spy": 766.81,
    "last": 172.5,
    "lastD": "2026-11-05",
-   "status": "open"
+   "status": "closed",
+   "closed": 172.5,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-APP-20261105",
@@ -497,7 +545,10 @@
    "spy": 766.81,
    "last": 58.86,
    "lastD": "2026-11-09",
-   "status": "open"
+   "status": "closed",
+   "closed": 58.86,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "swing-CEG-20261105",
@@ -509,7 +560,10 @@
    "spy": 766.81,
    "last": 276.09,
    "lastD": "2026-11-09",
-   "status": "open"
+   "status": "closed",
+   "closed": 276.09,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "swing-VRT-20261105",
@@ -521,7 +575,10 @@
    "spy": 766.81,
    "last": 205.55,
    "lastD": "2026-11-04",
-   "status": "open"
+   "status": "closed",
+   "closed": 205.55,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "swing-NBIS-20261105",
@@ -533,7 +590,10 @@
    "spy": 766.81,
    "last": 154.69,
    "lastD": "2026-11-11",
-   "status": "open"
+   "status": "closed",
+   "closed": 154.69,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "invest-AMZN-20261105",
@@ -569,7 +629,10 @@
    "spy": null,
    "last": null,
    "lastD": "2026-11-06",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "radar-TBBK-20261106",
@@ -581,7 +644,10 @@
    "spy": 733,
    "last": 47.34,
    "lastD": "2026-11-06",
-   "status": "open"
+   "status": "closed",
+   "closed": 47.34,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "radar-PRLB-20261106",
@@ -593,7 +659,10 @@
    "spy": 733,
    "last": 66.64,
    "lastD": "2026-11-06",
-   "status": "open"
+   "status": "closed",
+   "closed": 66.64,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "radar-STRZ-20261106",
@@ -605,7 +674,10 @@
    "spy": null,
    "last": null,
    "lastD": "2026-11-06",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-NET-20261106",
@@ -677,7 +749,10 @@
    "spy": null,
    "last": null,
    "lastD": "2026-11-06",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "invest-LLY-20261106",
@@ -809,7 +884,10 @@
    "spy": 735.29,
    "last": 20.03,
    "lastD": "2026-11-09",
-   "status": "open"
+   "status": "closed",
+   "closed": 20.03,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "radar-BXMT-20261109",
@@ -821,7 +899,10 @@
    "spy": null,
    "last": null,
    "lastD": "2026-11-09",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-CEG-20261109",
@@ -908,7 +989,10 @@
    "spy": 752.69,
    "last": 56.6,
    "lastD": "2026-11-12",
-   "status": "open"
+   "status": "closed",
+   "closed": 56.6,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "swing-AMAT-20261109",
@@ -920,7 +1004,10 @@
    "spy": null,
    "last": null,
    "lastD": "2026-11-09",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-AMD-20261110",
@@ -932,7 +1019,10 @@
    "spy": 752.69,
    "last": 508.58,
    "lastD": "2026-11-09",
-   "status": "open"
+   "status": "closed",
+   "closed": 508.58,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-HIMS-20261110",
@@ -944,7 +1034,10 @@
    "spy": 752.69,
    "last": 22.94,
    "lastD": "2026-11-09",
-   "status": "open"
+   "status": "closed",
+   "closed": 22.94,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-TLS-20261110",
@@ -956,7 +1049,10 @@
    "spy": 752.69,
    "last": 7.17,
    "lastD": "2026-11-09",
-   "status": "open"
+   "status": "closed",
+   "closed": 7.17,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "swing-MRNA-20261110",
@@ -1097,7 +1193,10 @@
    "spy": 752.69,
    "last": 276.09,
    "lastD": "2026-11-09",
-   "status": "open"
+   "status": "closed",
+   "closed": 276.09,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-NVDA-20261110",
@@ -1124,7 +1223,10 @@
    "spy": 752.69,
    "last": null,
    "lastD": "2026-11-10",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-DCTH-20261110",
@@ -1136,7 +1238,10 @@
    "spy": 752.69,
    "last": null,
    "lastD": "2026-11-10",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-NRG-20261110",
@@ -1148,7 +1253,10 @@
    "spy": 752.69,
    "last": null,
    "lastD": "2026-11-10",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "penny-EDSA-20261110",
@@ -1277,7 +1385,10 @@
    "spy": 749.92,
    "last": 56.6,
    "lastD": "2026-11-12",
-   "status": "open"
+   "status": "closed",
+   "closed": 56.6,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-TSM-20261111",
@@ -1289,7 +1400,10 @@
    "spy": 749.92,
    "last": 405.49,
    "lastD": "2026-11-12",
-   "status": "open"
+   "status": "closed",
+   "closed": 405.49,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-RGTI-20261111",
@@ -1301,7 +1415,10 @@
    "spy": null,
    "last": null,
    "lastD": null,
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-GPRO-20261111",
@@ -1313,7 +1430,10 @@
    "spy": null,
    "last": null,
    "lastD": null,
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-ZIP-20261111",
@@ -1325,7 +1445,10 @@
    "spy": null,
    "last": null,
    "lastD": null,
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-FOSL-20261111",
@@ -1337,7 +1460,10 @@
    "spy": null,
    "last": null,
    "lastD": null,
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "swing-CSCO-20261111",
@@ -1359,8 +1485,8 @@
    "entry": 168.89,
    "entryN": "Nov 10 close",
    "spy": 749.92,
-   "last": 150.96,
-   "lastD": "2026-11-18",
+   "last": 125.53,
+   "lastD": "2026-11-20",
    "status": "open"
   },
   {
@@ -1433,7 +1559,10 @@
    "spy": 749.92,
    "last": 0.38,
    "lastD": "2026-11-16",
-   "status": "open"
+   "status": "closed",
+   "closed": 0.38,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-NVDA-20261118",
@@ -1505,7 +1634,10 @@
    "spy": 732.44,
    "last": 123.95,
    "lastD": "2026-11-17",
-   "status": "open"
+   "status": "closed",
+   "closed": 123.95,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-ENR-20261118",
@@ -1517,7 +1649,10 @@
    "spy": null,
    "last": null,
    "lastD": null,
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-ARDT-20261118",
@@ -1529,7 +1664,10 @@
    "spy": null,
    "last": null,
    "lastD": null,
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "swing-PANW-20261118",
@@ -1611,8 +1749,8 @@
    "entry": 1.41,
    "entryN": "Nov 9 close (Alpha Vantage)",
    "spy": 730.2,
-   "last": 1.46,
-   "lastD": "2026-11-19",
+   "last": 1.305,
+   "lastD": "2026-11-20",
    "status": "open"
   },
   {
@@ -1623,8 +1761,8 @@
    "entry": 0.6976,
    "entryN": "Nov 9 close (Alpha Vantage)",
    "spy": 730.2,
-   "last": 0.4694,
-   "lastD": "2026-11-19",
+   "last": 0.427,
+   "lastD": "2026-11-20",
    "status": "open"
   },
   {
@@ -1683,8 +1821,8 @@
    "entry": 0.1873,
    "entryN": "Nov 10 close (Alpha Vantage)",
    "spy": 730.2,
-   "last": 0.1873,
-   "lastD": "2026-11-19",
+   "last": 0.1291,
+   "lastD": "2026-11-20",
    "status": "open"
   },
   {
@@ -1695,8 +1833,8 @@
    "entry": 0.858,
    "entryN": "Nov 10 close (Alpha Vantage)",
    "spy": 730.2,
-   "last": 0.858,
-   "lastD": "2026-11-19",
+   "last": 0.6402,
+   "lastD": "2026-11-20",
    "status": "open"
   },
   {
@@ -1745,7 +1883,10 @@
    "spy": 730.2,
    "last": 140.3,
    "lastD": "2026-11-19",
-   "status": "open"
+   "status": "closed",
+   "closed": 140.3,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-TGT-20261119",
@@ -1757,7 +1898,10 @@
    "spy": 730.2,
    "last": 165.93,
    "lastD": "2026-11-19",
-   "status": "open"
+   "status": "closed",
+   "closed": 165.93,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-PANW-20261119",
@@ -1769,7 +1913,10 @@
    "spy": 715.87,
    "last": 361.73,
    "lastD": "2026-11-19",
-   "status": "open"
+   "status": "closed",
+   "closed": 361.73,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-BRBR-20261119",
@@ -1781,7 +1928,10 @@
    "spy": null,
    "last": null,
    "lastD": null,
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-UNH-20261119",
@@ -1793,7 +1943,10 @@
    "spy": null,
    "last": null,
    "lastD": null,
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-P-20261119",
@@ -1805,7 +1958,10 @@
    "spy": null,
    "last": null,
    "lastD": null,
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "swing-INTU-20261119",
@@ -1973,7 +2129,10 @@
    "spy": 715.87,
    "last": 40.79,
    "lastD": "2026-11-20",
-   "status": "open"
+   "status": "closed",
+   "closed": 40.79,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-HY-20261120",
@@ -1985,7 +2144,10 @@
    "spy": null,
    "last": null,
    "lastD": "2026-11-20",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "day-JMIA-20261120",
@@ -1997,7 +2159,10 @@
    "spy": null,
    "last": null,
    "lastD": "2026-11-20",
-   "status": "open"
+   "status": "closed",
+   "closed": null,
+   "closedD": "2026-11-23",
+   "spyClosed": 689.81
   },
   {
    "id": "swing-ZM-20261120",
@@ -2091,7 +2256,7 @@
    "entry": 2.71,
    "entryN": "Nov 18 close (Alpha Vantage)",
    "spy": 715.87,
-   "last": 2.71,
+   "last": 2.9,
    "lastD": "2026-11-20",
    "status": "open"
   },
@@ -2127,7 +2292,7 @@
    "entry": 2.06,
    "entryN": "Nov 18 close (Alpha Vantage)",
    "spy": 715.87,
-   "last": 2.06,
+   "last": 2.0,
    "lastD": "2026-11-20",
    "status": "open"
   },
@@ -2148,10 +2313,10 @@
    "t": "NIVF",
    "kind": "penny",
    "posted": "2026-11-20",
-   "entry": null,
-   "entryN": "Price not found at posting",
-   "spy": null,
-   "last": null,
+   "entry": 0.0269,
+   "entryN": "Nov 20 close (first sourced price)",
+   "spy": 689.81,
+   "last": 0.0269,
    "lastD": "2026-11-20",
    "status": "open"
   },
@@ -2177,6 +2342,306 @@
    "spy": null,
    "last": null,
    "lastD": "2026-11-20",
+   "status": "open"
+  },
+  {
+   "id": "radar-USAR-20261123",
+   "t": "USAR",
+   "kind": "radar",
+   "posted": "2026-11-23",
+   "entry": 6.27,
+   "entryN": "Nov 20 close (approx.)",
+   "spy": 689.81,
+   "last": 6.27,
+   "lastD": "2026-11-23",
+   "status": "open"
+  },
+  {
+   "id": "radar-SONO-20261123",
+   "t": "SONO",
+   "kind": "radar",
+   "posted": "2026-11-23",
+   "entry": null,
+   "entryN": "Price not found at posting",
+   "spy": null,
+   "last": null,
+   "lastD": null,
+   "status": "open"
+  },
+  {
+   "id": "radar-EFC-20261123",
+   "t": "EFC",
+   "kind": "radar",
+   "posted": "2026-11-23",
+   "entry": null,
+   "entryN": "Price not found at posting",
+   "spy": null,
+   "last": null,
+   "lastD": null,
+   "status": "open"
+  },
+  {
+   "id": "radar-CRMD-20261123",
+   "t": "CRMD",
+   "kind": "radar",
+   "posted": "2026-11-23",
+   "entry": null,
+   "entryN": "Price not found at posting",
+   "spy": null,
+   "last": null,
+   "lastD": null,
+   "status": "open"
+  },
+  {
+   "id": "day-ZS-20261123",
+   "t": "ZS",
+   "kind": "day",
+   "posted": "2026-11-23",
+   "entry": null,
+   "entryN": "Price not found at posting",
+   "spy": null,
+   "last": null,
+   "lastD": null,
+   "status": "open"
+  },
+  {
+   "id": "day-CRWD-20261123",
+   "t": "CRWD",
+   "kind": "day",
+   "posted": "2026-11-23",
+   "entry": null,
+   "entryN": "Price not found at posting",
+   "spy": null,
+   "last": null,
+   "lastD": null,
+   "status": "open"
+  },
+  {
+   "id": "day-GAP-20261123",
+   "t": "GAP",
+   "kind": "day",
+   "posted": "2026-11-23",
+   "entry": null,
+   "entryN": "Price not found at posting",
+   "spy": null,
+   "last": null,
+   "lastD": null,
+   "status": "open"
+  },
+  {
+   "id": "day-KYMR-20261123",
+   "t": "KYMR",
+   "kind": "day",
+   "posted": "2026-11-23",
+   "entry": null,
+   "entryN": "Price not found at posting",
+   "spy": null,
+   "last": null,
+   "lastD": null,
+   "status": "open"
+  },
+  {
+   "id": "day-INTU-20261123",
+   "t": "INTU",
+   "kind": "day",
+   "posted": "2026-11-23",
+   "entry": null,
+   "entryN": "Price not found at posting",
+   "spy": null,
+   "last": null,
+   "lastD": null,
+   "status": "open"
+  },
+  {
+   "id": "day-PDD-20261123",
+   "t": "PDD",
+   "kind": "day",
+   "posted": "2026-11-23",
+   "entry": null,
+   "entryN": "Price not found at posting",
+   "spy": null,
+   "last": null,
+   "lastD": null,
+   "status": "open"
+  },
+  {
+   "id": "swing-WDAY-20261123",
+   "t": "WDAY",
+   "kind": "swing",
+   "posted": "2026-11-23",
+   "entry": null,
+   "entryN": "Price not found at posting",
+   "spy": null,
+   "last": null,
+   "lastD": null,
+   "status": "open"
+  },
+  {
+   "id": "penny-SVRA-20261123",
+   "t": "SVRA",
+   "kind": "penny",
+   "posted": "2026-11-23",
+   "entry": 4.26,
+   "entryN": "Nov 20 close",
+   "spy": 689.81,
+   "last": 4.26,
+   "lastD": "2026-11-23",
+   "status": "open"
+  },
+  {
+   "id": "penny-CAPR-20261123",
+   "t": "CAPR",
+   "kind": "penny",
+   "posted": "2026-11-23",
+   "entry": 2.32,
+   "entryN": "Nov 23 premarket",
+   "spy": 689.81,
+   "last": 2.32,
+   "lastD": "2026-11-23",
+   "status": "open"
+  },
+  {
+   "id": "penny-SRTS-20261123",
+   "t": "SRTS",
+   "kind": "penny",
+   "posted": "2026-11-23",
+   "entry": 2.26,
+   "entryN": "Nov 20 close",
+   "spy": 689.81,
+   "last": 2.26,
+   "lastD": "2026-11-23",
+   "status": "open"
+  },
+  {
+   "id": "penny-RYDE-20261123",
+   "t": "RYDE",
+   "kind": "penny",
+   "posted": "2026-11-23",
+   "entry": 1.07,
+   "entryN": "Nov 20 close",
+   "spy": 689.81,
+   "last": 1.07,
+   "lastD": "2026-11-23",
+   "status": "open"
+  },
+  {
+   "id": "penny-BRSP-20261123",
+   "t": "BRSP",
+   "kind": "penny",
+   "posted": "2026-11-23",
+   "entry": 3.19,
+   "entryN": "Nov 20 close",
+   "spy": 689.81,
+   "last": 3.19,
+   "lastD": "2026-11-23",
+   "status": "open"
+  },
+  {
+   "id": "penny-NIXX-20261123",
+   "t": "NIXX",
+   "kind": "penny",
+   "posted": "2026-11-23",
+   "entry": 2.233,
+   "entryN": "Nov 20 close (split-adjusted)",
+   "spy": 689.81,
+   "last": 2.233,
+   "lastD": "2026-11-23",
+   "status": "open"
+  },
+  {
+   "id": "micro-ANVS-20261123",
+   "t": "ANVS",
+   "kind": "micro",
+   "posted": "2026-11-23",
+   "entry": 0.7113,
+   "entryN": "Nov 20 close",
+   "spy": 689.81,
+   "last": 0.7113,
+   "lastD": "2026-11-23",
+   "status": "open"
+  },
+  {
+   "id": "micro-AREC-20261123",
+   "t": "AREC",
+   "kind": "micro",
+   "posted": "2026-11-23",
+   "entry": 0.905,
+   "entryN": "Nov 20 close",
+   "spy": 689.81,
+   "last": 0.905,
+   "lastD": "2026-11-23",
+   "status": "open"
+  },
+  {
+   "id": "micro-NIVF-20261123",
+   "t": "NIVF",
+   "kind": "micro",
+   "posted": "2026-11-23",
+   "entry": 0.0269,
+   "entryN": "Nov 20 close",
+   "spy": 689.81,
+   "last": 0.0269,
+   "lastD": "2026-11-23",
+   "status": "open"
+  },
+  {
+   "id": "micro-FCHL-20261123",
+   "t": "FCHL",
+   "kind": "micro",
+   "posted": "2026-11-23",
+   "entry": 0.017,
+   "entryN": "Nov 20 close (unreconciled)",
+   "spy": 689.81,
+   "last": 0.017,
+   "lastD": "2026-11-23",
+   "status": "open"
+  },
+  {
+   "id": "micro-JAGX-20261123",
+   "t": "JAGX",
+   "kind": "micro",
+   "posted": "2026-11-23",
+   "entry": 0.227,
+   "entryN": "Nov 20 close",
+   "spy": 689.81,
+   "last": 0.227,
+   "lastD": "2026-11-23",
+   "status": "open"
+  },
+  {
+   "id": "micro-TOVX-20261123",
+   "t": "TOVX",
+   "kind": "micro",
+   "posted": "2026-11-23",
+   "entry": 0.12,
+   "entryN": "Nov 20 close",
+   "spy": 689.81,
+   "last": 0.12,
+   "lastD": "2026-11-23",
+   "status": "open"
+  },
+  {
+   "id": "micro-MRM-20261123",
+   "t": "MRM",
+   "kind": "micro",
+   "posted": "2026-11-23",
+   "entry": 0.23,
+   "entryN": "Nov 20 close",
+   "spy": 689.81,
+   "last": 0.23,
+   "lastD": "2026-11-23",
+   "status": "open"
+  },
+  {
+   "id": "micro-RBNE-20261123",
+   "t": "RBNE",
+   "kind": "micro",
+   "posted": "2026-11-23",
+   "entry": 0.1226,
+   "entryN": "Nov 20 close",
+   "spy": 689.81,
+   "last": 0.1226,
+   "lastD": "2026-11-23",
    "status": "open"
   }
  ]

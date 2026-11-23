@@ -1,70 +1,70 @@
 {
- "asof": "Nov 20, 2026 (premarket)",
- "headline": "The S&P 500 fell 2.02% to 7,175.83 on Nov 19 (sixth straight loss), the Dow lost 2.19% to 49,097 and the VIX jumped to 28.44; Nasdaq futures are down about 1.1% Friday after Nvidia's CEO exit and Asia's worst week since 2020, with a December Fed hike about 96% priced.",
- "regime": "Hiking regime with a risk-off tape: the Fed funds target is 3.75-4.00%, a 25bp hike on Dec 9 is about 96% priced (CME FedWatch), the 10-year is 5.04%, the dollar index is near a 19-month high and the VIX is 28.4.",
+ "asof": "Nov 23, 2026 (premarket)",
+ "headline": "The S&P 500 fell 3.70% to 6,910.39 on Nov 20, entering a correction after a seventh straight loss, while the Nasdaq dropped 5.28% and the VIX closed at 35.89; futures were sharply higher Monday premarket, with a December Fed hike still about 96% priced.",
+ "regime": "Hiking regime with a violent risk-off tape: the Fed funds target is 3.75-4.00%, a 25bp hike on Dec 9 is about 96% priced (CME FedWatch), the 10-year slipped back to 4.93%, and the VIX is 35.9, its highest close since late March.",
  "lean": [
   {
    "h": "Today",
    "sub": "day trades",
-   "s": -20,
-   "t": "Oversold but weak",
-   "why": "Nasdaq-100 futures -1.1% premarket after the AI selloff; Waller and Cook speak and Michigan sentiment prints. Extreme-fear readings can bounce but not reliably."
+   "s": 10,
+   "t": "Bounce attempt, fragile",
+   "why": "Dow futures +1.97%, S&P +2.76% and Nasdaq-100 +3.43% premarket after an $8T slide; analysts say one morning's bounce is not a recovery."
   },
   {
    "h": "Next 2-4 weeks",
    "sub": "swing trades",
-   "s": -20,
-   "t": "Rates and AI sentiment dominate",
-   "why": "Dec 9 hike is about 96% priced; PCE and GDP (Nov 25), Dell (Nov 24) and the FOMC are ahead, and the S&P is 8.2% below its record."
+   "s": -25,
+   "t": "Rates, AI doubts and PCE dominate",
+   "why": "Dec 9 hike is about 96% priced; PCE and GDP (Nov 25), Dell (Nov 24) and the FOMC are ahead, and the S&P is about 11.5% below its record."
   },
   {
    "h": "6-12 months",
    "sub": "investing",
-   "s": 5,
-   "t": "Earnings strong, valuations reset",
-   "why": "Nvidia guided Q4 revenue to about $130B, but a hiking Fed with 5% yields and money markets pricing two more hikes by mid-2027 cap multiples."
+   "s": 0,
+   "t": "Valuations resetting",
+   "why": "Nasdaq is negative for 2026 (-2.7%), but a hiking Fed with 4.9% 10-year yields and an SEC probe of Nvidia keep multiples under pressure."
   }
  ],
  "rates": [
   {
    "l": "Fed funds target",
    "v": "3.75-4.00%",
-   "n": "Unchanged from the prior read; next FOMC Dec 8-9; Paulson says more hikes are needed (Nov 20)"
+   "n": "Cook (Nov 20): policy is not restrictive enough and waiting risks falling behind the curve; next FOMC Dec 8-9"
   },
   {
    "l": "Dec hike odds",
    "v": "~96% (25bp)",
-   "n": "CME FedWatch 96.4% for 25bp, Kalshi 89.3% (Capp Notes, Nov 19); 98.4% cited Nov 20"
+   "n": "CME FedWatch about 96% (conservativedailynews, Nov 23); Kalshi 90% for 25bp, 9% hold (Capp Notes, Nov 20)"
   },
   {
    "l": "10-year yield",
-   "v": "5.04%",
-   "n": "Nov 19 close (Capp Notes); 2-year 4.76%, 30-year 5.40%"
+   "v": "4.93%",
+   "n": "Nov 20 close, down 11-12bp, its biggest drop since Oct 22; 2-year 4.63-4.65%, 30-year 5.31-5.33%"
   },
   {
    "l": "30-yr mortgage",
    "v": "7.28%",
-   "n": "Freddie Mac survey of Nov 19, up from 7.11%, versus 6.26% a year ago"
+   "n": "Freddie Mac survey of Nov 19 (older: not re-verified this run); MBA 30-year rose to 7.35% from 7.21%"
   },
   {
    "l": "Dollar index",
    "v": "~103.9",
-   "n": "103.88 on Nov 19, near a 19-month high (Capp Notes)"
+   "n": "About 103.84-103.89 on Nov 20, flat"
   },
   {
    "l": "Gold",
-   "v": "~$3,628",
-   "n": "-3.04% on Nov 19 on the strong dollar and hike bets (Capp Notes)"
+   "v": "~$3,515-3,538",
+   "n": "Down 2.4% to 4.6% on Nov 20; sources differ (investinglive vs Capp Notes)"
   },
   {
    "l": "WTI oil",
-   "v": "~$81.6",
-   "n": "$83.21 on Nov 19 (lowest since Aug 26); $81.59 premarket Nov 20 (TipRanks)"
+   "v": "~$83.7-84.0",
+   "n": "Up 0.9-1.5% on Nov 20; FT says Trump is weighing renewed Iran strikes"
   },
   {
    "l": "VIX",
-   "v": "~28.4",
-   "n": "28.44 on Nov 19, +15.8%; intraday high 29.13 (Capp Notes)"
+   "v": "~35.9",
+   "n": "35.89 on Nov 20, +26.2%, highest close since late March (Capp Notes)"
   }
  ],
  "sectors": [
@@ -76,7 +76,7 @@
     0,
     1
    ],
-   "why": "Nvidia -3.3% Nov 19 and -1.9% premarket despite a $115.8B revenue beat; AMD -7.7%; Taiwan and Korea down 5-6% Nov 20."
+   "why": "Nvidia -14.01% to $125.53 after an SEC accounting-probe report; SOX -10.7%; AMD -13.25%, Micron -13.89%, Broadcom -12.19%; Nvidia futures +8.7% Monday premarket."
   },
   {
    "s": "Software and cloud",
@@ -86,7 +86,7 @@
     -1,
     0
    ],
-   "why": "Intuit fell about 10% after hours on weak guidance and Twilio fell 8.75%; Palo Alto rose 6.4% on its beat."
+   "why": "Intuit -12.77% on Nov 20; Zscaler +16% after hours on the CrowdStrike deal; tech sector fell 7.27%."
   },
   {
    "s": "Banks",
@@ -96,7 +96,7 @@
     1,
     1
    ],
-   "why": "Hike expectations help margins; the 10-year is 5.04% and the 2s10s spread 28bp, though the broad selloff hit all 11 sectors."
+   "why": "Financials -1.82% on Nov 20, better than the market; hike odds about 96% help margins; 2s10s spread 29bp."
   },
   {
    "s": "Homebuilders and mortgage",
@@ -106,7 +106,7 @@
     -1,
     0
    ],
-   "why": "Mortgage rates jumped 17bp to 7.28% and the 10-year is above 5%."
+   "why": "10-year fell to 4.93%, mildly supportive, but mortgage rates are 7.28% (Nov 19) and MBA rates rose to 7.35%."
   },
   {
    "s": "Gold and miners",
@@ -116,7 +116,7 @@
     0,
     1
    ],
-   "why": "Gold fell 3.04% to $3,628 on a strong dollar (DXY 103.88) and hike bets."
+   "why": "Gold fell 2.4-4.6% on Nov 20 to a 14.5-month low near $3,515-3,538 amid cash raising; silver about $41."
   },
   {
    "s": "Energy",
@@ -126,7 +126,7 @@
     0,
     0
    ],
-   "why": "Best sector Nov 19 at -0.65%; WTI at $83.21 (lowest since Aug 26) and $81.59 premarket."
+   "why": "Energy fell only 0.62% on Nov 20; WTI rose to about $83.7-84.0 on Iran headlines."
   },
   {
    "s": "Retail and consumer",
@@ -136,17 +136,17 @@
     0,
     0
    ],
-   "why": "Consumer discretionary was the worst sector at -2.79%; Williams-Sonoma -15.2%, Ross -7% after hours; Walmart raised its outlook."
+   "why": "Consumer discretionary -2.95%; Gap +11.44% on earnings; retail sales rose 0.2% in October (core +0.6%)."
   },
   {
    "s": "Health insurers and hospitals",
    "etf": "IHF XLV",
    "d": [
-    -1,
+    0,
     0,
     1
    ],
-   "why": "UnitedHealth -10% and Humana -13% Nov 18 on a CMS Medicare Advantage audit proposal."
+   "why": "UnitedHealth +2.84% and Humana +2.63% on Nov 20 on TD Cowen upgrades after the Nov 18 Medicare Advantage drop; health care -0.12%."
   },
   {
    "s": "Small caps",
@@ -156,7 +156,7 @@
     0,
     1
    ],
-   "why": "Russell 2000 fell 2.18% to 2,655 on Nov 19; high rates are a headwind."
+   "why": "Russell 2000 fell 2.76% to 2,581.79 on Nov 20; high rates are a headwind."
   },
   {
    "s": "Utilities and power",
@@ -166,392 +166,382 @@
     0,
     1
    ],
-   "why": "Utilities fell about 1.2% Nov 19 (Saxo), a defensive group but not immune."
+   "why": "Utilities fell 0.74% on Nov 20, a defensive group but not immune."
   },
   {
    "s": "Cybersecurity",
    "etf": "CIBR HACK",
    "d": [
-    1,
+    0,
     0,
     1
    ],
-   "why": "Palo Alto +6.4% on a beat and raised outlook; SentinelOne and CrowdStrike rose in sympathy Nov 18."
+   "why": "CrowdStrike -4.84% and Zscaler +16.34% after hours Nov 20; the Nov 23 deal is an all-stock $43.9B agreement."
   },
   {
    "s": "Airlines and travel",
    "etf": "JETS",
    "d": [
-    1,
+    0,
     0,
     0
    ],
-   "why": "WTI near a three-month low helps fuel costs, though the broad market is risk-off."
+   "why": "No airline price data found this run; WTI rose about 1% to roughly $83.7-84.0 on Nov 20."
   }
  ],
  "news": [
   {
-   "id": "selloff",
+   "id": "correction",
    "cat": "stocks",
-   "head": "S&P 500 falls 2% for a sixth straight loss; Dow drops below 50,000",
-   "when": "Nov 19",
-   "src": "https://cappnotes.substack.com/p/closing-look-thursday-november-19",
-   "srcN": "Capp Notes, Nov 19; AP via WPTF, Nov 19",
-   "mean": "The S&P 500 closed at 7,175.83 (-2.02%), its sixth straight loss and longest streak since 2024, about 8.2% below October's record. The Dow lost 2.19% to 49,097 (first close under 50,000 since June, 1 of 30 components up) and the Nasdaq 2.25% to 23,879. Decliners beat advancers 464 to 37 and all 11 sectors fell; the VIX jumped 15.8% to 28.44.",
+   "head": "S&P 500 enters correction as Nasdaq plunges 5.28%",
+   "when": "Nov 20",
+   "src": "https://cappnotes.substack.com/p/closing-look-friday-november-20-2026",
+   "srcN": "Capp Notes, Nov 20; investinglive, Nov 20",
+   "mean": "The S&P 500 closed at 6,910.39 (-3.70%), its seventh straight loss, about 11.5% below the Oct 6 record; the Dow lost 1.93% to 48,147.33 and the Nasdaq 5.28% to 22,617.73 (-10.0% on the week, negative for 2026). Decliners beat advancers 376 to 123 and only staples rose.",
    "react": [
     [
      "S&P 500",
      -1,
-     "Sixth straight loss"
+     "Correction territory"
+    ],
+    [
+     "Nasdaq",
+     -1,
+     "-5.28%, worst of the indexes"
+    ],
+    [
+     "Staples",
+     1,
+     "Only sector up, +0.67%"
     ],
     [
      "VIX",
      1,
-     "Up to 28.44"
-    ],
-    [
-     "Consumer discretionary",
-     -1,
-     "Worst sector, -2.79%"
-    ],
-    [
-     "Energy",
-     0,
-     "Best sector but still -0.65%"
+     "35.89, +26.2%"
     ]
    ],
-   "hist": "Rule of thumb: broad, one-day selloffs on heavy breadth often see sharp rebounds or further drops depending on the next catalyst, not a fixed pattern.",
+   "hist": "Rule of thumb: sharp one-day index drops on heavy breadth can be followed by rebounds or further declines depending on the next catalyst; there is no fixed pattern.",
    "histN": "",
    "histU": "",
-   "today": "Breadth was nearly one-sided, so Friday's Waller and Cook speeches and the Michigan sentiment print may set the tone.",
-   "later": "Investors may watch whether the selloff turns into a broader valuation reset or a bounce; this week is Dow -6.2%, S&P about -5%.",
+   "today": "Monday futures are sharply higher (S&P +2.76%), so the first hour may show whether sellers or buyers lead.",
+   "later": "Investors may weigh whether the selloff is a valuation reset; about $8T has been lost since Oct 6.",
    "conf": 3
   },
   {
    "id": "nvda",
    "cat": "stocks",
-   "head": "Nvidia beats and guides higher, but the CEO resigns and the stock falls",
-   "when": "Nov 19",
-   "src": "https://www.constellationr.com/insights/news/nvidia-posts-strong-q3-ups-q4-outlook-amid-huang-resignation",
-   "srcN": "Constellation Research, Nov 17; Capp Notes, Nov 19",
-   "mean": "Nvidia reported Q3 FY27 revenue of $115.8B (+103%) versus $108.7B expected, EPS $2.70 versus $2.47, and guided Q4 revenue to about $130B versus $124.9B expected, with an extra $150B buyback. CEO Jensen Huang resigned and CFO Colette Kress is interim CEO. The stock closed -3.30% at $145.98 and was down about 1.9% premarket Nov 20, its lowest in over a year.",
+   "head": "Nvidia falls 14% on SEC accounting-probe report",
+   "when": "Nov 20",
+   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-20-2026",
+   "srcN": "Stock Titan, Nov 20; Capp Notes, Nov 20",
+   "mean": "Nvidia closed at $125.53 (-14.01%), its worst day since Jan 2025 and about -23% on the week, after Reuters reported SEC enforcement staff are examining possible accounting issues and California's AG issued a subpoena over chips reaching China.",
    "react": [
     [
-     "Nvidia",
+     "NVDA",
      -1,
-     "Leadership change outweighs beat"
+     "-14.01% to $125.53"
     ],
     [
-     "AI chips (SMH)",
+     "SMH",
      -1,
-     "Sympathy selling: Broadcom -3%, AMD -5% premarket"
-    ],
-    [
-     "Micron",
-     -1,
-     "-3.8% premarket"
+     "SOX -10.7%"
     ]
    ],
-   "hist": "Rule of thumb: broad, one-day selloffs on heavy breadth often see sharp rebounds or further drops depending on the next catalyst, not a fixed pattern.",
+   "hist": "Rule of thumb: sharp one-day index drops on heavy breadth can be followed by rebounds or further declines depending on the next catalyst; there is no fixed pattern.",
    "histN": "",
    "histU": "",
-   "today": "Watch Nvidia's premarket low and whether AI names stabilize.",
-   "later": "Investors may separate the strong fundamentals from the governance and sentiment shock.",
-   "conf": 2
+   "today": "Nvidia was +8.7% premarket Monday; headlines on the probe could move it either way.",
+   "later": "Long-term holders may watch whether the probe widens or stays an accounting inquiry.",
+   "conf": 3
   },
   {
-   "id": "anthropic",
+   "id": "chips",
    "cat": "stocks",
-   "head": "Anthropic's record IPO opens at $111.50 but closes at $97.17",
-   "when": "Nov 19",
-   "src": "https://thewallstreetrepublic.substack.com/p/anthropic-closes-at-9717-s-and-p",
-   "srcN": "Wall Street Republic, Nov 19; conservativedailynews, Nov 20",
-   "mean": "Anthropic priced at $83 (above range), raised $81.3B in the largest IPO on record, opened at $111.50, hit $115.10 and closed at $97.17 (+17.07% versus the IPO price, -12.85% from the first trade), valuing it near $1.75T. It traded about 6% lower premarket Nov 20.",
+   "head": "Chip and AI stocks drop 9-16% in contagion",
+   "when": "Nov 20",
+   "src": "https://cappnotes.substack.com/p/closing-look-friday-november-20-2026",
+   "srcN": "Capp Notes, Nov 20; Stock Titan, Nov 20",
+   "mean": "AMD fell 13.25%, Micron 13.89%, Broadcom 12.19%, CoreWeave 12.02%, Arm 14.09%, Sandisk 16.05%, Nebius 16.11% and TSMC 9.48%, on doubts that AI infrastructure spending will pay back.",
    "react": [
     [
-     "New AI listings",
-     0,
-     "Demand strong but first-day fade"
+     "Semiconductors",
+     -1,
+     "SOX -10.7%"
     ],
     [
-     "Broad market",
+     "AI infrastructure",
      -1,
-     "IPO did not lift sentiment"
+     "CoreWeave, Nebius double-digit drops"
     ]
    ],
-   "hist": "Rule of thumb: broad, one-day selloffs on heavy breadth often see sharp rebounds or further drops depending on the next catalyst, not a fixed pattern.",
+   "hist": "Rule of thumb: sharp one-day index drops on heavy breadth can be followed by rebounds or further declines depending on the next catalyst; there is no fixed pattern.",
    "histN": "",
    "histU": "",
-   "today": "Volatility is likely high in the first sessions of a new listing.",
-   "later": "IPO supply and size can drain cash from other growth names.",
-   "conf": 2
+   "today": "Premarket the group is rebounding (Micron +7%, AMD +5.8%).",
+   "later": "Analysts called the move 'panic selling' and 'very oversold'; evidence of a durable bottom is thin.",
+   "conf": 3
   },
   {
-   "id": "fedodds",
+   "id": "cook",
    "cat": "fed",
-   "head": "Fed December hike near fully priced; Philadelphia Fed's Paulson says more hikes needed",
-   "when": "Nov 19-20",
-   "src": "https://cappnotes.substack.com/p/closing-look-thursday-november-19",
-   "srcN": "Capp Notes, Nov 19; conservativedailynews, Nov 20",
-   "mean": "CME FedWatch showed 96.4% for a 25bp hike at the Dec 9 FOMC (Kalshi 89.3%); another outlet cited 98.4%. Philadelphia Fed President Anna Paulson said the Fed will need to raise rates again, and Saxo says money markets price at least two more hikes by mid-2027.",
+   "head": "Fed's Cook says policy is not restrictive enough",
+   "when": "Nov 20",
+   "src": "https://cappnotes.substack.com/p/closing-look-friday-november-20-2026",
+   "srcN": "Capp Notes, Nov 20; Stock Titan, Nov 20",
+   "mean": "Governor Cook said in Chile that policy is not restrictive enough and waiting 'risks falling behind the curve'; Paulson is open to back-to-back hikes. Kalshi put a Dec 9 25bp hike at 90%, with 9% for a hold; CME FedWatch is near 96%.",
    "react": [
     [
-     "Fed funds futures",
-     -1,
-     "Hikes priced"
+     "10-year yield",
+     0,
+     "Fell 11bp anyway on risk-off"
     ],
     [
      "Banks",
      1,
-     "Higher rates help margins"
+     "Hike helps margins"
     ],
     [
      "Growth stocks",
      -1,
-     "Valuation pressure"
+     "Higher-rate headwind"
     ]
    ],
-   "hist": "Rule of thumb: broad, one-day selloffs on heavy breadth often see sharp rebounds or further drops depending on the next catalyst, not a fixed pattern.",
+   "hist": "Rule of thumb: sharp one-day index drops on heavy breadth can be followed by rebounds or further declines depending on the next catalyst; there is no fixed pattern.",
    "histN": "",
    "histU": "",
-   "today": "Fed Gov. Waller speaks 8:25am ET and Cook at 12:15pm ET Friday.",
-   "later": "Investors may plan for a higher-for-longer path through mid-2027.",
+   "today": "Williams speaks at 4:00pm ET Monday.",
+   "later": "Treasury Secretary Bessent warned the Fed could over-tighten (conservativedailynews, Nov 23).",
    "conf": 3
   },
   {
-   "id": "mortgage",
-   "cat": "housing",
-   "head": "Mortgage rates jump to 7.28%, ending a four-week decline",
-   "when": "Nov 19",
-   "src": "https://www.globenewswire.com/news-release/2026/11/19/3406994/0/en/mortgage-rates-average-7-28.html",
-   "srcN": "Freddie Mac via GlobeNewswire, Nov 19",
-   "mean": "Freddie Mac's 30-year fixed rate averaged 7.28%, up 17bp from 7.11% a week earlier and versus 6.26% a year ago; the 15-year was 6.66% versus 6.45%.",
+   "id": "rates",
+   "cat": "fed",
+   "head": "Treasuries rally; 10-year drops back below 5%",
+   "when": "Nov 20",
+   "src": "https://investinglive.com/news/investinglive-americas-fx-news-wrap-20-nov-stocks-get-hammered-as-nasdaq-plunges-5-28/",
+   "srcN": "investinglive, Nov 20; Capp Notes, Nov 20",
+   "mean": "The 10-year closed near 4.93% (-11 to -12bp, its biggest drop since Oct 22), the 2-year at 4.63-4.65% (-13bp) and the 30-year at 5.31-5.33%; the 2s10s spread is 29bp.",
    "react": [
+    [
+     "Long Treasuries",
+     1,
+     "TLT +1.37%"
+    ],
     [
      "Homebuilders",
-     -1,
-     "Higher borrowing costs"
+     1,
+     "Mild relief (inference)"
     ],
     [
-     "Mortgage lenders",
-     -1,
-     "Weaker affordability"
+     "Banks",
+     0,
+     "Flat spread"
     ]
    ],
-   "hist": "Rule of thumb: broad, one-day selloffs on heavy breadth often see sharp rebounds or further drops depending on the next catalyst, not a fixed pattern.",
+   "hist": "Rule of thumb: sharp one-day index drops on heavy breadth can be followed by rebounds or further declines depending on the next catalyst; there is no fixed pattern.",
    "histN": "",
    "histU": "",
-   "today": "Homebuilders may stay sensitive to the 10-year yield.",
-   "later": "Affordability remains a drag on housing demand.",
+   "today": "Watch whether yields hold under 5% as stocks rebound.",
+   "later": "If hike odds stay near 96%, mortgage rates may stay elevated.",
    "conf": 3
   },
   {
-   "id": "yields",
-   "cat": "fed",
-   "head": "10-year yield 5.04% and dollar near a 19-month high",
-   "when": "Nov 19",
-   "src": "https://cappnotes.substack.com/p/closing-look-thursday-november-19",
-   "srcN": "Capp Notes, Nov 19",
-   "mean": "The 10-year closed at 5.04% (5.07% Wednesday), the 2-year at 4.76% and the 30-year at 5.40%, a 28bp 2s10s spread. The dollar index was 103.88, near a 19-month high.",
+   "id": "data",
+   "cat": "economy",
+   "head": "Retail sales and claims beat; Michigan sentiment rises to 51.5",
+   "when": "Nov 20",
+   "src": "https://investinglive.com/news/investinglive-americas-fx-news-wrap-20-nov-stocks-get-hammered-as-nasdaq-plunges-5-28/",
+   "srcN": "investinglive, Nov 20; investing.com recap",
+   "mean": "Retail sales rose 0.2% (forecast 0.1%) and core retail 0.6% (forecast 0.4%); jobless claims were 203K (forecast 198K); industrial production fell 0.4%; Michigan final sentiment was 51.5 (prior 48.0) with 1-year inflation expectations at 3.7% (from 4.3% prelim); GDPNow for Q4 is 3.2%.",
    "react": [
     [
-     "Bonds",
+     "Consumer stocks",
      0,
-     "Yields still above 5%"
+     "Spending held up"
     ],
     [
-     "Gold",
+     "Rate-sensitive stocks",
      -1,
-     "Strong dollar"
-    ],
-    [
-     "Multinationals",
-     -1,
-     "Dollar headwind"
+     "Firm data supports hikes"
     ]
    ],
-   "hist": "Rule of thumb: broad, one-day selloffs on heavy breadth often see sharp rebounds or further drops depending on the next catalyst, not a fixed pattern.",
+   "hist": "Rule of thumb: sharp one-day index drops on heavy breadth can be followed by rebounds or further declines depending on the next catalyst; there is no fixed pattern.",
    "histN": "",
    "histU": "",
-   "today": "Watch the 10-year around 5%.",
-   "later": "A strong dollar can weigh on foreign earnings.",
+   "today": "The next hard data are PCE and GDP on Wednesday.",
+   "later": "Firm spending alongside high inflation is the backdrop for a Dec 9 hike.",
    "conf": 3
   },
   {
    "id": "gold",
    "cat": "commodities",
-   "head": "Gold drops 3% to $3,628 on the dollar and hike bets",
-   "when": "Nov 19",
-   "src": "https://cappnotes.substack.com/p/closing-look-thursday-november-19",
-   "srcN": "Capp Notes, Nov 19",
-   "mean": "Gold fell 3.04% to $3,628.30, silver 4.75% to $42.86; WTI was $83.21 (lowest since Aug 26) and Brent $91.98. Premarket Nov 20 Brent was $90.18 and WTI $81.59, about -1.95% (TipRanks).",
+   "head": "Gold and silver slide with stocks",
+   "when": "Nov 20",
+   "src": "https://investinglive.com/news/investinglive-americas-fx-news-wrap-20-nov-stocks-get-hammered-as-nasdaq-plunges-5-28/",
+   "srcN": "investinglive, Nov 20; Capp Notes, Nov 20",
+   "mean": "Gold fell about 2.4% to $3,537.77 (Capp Notes has -4.63% to about $3,515, a 14.5-month low) and silver about 3.8% to $41.22 as investors raised cash; the dollar index was flat near 103.9.",
    "react": [
+    [
+     "GLD",
+     -1,
+     "Selling alongside equities"
+    ],
     [
      "Gold miners",
      -1,
-     "Gold falling"
-    ],
+     "Bullion lower (inference)"
+    ]
+   ],
+   "hist": "Rule of thumb: sharp one-day index drops on heavy breadth can be followed by rebounds or further declines depending on the next catalyst; there is no fixed pattern.",
+   "histN": "",
+   "histU": "",
+   "today": "Gold has not acted as a haven in this selloff.",
+   "later": "Investors may watch whether the dollar and real yields keep pressuring gold.",
+   "conf": 2
+  },
+  {
+   "id": "oil",
+   "cat": "commodities",
+   "head": "WTI rises on Iran headlines",
+   "when": "Nov 20",
+   "src": "https://investinglive.com/news/investinglive-americas-fx-news-wrap-20-nov-stocks-get-hammered-as-nasdaq-plunges-5-28/",
+   "srcN": "investinglive, Nov 20",
+   "mean": "WTI rose 0.9-1.5% to about $83.70-83.98 and Brent to $92.57-92.63; the FT reported Trump is weighing renewed Iran strikes.",
+   "react": [
     [
-     "Energy",
-     -1,
-     "Oil at a near three-month low"
+     "Energy stocks",
+     0,
+     "XLE fell only 0.62%"
     ],
     [
      "Airlines",
-     1,
-     "Cheaper fuel"
+     -1,
+     "Higher fuel costs (inference)"
     ]
    ],
-   "hist": "Rule of thumb: broad, one-day selloffs on heavy breadth often see sharp rebounds or further drops depending on the next catalyst, not a fixed pattern.",
+   "hist": "Rule of thumb: sharp one-day index drops on heavy breadth can be followed by rebounds or further declines depending on the next catalyst; there is no fixed pattern.",
    "histN": "",
    "histU": "",
-   "today": "Oil and gold are both slipping on the dollar.",
-   "later": "Falling oil may ease inflation pressure if it lasts.",
-   "conf": 3
+   "today": "Oil-sensitive names may react to Iran headlines.",
+   "later": "Higher oil adds to headline inflation pressure.",
+   "conf": 2
   },
   {
-   "id": "intuit",
+   "id": "intu",
    "cat": "stocks",
-   "head": "Intuit falls about 10% after hours on weak FY27 guidance; sells Mailchimp",
-   "when": "Nov 19",
-   "src": "https://thewallstreetrepublic.substack.com/p/anthropic-closes-at-9717-s-and-p",
-   "srcN": "Wall Street Republic and Capp Notes, Nov 19",
-   "mean": "Intuit fell about 10-11% after hours on weak fiscal 2027 guidance and agreed to sell Mailchimp at a $3.68B enterprise value. Full results were not itemized in the sources.",
+   "head": "Intuit drops 12.8% after earnings and Mailchimp sale",
+   "when": "Nov 20",
+   "src": "https://cappnotes.substack.com/p/closing-look-friday-november-20-2026",
+   "srcN": "Capp Notes, Nov 20; Stock Titan, Nov 20",
+   "mean": "Intuit fell 12.77% after Q1 revenue rose 12% and it agreed to sell Mailchimp to Bending Spoons (about $3.68B); Capp Notes says it cut its Credit Karma revenue outlook to $2.72-2.83B, while Stock Titan says profit forecasts were kept.",
    "react": [
     [
-     "Intuit",
+     "INTU",
      -1,
-     "Guidance disappointed"
+     "-12.77%"
     ],
     [
      "Software",
      -1,
-     "Read-across"
+     "IGV pressured"
     ]
    ],
-   "hist": "Rule of thumb: broad, one-day selloffs on heavy breadth often see sharp rebounds or further drops depending on the next catalyst, not a fixed pattern.",
+   "hist": "Rule of thumb: sharp one-day index drops on heavy breadth can be followed by rebounds or further declines depending on the next catalyst; there is no fixed pattern.",
    "histN": "",
    "histU": "",
-   "today": "Intuit's Friday open is a software sentiment gauge.",
-   "later": "Software had already been weak.",
+   "today": "Sources differ on the main driver.",
+   "later": "Software multiples are sensitive to AI-disruption worries.",
    "conf": 2
   },
   {
-   "id": "retail",
+   "id": "deals",
    "cat": "stocks",
-   "head": "Walmart raises its outlook; off-price TJX jumped earlier in the week",
-   "when": "Nov 19-20",
-   "src": "https://www.heygotrade.com/en/news/walmart-wmt-stock-news-november-20-2026/",
-   "srcN": "HeyGoTrade, Nov 20",
-   "mean": "Walmart reported Q3 revenue of $188.8B (+5.2%) and adjusted EPS $0.65, with US comps +2.9% versus 3.1% expected, and raised FY EPS guidance to $2.84-2.89; the stock fell 1.04% to $126.04. Williams-Sonoma fell 15.16% to $220.66 and Ross Stores fell about 7% after hours.",
+   "head": "Deal news: CrowdStrike-Zscaler, Global Payments, Bill Holdings",
+   "when": "Nov 20-23",
+   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-20-2026",
+   "srcN": "Stock Titan, Nov 20; CrowdStrike 8-K, Nov 23",
+   "mean": "Zscaler rose about 16% after hours on reports of CrowdStrike talks; CrowdStrike's Nov 23 8-K confirms an all-stock deal near $43.9B (1.135 CRWD shares per ZS share). Global Payments rose 9.95% on a report GTCR is exploring a takeover of about $50B including debt, and Bill Holdings fell 4.12% on a $63.25 per share TPG and Corpay cash buyout.",
    "react": [
     [
-     "Walmart",
-     0,
-     "Raised outlook, comps slightly light"
+     "ZS",
+     1,
+     "Deal at a fixed ratio"
     ],
     [
-     "Williams-Sonoma",
+     "CRWD",
      -1,
-     "-15%"
+     "-4.84% after hours"
     ],
     [
-     "Consumer discretionary",
-     -1,
-     "Worst sector"
+     "GPN",
+     1,
+     "+9.95% on a takeover report"
     ]
    ],
-   "hist": "Rule of thumb: broad, one-day selloffs on heavy breadth often see sharp rebounds or further drops depending on the next catalyst, not a fixed pattern.",
+   "hist": "Rule of thumb: sharp one-day index drops on heavy breadth can be followed by rebounds or further declines depending on the next catalyst; there is no fixed pattern.",
    "histN": "",
    "histU": "",
-   "today": "Watch Ross and Williams-Sonoma for the home and apparel read.",
-   "later": "Retail results are mixed, with share gains at value retailers.",
-   "conf": 2
+   "today": "Merger-arb spreads and the CRWD share price drive ZS.",
+   "later": "Regulatory review is the main remaining risk for the CRWD deal.",
+   "conf": 3
   },
   {
-   "id": "amd",
+   "id": "gap",
    "cat": "stocks",
-   "head": "AMD falls 7.7% after a short report on China ties",
-   "when": "Nov 19",
-   "src": "https://thewallstreetrepublic.substack.com/p/anthropic-closes-at-9717-s-and-p",
-   "srcN": "Wall Street Republic, Nov 19",
-   "mean": "AMD fell 7.72% to $489.19 after a Hunterbrook short report on China ties, which AMD denied. Palo Alto rose 6.4% on its beat, and PDD rose 11% despite a revenue miss.",
+   "head": "Gap jumps 11% on earnings; health insurers bounce",
+   "when": "Nov 20",
+   "src": "https://cappnotes.substack.com/p/closing-look-friday-november-20-2026",
+   "srcN": "Capp Notes, Nov 20",
+   "mean": "Gap rose 11.44% on adjusted EPS of $0.82 vs $0.78 expected despite a lower full-year outlook; UnitedHealth rose 2.84% and Humana 2.63% on TD Cowen upgrades to Buy.",
    "react": [
     [
-     "AMD",
-     -1,
-     "Short report"
+     "GAP",
+     1,
+     "+11.44%"
     ],
     [
-     "Palo Alto",
+     "UNH",
      1,
-     "Beat and Applied Compute purchase for $4.5B"
+     "+2.84%"
     ],
     [
-     "Cybersecurity",
+     "HUM",
      1,
-     "Sympathy gains"
+     "+2.63%"
     ]
    ],
-   "hist": "Rule of thumb: broad, one-day selloffs on heavy breadth often see sharp rebounds or further drops depending on the next catalyst, not a fixed pattern.",
+   "hist": "Rule of thumb: sharp one-day index drops on heavy breadth can be followed by rebounds or further declines depending on the next catalyst; there is no fixed pattern.",
    "histN": "",
    "histU": "",
-   "today": "Short-report moves often fade or extend within days.",
-   "later": "Investors may wait for AMD's reply to be tested.",
+   "today": "Earnings-driven gaps held up even in a down tape.",
+   "later": "Insurers remain exposed to Medicare Advantage audit proposals.",
    "conf": 2
   },
   {
    "id": "global",
-   "cat": "economy",
-   "head": "Asia heads for its worst week since 2020 as the AI selloff spreads",
+   "cat": "stocks",
+   "head": "Asia and Europe routed on AI worries",
    "when": "Nov 20",
-   "src": "https://conservativedailynews.com/2026/11/nasdaq-futures-slide-as-asia-heads-for-its-worst-week-since-2020-and-the-ai-selloff-spreads-worldwide/",
-   "srcN": "conservativedailynews, Nov 20",
-   "mean": "The Nikkei fell 5.06% to 56,436.65 and the Kospi 5.21%, with Taiwan down over 6%; MSCI Asia ex-Japan is down 8% on the week, its worst since March 2020. Drivers cited were Huang's departure, slower data-center construction and the AMD report; Deutsche Bank called it 'very oversold'. Nasdaq-100 futures were -1.1% premarket.",
+   "src": "https://investinglive.com/news/investinglive-americas-fx-news-wrap-20-nov-stocks-get-hammered-as-nasdaq-plunges-5-28/",
+   "srcN": "investinglive, Nov 20; Capp Notes, Nov 20",
+   "mean": "Taiwan fell 6.23% (a record 17.5% weekly loss), the Nikkei 5.06%, Kospi 5.21%, the DAX 2.60% (-7.29% on the week) and the STOXX 600 2.00%; the ECB is about 95% priced for a 25bp hike on Dec 17.",
    "react": [
     [
-     "Asian chip names",
+     "Global equities",
      -1,
-     "Heavy selling"
+     "Broad selloff"
     ],
     [
-     "Nasdaq futures",
+     "TSMC",
      -1,
-     "-1.1%"
+     "-9.48%"
     ]
    ],
-   "hist": "Rule of thumb: broad, one-day selloffs on heavy breadth often see sharp rebounds or further drops depending on the next catalyst, not a fixed pattern.",
+   "hist": "Rule of thumb: sharp one-day index drops on heavy breadth can be followed by rebounds or further declines depending on the next catalyst; there is no fixed pattern.",
    "histN": "",
    "histU": "",
-   "today": "Overseas weakness points to a soft open.",
-   "later": "Extreme readings (CNN Fear & Greed 19) can precede bounces, but not reliably.",
-   "conf": 2
-  },
-  {
-   "id": "data",
-   "cat": "economy",
-   "head": "Jobless claims 203,000; Philly Fed falls to 6.3",
-   "when": "Nov 19",
-   "src": "https://cappnotes.substack.com/p/closing-look-thursday-november-19",
-   "srcN": "Capp Notes, Nov 19",
-   "mean": "Initial jobless claims were 203,000, the Philadelphia Fed index fell to 6.3 from 20.9 (prices paid 58.2), the Kansas City Fed rose to 18 from 11, and the October leading index fell 0.3%.",
-   "react": [
-    [
-     "Labor market",
-     1,
-     "Claims low"
-    ],
-    [
-     "Inflation worry",
-     -1,
-     "Prices paid 58.2"
-    ]
-   ],
-   "hist": "Rule of thumb: broad, one-day selloffs on heavy breadth often see sharp rebounds or further drops depending on the next catalyst, not a fixed pattern.",
-   "histN": "",
-   "histU": "",
-   "today": "Michigan final sentiment is due Friday at 10am ET.",
-   "later": "Low claims keep the Fed on its hiking path.",
+   "today": "Asian opens set the early tone.",
+   "later": "Rising rates abroad as well as in the US are a headwind for multiples.",
    "conf": 2
   }
  ],
@@ -591,14 +581,9 @@
  ],
  "calendar": [
   {
-   "d": "2026-11-20",
-   "t": "Fed Gov. Waller (8:25am ET) and Cook (12:15pm ET) speak; Michigan final sentiment (10am ET)",
-   "usual": "Fed speakers can shift hike-size odds."
-  },
-  {
    "d": "2026-11-23",
-   "t": "Zoom earnings (after the close); S&P Global flash PMIs",
-   "usual": "Software sentiment read."
+   "t": "Flash PMIs (9:45am ET); Williams speaks (4:00pm ET); Zoom, HPE, Agilent earnings (after the close)",
+   "usual": "Software and Fed-speak read."
   },
   {
    "d": "2026-11-24",
@@ -607,17 +592,17 @@
   },
   {
    "d": "2026-11-25",
-   "t": "Q3 GDP (second estimate) and core PCE; Deere earnings",
+   "t": "Oct PCE and Q3 GDP (second estimate) at 8:30am ET; Beige Book; Deere earnings",
    "usual": "The Fed's preferred inflation gauge two weeks before the FOMC."
   },
   {
    "d": "2026-11-26",
    "t": "Thanksgiving: US markets closed",
-   "usual": "Thin trading; Nov 27 is an early close."
+   "usual": "Thin trading; Nov 27 closes at 1pm ET."
   },
   {
    "d": "2026-11-27",
-   "t": "Early close; BridgeBio FDA date (BBP-418)",
+   "t": "Early close (1pm ET); BridgeBio FDA date (BBP-418)",
    "usual": "Binary biotech move."
   },
   {
@@ -626,27 +611,37 @@
    "usual": "Large-cap biotech decision."
   },
   {
+   "d": "2026-12-01",
+   "t": "JOLTS and ISM manufacturing (10am ET)",
+   "usual": "Early read on labor and factory demand."
+  },
+  {
    "d": "2026-12-04",
-   "t": "November jobs report (expected date, not confirmed)",
+   "t": "November jobs report (8:30am ET, confirmed by BLS)",
    "usual": "Strong jobs raise hike-size odds."
   },
   {
    "d": "2026-12-09",
    "t": "FOMC decision (Dec 8-9 meeting)",
    "usual": "A 25bp hike is about 96% priced."
+  },
+  {
+   "d": "2026-12-10",
+   "t": "November CPI (8:30am ET)",
+   "usual": "Inflation read right after the Fed."
   }
  ],
  "scen": {
-  "title": "What if core PCE (Nov 25) is... (no consensus forecast found this run)",
+  "title": "What if core PCE (Nov 25) is... (no published consensus; forecasts cluster near 3.2-3.3% y/y: Cleveland Fed 3.21%, Goldman 3.24%, Pantheon 3.3%; prior 3.1%)",
   "opts": [
    {
     "k": "hot",
-    "l": "Hot (above expectations)",
+    "l": "Hot (core above about 3.3% y/y or 0.35% m/m)",
     "out": [
      [
       "10-year yield",
       -1,
-      "Likely rises above 5.1%"
+      "Likely rises back above 5%"
      ],
      [
       "Dec hike odds",
@@ -677,7 +672,7 @@
    },
    {
     "k": "mid",
-    "l": "In line",
+    "l": "In line (about 3.2-3.3% y/y)",
     "out": [
      [
       "10-year yield",
@@ -713,7 +708,7 @@
    },
    {
     "k": "cold",
-    "l": "Cold (below expectations)",
+    "l": "Cold (3.1% y/y or below)",
     "out": [
      [
       "10-year yield",
