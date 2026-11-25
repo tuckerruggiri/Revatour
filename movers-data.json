@@ -1,1407 +1,1469 @@
 {
- "asof": "Nov 23, 2026",
- "tape": [
-  {
-   "l": "Dow",
-   "v": "48,147",
-   "d": -1.93
-  },
-  {
-   "l": "S&P 500",
-   "v": "6,910",
-   "d": -3.7
-  },
-  {
-   "l": "Nasdaq",
-   "v": "22,618",
-   "d": -5.28
-  },
-  {
-   "l": "10-yr yield",
-   "v": "4.93%"
-  },
-  {
-   "l": "Gold",
-   "v": "~$3,515-3,538"
-  }
- ],
- "tapeSrc": "https://cappnotes.substack.com/p/closing-look-friday-november-20-2026",
- "events": [
-  {
-   "d": "2026-11-23",
-   "l": "Zoom, HPE, Agilent earnings (after the close); flash PMIs"
-  },
-  {
-   "d": "2026-11-24",
-   "l": "Analog Devices, Medtronic (premarket); Dell, Workday, HP (after the close); consumer confidence"
-  },
-  {
-   "d": "2026-11-25",
-   "l": "Oct PCE and Q3 GDP (second estimate); Deere earnings"
-  },
-  {
-   "d": "2026-11-26",
-   "l": "Thanksgiving: US markets closed"
-  },
-  {
-   "d": "2026-11-27",
-   "l": "Stocks close 1pm ET; BridgeBio FDA date (BBP-418)"
-  },
-  {
-   "d": "2026-11-30",
-   "l": "Vertex FDA date (povetacicept)"
-  },
-  {
-   "d": "2026-12-01",
-   "l": "JOLTS and ISM manufacturing"
-  },
-  {
-   "d": "2026-12-04",
-   "l": "November jobs report"
-  },
-  {
-   "d": "2026-12-09",
-   "l": "FOMC decision (Dec 8-9 meeting)"
-  },
-  {
-   "d": "2026-12-10",
-   "l": "November CPI"
-  }
- ],
- "picks": [
-  {
-   "kind": "radar",
-   "t": "USAR",
-   "n": "USA Rare Earth",
-   "theme": "Director buying at 52-week lows",
-   "px": 6.27,
-   "pxN": "Nov 20 close (approx.)",
-   "chg": -8.73,
-   "cat": "No date set",
-   "setup": "Director bought on two straight days; stock now below his buy prices",
-   "stage": 3,
-   "stageN": "Price at lows while one director buys; no confirmed turn.",
-   "v": {
-    "inst": -1,
-    "ins": 1,
-    "vol": -1,
-    "base": 0,
-    "cat": -1
-   },
-   "why": "Director Michael Blitzer bought 100,000 shares on Nov 17 at $6.7155 and 100,000 on Nov 18 at $6.6412 (code P per the massive.com digest). The stock closed near $6.27 on Nov 20 (approximate), against a 52-week range of $6.18-$32.80.",
-   "risk": "Cash burn (Q3 revenue $3.0M vs a $141.4M operating deficit), feedstock constraints, William Blair downgrade Nov 16, and the stock is below the buy prices (falling knife). Quiver lists a larger Nov 17 buy that conflicts with the digest.",
-   "src": "https://massive.com/quote/usar/insider-trading",
-   "srcN": "massive.com Form 4 digest; Kalkine Nov 19; Motley Fool Nov 16",
-   "ins": "Michael Blitzer, director: 100,000 sh Nov 17 at $6.7155 and 100,000 sh Nov 18 at $6.6412 (massive.com digest)",
-   "dd": [
+  "asof": "Nov 25, 2026",
+  "tape": [
     {
-     "f": "Form 4",
-     "d": "Nov 17-18",
-     "s": "Director Blitzer, code P: 100,000 sh at $6.7155 (Nov 17) and 100,000 sh at $6.6412 (Nov 18); digest read, form not opened."
+      "l": "Dow",
+      "v": "50,019",
+      "d": 0.85
     },
     {
-     "f": "Form 4 history",
-     "d": "6 mo",
-     "s": "Quiver lists insider sales by the former CEO (88,391 sh, about $1.2M) and another officer (13,000 sh)."
+      "l": "S&P 500",
+      "v": "7,201",
+      "d": -0.5
     },
     {
-     "f": "10-Q",
-     "d": "Q3",
-     "s": "Per Kalkine: cash $1.16B at Sep 30, notes payable $305.6M; no going-concern language seen (10-Q not opened)."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "radar",
-   "t": "HUBS",
-   "n": "HubSpot",
-   "theme": "Founder returns as CEO and buys",
-   "px": 216.3,
-   "pxN": "Nov 17 close",
-   "cat": "2026-11-30",
-   "setup": "Co-founder CEO bought about $5M after a 47% drawdown; new CFO starts Nov 30",
-   "stage": 2,
-   "stageN": "Insider buying after a large drawdown; no price confirmation yet.",
-   "v": {
-    "inst": -1,
-    "ins": 1,
-    "vol": -1,
-    "base": 0,
-    "cat": 0
-   },
-   "why": "Brian Halligan returned as CEO Nov 12 and bought 22,985 shares on Nov 13 at an average $217.44 (about $5M), taking his stake to 436,139 shares. Q3 revenue rose 17% to $947.6M; Q4 is guided to +12%.",
-   "risk": "Slowing growth, four downgrades after the Nov 4 guide, and Halligan earlier sold 84,553 shares (about $20.1M) under trading plans and owes HubSpot $449,641.77 in short-swing profit.",
-   "src": "https://www.tikr.com/blog/hubspot-is-47-below-its-high-its-co-founder-is-back-for-a-refounding-and-bought-5-million",
-   "srcN": "TIKR; Quiver Nov 16",
-   "ins": "Brian Halligan, CEO and co-founder: 22,985 sh on Nov 13 at about $217.44 (about $5M); owns 436,139 sh (TIKR, Quiver)",
-   "dd": [
-    {
-     "f": "8-K Item 5.02",
-     "d": "Nov 12",
-     "s": "Halligan appointed CEO, prior CEO out, CFO to retire Feb 11, 2027 with Karen Burgess named successor; guidance reaffirmed (filing opened).",
-     "u": "https://www.sec.gov/Archives/edgar/data/1404655/000119312526457055/d77303d8k.htm"
+      "l": "Nasdaq",
+      "v": "23,734",
+      "d": -1.48
     },
     {
-     "f": "Form 4",
-     "d": "Nov 16",
-     "s": "Halligan filing for Nov 13 trade; I opened only the index page, the P code rests on Quiver and TIKR.",
-     "u": "https://www.sec.gov/Archives/edgar/data/1404655/000119312526462154/0001193125-26-462154-index.htm"
+      "l": "10-yr yield",
+      "v": "4.90%"
     },
     {
-     "f": "Form 4 history",
-     "d": "90 days",
-     "s": "Earlier plan sales of 84,553 shares (about $20.1M) per TIKR."
+      "l": "Gold",
+      "v": "~$3,553-3,555"
     }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "radar",
-   "t": "SONO",
-   "n": "Sonos",
-   "theme": "Director and 10% owner buying",
-   "cat": "No date set",
-   "setup": "Director bought Nov 12-13; two 10% owners bought in March",
-   "stage": 2,
-   "stageN": "Early buying; price data not found.",
-   "v": {
-    "inst": 1,
-    "ins": 1,
-    "vol": -1,
-    "base": -1,
-    "cat": -1
-   },
-   "why": "Director Joseph Kennedy bought 89,810 shares at $18.77 on Nov 12 and 10,190 at $18.23 on Nov 13 (code P). 10% owners Adam Gray and Christopher Shackelton bought in March at $13-14, so the stock is up about 30% from their entries.",
-   "risk": "Director Boone sold under 10b5-1 plans (46,766 sh at $18.13 on Sep 1); no catalyst or volume data found.",
-   "src": "https://massive.com/quote/sono/insider-trading",
-   "srcN": "massive.com Form 4 digest; Quiver Nov 16",
-   "ins": "Joseph Kennedy, director: 89,810 sh Nov 12 at $18.77 and 10,190 sh Nov 13 at $18.23, code P (massive.com)",
-   "dd": [
+  ],
+  "tapeSrc": "https://cappnotes.substack.com/p/closing-look-tuesday-november-24",
+  "events": [
     {
-     "f": "Form 4",
-     "d": "Nov 12-13",
-     "s": "Kennedy, code P, 89,810 sh at $18.77 and 10,190 sh at $18.23; digest only."
+      "d": "2026-11-25",
+      "l": "Oct PCE and Q3 GDP (8:30am ET), jobless claims, Beige Book (2pm ET); Deere earnings (before the open)"
     },
     {
-     "f": "Form 4",
-     "d": "Mar",
-     "s": "Gray (500,000 sh at $14.20, 125,000 at $13.57) and Shackelton (103,920 at $13.21) bought; digest only."
+      "d": "2026-11-26",
+      "l": "Thanksgiving: US markets closed"
     },
     {
-     "f": "Form 4 (10b5-1)",
-     "d": "Sep 1",
-     "s": "Director Boone sold 46,766 sh at $18.13 under a pre-set plan; weaker signal."
-    }
-   ],
-   "ddv": "clean"
-  },
-  {
-   "kind": "radar",
-   "t": "EFC",
-   "n": "Ellington Financial",
-   "theme": "Co-CIO and CEO buying",
-   "cat": "No date set",
-   "setup": "Co-CIO bought about $1.08M; MSR sale freed over $75M cash",
-   "stage": 2,
-   "stageN": "Insider buying; no price confirmation.",
-   "v": {
-    "inst": -1,
-    "ins": 1,
-    "vol": -1,
-    "base": -1,
-    "cat": -1
-   },
-   "why": "Co-CIO Michael Vranos bought 100,000 shares on Nov 18 (about $1.08M) and CEO Laurence Penn bought 10,000 shares (about $106,540). On Nov 12 EFC sold its MSR portfolio above carrying value, freeing more than $75M of cash.",
-   "risk": "Mortgage-REIT leverage and rate sensitivity; no price, volume or catalyst date found, and the transaction code was not shown (labelled a purchase).",
-   "src": "https://www.quiverquant.com/news/Insider+Stock+Purchases%3A+November+19%2C+2026",
-   "srcN": "Quiver Nov 19; BusinessWire via Finviz Nov 12",
-   "ins": "Michael Vranos, co-CIO: 100,000 sh Nov 18 (about $1.08M); Laurence Penn, CEO: 10,000 sh (about $106,540) (Quiver)",
-   "dd": [
-    {
-     "f": "Form 4",
-     "d": "Nov 18",
-     "s": "Vranos purchase of 100,000 sh (about $1.08M); code not displayed on the digest, so not verified as P."
+      "d": "2026-11-27",
+      "l": "Stocks close 1pm ET; BridgeBio FDA date (BBP-418)"
     },
     {
-     "f": "8-K / release",
-     "d": "Nov 12",
-     "s": "MSR sale above Sep 30 carrying value, over $75M cash freed (press release read; 8-K items not seen)."
-    }
-   ],
-   "ddv": "clean"
-  },
-  {
-   "kind": "radar",
-   "t": "KURA",
-   "n": "Kura Oncology",
-   "theme": "CEO buying",
-   "cat": "No date set",
-   "setup": "CEO bought about $754K; a lead, not a full thesis",
-   "stage": 2,
-   "stageN": "Single insider buy; nothing else confirmed.",
-   "v": {
-    "inst": -1,
-    "ins": 1,
-    "vol": -1,
-    "base": -1,
-    "cat": -1
-   },
-   "why": "CEO Troy Wilson bought 98,881 shares on Nov 13 (about $754,462), an implied price near $7.63.",
-   "risk": "Price, cash runway and catalysts were not found; biotech with no balance-sheet data read.",
-   "src": "https://www.quiverquant.com/news/Insider+Stock+Purchases%3A+November+17%2C+2026",
-   "srcN": "Quiver Nov 17",
-   "ins": "Troy Wilson, CEO: 98,881 sh on Nov 13 (about $754,462), labelled open-market purchase (Quiver)",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 17",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "radar",
-   "t": "HOS",
-   "n": "Hornbeck Offshore",
-   "theme": "CEO buying",
-   "cat": "No date set",
-   "setup": "CEO bought about $500K",
-   "stage": 2,
-   "stageN": "Single insider buy; unconfirmed.",
-   "v": {
-    "inst": -1,
-    "ins": 1,
-    "vol": -1,
-    "base": -1,
-    "cat": -1
-   },
-   "why": "CEO Todd Hornbeck bought 85,912 shares on Nov 13 (about $500,000).",
-   "risk": "Lead only: no price, catalyst or filing data found beyond the Quiver digest.",
-   "src": "https://www.quiverquant.com/news/Insider+Stock+Purchases%3A+November+16%2C+2026",
-   "srcN": "Quiver Nov 16",
-   "ins": "Todd Hornbeck, CEO: 85,912 sh on Nov 13 (about $500,000) (Quiver)",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 16",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "radar",
-   "t": "CRMD",
-   "n": "CorMedix",
-   "theme": "CEO buying",
-   "cat": "No date set",
-   "setup": "CEO bought about $391K",
-   "stage": 2,
-   "stageN": "Single insider buy; unconfirmed.",
-   "v": {
-    "inst": -1,
-    "ins": 1,
-    "vol": -1,
-    "base": -1,
-    "cat": -1
-   },
-   "why": "CEO Joseph Todisco bought 80,000 shares on Nov 13 (about $391,200).",
-   "risk": "Lead only: no price, catalyst or filing data found beyond the Quiver digest.",
-   "src": "https://www.quiverquant.com/news/Insider+Stock+Purchases%3A+November+16%2C+2026",
-   "srcN": "Quiver Nov 16",
-   "ins": "Joseph Todisco, CEO: 80,000 sh on Nov 13 (about $391,200) (Quiver)",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 16",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "day",
-   "t": "ZS",
-   "n": "Zscaler",
-   "theme": "Takeover by CrowdStrike",
-   "chg": 16.34,
-   "cat": "Definitive deal announced Nov 23",
-   "catDate": "2026-11-23",
-   "setup": "CrowdStrike agreed to buy Zscaler in an all-stock deal",
-   "v": {
-    "news": 1,
-    "gap": 1,
-    "vol": -1,
-    "iv": -1,
-    "liq": 1
-   },
-   "why": "Zscaler rose 16.34% after hours Nov 20 on reports of CrowdStrike talks; CrowdStrike's Nov 23 8-K shows a definitive deal valuing Zscaler at about $43.9B at 1.135 CRWD shares per ZS share.",
-   "risk": "A fixed share ratio means ZS now tracks CRWD, and the deal needs regulatory approval. Regular-session close not found.",
-   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-20-2026",
-   "srcN": "Stock Titan Nov 20; CrowdStrike 8-K Nov 23",
-   "dd": [
-    {
-     "f": "8-K Ex. 99.1 (CRWD)",
-     "d": "Nov 23",
-     "s": "Definitive all-stock agreement, about $43.9B for Zscaler, 1.135 CRWD shares per share, subject to regulatory approval (filing opened).",
-     "u": "https://www.sec.gov/Archives/edgar/data/0001535527/000153552726000035/crwd-20261123xex991.htm"
+      "d": "2026-11-30",
+      "l": "Vertex FDA date (povetacicept)"
     },
     {
-     "f": "Filings",
-     "d": "Nov 23",
-     "s": "No Zscaler-side filing was read."
-    }
-   ],
-   "ddv": "clean"
-  },
-  {
-   "kind": "day",
-   "t": "CRWD",
-   "n": "CrowdStrike",
-   "theme": "Acquirer of Zscaler",
-   "chg": -4.84,
-   "cat": "Deal announced Nov 23",
-   "catDate": "2026-11-23",
-   "setup": "Acquirer fell 4.84% after hours; record quarter reported with the deal",
-   "v": {
-    "news": 1,
-    "gap": -1,
-    "vol": -1,
-    "iv": -1,
-    "liq": 1
-   },
-   "why": "CrowdStrike fell 4.84% after hours Nov 20. Its Nov 23 8-K shows Q3 revenue of $1.58B (+28%), ARR $6.26B, free cash flow $474.4M and cash $5.37B, alongside the $43.9B all-stock deal.",
-   "risk": "Share issuance for a $43.9B deal dilutes holders, and regulators must approve. Price not found.",
-   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-20-2026",
-   "srcN": "Stock Titan Nov 20; CrowdStrike 8-K Nov 23",
-   "dd": [
-    {
-     "f": "8-K Ex. 99.1",
-     "d": "Nov 23",
-     "s": "Q3 revenue $1.58B (+28%), ARR $6.26B, FCF $474.4M, cash $5.37B; outlook raised; Zscaler deal terms (filing opened).",
-     "u": "https://www.sec.gov/Archives/edgar/data/0001535527/000153552726000035/crwd-20261123xex991.htm"
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "day",
-   "t": "GAP",
-   "n": "Gap Inc.",
-   "theme": "Earnings gap up",
-   "chg": 11.44,
-   "cat": "Reported Nov 19",
-   "setup": "Q3 beat, but full-year sales outlook lowered",
-   "v": {
-    "news": 1,
-    "gap": 1,
-    "vol": -1,
-    "iv": -1,
-    "liq": 1
-   },
-   "why": "Gap rose 11.44% on Nov 20 (as much as 16.31% intraday) on Q3 sales up 2% to $4.0B and better-than-expected profit; adjusted EPS $0.82 vs $0.78 expected.",
-   "risk": "It lowered its full-year sales outlook, and the market fell 3.7% the same day. Price not found.",
-   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-20-2026",
-   "srcN": "Stock Titan Nov 20; Capp Notes Nov 20",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 20",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "day",
-   "t": "KYMR",
-   "n": "Kymera Therapeutics",
-   "theme": "Phase 2b data day",
-   "cat": "2026-11-23",
-   "catDate": "2026-11-23",
-   "setup": "KT-621 BROADEN2 results due Nov 23",
-   "v": {
-    "news": 1,
-    "gap": -1,
-    "vol": -1,
-    "iv": -1,
-    "liq": -1
-   },
-   "why": "Kymera planned to announce KT-621 BROADEN2 Phase 2b results on Nov 23 (Stock Titan news listing, Nov 20).",
-   "risk": "Binary data event; price and implied move not found.",
-   "src": "https://www.stocktitan.net/news/2026-11-20",
-   "srcN": "Stock Titan news list Nov 20",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 20",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "day",
-   "t": "INTU",
-   "n": "Intuit",
-   "theme": "Post-earnings drop",
-   "chg": -12.77,
-   "cat": "Reported Nov 19",
-   "setup": "Fell 12.77% after Q1 results and Mailchimp sale",
-   "v": {
-    "news": 1,
-    "gap": 1,
-    "vol": -1,
-    "iv": -1,
-    "liq": 1
-   },
-   "why": "Intuit fell 12.77% on Nov 20 after Q1 revenue rose 12% and it agreed to sell Mailchimp to Bending Spoons (about $3.68B). Capp Notes cites a cut to the Credit Karma revenue outlook ($2.72-2.83B).",
-   "risk": "Sources differ on the main driver; price not found; software was weak in a 7% tech sector drop.",
-   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-20-2026",
-   "srcN": "Stock Titan; Capp Notes Nov 20",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 20",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "day",
-   "t": "PDD",
-   "n": "PDD Holdings",
-   "theme": "Earnings gap up",
-   "chg": 11.0,
-   "cat": "Reported Nov 19",
-   "setup": "Rose about 11% on an EPS beat despite a revenue miss",
-   "v": {
-    "news": 1,
-    "gap": 1,
-    "vol": -1,
-    "iv": 1,
-    "liq": 1
-   },
-   "why": "PDD closed +11.0% on Nov 19 against an implied move near 7.5%; non-GAAP EPS RMB21.04 vs 18.54 expected, revenue RMB108.3B vs 115.2B expected (TIKR says +9%).",
-   "risk": "Revenue was flat and missed; the Nov 20 reaction was not found; China consumer risk.",
-   "src": "https://www.tikr.com/blog/pdd-holdings-soars-6-on-forecast-beating-third-quarter-earnings",
-   "srcN": "TIKR and earnings-watcher, Nov 19",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 19",
-     "s": "Foreign issuer; no 6-K was opened."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "swing",
-   "t": "ZM",
-   "n": "Zoom",
-   "theme": "Earnings tonight",
-   "cat": "2026-11-23",
-   "catDate": "2026-11-23",
-   "setup": "Reports after the close Nov 23",
-   "v": {
-    "cat": 1,
-    "low": -1,
-    "sel": 0,
-    "mom": -1,
-    "thm": 0
-   },
-   "why": "Guidance was revenue $1.275-1.280B and EPS $1.46-1.48; consensus EPS $1.49 on $1.28B and a whisper of $1.55. RPO rose 14% to about $4.5B.",
-   "risk": "White-label churn, online business flat, AI cost pressure and high expectations; Nov 20 price not found.",
-   "src": "https://finviz.com/news/422873/zooms-enterprise-inflection-faces-its-next-test-as-white-label-churn-and-ai-costs-build",
-   "srcN": "Finviz Nov 15; ifyouspent Nov 11",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 23",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "swing",
-   "t": "ADI",
-   "n": "Analog Devices",
-   "theme": "Earnings Nov 24",
-   "cat": "2026-11-24",
-   "catDate": "2026-11-24",
-   "setup": "Reports before the open Nov 24",
-   "v": {
-    "cat": 1,
-    "low": -1,
-    "sel": -1,
-    "mom": -1,
-    "thm": 1
-   },
-   "why": "Consensus EPS $3.89 on revenue $4.32B against guidance of $3.71-4.01 and $4.20-4.40B; whisper EPS $4.02; gross margin 72.5% vs about 74% guided.",
-   "risk": "Chips fell 9-14% on Nov 20; margin miss or an AI-cycle peak scare; its price was last seen near $398 on Nov 16 (stale).",
-   "src": "https://finviz.com/news/423365/analog-devices-faces-a-whisper-above-its-own-guidance-as-data-center-boom-tests-margins",
-   "srcN": "Finviz Nov 16",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 24",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "swing",
-   "t": "DELL",
-   "n": "Dell Technologies",
-   "theme": "Earnings Nov 24",
-   "cat": "2026-11-24",
-   "catDate": "2026-11-24",
-   "setup": "Reports after the close Nov 24 with $95B AI backlog",
-   "v": {
-    "cat": 1,
-    "low": 1,
-    "sel": 1,
-    "mom": 0,
-    "thm": 1
-   },
-   "why": "Implied move about 7%; consensus EPS $6.59 on $49.2B revenue; AI backlog $95B and a forward P/E near 11.5x; 26 estimate revisions up, none down.",
-   "risk": "Memory supply caps shipments, order surge may be one-time, thinning margins; options confidence score 34/100 (bearish); Nov 20 price not found.",
-   "src": "https://tradestie.com/news/dell-earnings-nov-24-7-expected-move-659-eps-consensus-20261124/",
-   "srcN": "Tradestie Nov 18; Finviz Nov 16",
-   "opt": "Front-week implied volatility 133.8% and implied move about 7% (Tradestie, Nov 18)",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 24",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "swing",
-   "t": "WDAY",
-   "n": "Workday",
-   "theme": "Earnings Nov 24",
-   "cat": "2026-11-24",
-   "catDate": "2026-11-24",
-   "setup": "Reports after the close Nov 24",
-   "v": {
-    "cat": 1,
-    "low": 0,
-    "sel": -1,
-    "mom": -1,
-    "thm": 1
-   },
-   "why": "Consensus EPS $2.74 (whisper $2.83) on about $2.69B revenue; operating margin target raised to 30.5%; agentic AI ARR approaching $500M.",
-   "risk": "Flat seat counts and a cautious Q4 guide; price near $196 on Nov 16 (stale).",
-   "src": "https://finviz.com/news/423401/workdays-promised-second-half-ai-bookings-surge-faces-its-first-real-test",
-   "srcN": "Finviz Nov 16",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 24",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "swing",
-   "t": "DE",
-   "n": "Deere",
-   "theme": "Earnings Nov 25",
-   "cat": "2026-11-25",
-   "catDate": "2026-11-25",
-   "setup": "Reports Nov 25; management calls 2026 the cycle bottom",
-   "v": {
-    "cat": 1,
-    "low": 0,
-    "sel": -1,
-    "mom": -1,
-    "thm": 0
-   },
-   "why": "Consensus EPS $4.07 (whisper $4.30) on about $10.30B revenue (down about 17%); FY EPS guide $17.55-18.47.",
-   "risk": "Tariff costs near $1B next year and South America guided down 15-20%; price near $649 on Nov 18 (stale).",
-   "src": "https://finviz.com/news/424950/deeres-fourth-quarter-must-prove-fiscal-2026-was-the-bottom-of-the-farm-cycle",
-   "srcN": "Finviz Nov 18",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 25",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "swing",
-   "t": "BBIO",
-   "n": "BridgeBio",
-   "theme": "FDA decision Nov 27",
-   "cat": "2026-11-27",
-   "catDate": "2026-11-27",
-   "setup": "BBP-418 PDUFA date Nov 27 with a heavy convertible stack",
-   "v": {
-    "cat": 1,
-    "low": -1,
-    "sel": -1,
-    "mom": -1,
-    "thm": 0
-   },
-   "why": "BBP-418 for LGMD2I/R9 has priority review and a Nov 27 PDUFA date. Q3: cash and securities about $1.54B vs convertible notes about $2.48B (about $548M due 2027).",
-   "risk": "Leverage (converts, preferred about $942M, royalty obligations about $884M) and a binary FDA outcome.",
-   "src": "https://finviz.com/news/411978/bridgebio-reports-third-quarter-2026-financial-results-and-corporate-updates",
-   "srcN": "Finviz Q3 release Oct 29; RTTNews",
-   "dd": [
-    {
-     "f": "10-Q / Q3 release",
-     "d": "Oct 29",
-     "s": "Cash about $1.54B, converts about $2.48B, net loss to common $83.0M; no going-concern language seen (press release only, 10-Q not opened)."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "swing",
-   "t": "VRTX",
-   "n": "Vertex",
-   "theme": "FDA decision Nov 30",
-   "cat": "2026-11-30",
-   "catDate": "2026-11-30",
-   "setup": "Povetacicept PDUFA date Nov 30",
-   "v": {
-    "cat": 1,
-    "low": -1,
-    "sel": -1,
-    "mom": -1,
-    "thm": 0
-   },
-   "why": "The BLA for povetacicept in IgA nephropathy (accelerated approval) has a Nov 30 target action date, per RTTNews on Jun 1.",
-   "risk": "Binary FDA outcome; current price not found.",
-   "src": "https://www.rttnews.com/3656952/vertex-fda-accepts-bla-submission-for-povetacicept-assigns-pdufa-target-action-date-of-nov-30.aspx",
-   "srcN": "RTTNews Jun 1",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 30",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "invest",
-   "t": "MU",
-   "n": "Micron",
-   "theme": "Memory and AI demand",
-   "px": 594.51,
-   "pxN": "Nov 20 (approx.)",
-   "chg": -13.89,
-   "cat": "None",
-   "setup": "Fell 13.89% Nov 20; trailing P/E about 11x",
-   "v": {
-    "gro": 1,
-    "moat": -1,
-    "val": 1,
-    "mar": -1,
-    "dur": 0
-   },
-   "why": "FQ4 revenue $54.23B (+379%), adjusted EPS $33.42 vs $31.35; FQ1 guide $61.5B; over 75% of FY27 shipments committed; average analyst target $1,561.91.",
-   "risk": "Memory-cycle peak fears; the price here comes from a live-quote box and is approximate.",
-   "src": "https://247wallst.com/investing/2026/11/13/micron-is-down-20-in-a-month-what-will-it-take-to-get-mu-stock-back-to-1000/",
-   "srcN": "24/7 Wall St, Nov 13",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 23",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "invest",
-   "t": "NVDA",
-   "n": "Nvidia",
-   "theme": "AI compute leader",
-   "px": 125.53,
-   "pxN": "Nov 20 close",
-   "chg": -14.01,
-   "cat": "None",
-   "setup": "Fell 14.01% Nov 20 on an SEC accounting probe report",
-   "v": {
-    "gro": 1,
-    "moat": -1,
-    "val": -1,
-    "mar": -1,
-    "dur": 0
-   },
-   "why": "Closed at $125.53 (-14.01%), its worst day since Jan 2025 and about -23% on the week, after Reuters reported SEC enforcement staff are examining possible accounting issues and California's AG sent a subpoena.",
-   "risk": "Regulatory probes and AI-capex return doubts; valuation and margin data not found this run.",
-   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-20-2026",
-   "srcN": "Stock Titan Nov 20",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 23",
-     "s": "No SEC filing about the probe was opened; news reports only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "invest",
-   "t": "AMZN",
-   "n": "Amazon",
-   "theme": "AWS growth, heavy AI capex",
-   "cat": "None",
-   "setup": "AWS up 39%, free cash flow negative",
-   "v": {
-    "gro": 1,
-    "moat": -1,
-    "val": -1,
-    "mar": 1,
-    "dur": 0
-   },
-   "why": "Q3 AWS revenue rose 39% to $46.0B with operating income $17.8B (vs $11.4B); trailing free cash flow was -$42.4B vs +$14.8B a year ago.",
-   "risk": "Negative free cash flow from AI capex and an FTC and 22-state ad-pricing suit; price not found.",
-   "src": "https://www.heygotrade.com/en/news/amazon-amzn-stock-news-november-6-2026/",
-   "srcN": "HeyGoTrade Nov 6",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 23",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "invest",
-   "t": "MELI",
-   "n": "MercadoLibre",
-   "theme": "LatAm commerce and fintech",
-   "cat": "None",
-   "setup": "Revenue +45%, margins squeezed",
-   "v": {
-    "gro": 1,
-    "moat": -1,
-    "val": 1,
-    "mar": 0,
-    "dur": 0
-   },
-   "why": "Q3 revenue rose 45% to $10.75B; operating income fell 6% to $676M; EPS $8.83 vs $9.27 expected; forward P/E about 33x vs a five-year average of 62x; Goldman Buy, target $2,100.",
-   "risk": "Margin compression and an EPS miss; price not stated.",
-   "src": "https://www.tikr.com/blog/mercadolibre-keeps-sliding-why-goldman-sachs-still-sees-41-upside",
-   "srcN": "TIKR, Nov 11",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 23",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "invest",
-   "t": "ONON",
-   "n": "On Holding",
-   "theme": "Premium running",
-   "cat": "None",
-   "setup": "Cantor initiated at Overweight, $46 target",
-   "v": {
-    "gro": 1,
-    "moat": 1,
-    "val": -1,
-    "mar": -1,
-    "dur": 0
-   },
-   "why": "Cantor Fitzgerald initiated at Overweight with a $46 target on premium innovation and full-price sell-through, projecting 18% EBITDA and 23% free-cash-flow CAGR through FY29. The stock was down about 25% year to date.",
-   "risk": "Premium valuation and consumer-demand sensitivity; Nov 20 move not found.",
-   "src": "https://stocktwits.com/news-articles/markets/equity/onon-stock-rises-premarket-retail-says-smack-that-buy-button/cNGDjZhR9B3",
-   "srcN": "Stocktwits Nov 11",
-   "soc": "Retail sentiment 'extremely bullish' (Stocktwits, Nov 11)",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 23",
-     "s": "Could not open the SEC filing itself this run; digest only."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "penny",
-   "t": "SVRA",
-   "n": "Savara",
-   "theme": "FDA missed its date",
-   "px": 4.26,
-   "pxN": "Nov 20 close",
-   "chg": -18.23,
-   "cat": "FDA action date passed Nov 22",
-   "setup": "FDA will not act by the Nov 22 PDUFA date; no new date",
-   "stage": 1,
-   "stageN": "Real catalyst, but the outcome is a delay.",
-   "v": {
-    "news": 1,
-    "vol": 1,
-    "list": 1,
-    "cash": 0,
-    "dil": -1
-   },
-   "why": "Savara fell 18.23% to $4.26 on Nov 20 (17.08M shares) after the FDA said it would not act on the molgramostim BLA by the Nov 22 PDUFA date, with no new date.",
-   "risk": "No new FDA date; Q3 net loss $43.0M and the company says cash funds at least 12 months; no cash balance or share count found.",
-   "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-20-2026",
-   "srcN": "Stock Titan Nov 20; Stocktwits Nov 23",
-   "soc": "Stocktwits retail sentiment 'extremely bullish' over 24h (Nov 23); message volume not stated",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 20",
-     "s": "No SEC filing opened; Stock Titan headline and a Quartr digest of the Q3 report (net loss $43.0M, cash for at least 12 months)."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "penny",
-   "t": "CAPR",
-   "n": "Capricor Therapeutics",
-   "theme": "Second FDA rejection",
-   "px": 2.32,
-   "pxN": "Nov 23 premarket",
-   "chg": -69.5,
-   "cat": "FDA CRL Nov 20",
-   "setup": "Complete response letter; stock down about 70% premarket",
-   "stage": 3,
-   "stageN": "The move already happened.",
-   "v": {
-    "news": 1,
-    "vol": 1,
-    "list": 1,
-    "cash": 1,
-    "dil": 0
-   },
-   "why": "The FDA issued a second CRL for deramiocel on Nov 20, saying the data do not give substantial evidence of effectiveness. The stock was $7.59 at the Nov 20 close and $2.32 premarket Nov 23 (-69.5%, Investing.com).",
-   "risk": "The premarket price may change; Stock Titan shows -78.52% with no timestamp. Cash was about $198.5M at Sep 30 and the company disputes the FDA's view and has a call Nov 23.",
-   "src": "https://www.globenewswire.com/news-release/2026/11/21/3407877/0/en/capricor-therapeutics-provides-regulatory-update-on-deramiocel-bla-for-duchenne-muscular-dystrophy.html",
-   "srcN": "GlobeNewswire Nov 20; Investing.com Nov 23",
-   "soc": "Stocktwits retail sentiment 'extremely bullish' (Nov 23); message volume not stated",
-   "dd": [
-    {
-     "f": "CRL release",
-     "d": "Nov 20",
-     "s": "Second CRL for deramiocel (Duchenne cardiomyopathy); company disputes it (release opened, not the 8-K)."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "penny",
-   "t": "SRTS",
-   "n": "Sensus Healthcare",
-   "theme": "Director buying after a post-earnings drop",
-   "px": 2.26,
-   "pxN": "Nov 20 close",
-   "chg": -4.24,
-   "cat": "No date set",
-   "setup": "Director bought 81,575 shares at $2.243 after a 27.8% fall",
-   "stage": 2,
-   "stageN": "Speculative; insider buying vs shrinking cash.",
-   "v": {
-    "news": 1,
-    "vol": -1,
-    "list": 1,
-    "cash": 1,
-    "dil": -1
-   },
-   "why": "Director Eric Sachetta bought 81,575 shares at $2.243 on Nov 17 (code P). The stock fell 27.8% on Nov 13 after Q3 revenue of $6.0M (-13%), a net loss of $1.5M and a dropped profitability target.",
-   "risk": "Cash fell to $12.9M from $22.1M at year-end; two customers were 61% of Q3 revenue; sources conflict on debt (Finviz: no borrowings; Panabee: $15M facility, $2M available).",
-   "src": "https://www.panabee.com/news/sensus-earnings-q3-2026",
-   "srcN": "Panabee Nov 12; Finviz Nov 12; Quiver Nov 19",
-   "ins": "Eric Sachetta, director: 81,575 sh on Nov 17 at $2.243, code P (Form 4 opened)",
-   "dd": [
-    {
-     "f": "Form 4",
-     "d": "Nov 19",
-     "s": "Sachetta, director, code P: 81,575 sh at $2.243 on Nov 17; owns 376,359 direct plus 2,093 via spouse (form opened).",
-     "u": "https://www.sec.gov/Archives/edgar/data/0001494891/000209734526000018/form4-11192026_021136.xml"
+      "d": "2026-12-01",
+      "l": "JOLTS (10am ET); House interview with Nvidia CEO reported"
     },
     {
-     "f": "10-Q",
-     "d": "Q3",
-     "s": "Only digests read: cash $12.9M, nine-month operating cash burn $9.1M."
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "penny",
-   "t": "RYDE",
-   "n": "Ryde Group",
-   "theme": "MOU, not revenue",
-   "px": 1.07,
-   "pxN": "Nov 20 close",
-   "chg": -9.32,
-   "cat": "MOU signed Nov 5",
-   "setup": "Non-binding GPU-as-a-service MOU of up to US$278M",
-   "stage": 2,
-   "stageN": "Speculative; framework only.",
-   "v": {
-    "news": 1,
-    "vol": -1,
-    "list": 1,
-    "cash": -1,
-    "dil": 0
-   },
-   "why": "Ryde signed an MOU with Dimension AI on Nov 5 to explore GPU-as-a-Service of up to US$278M over three years; the release says it is not contracted revenue. Shares closed at $1.07 (-9.32%).",
-   "risk": "No agreed terms; an April private placement sold 37.25M shares at $0.40; search titles suggest a later reverse split and an NYSE American shortfall notice that I did not confirm.",
-   "src": "https://finviz.com/news/416540/ryde-signs-strategic-mou-with-dimension-ai-to-explore-us278-million-three-year-gpu-as-a-service-collaboration",
-   "srcN": "Finviz Nov 5; Stock Titan Nov 20",
-   "dd": [
-    {
-     "f": "6-K",
-     "d": "Apr 7",
-     "s": "Private placement of 37,250,000 Class A shares at $0.40 (about $14.9M); Stock Titan digest.",
-     "u": "https://www.stocktitan.net/sec-filings/RYDE/6-k-ryde-group-ltd-current-report-foreign-issuer-022cf9b248b3.html"
+      "d": "2026-12-02",
+      "l": "Salesforce earnings (after the close)"
     },
     {
-     "f": "Filings",
-     "d": "Nov 23",
-     "s": "Reverse split and listing notice seen only in search titles, not opened."
-    }
-   ],
-   "ddv": "red"
-  },
-  {
-   "kind": "penny",
-   "t": "BRSP",
-   "n": "BrightSpire Capital",
-   "theme": "CEO buying",
-   "px": 3.19,
-   "pxN": "Nov 20 close",
-   "chg": -2.74,
-   "cat": "No date set",
-   "setup": "CEO bought 228,463 shares for $749,358",
-   "stage": 2,
-   "stageN": "Speculative; insider buy unverified as code P.",
-   "v": {
-    "news": 1,
-    "vol": 1,
-    "list": 1,
-    "cash": -1,
-    "dil": 0
-   },
-   "why": "CEO Michael Mazzei bought 228,463 shares for $749,358 (about $3.28 a share) on Nov 16; the stock closed at $3.19 on Nov 20 (-2.74%).",
-   "risk": "Price was $5.54 in March; the transaction code was not stated and the Nov 16 Form 4 was not opened.",
-   "src": "https://www.quiverquant.com/news/Insider+Stock+Purchases%3A+November+17%2C+2026",
-   "srcN": "Quiver Nov 17",
-   "ins": "Michael Mazzei, CEO: 228,463 sh for $749,358 on Nov 16; code not stated (Quiver)",
-   "dd": [
-    {
-     "f": "Form 4",
-     "d": "Nov 16",
-     "s": "Mazzei purchase from the Quiver digest; form not opened, code not stated."
+      "d": "2026-12-04",
+      "l": "November jobs report"
     },
     {
-     "f": "Form 4 history",
-     "d": "Feb-Mar",
-     "s": "Older Form 4s opened: grants (code A), tax withholding (code F at $5.54) and a divorce transfer (code J); none are buys.",
-     "u": "https://www.stocktitan.net/sec-filings/BRSP/form-4-bright-spire-capital-inc-insider-trading-activity-58804a733754.html"
-    }
-   ],
-   "ddv": "watch"
-  },
-  {
-   "kind": "penny",
-   "t": "NIXX",
-   "n": "Nixxy",
-   "theme": "Study example: reverse-split trap",
-   "px": 2.233,
-   "pxN": "Nov 20 close (split-adjusted)",
-   "chg": -16.12,
-   "cat": "Reverse split Nov 20",
-   "setup": "1-for-20 reverse split to regain Nasdaq's $1 bid",
-   "stage": 4,
-   "stageN": "Study example of a likely trap.",
-   "v": {
-    "news": 1,
-    "vol": 0,
-    "list": 0,
-    "cash": 0,
-    "dil": 0
-   },
-   "why": "A 1-for-20 reverse split took effect Nov 20, cutting shares from about 29.5M to about 1.5M; the stock traded at $0.13-0.18 pre-split and closed at $2.233 split-adjusted (-16.12%).",
-   "risk": "Cash was $248K at Sep 30 vs a $2.1M quarterly loss, the 10-Q has going-concern language, and it sold new shares privately in 2026.",
-   "src": "https://www.stocktitan.net/news/NIXX/nixxy-announces-1-for-20-reverse-stock-7b5grnj3ah7b.html",
-   "srcN": "Stock Titan Nov 18",
-   "dd": [
-    {
-     "f": "10-Q",
-     "d": "Nov 16",
-     "s": "Cash $248K, nine-month net loss $3.88M, going-concern language, 29,378,339 shares at Nov 16 (first 100K characters opened).",
-     "u": "https://www.sec.gov/Archives/edgar/data/1462223/000168316826008741/nixxy_i10q-093026.htm"
-    }
-   ],
-   "ddv": "red"
-  },
-  {
-   "kind": "micro",
-   "t": "GPUS",
-   "n": "Hyperscale Data",
-   "theme": "Exchange offer",
-   "px": 0.1291,
-   "pxN": "Nov 20 close",
-   "chg": -15.01,
-   "cat": "Offer expires Dec 18",
-   "setup": "Offer for up to 192.3M shares at a stated $0.26",
-   "stage": 2,
-   "stageN": "Speculative; capital-structure swap.",
-   "v": {
-    "news": 1,
-    "vol": 1,
-    "buzz": 0,
-    "buy": -1,
-    "dil": 0
-   },
-   "why": "On Nov 20 it launched an exchange offer for up to 192,308,000 common shares at a stated $0.26 each, paid as $2.00 cash plus one 12% Series I Preferred share per 100 shares; it needs 100M shares tendered. The stock closed at $0.1291 (-15.01%).",
-   "risk": "The offer swaps common for high-cost 12% preferred and uses cash; the Q3 10-Q is due Nov 23 and a slip would add listing risk; it sold 211.56 BTC (about $16.0M) on Nov 10 to pay debt.",
-   "src": "https://www.sec.gov/Archives/edgar/data/0000896493/000119380526001516/e665914_ex99-a5e.htm",
-   "srcN": "SC TO-I exhibit Nov 20; Finviz Nov 10",
-   "dd": [
-    {
-     "f": "SC TO-I",
-     "d": "Nov 20",
-     "s": "Exchange offer terms: up to 192,308,000 shares, $2.00 cash plus Series I Preferred per 100 shares, minimum 100M tendered, expires Dec 18 (exhibit opened).",
-     "u": "https://www.sec.gov/Archives/edgar/data/0000896493/000119380526001516/e665914_ex99-a5e.htm"
+      "d": "2026-12-09",
+      "l": "FOMC decision (Dec 8-9 meeting)"
     },
     {
-     "f": "ATM",
-     "d": "n/a",
-     "s": "A completed $125M ATM program appeared only in a search title."
+      "d": "2026-12-10",
+      "l": "November CPI"
     }
-   ],
-   "ddv": "red"
-  },
-  {
-   "kind": "micro",
-   "t": "ANVS",
-   "n": "Annovis Bio",
-   "theme": "FDA agreement, thin cash",
-   "px": 0.7113,
-   "pxN": "Nov 20 close",
-   "chg": -4.96,
-   "cat": "FDA agreement Nov 20",
-   "setup": "FDA agreed to the integrated safety summary plan for buntanetap",
-   "stage": 2,
-   "stageN": "Speculative; funded but diluted.",
-   "v": {
-    "news": 1,
-    "vol": 0,
-    "buzz": -1,
-    "buy": -1,
-    "dil": 1
-   },
-   "why": "On Nov 20 the FDA agreed to the Integrated Summary of Safety plan for buntanetap ahead of the NDA (DUET-AD readout March 2027); the company says this is not approval. The stock closed at $0.7113 (-4.96%).",
-   "risk": "Cash was $2.82M at Sep 30 before a $21.0M offering closed Nov 6; shares outstanding rose from 27.2M to 42.7M this year and the 424B5 carried a going-concern warning.",
-   "src": "https://www.globenewswire.com/news-release/2026/11/20/3407385/0/en/annovis-secures-fda-agreement-on-integrated-summary-of-safety-plan-combining-alzheimer-s-and-parkinson-s-data-ahead-of-buntanetap-nda.html",
-   "srcN": "GlobeNewswire Nov 20; Finviz Nov 13",
-   "dd": [
+  ],
+  "picks": [
     {
-     "f": "424B5",
-     "d": "Nov 4",
-     "s": "Preliminary prospectus supplement warns it lacks capital for the next 12 months (Stock Titan digest).",
-     "u": "https://www.stocktitan.net/sec-filings/ANVS/424b5-annovis-bio-inc-prospectus-supplement-debt-securities-772a3cfdf003.html"
+      "kind": "radar",
+      "t": "USAR",
+      "n": "USA Rare Earth",
+      "theme": "Director buying at 52-week lows",
+      "px": 6.27,
+      "pxN": "Nov 20 close (approx.)",
+      "chg": -8.73,
+      "cat": "No date set",
+      "setup": "Director bought on two straight days; stock now below his buy prices",
+      "stage": 3,
+      "stageN": "Price at lows while one director buys; no confirmed turn.",
+      "v": {
+        "inst": -1,
+        "ins": 1,
+        "vol": -1,
+        "base": 0,
+        "cat": -1
+      },
+      "why": "Director Michael Blitzer bought 100,000 shares on Nov 17 at $6.7155 and 100,000 on Nov 18 at $6.6412 (code P per the massive.com digest). The stock closed near $6.27 on Nov 20 (approximate), against a 52-week range of $6.18-$32.80.",
+      "risk": "Cash burn (Q3 revenue $3.0M vs a $141.4M operating deficit), feedstock constraints, William Blair downgrade Nov 16, and the stock is below the buy prices (falling knife). Quiver lists a larger Nov 17 buy that conflicts with the digest.",
+      "src": "https://massive.com/quote/usar/insider-trading",
+      "srcN": "massive.com Form 4 digest; Kalkine Nov 19; Motley Fool Nov 16",
+      "ins": "Michael Blitzer, director: 100,000 sh Nov 17 at $6.7155 and 100,000 sh Nov 18 at $6.6412 (massive.com digest)",
+      "dd": [
+        {
+          "f": "Form 4",
+          "d": "Nov 17-18",
+          "s": "Director Blitzer, code P: 100,000 sh at $6.7155 (Nov 17) and 100,000 sh at $6.6412 (Nov 18); digest read, form not opened."
+        },
+        {
+          "f": "Form 4 history",
+          "d": "6 mo",
+          "s": "Quiver lists insider sales by the former CEO (88,391 sh, about $1.2M) and another officer (13,000 sh)."
+        },
+        {
+          "f": "10-Q",
+          "d": "Q3",
+          "s": "Per Kalkine: cash $1.16B at Sep 30, notes payable $305.6M; no going-concern language seen (10-Q not opened)."
+        }
+      ],
+      "ddv": "watch"
     },
     {
-     "f": "10-Q",
-     "d": "Aug 14",
-     "s": "June 30 quarter: going concern, offerings at $2.50 and $2.25 with warrants, $50M ATM (digest)."
-    }
-   ],
-   "ddv": "red"
-  },
-  {
-   "kind": "micro",
-   "t": "AREC",
-   "n": "American Resources",
-   "theme": "Kenya niobium bid",
-   "px": 0.905,
-   "pxN": "Nov 20 close",
-   "chg": 2.02,
-   "cat": "Exclusive negotiation Nov 20",
-   "setup": "Named successful bidder for Mrima Hill niobium and rare earths",
-   "stage": 2,
-   "stageN": "Speculative; late filings.",
-   "v": {
-    "news": 1,
-    "vol": 0,
-    "buzz": -1,
-    "buy": -1,
-    "dil": 0
-   },
-   "why": "A consortium with ReElement and Bunker Hill was named successful bidder for Kenya's Mrima Hill project on Nov 20; this is exclusive negotiation toward a license, not the license. The stock closed at $0.905 (+2.02%).",
-   "risk": "Stock Titan lists an NT 10-Q (late filing) on Nov 17 and a Nasdaq late-10-Q notice in June; resource figures are unverified.",
-   "src": "https://www.stocktitan.net/news/AREC/american-resources-corporation-and-re-element-technologies-selected-dwiep33s192c.html",
-   "srcN": "Stock Titan, Nov 20",
-   "dd": [
-    {
-     "f": "NT 10-Q",
-     "d": "Nov 17",
-     "s": "Late-filing notice listed by Stock Titan (digest; not opened)."
+      "kind": "radar",
+      "t": "HUBS",
+      "n": "HubSpot",
+      "theme": "Founder returns as CEO and buys",
+      "px": 216.3,
+      "pxN": "Nov 17 close",
+      "cat": "2026-11-30",
+      "setup": "Co-founder CEO bought about $5M after a 47% drawdown; new CFO starts Nov 30",
+      "stage": 2,
+      "stageN": "Insider buying after a large drawdown; no price confirmation yet.",
+      "v": {
+        "inst": -1,
+        "ins": 1,
+        "vol": -1,
+        "base": 0,
+        "cat": 0
+      },
+      "why": "Brian Halligan returned as CEO Nov 12 and bought 22,985 shares on Nov 13 at an average $217.44 (about $5M), taking his stake to 436,139 shares. Q3 revenue rose 17% to $947.6M; Q4 is guided to +12%.",
+      "risk": "Slowing growth, four downgrades after the Nov 4 guide, and Halligan earlier sold 84,553 shares (about $20.1M) under trading plans and owes HubSpot $449,641.77 in short-swing profit.",
+      "src": "https://www.tikr.com/blog/hubspot-is-47-below-its-high-its-co-founder-is-back-for-a-refounding-and-bought-5-million",
+      "srcN": "TIKR; Quiver Nov 16",
+      "ins": "Brian Halligan, CEO and co-founder: 22,985 sh on Nov 13 at about $217.44 (about $5M); owns 436,139 sh (TIKR, Quiver)",
+      "dd": [
+        {
+          "f": "8-K Item 5.02",
+          "d": "Nov 12",
+          "s": "Halligan appointed CEO, prior CEO out, CFO to retire Feb 11, 2027 with Karen Burgess named successor; guidance reaffirmed (filing opened).",
+          "u": "https://www.sec.gov/Archives/edgar/data/1404655/000119312526457055/d77303d8k.htm"
+        },
+        {
+          "f": "Form 4",
+          "d": "Nov 16",
+          "s": "Halligan filing for Nov 13 trade; I opened only the index page, the P code rests on Quiver and TIKR.",
+          "u": "https://www.sec.gov/Archives/edgar/data/1404655/000119312526462154/0001193125-26-462154-index.htm"
+        },
+        {
+          "f": "Form 4 history",
+          "d": "90 days",
+          "s": "Earlier plan sales of 84,553 shares (about $20.1M) per TIKR."
+        }
+      ],
+      "ddv": "watch"
     },
     {
-     "f": "Nasdaq notice",
-     "d": "Jun 3",
-     "s": "Late Form 10-Q notice for Q1 (digest).",
-     "u": "https://www.stocktitan.net/news/AREC/american-resources-receives-nasdaq-notice-regarding-late-form-10-q-3llib0jfrmx1.html"
-    }
-   ],
-   "ddv": "red"
-  },
-  {
-   "kind": "micro",
-   "t": "XHLD",
-   "n": "TEN Holdings",
-   "theme": "Repeat offerings",
-   "px": 0.6402,
-   "pxN": "Nov 20 close",
-   "chg": -3.03,
-   "cat": "Offering closed Nov 9",
-   "setup": "Registered direct offering at $0.59 closed",
-   "stage": 3,
-   "stageN": "Spike faded; dilution continues.",
-   "v": {
-    "news": 1,
-    "vol": -1,
-    "buzz": -1,
-    "buy": -1,
-    "dil": 1
-   },
-   "why": "TEN closed a registered direct of 3,389,831 shares at $0.59 (about $2.0M) on Nov 9; Q3 revenue was $640K with a net loss of $3.73M and cash of $3.5M. The stock closed at $0.6402 (-3.03%).",
-   "risk": "Repeat offerings, tiny revenue and a 1-for-15 reverse split already done Dec 1, 2025.",
-   "src": "https://finviz.com/news/419625/ten-holdings-announces-closing-of-20-million-registered-direct-offering",
-   "srcN": "Finviz Nov 9; Finviz Nov 6",
-   "dd": [
-    {
-     "f": "S-3 / offering",
-     "d": "Nov 9",
-     "s": "Registered direct off an effective S-3 (File No. 333-299485); cited in the release, shelf not opened."
-    }
-   ],
-   "ddv": "red"
-  },
-  {
-   "kind": "micro",
-   "t": "NIVF",
-   "n": "NewGenIvf",
-   "theme": "Study example: serial offerings",
-   "px": 0.0269,
-   "pxN": "Nov 20 close",
-   "chg": -23.14,
-   "cat": "Offering closed",
-   "setup": "Closed a $2.5M underwritten offering",
-   "stage": 4,
-   "stageN": "Study example of a likely trap.",
-   "v": {
-    "news": 1,
-    "vol": 1,
-    "buzz": -1,
-    "buy": -1,
-    "dil": 1
-   },
-   "why": "Stock Titan's Nov 20 list shows NewGenIvf closed a $2.5M underwritten offering. The stock closed at $0.0269 (-23.14%) on 274M shares.",
-   "risk": "Serial offerings at falling prices and far below Nasdaq's $1 minimum bid; the release itself was not found.",
-   "src": "https://www.stocktitan.net/news/2026-11-20/",
-   "srcN": "Stock Titan news list Nov 20 (headline only)",
-   "dd": [
-    {
-     "f": "Filings",
-     "d": "Nov 20",
-     "s": "No prospectus found; digest only."
-    }
-   ],
-   "ddv": "red"
-  },
-  {
-   "kind": "micro",
-   "t": "FCHL",
-   "n": "Fitness Champs Holdings",
-   "theme": "Study example: dilution trap",
-   "px": 0.017,
-   "pxN": "Nov 20 close (unreconciled)",
-   "chg": -74.24,
-   "cat": "Offering closed Nov 20",
-   "setup": "$5M offering with zero-exercise warrants",
-   "stage": 4,
-   "stageN": "Study example of a likely trap.",
-   "v": {
-    "news": 1,
-    "vol": 1,
-    "buzz": -1,
-    "buy": -1,
-    "dil": 1
-   },
-   "why": "On Nov 20 it closed a $5M best-efforts offering of 14,285,715 units at $0.35; the warrants carry a zero-exercise-price option for up to 15 shares each (about 214M shares possible).",
-   "risk": "The quoted $0.017 close (-74.24%) is far below the $0.35 unit price and I could not reconcile it, so verify before use; Nasdaq equity compliance still needs confirmation.",
-   "src": "https://www.sec.gov/Archives/edgar/data/0002023796/000149315226053460/ex99-1.htm",
-   "srcN": "6-K Ex. 99.1, Nov 20",
-   "dd": [
-    {
-     "f": "6-K Ex. 99.1",
-     "d": "Nov 20",
-     "s": "Closing of a $5M offering at $0.35 per unit with $1.02 warrants and a zero-exercise cashless option for up to 15 shares each (opened).",
-     "u": "https://www.sec.gov/Archives/edgar/data/0002023796/000149315226053460/ex99-1.htm"
+      "kind": "radar",
+      "t": "SONO",
+      "n": "Sonos",
+      "theme": "Director and 10% owner buying",
+      "cat": "No date set",
+      "setup": "Director bought Nov 12-13; two 10% owners bought in March",
+      "stage": 2,
+      "stageN": "Early buying; price data not found.",
+      "v": {
+        "inst": 1,
+        "ins": 1,
+        "vol": -1,
+        "base": -1,
+        "cat": -1
+      },
+      "why": "Director Joseph Kennedy bought 89,810 shares at $18.77 on Nov 12 and 10,190 at $18.23 on Nov 13 (code P). 10% owners Adam Gray and Christopher Shackelton bought in March at $13-14, so the stock is up about 30% from their entries.",
+      "risk": "Director Boone sold under 10b5-1 plans (46,766 sh at $18.13 on Sep 1); no catalyst or volume data found.",
+      "src": "https://massive.com/quote/sono/insider-trading",
+      "srcN": "massive.com Form 4 digest; Quiver Nov 16",
+      "ins": "Joseph Kennedy, director: 89,810 sh Nov 12 at $18.77 and 10,190 sh Nov 13 at $18.23, code P (massive.com)",
+      "dd": [
+        {
+          "f": "Form 4",
+          "d": "Nov 12-13",
+          "s": "Kennedy, code P, 89,810 sh at $18.77 and 10,190 sh at $18.23; digest only."
+        },
+        {
+          "f": "Form 4",
+          "d": "Mar",
+          "s": "Gray (500,000 sh at $14.20, 125,000 at $13.57) and Shackelton (103,920 at $13.21) bought; digest only."
+        },
+        {
+          "f": "Form 4 (10b5-1)",
+          "d": "Sep 1",
+          "s": "Director Boone sold 46,766 sh at $18.13 under a pre-set plan; weaker signal."
+        }
+      ],
+      "ddv": "clean"
     },
     {
-     "f": "Nasdaq notice",
-     "d": "May 26",
-     "s": "Equity was $598,490 vs the $2.5M minimum; the offering is said to restore compliance, not yet confirmed."
-    }
-   ],
-   "ddv": "red"
-  },
-  {
-   "kind": "micro",
-   "t": "JAGX",
-   "n": "Jaguar Health",
-   "theme": "Study example: reverse split",
-   "px": 0.227,
-   "pxN": "Nov 20 close",
-   "chg": -30.58,
-   "cat": "Reverse split Nov 24",
-   "setup": "1-for-25 reverse split effective Nov 24, after a 1-for-35 in April",
-   "stage": 4,
-   "stageN": "Study example of a likely trap.",
-   "v": {
-    "news": 1,
-    "vol": 0,
-    "buzz": -1,
-    "buy": -1,
-    "dil": 1
-   },
-   "why": "A 1-for-25 reverse split takes effect 12:01 a.m. ET Nov 24 (8-K signed Nov 20); the stock closed at $0.227 (-30.58%) pre-split.",
-   "risk": "A 1-for-35 split already took effect Apr 30 and Nasdaq flagged a public-float shortfall in May; the ledger price will jump on the split, which is not a real gain.",
-   "src": "https://www.sec.gov/Archives/edgar/data/1585608/000119312526469575/d196905d8k.htm",
-   "srcN": "8-K Nov 20; Biopharmawatch Nov 20",
-   "dd": [
-    {
-     "f": "8-K Items 3.03/5.03",
-     "d": "Nov 20",
-     "s": "1-for-25 reverse split effective Nov 24; authorized shares unchanged (filing opened).",
-     "u": "https://www.sec.gov/Archives/edgar/data/1585608/000119312526469575/d196905d8k.htm"
+      "kind": "radar",
+      "t": "EFC",
+      "n": "Ellington Financial",
+      "theme": "Co-CIO and CEO buying",
+      "cat": "No date set",
+      "setup": "Co-CIO bought about $1.08M; MSR sale freed over $75M cash",
+      "stage": 2,
+      "stageN": "Insider buying; no price confirmation.",
+      "v": {
+        "inst": -1,
+        "ins": 1,
+        "vol": -1,
+        "base": -1,
+        "cat": -1
+      },
+      "why": "Co-CIO Michael Vranos bought 100,000 shares on Nov 18 (about $1.08M) and CEO Laurence Penn bought 10,000 shares (about $106,540). On Nov 12 EFC sold its MSR portfolio above carrying value, freeing more than $75M of cash.",
+      "risk": "Mortgage-REIT leverage and rate sensitivity; no price, volume or catalyst date found, and the transaction code was not shown (labelled a purchase).",
+      "src": "https://www.quiverquant.com/news/Insider+Stock+Purchases%3A+November+19%2C+2026",
+      "srcN": "Quiver Nov 19; BusinessWire via Finviz Nov 12",
+      "ins": "Michael Vranos, co-CIO: 100,000 sh Nov 18 (about $1.08M); Laurence Penn, CEO: 10,000 sh (about $106,540) (Quiver)",
+      "dd": [
+        {
+          "f": "Form 4",
+          "d": "Nov 18",
+          "s": "Vranos purchase of 100,000 sh (about $1.08M); code not displayed on the digest, so not verified as P."
+        },
+        {
+          "f": "8-K / release",
+          "d": "Nov 12",
+          "s": "MSR sale above Sep 30 carrying value, over $75M cash freed (press release read; 8-K items not seen)."
+        }
+      ],
+      "ddv": "clean"
     },
     {
-     "f": "8-K",
-     "d": "May 4",
-     "s": "Nasdaq staff flagged about 401,226 publicly held shares vs 500,000 required (digest)."
-    }
-   ],
-   "ddv": "red"
-  },
-  {
-   "kind": "micro",
-   "t": "TOVX",
-   "n": "Theriva Biologics",
-   "theme": "Study example: reverse split",
-   "px": 0.12,
-   "pxN": "Nov 20 close",
-   "chg": -6.25,
-   "cat": "Reverse split Dec 1",
-   "setup": "1-for-30 reverse split to meet NYSE American's price rule",
-   "stage": 4,
-   "stageN": "Study example of a likely trap.",
-   "v": {
-    "news": 1,
-    "vol": 0,
-    "buzz": -1,
-    "buy": -1,
-    "dil": 0
-   },
-   "why": "A 1-for-30 reverse split takes effect 11:59 p.m. ET Dec 1 (adjusted trading Dec 2) to meet NYSE American's per-share price requirement; the stock closed at $0.12 (-6.25%).",
-   "risk": "No cash figure in the release; the ledger price will jump on the split, which is not a real gain.",
-   "src": "https://www.sec.gov/Archives/edgar/data/0000894158/000110465926130644/tm2630359d1_ex99-1.htm",
-   "srcN": "8-K Nov 20",
-   "dd": [
+      "kind": "radar",
+      "t": "KURA",
+      "n": "Kura Oncology",
+      "theme": "CEO buying",
+      "cat": "No date set",
+      "setup": "CEO bought about $754K; a lead, not a full thesis",
+      "stage": 2,
+      "stageN": "Single insider buy; nothing else confirmed.",
+      "v": {
+        "inst": -1,
+        "ins": 1,
+        "vol": -1,
+        "base": -1,
+        "cat": -1
+      },
+      "why": "CEO Troy Wilson bought 98,881 shares on Nov 13 (about $754,462), an implied price near $7.63.",
+      "risk": "Price, cash runway and catalysts were not found; biotech with no balance-sheet data read.",
+      "src": "https://www.quiverquant.com/news/Insider+Stock+Purchases%3A+November+17%2C+2026",
+      "srcN": "Quiver Nov 17",
+      "ins": "Troy Wilson, CEO: 98,881 sh on Nov 13 (about $754,462), labelled open-market purchase (Quiver)",
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 17",
+          "s": "Could not open the SEC filing itself this run; digest only."
+        }
+      ],
+      "ddv": "watch"
+    },
     {
-     "f": "8-K Items 8.01/9.01",
-     "d": "Nov 20",
-     "s": "1-for-30 reverse split effective Dec 1 to meet the NYSE American price requirement (filing and release opened).",
-     "u": "https://www.sec.gov/Archives/edgar/data/0000894158/000110465926130644/tm2630359d1_8k.htm"
-    }
-   ],
-   "ddv": "red"
-  },
-  {
-   "kind": "micro",
-   "t": "MRM",
-   "n": "MEDIROM Healthcare",
-   "theme": "Study example: delisting notice",
-   "px": 0.23,
-   "pxN": "Nov 20 close",
-   "chg": -6.12,
-   "cat": "Nasdaq notice Nov 13",
-   "setup": "Delisting notice for a late 20-F; filed Nov 18",
-   "stage": 4,
-   "stageN": "Study example of a likely trap.",
-   "v": {
-    "news": 1,
-    "vol": 1,
-    "buzz": -1,
-    "buy": -1,
-    "dil": 0
-   },
-   "why": "Nasdaq sent a delisting notice (received Nov 13) for not filing the 2025 Form 20-F; the company requested a hearing and filed it Nov 18, and Stock Titan lists a regained-compliance headline. The stock closed at $0.23 (-6.12%).",
-   "risk": "A separate bid-price deficiency (Oct 6) has an Apr 5, 2027 deadline; cash and dilution not found.",
-   "src": "https://www.biopharmawatch.com/news/MRM/medirom-nasdaq-delisting-notice-annual-report-filing",
-   "srcN": "Biopharmawatch Nov 18; Stock Titan Nov 20",
-   "dd": [
+      "kind": "radar",
+      "t": "HOS",
+      "n": "Hornbeck Offshore",
+      "theme": "CEO buying",
+      "cat": "No date set",
+      "setup": "CEO bought about $500K",
+      "stage": 2,
+      "stageN": "Single insider buy; unconfirmed.",
+      "v": {
+        "inst": -1,
+        "ins": 1,
+        "vol": -1,
+        "base": -1,
+        "cat": -1
+      },
+      "why": "CEO Todd Hornbeck bought 85,912 shares on Nov 13 (about $500,000).",
+      "risk": "Lead only: no price, catalyst or filing data found beyond the Quiver digest.",
+      "src": "https://www.quiverquant.com/news/Insider+Stock+Purchases%3A+November+16%2C+2026",
+      "srcN": "Quiver Nov 16",
+      "ins": "Todd Hornbeck, CEO: 85,912 sh on Nov 13 (about $500,000) (Quiver)",
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 16",
+          "s": "Could not open the SEC filing itself this run; digest only."
+        }
+      ],
+      "ddv": "watch"
+    },
     {
-     "f": "Nasdaq notice",
-     "d": "Nov 13",
-     "s": "Delisting notice under Rule 5250(c)(1) for the late 20-F (digest)."
-    }
-   ],
-   "ddv": "red"
-  },
-  {
-   "kind": "micro",
-   "t": "RBNE",
-   "n": "Robin Energy",
-   "theme": "Study example: reverse split",
-   "px": 0.1226,
-   "pxN": "Nov 20 close",
-   "chg": -3.99,
-   "cat": "Reverse split Nov 24",
-   "setup": "Reverse split effective Nov 24; ratio not found",
-   "stage": 4,
-   "stageN": "Study example of a likely trap.",
-   "v": {
-    "news": 1,
-    "vol": 1,
-    "buzz": -1,
-    "buy": -1,
-    "dil": 0
-   },
-   "why": "Stock Titan's Nov 20 list shows a reverse stock split effective Nov 24; the stock closed at $0.1226 (-3.99%) on 34.6M shares.",
-   "risk": "Ratio and terms not found; the ledger price will jump on the split, which is not a real gain.",
-   "src": "https://www.stocktitan.net/news/2026-11-20/",
-   "srcN": "Stock Titan news list Nov 20 (headline only)",
-   "dd": [
+      "kind": "radar",
+      "t": "CRMD",
+      "n": "CorMedix",
+      "theme": "CEO buying",
+      "cat": "No date set",
+      "setup": "CEO bought about $391K",
+      "stage": 2,
+      "stageN": "Single insider buy; unconfirmed.",
+      "v": {
+        "inst": -1,
+        "ins": 1,
+        "vol": -1,
+        "base": -1,
+        "cat": -1
+      },
+      "why": "CEO Joseph Todisco bought 80,000 shares on Nov 13 (about $391,200).",
+      "risk": "Lead only: no price, catalyst or filing data found beyond the Quiver digest.",
+      "src": "https://www.quiverquant.com/news/Insider+Stock+Purchases%3A+November+16%2C+2026",
+      "srcN": "Quiver Nov 16",
+      "ins": "Joseph Todisco, CEO: 80,000 sh on Nov 13 (about $391,200) (Quiver)",
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 16",
+          "s": "Could not open the SEC filing itself this run; digest only."
+        }
+      ],
+      "ddv": "watch"
+    },
     {
-     "f": "Filings",
-     "d": "Nov 20",
-     "s": "No release or 8-K was opened; headline only."
+      "kind": "swing",
+      "t": "DE",
+      "n": "Deere",
+      "theme": "Earnings Nov 25",
+      "cat": "2026-11-25",
+      "catDate": "2026-11-25",
+      "setup": "Reports before the open Nov 25 (call 9:00am CT)",
+      "v": {
+        "cat": 1,
+        "low": 0,
+        "sel": -1,
+        "mom": -1,
+        "thm": 0
+      },
+      "why": "Consensus EPS $4.07 (whisper $4.30) on about $10.30B revenue (down about 17%); FY EPS guide $17.55-18.47.",
+      "risk": "Tariff costs near $1B next year and South America guided down 15-20%; price near $649 on Nov 18 (stale). Earnings come out today; the result was not available when this refresh ran.",
+      "src": "https://finviz.com/news/424950/deeres-fourth-quarter-must-prove-fiscal-2026-was-the-bottom-of-the-farm-cycle",
+      "srcN": "Finviz Nov 18; Placera (company release) Nov 11",
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 25",
+          "s": "Could not open the SEC filing itself this run; digest only."
+        }
+      ],
+      "ddv": "watch"
+    },
+    {
+      "kind": "swing",
+      "t": "BBIO",
+      "n": "BridgeBio",
+      "theme": "FDA decision Nov 27",
+      "cat": "2026-11-27",
+      "catDate": "2026-11-27",
+      "setup": "BBP-418 PDUFA date Nov 27 with a heavy convertible stack",
+      "v": {
+        "cat": 1,
+        "low": -1,
+        "sel": -1,
+        "mom": -1,
+        "thm": 0
+      },
+      "why": "BBP-418 for LGMD2I/R9 has priority review and a Nov 27 PDUFA date. Q3: cash and securities about $1.54B vs convertible notes about $2.48B (about $548M due 2027).",
+      "risk": "Leverage (converts, preferred about $942M, royalty obligations about $884M) and a binary FDA outcome.",
+      "src": "https://finviz.com/news/411978/bridgebio-reports-third-quarter-2026-financial-results-and-corporate-updates",
+      "srcN": "Finviz Q3 release Oct 29; RTTNews",
+      "dd": [
+        {
+          "f": "10-Q / Q3 release",
+          "d": "Oct 29",
+          "s": "Cash about $1.54B, converts about $2.48B, net loss to common $83.0M; no going-concern language seen (press release only, 10-Q not opened)."
+        }
+      ],
+      "ddv": "watch"
+    },
+    {
+      "kind": "swing",
+      "t": "VRTX",
+      "n": "Vertex",
+      "theme": "FDA decision Nov 30",
+      "cat": "2026-11-30",
+      "catDate": "2026-11-30",
+      "setup": "Povetacicept PDUFA date Nov 30",
+      "v": {
+        "cat": 1,
+        "low": -1,
+        "sel": -1,
+        "mom": -1,
+        "thm": 0
+      },
+      "why": "The BLA for povetacicept in IgA nephropathy (accelerated approval) has a Nov 30 target action date, per RTTNews on Jun 1.",
+      "risk": "Binary FDA outcome; current price not found.",
+      "src": "https://www.rttnews.com/3656952/vertex-fda-accepts-bla-submission-for-povetacicept-assigns-pdufa-target-action-date-of-nov-30.aspx",
+      "srcN": "RTTNews Jun 1",
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 30",
+          "s": "Could not open the SEC filing itself this run; digest only."
+        }
+      ],
+      "ddv": "watch"
+    },
+    {
+      "kind": "invest",
+      "t": "MU",
+      "n": "Micron",
+      "theme": "Memory and AI demand",
+      "px": 629.79,
+      "pxN": "Nov 24 close",
+      "chg": -11.01,
+      "cat": "None",
+      "setup": "Fell 11.01% Nov 24, giving back over two-thirds of Monday's gain",
+      "v": {
+        "gro": 1,
+        "moat": -1,
+        "val": 1,
+        "mar": -1,
+        "dur": 0
+      },
+      "why": "FQ4 revenue $54.23B (+379%), adjusted EPS $33.42 vs $31.35; FQ1 guide $61.5B; over 75% of FY27 shipments committed; average analyst target $1,561.91.",
+      "risk": "Memory-cycle peak fears; chip stocks swung hard this week (SOXX -8.27% on Nov 24 per Capp Notes).",
+      "src": "https://247wallst.com/investing/2026/11/13/micron-is-down-20-in-a-month-what-will-it-take-to-get-mu-stock-back-to-1000/",
+      "srcN": "24/7 Wall St Nov 13; Stock Titan Nov 24 (price)",
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 23",
+          "s": "Could not open the SEC filing itself this run; digest only."
+        }
+      ],
+      "ddv": "watch"
+    },
+    {
+      "kind": "invest",
+      "t": "NVDA",
+      "n": "Nvidia",
+      "theme": "AI compute leader",
+      "px": 155.38,
+      "pxN": "Nov 24 close",
+      "chg": -5.86,
+      "cat": "None",
+      "setup": "Fell 5.86% Nov 24 after Monday's +31.48% on Huang's return",
+      "v": {
+        "gro": 1,
+        "moat": -1,
+        "val": -1,
+        "mar": -1,
+        "dur": 0
+      },
+      "why": "Closed at $155.38 (-5.86%) from $165.05 after jumping 31.48% on Nov 23 when the board reinstated Jensen Huang. FQ3 revenue was $115.8B (+103%) with a Q4 guide of $130B +/-3% excluding China data center compute (YourStory).",
+      "risk": "SEC accounting-probe reports (Nov 20), House interviews Dec 1-2 and export-control uncertainty; valuation and margin data not found this run.",
+      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-24-2026",
+      "srcN": "Stock Titan Nov 24; YourStory",
+      "dd": [
+        {
+          "f": "8-K",
+          "d": "Nov 23",
+          "s": "Nvidia press release (8-K exhibit): Huang reinstated as President/CEO, new independent national-security and export-control committee formed; read through a secondary summary, filing itself not opened."
+        }
+      ],
+      "ddv": "watch"
+    },
+    {
+      "kind": "invest",
+      "t": "AMZN",
+      "n": "Amazon",
+      "theme": "AWS growth, heavy AI capex",
+      "cat": "None",
+      "setup": "AWS up 39%, free cash flow negative",
+      "v": {
+        "gro": 1,
+        "moat": -1,
+        "val": -1,
+        "mar": 1,
+        "dur": 0
+      },
+      "why": "Q3 AWS revenue rose 39% to $46.0B with operating income $17.8B (vs $11.4B); trailing free cash flow was -$42.4B vs +$14.8B a year ago.",
+      "risk": "Negative free cash flow from AI capex and an FTC and 22-state ad-pricing suit; price not found.",
+      "src": "https://www.heygotrade.com/en/news/amazon-amzn-stock-news-november-6-2026/",
+      "srcN": "HeyGoTrade Nov 6",
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 23",
+          "s": "Could not open the SEC filing itself this run; digest only."
+        }
+      ],
+      "ddv": "watch"
+    },
+    {
+      "kind": "invest",
+      "t": "MELI",
+      "n": "MercadoLibre",
+      "theme": "LatAm commerce and fintech",
+      "cat": "None",
+      "setup": "Revenue +45%, margins squeezed",
+      "v": {
+        "gro": 1,
+        "moat": -1,
+        "val": 1,
+        "mar": 0,
+        "dur": 0
+      },
+      "why": "Q3 revenue rose 45% to $10.75B; operating income fell 6% to $676M; EPS $8.83 vs $9.27 expected; forward P/E about 33x vs a five-year average of 62x; Goldman Buy, target $2,100.",
+      "risk": "Margin compression and an EPS miss; price not stated.",
+      "src": "https://www.tikr.com/blog/mercadolibre-keeps-sliding-why-goldman-sachs-still-sees-41-upside",
+      "srcN": "TIKR, Nov 11",
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 23",
+          "s": "Could not open the SEC filing itself this run; digest only."
+        }
+      ],
+      "ddv": "watch"
+    },
+    {
+      "kind": "invest",
+      "t": "ONON",
+      "n": "On Holding",
+      "theme": "Premium running",
+      "cat": "None",
+      "setup": "Cantor initiated at Overweight, $46 target",
+      "v": {
+        "gro": 1,
+        "moat": 1,
+        "val": -1,
+        "mar": -1,
+        "dur": 0
+      },
+      "why": "Cantor Fitzgerald initiated at Overweight with a $46 target on premium innovation and full-price sell-through, projecting 18% EBITDA and 23% free-cash-flow CAGR through FY29. The stock was down about 25% year to date.",
+      "risk": "Premium valuation and consumer-demand sensitivity; Nov 20 move not found.",
+      "src": "https://stocktwits.com/news-articles/markets/equity/onon-stock-rises-premarket-retail-says-smack-that-buy-button/cNGDjZhR9B3",
+      "srcN": "Stocktwits Nov 11",
+      "soc": "Retail sentiment 'extremely bullish' (Stocktwits, Nov 11)",
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 23",
+          "s": "Could not open the SEC filing itself this run; digest only."
+        }
+      ],
+      "ddv": "watch"
+    },
+    {
+      "kind": "penny",
+      "t": "SVRA",
+      "n": "Savara",
+      "theme": "FDA missed its date",
+      "px": 4.55,
+      "pxN": "Nov 24 close (Alpha Vantage)",
+      "chg": 7.31,
+      "cat": "FDA action date passed Nov 22",
+      "setup": "FDA will not act by the Nov 22 PDUFA date; no new date",
+      "stage": 1,
+      "stageN": "Real catalyst, but the outcome is a delay.",
+      "v": {
+        "news": 1,
+        "vol": 1,
+        "list": 1,
+        "cash": 0,
+        "dil": -1
+      },
+      "why": "Savara fell 18.23% to $4.26 on Nov 20 (17.08M shares) after the FDA said it would not act on the molgramostim BLA by the Nov 22 PDUFA date, with no new date.",
+      "risk": "No new FDA date; Q3 net loss $43.0M and the company says cash funds at least 12 months; no cash balance or share count found.",
+      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-20-2026",
+      "srcN": "Stock Titan Nov 20; Stocktwits Nov 23",
+      "soc": "Stocktwits retail sentiment 'extremely bullish' over 24h (Nov 23); message volume not stated",
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 20",
+          "s": "No SEC filing opened; Stock Titan headline and a Quartr digest of the Q3 report (net loss $43.0M, cash for at least 12 months)."
+        }
+      ],
+      "ddv": "watch"
+    },
+    {
+      "kind": "penny",
+      "t": "CAPR",
+      "n": "Capricor Therapeutics",
+      "theme": "Second FDA rejection",
+      "px": 2.02,
+      "pxN": "Nov 24 close (Alpha Vantage)",
+      "chg": 5.21,
+      "cat": "FDA CRL Nov 20",
+      "setup": "Complete response letter; stock down about 70% premarket",
+      "stage": 3,
+      "stageN": "The move already happened.",
+      "v": {
+        "news": 1,
+        "vol": 1,
+        "list": 1,
+        "cash": 1,
+        "dil": 0
+      },
+      "why": "The FDA issued a second CRL for deramiocel on Nov 20, saying the data do not give substantial evidence of effectiveness. The stock was $7.59 at the Nov 20 close and $2.32 premarket Nov 23 (-69.5%, Investing.com).",
+      "risk": "The premarket price may change; Stock Titan shows -78.52% with no timestamp. Cash was about $198.5M at Sep 30 and the company disputes the FDA's view and has a call Nov 23.",
+      "src": "https://www.globenewswire.com/news-release/2026/11/21/3407877/0/en/capricor-therapeutics-provides-regulatory-update-on-deramiocel-bla-for-duchenne-muscular-dystrophy.html",
+      "srcN": "GlobeNewswire Nov 20; Investing.com Nov 23",
+      "soc": "Stocktwits retail sentiment 'extremely bullish' (Nov 23); message volume not stated",
+      "dd": [
+        {
+          "f": "CRL release",
+          "d": "Nov 20",
+          "s": "Second CRL for deramiocel (Duchenne cardiomyopathy); company disputes it (release opened, not the 8-K)."
+        }
+      ],
+      "ddv": "watch"
+    },
+    {
+      "kind": "penny",
+      "t": "SRTS",
+      "n": "Sensus Healthcare",
+      "theme": "Director buying after a post-earnings drop",
+      "px": 2.26,
+      "pxN": "Nov 20 close",
+      "chg": -4.24,
+      "cat": "No date set",
+      "setup": "Director bought 81,575 shares at $2.243 after a 27.8% fall",
+      "stage": 2,
+      "stageN": "Speculative; insider buying vs shrinking cash.",
+      "v": {
+        "news": 1,
+        "vol": -1,
+        "list": 1,
+        "cash": 1,
+        "dil": -1
+      },
+      "why": "Director Eric Sachetta bought 81,575 shares at $2.243 on Nov 17 (code P). The stock fell 27.8% on Nov 13 after Q3 revenue of $6.0M (-13%), a net loss of $1.5M and a dropped profitability target.",
+      "risk": "Cash fell to $12.9M from $22.1M at year-end; two customers were 61% of Q3 revenue; sources conflict on debt (Finviz: no borrowings; Panabee: $15M facility, $2M available).",
+      "src": "https://www.panabee.com/news/sensus-earnings-q3-2026",
+      "srcN": "Panabee Nov 12; Finviz Nov 12; Quiver Nov 19",
+      "ins": "Eric Sachetta, director: 81,575 sh on Nov 17 at $2.243, code P (Form 4 opened)",
+      "dd": [
+        {
+          "f": "Form 4",
+          "d": "Nov 19",
+          "s": "Sachetta, director, code P: 81,575 sh at $2.243 on Nov 17; owns 376,359 direct plus 2,093 via spouse (form opened).",
+          "u": "https://www.sec.gov/Archives/edgar/data/0001494891/000209734526000018/form4-11192026_021136.xml"
+        },
+        {
+          "f": "10-Q",
+          "d": "Q3",
+          "s": "Only digests read: cash $12.9M, nine-month operating cash burn $9.1M."
+        }
+      ],
+      "ddv": "watch"
+    },
+    {
+      "kind": "penny",
+      "t": "RYDE",
+      "n": "Ryde Group",
+      "theme": "MOU, not revenue",
+      "px": 1.07,
+      "pxN": "Nov 20 close",
+      "chg": -9.32,
+      "cat": "MOU signed Nov 5",
+      "setup": "Non-binding GPU-as-a-service MOU of up to US$278M",
+      "stage": 2,
+      "stageN": "Speculative; framework only.",
+      "v": {
+        "news": 1,
+        "vol": -1,
+        "list": 1,
+        "cash": -1,
+        "dil": 0
+      },
+      "why": "Ryde signed an MOU with Dimension AI on Nov 5 to explore GPU-as-a-Service of up to US$278M over three years; the release says it is not contracted revenue. Shares closed at $1.07 (-9.32%).",
+      "risk": "No agreed terms; an April private placement sold 37.25M shares at $0.40; search titles suggest a later reverse split and an NYSE American shortfall notice that I did not confirm.",
+      "src": "https://finviz.com/news/416540/ryde-signs-strategic-mou-with-dimension-ai-to-explore-us278-million-three-year-gpu-as-a-service-collaboration",
+      "srcN": "Finviz Nov 5; Stock Titan Nov 20",
+      "dd": [
+        {
+          "f": "6-K",
+          "d": "Apr 7",
+          "s": "Private placement of 37,250,000 Class A shares at $0.40 (about $14.9M); Stock Titan digest.",
+          "u": "https://www.stocktitan.net/sec-filings/RYDE/6-k-ryde-group-ltd-current-report-foreign-issuer-022cf9b248b3.html"
+        },
+        {
+          "f": "Filings",
+          "d": "Nov 23",
+          "s": "Reverse split and listing notice seen only in search titles, not opened."
+        }
+      ],
+      "ddv": "red"
+    },
+    {
+      "kind": "penny",
+      "t": "BRSP",
+      "n": "BrightSpire Capital",
+      "theme": "CEO buying",
+      "px": 3.19,
+      "pxN": "Nov 20 close",
+      "chg": -2.74,
+      "cat": "No date set",
+      "setup": "CEO bought 228,463 shares for $749,358",
+      "stage": 2,
+      "stageN": "Speculative; insider buy unverified as code P.",
+      "v": {
+        "news": 1,
+        "vol": 1,
+        "list": 1,
+        "cash": -1,
+        "dil": 0
+      },
+      "why": "CEO Michael Mazzei bought 228,463 shares for $749,358 (about $3.28 a share) on Nov 16; the stock closed at $3.19 on Nov 20 (-2.74%).",
+      "risk": "Price was $5.54 in March; the transaction code was not stated and the Nov 16 Form 4 was not opened.",
+      "src": "https://www.quiverquant.com/news/Insider+Stock+Purchases%3A+November+17%2C+2026",
+      "srcN": "Quiver Nov 17",
+      "ins": "Michael Mazzei, CEO: 228,463 sh for $749,358 on Nov 16; code not stated (Quiver)",
+      "dd": [
+        {
+          "f": "Form 4",
+          "d": "Nov 16",
+          "s": "Mazzei purchase from the Quiver digest; form not opened, code not stated."
+        },
+        {
+          "f": "Form 4 history",
+          "d": "Feb-Mar",
+          "s": "Older Form 4s opened: grants (code A), tax withholding (code F at $5.54) and a divorce transfer (code J); none are buys.",
+          "u": "https://www.stocktitan.net/sec-filings/BRSP/form-4-bright-spire-capital-inc-insider-trading-activity-58804a733754.html"
+        }
+      ],
+      "ddv": "watch"
+    },
+    {
+      "kind": "penny",
+      "t": "NIXX",
+      "n": "Nixxy",
+      "theme": "Study example: reverse-split trap",
+      "px": 2.233,
+      "pxN": "Nov 20 close (split-adjusted)",
+      "chg": -16.12,
+      "cat": "Reverse split Nov 20",
+      "setup": "1-for-20 reverse split to regain Nasdaq's $1 bid",
+      "stage": 4,
+      "stageN": "Study example of a likely trap.",
+      "v": {
+        "news": 1,
+        "vol": 0,
+        "list": 0,
+        "cash": 0,
+        "dil": 0
+      },
+      "why": "A 1-for-20 reverse split took effect Nov 20, cutting shares from about 29.5M to about 1.5M; the stock traded at $0.13-0.18 pre-split and closed at $2.233 split-adjusted (-16.12%).",
+      "risk": "Cash was $248K at Sep 30 vs a $2.1M quarterly loss, the 10-Q has going-concern language, and it sold new shares privately in 2026.",
+      "src": "https://www.stocktitan.net/news/NIXX/nixxy-announces-1-for-20-reverse-stock-7b5grnj3ah7b.html",
+      "srcN": "Stock Titan Nov 18",
+      "dd": [
+        {
+          "f": "10-Q",
+          "d": "Nov 16",
+          "s": "Cash $248K, nine-month net loss $3.88M, going-concern language, 29,378,339 shares at Nov 16 (first 100K characters opened).",
+          "u": "https://www.sec.gov/Archives/edgar/data/1462223/000168316826008741/nixxy_i10q-093026.htm"
+        }
+      ],
+      "ddv": "red"
+    },
+    {
+      "kind": "micro",
+      "t": "GPUS",
+      "n": "Hyperscale Data",
+      "theme": "Exchange offer",
+      "px": 0.1379,
+      "pxN": "Nov 24 close (Alpha Vantage)",
+      "chg": -9.81,
+      "cat": "Offer expires Dec 18",
+      "setup": "Offer for up to 192.3M shares at a stated $0.26",
+      "stage": 2,
+      "stageN": "Speculative; capital-structure swap.",
+      "v": {
+        "news": 1,
+        "vol": 1,
+        "buzz": 0,
+        "buy": -1,
+        "dil": 0
+      },
+      "why": "On Nov 20 it launched an exchange offer for up to 192,308,000 common shares at a stated $0.26 each, paid as $2.00 cash plus one 12% Series I Preferred share per 100 shares; it needs 100M shares tendered. The stock closed at $0.1291 (-15.01%).",
+      "risk": "The offer swaps common for high-cost 12% preferred and uses cash; the Q3 10-Q is due Nov 23 and a slip would add listing risk; it sold 211.56 BTC (about $16.0M) on Nov 10 to pay debt.",
+      "src": "https://www.sec.gov/Archives/edgar/data/0000896493/000119380526001516/e665914_ex99-a5e.htm",
+      "srcN": "SC TO-I exhibit Nov 20; Finviz Nov 10",
+      "dd": [
+        {
+          "f": "SC TO-I",
+          "d": "Nov 20",
+          "s": "Exchange offer terms: up to 192,308,000 shares, $2.00 cash plus Series I Preferred per 100 shares, minimum 100M tendered, expires Dec 18 (exhibit opened).",
+          "u": "https://www.sec.gov/Archives/edgar/data/0000896493/000119380526001516/e665914_ex99-a5e.htm"
+        },
+        {
+          "f": "ATM",
+          "d": "n/a",
+          "s": "A completed $125M ATM program appeared only in a search title."
+        }
+      ],
+      "ddv": "red"
+    },
+    {
+      "kind": "micro",
+      "t": "ANVS",
+      "n": "Annovis Bio",
+      "theme": "FDA agreement, thin cash",
+      "px": 0.7113,
+      "pxN": "Nov 20 close",
+      "chg": -4.96,
+      "cat": "FDA agreement Nov 20",
+      "setup": "FDA agreed to the integrated safety summary plan for buntanetap",
+      "stage": 2,
+      "stageN": "Speculative; funded but diluted.",
+      "v": {
+        "news": 1,
+        "vol": 0,
+        "buzz": -1,
+        "buy": -1,
+        "dil": 1
+      },
+      "why": "On Nov 20 the FDA agreed to the Integrated Summary of Safety plan for buntanetap ahead of the NDA (DUET-AD readout March 2027); the company says this is not approval. The stock closed at $0.7113 (-4.96%).",
+      "risk": "Cash was $2.82M at Sep 30 before a $21.0M offering closed Nov 6; shares outstanding rose from 27.2M to 42.7M this year and the 424B5 carried a going-concern warning.",
+      "src": "https://www.globenewswire.com/news-release/2026/11/20/3407385/0/en/annovis-secures-fda-agreement-on-integrated-summary-of-safety-plan-combining-alzheimer-s-and-parkinson-s-data-ahead-of-buntanetap-nda.html",
+      "srcN": "GlobeNewswire Nov 20; Finviz Nov 13",
+      "dd": [
+        {
+          "f": "424B5",
+          "d": "Nov 4",
+          "s": "Preliminary prospectus supplement warns it lacks capital for the next 12 months (Stock Titan digest).",
+          "u": "https://www.stocktitan.net/sec-filings/ANVS/424b5-annovis-bio-inc-prospectus-supplement-debt-securities-772a3cfdf003.html"
+        },
+        {
+          "f": "10-Q",
+          "d": "Aug 14",
+          "s": "June 30 quarter: going concern, offerings at $2.50 and $2.25 with warrants, $50M ATM (digest)."
+        }
+      ],
+      "ddv": "red"
+    },
+    {
+      "kind": "micro",
+      "t": "AREC",
+      "n": "American Resources",
+      "theme": "Kenya niobium bid",
+      "px": 0.905,
+      "pxN": "Nov 20 close",
+      "chg": 2.02,
+      "cat": "Exclusive negotiation Nov 20",
+      "setup": "Named successful bidder for Mrima Hill niobium and rare earths",
+      "stage": 2,
+      "stageN": "Speculative; late filings.",
+      "v": {
+        "news": 1,
+        "vol": 0,
+        "buzz": -1,
+        "buy": -1,
+        "dil": 0
+      },
+      "why": "A consortium with ReElement and Bunker Hill was named successful bidder for Kenya's Mrima Hill project on Nov 20; this is exclusive negotiation toward a license, not the license. The stock closed at $0.905 (+2.02%).",
+      "risk": "Stock Titan lists an NT 10-Q (late filing) on Nov 17 and a Nasdaq late-10-Q notice in June; resource figures are unverified.",
+      "src": "https://www.stocktitan.net/news/AREC/american-resources-corporation-and-re-element-technologies-selected-dwiep33s192c.html",
+      "srcN": "Stock Titan, Nov 20",
+      "dd": [
+        {
+          "f": "NT 10-Q",
+          "d": "Nov 17",
+          "s": "Late-filing notice listed by Stock Titan (digest; not opened)."
+        },
+        {
+          "f": "Nasdaq notice",
+          "d": "Jun 3",
+          "s": "Late Form 10-Q notice for Q1 (digest).",
+          "u": "https://www.stocktitan.net/news/AREC/american-resources-receives-nasdaq-notice-regarding-late-form-10-q-3llib0jfrmx1.html"
+        }
+      ],
+      "ddv": "red"
+    },
+    {
+      "kind": "micro",
+      "t": "XHLD",
+      "n": "TEN Holdings",
+      "theme": "Repeat offerings",
+      "px": 0.6402,
+      "pxN": "Nov 20 close",
+      "chg": -3.03,
+      "cat": "Offering closed Nov 9",
+      "setup": "Registered direct offering at $0.59 closed",
+      "stage": 3,
+      "stageN": "Spike faded; dilution continues.",
+      "v": {
+        "news": 1,
+        "vol": -1,
+        "buzz": -1,
+        "buy": -1,
+        "dil": 1
+      },
+      "why": "TEN closed a registered direct of 3,389,831 shares at $0.59 (about $2.0M) on Nov 9; Q3 revenue was $640K with a net loss of $3.73M and cash of $3.5M. The stock closed at $0.6402 (-3.03%).",
+      "risk": "Repeat offerings, tiny revenue and a 1-for-15 reverse split already done Dec 1, 2025.",
+      "src": "https://finviz.com/news/419625/ten-holdings-announces-closing-of-20-million-registered-direct-offering",
+      "srcN": "Finviz Nov 9; Finviz Nov 6",
+      "dd": [
+        {
+          "f": "S-3 / offering",
+          "d": "Nov 9",
+          "s": "Registered direct off an effective S-3 (File No. 333-299485); cited in the release, shelf not opened."
+        }
+      ],
+      "ddv": "red"
+    },
+    {
+      "kind": "micro",
+      "t": "NIVF",
+      "n": "NewGenIvf",
+      "theme": "Study example: serial offerings",
+      "px": 0.0269,
+      "pxN": "Nov 20 close",
+      "chg": -23.14,
+      "cat": "Offering closed",
+      "setup": "Closed a $2.5M underwritten offering",
+      "stage": 4,
+      "stageN": "Study example of a likely trap.",
+      "v": {
+        "news": 1,
+        "vol": 1,
+        "buzz": -1,
+        "buy": -1,
+        "dil": 1
+      },
+      "why": "Stock Titan's Nov 20 list shows NewGenIvf closed a $2.5M underwritten offering. The stock closed at $0.0269 (-23.14%) on 274M shares.",
+      "risk": "Serial offerings at falling prices and far below Nasdaq's $1 minimum bid; the release itself was not found.",
+      "src": "https://www.stocktitan.net/news/2026-11-20/",
+      "srcN": "Stock Titan news list Nov 20 (headline only)",
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 20",
+          "s": "No prospectus found; digest only."
+        }
+      ],
+      "ddv": "red"
+    },
+    {
+      "kind": "micro",
+      "t": "FCHL",
+      "n": "Fitness Champs Holdings",
+      "theme": "Study example: dilution trap",
+      "px": 0.017,
+      "pxN": "Nov 20 close (unreconciled)",
+      "chg": -74.24,
+      "cat": "Offering closed Nov 20",
+      "setup": "$5M offering with zero-exercise warrants",
+      "stage": 4,
+      "stageN": "Study example of a likely trap.",
+      "v": {
+        "news": 1,
+        "vol": 1,
+        "buzz": -1,
+        "buy": -1,
+        "dil": 1
+      },
+      "why": "On Nov 20 it closed a $5M best-efforts offering of 14,285,715 units at $0.35; the warrants carry a zero-exercise-price option for up to 15 shares each (about 214M shares possible).",
+      "risk": "The quoted $0.017 close (-74.24%) is far below the $0.35 unit price and I could not reconcile it, so verify before use; Nasdaq equity compliance still needs confirmation.",
+      "src": "https://www.sec.gov/Archives/edgar/data/0002023796/000149315226053460/ex99-1.htm",
+      "srcN": "6-K Ex. 99.1, Nov 20",
+      "dd": [
+        {
+          "f": "6-K Ex. 99.1",
+          "d": "Nov 20",
+          "s": "Closing of a $5M offering at $0.35 per unit with $1.02 warrants and a zero-exercise cashless option for up to 15 shares each (opened).",
+          "u": "https://www.sec.gov/Archives/edgar/data/0002023796/000149315226053460/ex99-1.htm"
+        },
+        {
+          "f": "Nasdaq notice",
+          "d": "May 26",
+          "s": "Equity was $598,490 vs the $2.5M minimum; the offering is said to restore compliance, not yet confirmed."
+        }
+      ],
+      "ddv": "red"
+    },
+    {
+      "kind": "micro",
+      "t": "JAGX",
+      "n": "Jaguar Health",
+      "theme": "Study example: reverse split",
+      "px": 0.227,
+      "pxN": "Nov 20 close",
+      "chg": -30.58,
+      "cat": "Reverse split Nov 24",
+      "setup": "1-for-25 reverse split effective Nov 24, after a 1-for-35 in April",
+      "stage": 4,
+      "stageN": "Study example of a likely trap.",
+      "v": {
+        "news": 1,
+        "vol": 0,
+        "buzz": -1,
+        "buy": -1,
+        "dil": 1
+      },
+      "why": "A 1-for-25 reverse split takes effect 12:01 a.m. ET Nov 24 (8-K signed Nov 20); the stock closed at $0.227 (-30.58%) pre-split.",
+      "risk": "A 1-for-35 split already took effect Apr 30 and Nasdaq flagged a public-float shortfall in May; the ledger price will jump on the split, which is not a real gain. Alpha Vantage showed $12.80 on Nov 24 (+109% vs a $6.1175 prior close), which implies a reverse split that no article I opened confirms; the $0.227 price above is unadjusted.",
+      "src": "https://www.sec.gov/Archives/edgar/data/1585608/000119312526469575/d196905d8k.htm",
+      "srcN": "8-K Nov 20; Biopharmawatch Nov 20",
+      "dd": [
+        {
+          "f": "8-K Items 3.03/5.03",
+          "d": "Nov 20",
+          "s": "1-for-25 reverse split effective Nov 24; authorized shares unchanged (filing opened).",
+          "u": "https://www.sec.gov/Archives/edgar/data/1585608/000119312526469575/d196905d8k.htm"
+        },
+        {
+          "f": "8-K",
+          "d": "May 4",
+          "s": "Nasdaq staff flagged about 401,226 publicly held shares vs 500,000 required (digest)."
+        }
+      ],
+      "ddv": "red"
+    },
+    {
+      "kind": "micro",
+      "t": "TOVX",
+      "n": "Theriva Biologics",
+      "theme": "Study example: reverse split",
+      "px": 0.12,
+      "pxN": "Nov 20 close",
+      "chg": -6.25,
+      "cat": "Reverse split Dec 1",
+      "setup": "1-for-30 reverse split to meet NYSE American's price rule",
+      "stage": 4,
+      "stageN": "Study example of a likely trap.",
+      "v": {
+        "news": 1,
+        "vol": 0,
+        "buzz": -1,
+        "buy": -1,
+        "dil": 0
+      },
+      "why": "A 1-for-30 reverse split takes effect 11:59 p.m. ET Dec 1 (adjusted trading Dec 2) to meet NYSE American's per-share price requirement; the stock closed at $0.12 (-6.25%).",
+      "risk": "No cash figure in the release; the ledger price will jump on the split, which is not a real gain.",
+      "src": "https://www.sec.gov/Archives/edgar/data/0000894158/000110465926130644/tm2630359d1_ex99-1.htm",
+      "srcN": "8-K Nov 20",
+      "dd": [
+        {
+          "f": "8-K Items 8.01/9.01",
+          "d": "Nov 20",
+          "s": "1-for-30 reverse split effective Dec 1 to meet the NYSE American price requirement (filing and release opened).",
+          "u": "https://www.sec.gov/Archives/edgar/data/0000894158/000110465926130644/tm2630359d1_8k.htm"
+        }
+      ],
+      "ddv": "red"
+    },
+    {
+      "kind": "micro",
+      "t": "MRM",
+      "n": "MEDIROM Healthcare",
+      "theme": "Study example: delisting notice",
+      "px": 0.23,
+      "pxN": "Nov 20 close",
+      "chg": -6.12,
+      "cat": "Nasdaq notice Nov 13",
+      "setup": "Delisting notice for a late 20-F; filed Nov 18",
+      "stage": 4,
+      "stageN": "Study example of a likely trap.",
+      "v": {
+        "news": 1,
+        "vol": 1,
+        "buzz": -1,
+        "buy": -1,
+        "dil": 0
+      },
+      "why": "Nasdaq sent a delisting notice (received Nov 13) for not filing the 2025 Form 20-F; the company requested a hearing and filed it Nov 18, and Stock Titan lists a regained-compliance headline. The stock closed at $0.23 (-6.12%).",
+      "risk": "A separate bid-price deficiency (Oct 6) has an Apr 5, 2027 deadline; cash and dilution not found.",
+      "src": "https://www.biopharmawatch.com/news/MRM/medirom-nasdaq-delisting-notice-annual-report-filing",
+      "srcN": "Biopharmawatch Nov 18; Stock Titan Nov 20",
+      "dd": [
+        {
+          "f": "Nasdaq notice",
+          "d": "Nov 13",
+          "s": "Delisting notice under Rule 5250(c)(1) for the late 20-F (digest)."
+        }
+      ],
+      "ddv": "red"
+    },
+    {
+      "kind": "micro",
+      "t": "RBNE",
+      "n": "Robin Energy",
+      "theme": "Study example: reverse split",
+      "px": 0.1226,
+      "pxN": "Nov 20 close",
+      "chg": -3.99,
+      "cat": "Reverse split Nov 24",
+      "setup": "Reverse split effective Nov 24; ratio not found",
+      "stage": 4,
+      "stageN": "Study example of a likely trap.",
+      "v": {
+        "news": 1,
+        "vol": 1,
+        "buzz": -1,
+        "buy": -1,
+        "dil": 0
+      },
+      "why": "Stock Titan's Nov 20 list shows a reverse stock split effective Nov 24; the stock closed at $0.1226 (-3.99%) on 34.6M shares.",
+      "risk": "Ratio and terms not found; the ledger price will jump on the split, which is not a real gain.",
+      "src": "https://www.stocktitan.net/news/2026-11-20/",
+      "srcN": "Stock Titan news list Nov 20 (headline only)",
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 20",
+          "s": "No release or 8-K was opened; headline only."
+        }
+      ],
+      "ddv": "red"
+    },
+    {
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 25",
+          "s": "Could not open the SEC filings this run (sec.gov was blocked in this environment); news digest only."
+        }
+      ],
+      "ddv": "watch",
+      "kind": "day",
+      "t": "INSM",
+      "n": "Insmed",
+      "theme": "Takeover bid",
+      "px": 170.15,
+      "pxN": "Nov 24 close",
+      "chg": 14.13,
+      "cat": "Sanofi deal announced Nov 24",
+      "catDate": "2026-11-24",
+      "setup": "Gapped up on a cash buyout; trades just under the $175 offer",
+      "v": {
+        "news": 1,
+        "gap": 1,
+        "vol": -1,
+        "iv": -1,
+        "liq": -1
+      },
+      "why": "Sanofi agreed to buy Insmed for $175 per share in cash, about $41.0B in total; closing is expected in the first half of 2027. Insmed rose 14.13% to $170.15, about 2.9% below the offer price.",
+      "risk": "The deal needs shareholder and regulatory approval (no vote date given), so upside is capped near $175 and a failed deal could reverse the gain.",
+      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-24-2026",
+      "srcN": "Stock Titan Nov 24; Vista Nov 24"
+    },
+    {
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 25",
+          "s": "Could not open the SEC filings this run (sec.gov was blocked in this environment); news digest only."
+        }
+      ],
+      "ddv": "watch",
+      "kind": "day",
+      "t": "COGT",
+      "n": "Cogent Biosciences",
+      "theme": "FDA approval",
+      "chg": 17.43,
+      "cat": "FDA approved Ekitna Nov 24",
+      "catDate": "2026-11-24",
+      "setup": "Rose after FDA approval for advanced GIST",
+      "v": {
+        "news": 1,
+        "gap": -1,
+        "vol": -1,
+        "iv": -1,
+        "liq": -1
+      },
+      "why": "The FDA approved Ekitna for advanced gastrointestinal stromal tumors in patients already treated with imatinib; the stock rose 17.43% on Nov 24.",
+      "risk": "Price, volume and any follow-on offering not found; approval news may already be priced in after a double-digit jump.",
+      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-24-2026",
+      "srcN": "Stock Titan Nov 24"
+    },
+    {
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 25",
+          "s": "Could not open the SEC filings this run (sec.gov was blocked in this environment); news digest only."
+        }
+      ],
+      "ddv": "watch",
+      "kind": "day",
+      "t": "KSS",
+      "n": "Kohl's",
+      "theme": "Retail earnings beat",
+      "chg": 19.48,
+      "cat": "Q3 results Nov 24",
+      "catDate": "2026-11-24",
+      "setup": "Jumped after Q3 results and a raised full-year outlook",
+      "v": {
+        "news": 1,
+        "gap": -1,
+        "vol": -1,
+        "iv": -1,
+        "liq": -1
+      },
+      "why": "Q3 net sales rose 1.3% to $3.5B and Kohl's raised its fiscal-year outlook; the stock gained 19.48% on Nov 24.",
+      "risk": "Price and volume not found; a one-day retail pop of this size can fade.",
+      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-24-2026",
+      "srcN": "Stock Titan Nov 24"
+    },
+    {
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 25",
+          "s": "Could not open the SEC filings this run (sec.gov was blocked in this environment); news digest only."
+        }
+      ],
+      "ddv": "watch",
+      "kind": "day",
+      "t": "ANF",
+      "n": "Abercrombie & Fitch",
+      "theme": "Retail earnings beat",
+      "chg": 19.69,
+      "cat": "Q3 results Nov 24",
+      "catDate": "2026-11-24",
+      "setup": "Record quarter and a raised EPS outlook",
+      "v": {
+        "news": 1,
+        "gap": -1,
+        "vol": -1,
+        "iv": -1,
+        "liq": -1
+      },
+      "why": "Record Q3 net sales of $1.4B (+11%); full-year EPS outlook raised to $13.70-13.90; the stock rose 19.69% on Nov 24.",
+      "risk": "Price and volume not found; the shares may already reflect the beat.",
+      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-24-2026",
+      "srcN": "Stock Titan Nov 24"
+    },
+    {
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 25",
+          "s": "Could not open the SEC filings this run (sec.gov was blocked in this environment); news digest only."
+        }
+      ],
+      "ddv": "watch",
+      "kind": "day",
+      "t": "AMBA",
+      "n": "Ambarella",
+      "theme": "Weak guidance",
+      "chg": -37.55,
+      "cat": "Q3 results and Q4 guide Nov 24",
+      "catDate": "2026-11-24",
+      "setup": "Plunged after hours on a sharply lower revenue forecast",
+      "v": {
+        "news": 1,
+        "gap": 1,
+        "vol": -1,
+        "iv": -1,
+        "liq": -1
+      },
+      "why": "Ambarella fell 37.55% at 7:59 p.m. ET on Nov 24; it forecast Q4 revenue of $70-75M versus $115.2M in Q3, and the CEO cited rising memory prices.",
+      "risk": "After-hours moves can change at the open; regular-session price not found.",
+      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-24-2026",
+      "srcN": "Stock Titan Nov 24 (after-hours)"
+    },
+    {
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 25",
+          "s": "Could not open the SEC filings this run (sec.gov was blocked in this environment); news digest only."
+        }
+      ],
+      "ddv": "watch",
+      "kind": "day",
+      "t": "HPE",
+      "n": "Hewlett Packard Enterprise",
+      "theme": "AI server margins",
+      "px": 40.19,
+      "pxN": "Nov 24 close",
+      "chg": -16.31,
+      "cat": "Q4 results Nov 24",
+      "catDate": "2026-11-24",
+      "setup": "Sold off despite 50% revenue growth on margin worries",
+      "v": {
+        "news": 1,
+        "gap": -1,
+        "vol": -1,
+        "iv": -1,
+        "liq": -1
+      },
+      "why": "Q4 revenue rose 50% to $14.5B and the FY27 revenue outlook is $59.4-63.1B, but adjusted gross margin fell 2.2 points; shares fell 16.31% to $40.19.",
+      "risk": "HPE warned cloud and AI operating margins could narrow in fiscal 2027; volume and options data not found.",
+      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-24-2026",
+      "srcN": "Stock Titan Nov 24; Vista Nov 24"
+    },
+    {
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 25",
+          "s": "Could not open the SEC filings this run (sec.gov was blocked in this environment); news digest only."
+        }
+      ],
+      "ddv": "watch",
+      "kind": "day",
+      "t": "DELL",
+      "n": "Dell Technologies",
+      "theme": "AI server demand",
+      "px": 295.28,
+      "pxN": "Nov 24 close (before results)",
+      "chg": -11.83,
+      "cat": "Q3 results Nov 24 after the close",
+      "catDate": "2026-11-24",
+      "setup": "Results after the close beat; after-hours reaction roughly flat to slightly up",
+      "v": {
+        "news": 1,
+        "gap": -1,
+        "vol": -1,
+        "iv": -1,
+        "liq": -1
+      },
+      "why": "Revenue $54.94B vs $49.32B expected and adjusted EPS $9.45 vs $6.59; AI server sales $22B (+291%), backlog $132.3B; Q4 guide EPS $8.40 and revenue about $56.3B.",
+      "risk": "Sources differ on the after-hours move (+0.89% per Stock Titan; about flat to +1% per CNBC via Gotrade); inventory nearly tripled per The Company Chronicle.",
+      "src": "https://www.heygotrade.com/en/news/after-dells-beat-pce-tests-the-market/",
+      "srcN": "CNBC via Gotrade Nov 24-25; Stock Titan Nov 24"
+    },
+    {
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 25",
+          "s": "Could not open the SEC filings this run (sec.gov was blocked in this environment); news digest only."
+        }
+      ],
+      "ddv": "watch",
+      "kind": "day",
+      "t": "KYMR",
+      "n": "Kymera Therapeutics",
+      "theme": "Upsized offering",
+      "cat": "Offering closes Nov 25",
+      "catDate": "2026-11-25",
+      "setup": "Priced an upsized public offering of about $1.75B at $150.37",
+      "v": {
+        "news": 1,
+        "gap": -1,
+        "vol": -1,
+        "iv": -1,
+        "liq": -1
+      },
+      "why": "Kymera priced 11,638,000 shares at $150.37 (about $1.75B, plus an option for 1,745,700 more shares); it is expected to close Nov 25.",
+      "risk": "New share supply dilutes holders; the offering followed its Nov 23 trial-data event, and the trading price was not found.",
+      "src": "https://vistapglobal.com/stock-market-today-november-24-2026-dow-tops-50000-as-nasdaq-slides-consumer-confidence-surges-with-pce-due-on-thanksgiving-eve-ant-bby-dell-dks-dltr-eprx-gld-insm-kymr-modd-msft-n/",
+      "srcN": "Vista Nov 24"
+    },
+    {
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 25",
+          "s": "Could not open the SEC filings this run (sec.gov was blocked in this environment); news digest only."
+        }
+      ],
+      "ddv": "watch",
+      "kind": "swing",
+      "t": "CRM",
+      "n": "Salesforce",
+      "theme": "Earnings Dec 2",
+      "cat": "2026-12-02",
+      "catDate": "2026-12-02",
+      "setup": "Reports Q3 FY27 after the close Dec 2 (webcast 5pm ET)",
+      "v": {
+        "cat": 1,
+        "low": -1,
+        "sel": -1,
+        "mom": -1,
+        "thm": 0
+      },
+      "why": "Salesforce announced it will report third-quarter fiscal 2027 results after the close on Dec 2 with a webcast at 5pm ET. Software peer Workday fell 7.22% after hours on Nov 24 despite revenue up 11.2%.",
+      "risk": "Software names are being sold on earnings; Salesforce price and consensus not found this run.",
+      "src": "https://finviz.com/news/420648/salesforce-announces-date-of-third-quarter-fiscal-2027-earnings-release-and-webcast",
+      "srcN": "Finviz (company release); Stock Titan Nov 24"
+    },
+    {
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 25",
+          "s": "Could not open the SEC filings this run (sec.gov was blocked in this environment); news digest only."
+        }
+      ],
+      "ddv": "watch",
+      "kind": "swing",
+      "t": "WDAY",
+      "n": "Workday",
+      "theme": "Post-earnings pullback",
+      "chg": -7.22,
+      "cat": "Q3 results Nov 24 (after hours)",
+      "setup": "Slid after hours on free cash flow slightly below estimates",
+      "v": {
+        "cat": 0,
+        "low": -1,
+        "sel": -1,
+        "mom": -1,
+        "thm": 0
+      },
+      "why": "Q3 revenue $2.705B (+11.2%), EPS $2.82; free cash flow $691M vs $712M expected. The stock was about $166.64 after hours from $179.23 per Gotrade (-7.22% per Stock Titan).",
+      "risk": "After-hours price only; no dated catalyst ahead and AI-disruption worries weigh on software.",
+      "src": "https://www.heygotrade.com/en/news/after-dells-beat-pce-tests-the-market/",
+      "srcN": "CNBC via Gotrade Nov 24-25; Stock Titan Nov 24"
+    },
+    {
+      "dd": [
+        {
+          "f": "8-K",
+          "d": "Nov 23",
+          "s": "Nvidia press release (8-K exhibit): Huang reinstated as President/CEO and back on the board by unanimous vote; read through a secondary summary, filing itself not opened."
+        }
+      ],
+      "ddv": "watch",
+      "kind": "swing",
+      "t": "NVDA",
+      "n": "Nvidia",
+      "theme": "CEO reinstated, House interviews Dec 1-2",
+      "px": 155.38,
+      "pxN": "Nov 24 close",
+      "chg": -5.86,
+      "cat": "House interviews Dec 1-2",
+      "catDate": "2026-12-01",
+      "setup": "Gave back about a quarter of Monday's +31.48% jump",
+      "v": {
+        "cat": 1,
+        "low": -1,
+        "sel": -1,
+        "mom": -1,
+        "thm": 1
+      },
+      "why": "Nvidia rose 31.48% on Nov 23 after the board reinstated Jensen Huang as CEO, then fell 5.86% to $155.38 on Nov 24. A House transcribed interview with Huang is reported for Dec 1 and with the general counsel for Dec 2.",
+      "risk": "Regulatory and export-control uncertainty; the interview dates come from an article published before the reinstatement.",
+      "src": "https://thecompanychronicle.com/story/stocks-close-dow-back-above-50000-nasdaq-falls-1-5-nvidia-5-9-anthropic-below-ipo-november-24-2026",
+      "srcN": "The Company Chronicle Nov 24; YourStory"
+    },
+    {
+      "dd": [
+        {
+          "f": "Filings",
+          "d": "Nov 25",
+          "s": "Could not open the SEC filings this run (sec.gov was blocked in this environment); news digest only."
+        }
+      ],
+      "ddv": "watch",
+      "kind": "penny",
+      "t": "MODD",
+      "n": "Modular Medical",
+      "theme": "Insulin pump launch expansion",
+      "px": 1.65,
+      "pxN": "Nov 24 close (Alpha Vantage)",
+      "chg": 5.1,
+      "cat": "Pivot launch expands from 5 to 15 US markets in 2027",
+      "setup": "Small insulin-pump maker rising on launch expansion plans",
+      "stage": 2,
+      "stageN": "Speculative; launch plan, no dated catalyst.",
+      "v": {
+        "news": 1,
+        "vol": -1,
+        "list": -1,
+        "cash": -1,
+        "dil": -1
+      },
+      "why": "Modular Medical closed at $1.65 (+5.10%, volume 101,589 per Alpha Vantage) after saying it plans to expand the Pivot launch from 5 to 15 US markets in 2027.",
+      "risk": "Cash runway, exchange listing and dilution not checked; sec.gov was unavailable, so filings were not read.",
+      "src": "https://vistapglobal.com/stock-market-today-november-24-2026-dow-tops-50000-as-nasdaq-slides-consumer-confidence-surges-with-pce-due-on-thanksgiving-eve-ant-bby-dell-dks-dltr-eprx-gld-insm-kymr-modd-msft-n/",
+      "srcN": "Vista Nov 24; Alpha Vantage quote Nov 24"
     }
-   ],
-   "ddv": "red"
-  }
- ]
+  ]
 }
