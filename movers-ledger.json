@@ -1,9 +1,9 @@
 {
   "started": "2026-11-04",
-  "asof": "2026-11-25",
+  "asof": "2026-11-26",
   "bench": "SPY",
-  "spyLast": 718.78,
-  "spyLastD": "2026-11-24",
+  "spyLast": 716.7,
+  "spyLastD": "2026-11-25",
   "horizon": {
     "day": 1,
     "radar": 10,
@@ -1782,9 +1782,12 @@
       "entry": 1.41,
       "entryN": "Nov 9 close (Alpha Vantage)",
       "spy": 730.2,
-      "last": 1.305,
-      "lastD": "2026-11-20",
-      "status": "open"
+      "last": 1.26,
+      "lastD": "2026-11-25",
+      "status": "closed",
+      "closed": 1.26,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "penny-CRIS-20261119",
@@ -1794,9 +1797,12 @@
       "entry": 0.6976,
       "entryN": "Nov 9 close (Alpha Vantage)",
       "spy": 730.2,
-      "last": 0.427,
-      "lastD": "2026-11-20",
-      "status": "open"
+      "last": 0.346,
+      "lastD": "2026-11-25",
+      "status": "closed",
+      "closed": 0.346,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "micro-LABT-20261119",
@@ -2055,8 +2061,8 @@
       "entry": 190.4,
       "entryN": "Nov 18 close (Alpha Vantage)",
       "spy": 730.2,
-      "last": 190.4,
-      "lastD": "2026-11-19",
+      "last": 197.21,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2067,8 +2073,8 @@
       "entry": 295.28,
       "entryN": "Nov 24 close",
       "spy": 718.78,
-      "last": 295.28,
-      "lastD": "2026-11-24",
+      "last": 297.06,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2229,11 +2235,11 @@
       "t": "ZM",
       "kind": "swing",
       "posted": "2026-11-20",
-      "entry": null,
-      "entryN": "Price not found at posting",
-      "spy": null,
-      "last": null,
-      "lastD": "2026-11-20",
+      "entry": 88.56,
+      "entryN": "Nov 25 close (first sourced price)",
+      "spy": 716.7,
+      "last": 88.56,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2256,8 +2262,8 @@
       "entry": 295.28,
       "entryN": "Nov 24 close",
       "spy": 718.78,
-      "last": 295.28,
-      "lastD": "2026-11-24",
+      "last": 297.06,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2289,11 +2295,11 @@
       "t": "VRTX",
       "kind": "swing",
       "posted": "2026-11-20",
-      "entry": null,
-      "entryN": "Price not found at posting",
-      "spy": null,
-      "last": null,
-      "lastD": "2026-11-20",
+      "entry": 564.12,
+      "entryN": "Nov 25 close (first sourced price)",
+      "spy": 716.7,
+      "last": 564.12,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2376,8 +2382,8 @@
       "entry": 0.0269,
       "entryN": "Nov 20 close (first sourced price)",
       "spy": 689.81,
-      "last": 0.0269,
-      "lastD": "2026-11-20",
+      "last": 0.0177,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2568,8 +2574,8 @@
       "entry": 4.26,
       "entryN": "Nov 20 close",
       "spy": 689.81,
-      "last": 4.55,
-      "lastD": "2026-11-24",
+      "last": 4.59,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2580,8 +2586,8 @@
       "entry": 2.32,
       "entryN": "Nov 23 premarket",
       "spy": 689.81,
-      "last": 2.02,
-      "lastD": "2026-11-24",
+      "last": 1.95,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2592,8 +2598,8 @@
       "entry": 2.26,
       "entryN": "Nov 20 close",
       "spy": 689.81,
-      "last": 2.26,
-      "lastD": "2026-11-23",
+      "last": 2.08,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2604,8 +2610,8 @@
       "entry": 1.07,
       "entryN": "Nov 20 close",
       "spy": 689.81,
-      "last": 1.07,
-      "lastD": "2026-11-23",
+      "last": 0.6902,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2628,8 +2634,8 @@
       "entry": 2.233,
       "entryN": "Nov 20 close (split-adjusted)",
       "spy": 689.81,
-      "last": 2.233,
-      "lastD": "2026-11-23",
+      "last": 2.34,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2640,9 +2646,12 @@
       "entry": 0.7113,
       "entryN": "Nov 20 close",
       "spy": 689.81,
-      "last": 0.7113,
-      "lastD": "2026-11-23",
-      "status": "open"
+      "last": 0.8548,
+      "lastD": "2026-11-25",
+      "status": "closed",
+      "closed": 0.8548,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "micro-AREC-20261123",
@@ -2652,9 +2661,12 @@
       "entry": 0.905,
       "entryN": "Nov 20 close",
       "spy": 689.81,
-      "last": 0.905,
-      "lastD": "2026-11-23",
-      "status": "open"
+      "last": 0.7425,
+      "lastD": "2026-11-25",
+      "status": "closed",
+      "closed": 0.7425,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "micro-NIVF-20261123",
@@ -2664,9 +2676,12 @@
       "entry": 0.0269,
       "entryN": "Nov 20 close",
       "spy": 689.81,
-      "last": 0.0269,
-      "lastD": "2026-11-23",
-      "status": "open"
+      "last": 0.0177,
+      "lastD": "2026-11-25",
+      "status": "closed",
+      "closed": 0.0177,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "micro-FCHL-20261123",
@@ -2676,9 +2691,12 @@
       "entry": 0.017,
       "entryN": "Nov 20 close (unreconciled)",
       "spy": 689.81,
-      "last": 0.017,
-      "lastD": "2026-11-23",
-      "status": "open"
+      "last": 0.0107,
+      "lastD": "2026-11-25",
+      "status": "closed",
+      "closed": 0.0107,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "micro-JAGX-20261123",
@@ -2690,7 +2708,11 @@
       "spy": 689.81,
       "last": 0.227,
       "lastD": "2026-11-23",
-      "status": "open"
+      "status": "closed",
+      "note": "Reverse split around Nov 24 (price jumped from about $0.24 to $12.80); split-adjusted close not sourced, last left unchanged.",
+      "closed": 0.227,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "micro-TOVX-20261123",
@@ -2700,9 +2722,13 @@
       "entry": 0.12,
       "entryN": "Nov 20 close",
       "spy": 689.81,
-      "last": 0.12,
-      "lastD": "2026-11-23",
-      "status": "open"
+      "last": 0.0825,
+      "lastD": "2026-11-25",
+      "status": "closed",
+      "note": "Zero volume Nov 24-25 (likely halted); last is the final trade at $0.0825.",
+      "closed": 0.0825,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "micro-MRM-20261123",
@@ -2712,9 +2738,12 @@
       "entry": 0.23,
       "entryN": "Nov 20 close",
       "spy": 689.81,
-      "last": 0.23,
-      "lastD": "2026-11-23",
-      "status": "open"
+      "last": 0.429,
+      "lastD": "2026-11-25",
+      "status": "closed",
+      "closed": 0.429,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "micro-RBNE-20261123",
@@ -2726,7 +2755,11 @@
       "spy": 689.81,
       "last": 0.1226,
       "lastD": "2026-11-23",
-      "status": "open"
+      "status": "closed",
+      "note": "Reverse split around Nov 24 (price jumped from about $0.04 to $3.18); split-adjusted close not sourced, last left unchanged.",
+      "closed": 0.1226,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "micro-GPUS-20261125",
@@ -2736,7 +2769,7 @@
       "entry": 0.1379,
       "entryN": "Nov 24 close (Alpha Vantage)",
       "spy": 718.78,
-      "last": 0.1379,
+      "last": 0.1403,
       "lastD": "2026-11-25",
       "status": "open"
     },
@@ -2750,7 +2783,10 @@
       "spy": 718.78,
       "last": 170.15,
       "lastD": "2026-11-25",
-      "status": "open"
+      "status": "closed",
+      "closed": 170.15,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "day-COGT-20261125",
@@ -2762,7 +2798,10 @@
       "spy": null,
       "last": null,
       "lastD": "2026-11-25",
-      "status": "open"
+      "status": "closed",
+      "closed": null,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "day-KSS-20261125",
@@ -2774,7 +2813,10 @@
       "spy": null,
       "last": null,
       "lastD": "2026-11-25",
-      "status": "open"
+      "status": "closed",
+      "closed": null,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "day-ANF-20261125",
@@ -2786,7 +2828,10 @@
       "spy": null,
       "last": null,
       "lastD": "2026-11-25",
-      "status": "open"
+      "status": "closed",
+      "closed": null,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "day-AMBA-20261125",
@@ -2798,7 +2843,10 @@
       "spy": null,
       "last": null,
       "lastD": "2026-11-25",
-      "status": "open"
+      "status": "closed",
+      "closed": null,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "day-HPE-20261125",
@@ -2810,7 +2858,10 @@
       "spy": 718.78,
       "last": 40.19,
       "lastD": "2026-11-25",
-      "status": "open"
+      "status": "closed",
+      "closed": 40.19,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "day-DELL-20261125",
@@ -2820,9 +2871,12 @@
       "entry": 295.28,
       "entryN": "Nov 24 close (before results)",
       "spy": 718.78,
-      "last": 295.28,
+      "last": 297.06,
       "lastD": "2026-11-25",
-      "status": "open"
+      "status": "closed",
+      "closed": 297.06,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "day-KYMR-20261125",
@@ -2834,7 +2888,10 @@
       "spy": null,
       "last": null,
       "lastD": "2026-11-25",
-      "status": "open"
+      "status": "closed",
+      "closed": null,
+      "closedD": "2026-11-26",
+      "spyClosed": 716.7
     },
     {
       "id": "swing-NVDA-20261125",
@@ -2856,8 +2913,428 @@
       "entry": 1.65,
       "entryN": "Nov 24 close (Alpha Vantage)",
       "spy": 718.78,
-      "last": 1.65,
+      "last": 1.68,
       "lastD": "2026-11-25",
+      "status": "open"
+    },
+    {
+      "id": "radar-FUN-20261126",
+      "t": "FUN",
+      "kind": "radar",
+      "posted": "2026-11-26",
+      "entry": 11.39,
+      "entryN": "Nov 24 close (24/7 Wall St; Nov 25 close not found)",
+      "spy": 718.78,
+      "last": 11.39,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "radar-COHR-20261126",
+      "t": "COHR",
+      "kind": "radar",
+      "posted": "2026-11-26",
+      "entry": 196.24,
+      "entryN": "Nov 24 close (24/7 Wall St; a Nov 25 close of $192.66 per The Inference could not be confirmed)",
+      "spy": 718.78,
+      "last": 196.24,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "radar-CGON-20261126",
+      "t": "CGON",
+      "kind": "radar",
+      "posted": "2026-11-26",
+      "entry": null,
+      "entryN": "Price not found at posting",
+      "spy": null,
+      "last": null,
+      "lastD": null,
+      "status": "open"
+    },
+    {
+      "id": "radar-RMIX-20261126",
+      "t": "RMIX",
+      "kind": "radar",
+      "posted": "2026-11-26",
+      "entry": 7.08,
+      "entryN": "Last close shown through Nov 23 (massive.com chart); Nov 25 close not found",
+      "spy": null,
+      "last": 7.08,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "radar-BG-20261126",
+      "t": "BG",
+      "kind": "radar",
+      "posted": "2026-11-26",
+      "entry": 88.15,
+      "entryN": "Nov 25 close (massive.com chart)",
+      "spy": 716.7,
+      "last": 88.15,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "radar-NTSK-20261126",
+      "t": "NTSK",
+      "kind": "radar",
+      "posted": "2026-11-26",
+      "entry": null,
+      "entryN": "Price not found at posting",
+      "spy": null,
+      "last": null,
+      "lastD": null,
+      "status": "open"
+    },
+    {
+      "id": "day-HPQ-20261126",
+      "t": "HPQ",
+      "kind": "day",
+      "posted": "2026-11-26",
+      "entry": 31.15,
+      "entryN": "Nov 25 close (Alpha Vantage)",
+      "spy": 716.7,
+      "last": 31.15,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "day-NTNX-20261126",
+      "t": "NTNX",
+      "kind": "day",
+      "posted": "2026-11-26",
+      "entry": 48.82,
+      "entryN": "Nov 25 close (calculated: Fox Business Nov 24 close $57.56 less 15.19%)",
+      "spy": 716.7,
+      "last": 48.82,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "day-GDRX-20261126",
+      "t": "GDRX",
+      "kind": "day",
+      "posted": "2026-11-26",
+      "entry": 2.38,
+      "entryN": "Nov 25 close (Alpha Vantage)",
+      "spy": 716.7,
+      "last": 2.38,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "day-BZ-20261126",
+      "t": "BZ",
+      "kind": "day",
+      "posted": "2026-11-26",
+      "entry": null,
+      "entryN": "Price not found at posting",
+      "spy": null,
+      "last": null,
+      "lastD": null,
+      "status": "open"
+    },
+    {
+      "id": "day-LI-20261126",
+      "t": "LI",
+      "kind": "day",
+      "posted": "2026-11-26",
+      "entry": null,
+      "entryN": "Price not found at posting",
+      "spy": null,
+      "last": null,
+      "lastD": null,
+      "status": "open"
+    },
+    {
+      "id": "day-PHAR-20261126",
+      "t": "PHAR",
+      "kind": "day",
+      "posted": "2026-11-26",
+      "entry": null,
+      "entryN": "Price not found at posting",
+      "spy": null,
+      "last": null,
+      "lastD": null,
+      "status": "open"
+    },
+    {
+      "id": "swing-MRVL-20261126",
+      "t": "MRVL",
+      "kind": "swing",
+      "posted": "2026-11-26",
+      "entry": 130.93,
+      "entryN": "Nov 25 close (Motley Fool quote box)",
+      "spy": 716.7,
+      "last": 130.93,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "swing-SNOW-20261126",
+      "t": "SNOW",
+      "kind": "swing",
+      "posted": "2026-11-26",
+      "entry": null,
+      "entryN": "Price not found at posting",
+      "spy": null,
+      "last": null,
+      "lastD": null,
+      "status": "open"
+    },
+    {
+      "id": "swing-MDB-20261126",
+      "t": "MDB",
+      "kind": "swing",
+      "posted": "2026-11-26",
+      "entry": null,
+      "entryN": "Price not found at posting",
+      "spy": null,
+      "last": null,
+      "lastD": null,
+      "status": "open"
+    },
+    {
+      "id": "swing-CRDO-20261126",
+      "t": "CRDO",
+      "kind": "swing",
+      "posted": "2026-11-26",
+      "entry": null,
+      "entryN": "Price not found at posting",
+      "spy": null,
+      "last": null,
+      "lastD": null,
+      "status": "open"
+    },
+    {
+      "id": "invest-COST-20261126",
+      "t": "COST",
+      "kind": "invest",
+      "posted": "2026-11-26",
+      "entry": null,
+      "entryN": "Price not found at posting",
+      "spy": null,
+      "last": null,
+      "lastD": null,
+      "status": "open"
+    },
+    {
+      "id": "invest-ABBV-20261126",
+      "t": "ABBV",
+      "kind": "invest",
+      "posted": "2026-11-26",
+      "entry": null,
+      "entryN": "Price not found at posting",
+      "spy": null,
+      "last": null,
+      "lastD": null,
+      "status": "open"
+    },
+    {
+      "id": "invest-WMB-20261126",
+      "t": "WMB",
+      "kind": "invest",
+      "posted": "2026-11-26",
+      "entry": null,
+      "entryN": "Price not found at posting",
+      "spy": null,
+      "last": null,
+      "lastD": null,
+      "status": "open"
+    },
+    {
+      "id": "invest-PAYX-20261126",
+      "t": "PAYX",
+      "kind": "invest",
+      "posted": "2026-11-26",
+      "entry": null,
+      "entryN": "Price not found at posting",
+      "spy": null,
+      "last": null,
+      "lastD": null,
+      "status": "open"
+    },
+    {
+      "id": "penny-VNDA-20261126",
+      "t": "VNDA",
+      "kind": "penny",
+      "posted": "2026-11-26",
+      "entry": 3.9,
+      "entryN": "Nov 25 close (ChartExchange)",
+      "spy": 716.7,
+      "last": 3.9,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "penny-DLTH-20261126",
+      "t": "DLTH",
+      "kind": "penny",
+      "posted": "2026-11-26",
+      "entry": 3.71,
+      "entryN": "Nov 24 close (Stock Titan)",
+      "spy": 718.78,
+      "last": 3.71,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "penny-IRWD-20261126",
+      "t": "IRWD",
+      "kind": "penny",
+      "posted": "2026-11-26",
+      "entry": 4.95,
+      "entryN": "Nov 23 (Stocktwits)",
+      "spy": null,
+      "last": 4.95,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "penny-PLUG-20261126",
+      "t": "PLUG",
+      "kind": "penny",
+      "posted": "2026-11-26",
+      "entry": 1.07,
+      "entryN": "Nov 25 close (24/7 Wall St ticker; Longbridge)",
+      "spy": 716.7,
+      "last": 1.07,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "penny-BYND-20261126",
+      "t": "BYND",
+      "kind": "penny",
+      "posted": "2026-11-26",
+      "entry": 4.45,
+      "entryN": "Nov 25 close (TipRanks)",
+      "spy": 716.7,
+      "last": 4.45,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "penny-BFRG-20261126",
+      "t": "BFRG",
+      "kind": "penny",
+      "posted": "2026-11-26",
+      "entry": null,
+      "entryN": "Price not found at posting",
+      "spy": null,
+      "last": null,
+      "lastD": null,
+      "status": "open"
+    },
+    {
+      "id": "micro-BENF-20261126",
+      "t": "BENF",
+      "kind": "micro",
+      "posted": "2026-11-26",
+      "entry": null,
+      "entryN": "Price not found at posting",
+      "spy": null,
+      "last": null,
+      "lastD": null,
+      "status": "open"
+    },
+    {
+      "id": "micro-ALDX-20261126",
+      "t": "ALDX",
+      "kind": "micro",
+      "posted": "2026-11-26",
+      "entry": 0.98,
+      "entryN": "Nov 24 intraday (Benzinga via Longbridge)",
+      "spy": 718.78,
+      "last": 0.98,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "micro-EYPT-20261126",
+      "t": "EYPT",
+      "kind": "micro",
+      "posted": "2026-11-26",
+      "entry": 0.33,
+      "entryN": "Nov 25 intraday (Benzinga via Longbridge)",
+      "spy": 716.7,
+      "last": 0.33,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "micro-AVXL-20261126",
+      "t": "AVXL",
+      "kind": "micro",
+      "posted": "2026-11-26",
+      "entry": 0.79,
+      "entryN": "Nov 24 intraday (Benzinga via Longbridge)",
+      "spy": 718.78,
+      "last": 0.79,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "micro-CABR-20261126",
+      "t": "CABR",
+      "kind": "micro",
+      "posted": "2026-11-26",
+      "entry": 0.73,
+      "entryN": "Nov 25 premarket (Benzinga via Longbridge)",
+      "spy": 716.7,
+      "last": 0.73,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "micro-WHLR-20261126",
+      "t": "WHLR",
+      "kind": "micro",
+      "posted": "2026-11-26",
+      "entry": 0.58,
+      "entryN": "Nov 25 premarket (Benzinga via Longbridge)",
+      "spy": 716.7,
+      "last": 0.58,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "micro-ZNB-20261126",
+      "t": "ZNB",
+      "kind": "micro",
+      "posted": "2026-11-26",
+      "entry": 0.2,
+      "entryN": "Nov 25 intraday (Benzinga via Longbridge)",
+      "spy": 716.7,
+      "last": 0.2,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "micro-RAYA-20261126",
+      "t": "RAYA",
+      "kind": "micro",
+      "posted": "2026-11-26",
+      "entry": 0.65,
+      "entryN": "Nov 25 intraday (Benzinga via Longbridge)",
+      "spy": 716.7,
+      "last": 0.65,
+      "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "micro-CRMT-20261126",
+      "t": "CRMT",
+      "kind": "micro",
+      "posted": "2026-11-26",
+      "entry": 0.35,
+      "entryN": "Nov 24 intraday (Benzinga via Longbridge)",
+      "spy": 718.78,
+      "last": 0.35,
+      "lastD": "2026-11-26",
       "status": "open"
     }
   ]
