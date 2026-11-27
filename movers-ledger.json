@@ -1,6 +1,6 @@
 {
   "started": "2026-11-04",
-  "asof": "2026-11-26",
+  "asof": "2026-11-27",
   "bench": "SPY",
   "spyLast": 716.7,
   "spyLastD": "2026-11-25",
@@ -246,8 +246,8 @@
       "entry": 206.69,
       "entryN": "Nov 3 close",
       "spy": 766.81,
-      "last": 155.38,
-      "lastD": "2026-11-24",
+      "last": 149.3,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -258,8 +258,8 @@
       "entry": 331.37,
       "entryN": "Nov 4, 10:13 am ET",
       "spy": 766.81,
-      "last": 291.53,
-      "lastD": "2026-11-05",
+      "last": 300.86,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -270,8 +270,8 @@
       "entry": 803.71,
       "entryN": "Nov 4, 11:22 am ET",
       "spy": 766.81,
-      "last": 629.79,
-      "lastD": "2026-11-24",
+      "last": 601.25,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -294,8 +294,8 @@
       "entry": 141.52,
       "entryN": "Nov 4 price from article",
       "spy": 766.81,
-      "last": 154.69,
-      "lastD": "2026-11-11",
+      "last": 84.99,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -306,8 +306,8 @@
       "entry": 48.42,
       "entryN": "Nov 4 price from article",
       "spy": 766.81,
-      "last": 56.6,
-      "lastD": "2026-11-12",
+      "last": 42.57,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -1542,8 +1542,8 @@
       "entry": 396.48,
       "entryN": "Last close in source (date not stated)",
       "spy": 749.92,
-      "last": 405.49,
-      "lastD": "2026-11-12",
+      "last": 342.34,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -1710,8 +1710,8 @@
       "entry": 361.73,
       "entryN": "Nov 19 close (Alpha Vantage)",
       "spy": 715.87,
-      "last": 361.73,
-      "lastD": "2026-11-19",
+      "last": 356.14,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -1722,8 +1722,8 @@
       "entry": 339.01,
       "entryN": "Nov 17 close (Alpha Vantage)",
       "spy": 732.44,
-      "last": 339.01,
-      "lastD": "2026-11-17",
+      "last": 361.26,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2322,8 +2322,8 @@
       "entry": 2.71,
       "entryN": "Nov 18 close (Alpha Vantage)",
       "spy": 715.87,
-      "last": 2.9,
-      "lastD": "2026-11-20",
+      "last": 2.83,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2334,8 +2334,8 @@
       "entry": 1.04,
       "entryN": "Nov 18 close (Alpha Vantage)",
       "spy": 715.87,
-      "last": 1.04,
-      "lastD": "2026-11-20",
+      "last": 1.06,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2346,8 +2346,8 @@
       "entry": 2.89,
       "entryN": "Nov 18 close (Alpha Vantage)",
       "spy": 715.87,
-      "last": 2.89,
-      "lastD": "2026-11-20",
+      "last": 1.87,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2358,8 +2358,8 @@
       "entry": 2.06,
       "entryN": "Nov 18 close (Alpha Vantage)",
       "spy": 715.87,
-      "last": 2,
-      "lastD": "2026-11-20",
+      "last": 2.27,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2370,8 +2370,8 @@
       "entry": 2.06,
       "entryN": "Nov 18 close (Alpha Vantage)",
       "spy": 715.87,
-      "last": 2.06,
-      "lastD": "2026-11-20",
+      "last": 1.79,
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -2901,7 +2901,7 @@
       "entry": 155.38,
       "entryN": "Nov 24 close",
       "spy": 718.78,
-      "last": 155.38,
+      "last": 149.3,
       "lastD": "2026-11-25",
       "status": "open"
     },
@@ -3070,7 +3070,7 @@
       "entryN": "Nov 25 close (Motley Fool quote box)",
       "spy": 716.7,
       "last": 130.93,
-      "lastD": "2026-11-26",
+      "lastD": "2026-11-25",
       "status": "open"
     },
     {
@@ -3335,6 +3335,78 @@
       "spy": 718.78,
       "last": 0.35,
       "lastD": "2026-11-26",
+      "status": "open"
+    },
+    {
+      "id": "day-NVDA-20261127",
+      "t": "NVDA",
+      "kind": "day",
+      "posted": "2026-11-27",
+      "entry": 155.52,
+      "entryN": "Nov 27 premarket, 5:44am ET (TECHi); Nov 25 close $149.30",
+      "spy": 716.7,
+      "last": 155.52,
+      "lastD": "2026-11-27",
+      "status": "open"
+    },
+    {
+      "id": "day-MU-20261127",
+      "t": "MU",
+      "kind": "day",
+      "posted": "2026-11-27",
+      "entry": 643.35,
+      "entryN": "Nov 27 premarket, 5:44am ET (TECHi); Nov 25 close $601.25",
+      "spy": 716.7,
+      "last": 643.35,
+      "lastD": "2026-11-27",
+      "status": "open"
+    },
+    {
+      "id": "day-SNDK-20261127",
+      "t": "SNDK",
+      "kind": "day",
+      "posted": "2026-11-27",
+      "entry": 81.56,
+      "entryN": "Nov 27 premarket (Forbes, 5:43am ET); Nov 25 close $73.61 (AltIndex)",
+      "spy": 716.7,
+      "last": 81.56,
+      "lastD": "2026-11-27",
+      "status": "open"
+    },
+    {
+      "id": "day-NBIS-20261127",
+      "t": "NBIS",
+      "kind": "day",
+      "posted": "2026-11-27",
+      "entry": 90.74,
+      "entryN": "Nov 27 premarket, 7:13am ET (MarketScreener); Nov 25 close $84.99",
+      "spy": 716.7,
+      "last": 90.74,
+      "lastD": "2026-11-27",
+      "status": "open"
+    },
+    {
+      "id": "day-KNTK-20261127",
+      "t": "KNTK",
+      "kind": "day",
+      "posted": "2026-11-27",
+      "entry": 54.7,
+      "entryN": "Nov 25 close (Alpha Vantage); about +7% premarket per Oninvest",
+      "spy": 716.7,
+      "last": 54.7,
+      "lastD": "2026-11-27",
+      "status": "open"
+    },
+    {
+      "id": "day-MSTR-20261127",
+      "t": "MSTR",
+      "kind": "day",
+      "posted": "2026-11-27",
+      "entry": 79.96,
+      "entryN": "Nov 25 close (Alpha Vantage); over +6% premarket per Stocktwits",
+      "spy": 716.7,
+      "last": 79.96,
+      "lastD": "2026-11-27",
       "status": "open"
     }
   ]

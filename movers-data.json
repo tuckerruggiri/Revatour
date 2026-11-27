@@ -1,41 +1,41 @@
 {
-  "asof": "Nov 26, 2026",
+  "asof": "Nov 27, 2026",
   "tape": [
     {
-      "l": "Dow",
-      "v": "50,183",
-      "d": 0.33
+      "l": "S&P 500 fut",
+      "v": "7,322.50",
+      "d": 1.76
     },
     {
-      "l": "S&P 500",
-      "v": "7,183",
-      "d": -0.25
+      "l": "Nasdaq-100 fut",
+      "v": "26,766.50",
+      "d": 2.55
     },
     {
-      "l": "Nasdaq",
-      "v": "23,586",
-      "d": -0.62
+      "l": "Dow fut",
+      "v": "50,765",
+      "d": 1.07
     },
     {
-      "l": "10-yr yield",
-      "v": "4.85%"
-    },
-    {
-      "l": "Gold",
-      "v": "$3,535",
-      "d": -0.71
+      "l": "Russell 2000 fut",
+      "v": "2,740.60",
+      "d": 1.27
     },
     {
       "l": "WTI oil",
-      "v": "$83.68",
-      "d": 1.99
+      "v": "$85.75",
+      "d": 2.97
     }
   ],
-  "tapeSrc": "https://cappnotes.substack.com/p/closing-look-wednesday-november-25",
+  "tapeSrc": "https://247wallst.com/investing/2026/11/27/stock-futures-rip-on-thanksgiving-night-as-sp-500-futures-top-7300/",
   "events": [
     {
       "d": "2026-11-27",
       "l": "Stocks close 1pm ET (bonds 2pm)"
+    },
+    {
+      "d": "2026-11-29",
+      "l": "OPEC+ meeting"
     },
     {
       "d": "2026-11-30",
@@ -325,238 +325,185 @@
     },
     {
       "kind": "day",
-      "t": "HPQ",
-      "n": "HP Inc.",
-      "theme": "Earnings gap up",
-      "px": 31.15,
-      "pxN": "Nov 25 close (Alpha Vantage)",
-      "chg": 11.49,
-      "hi": 32.05,
-      "lo": 29.7,
-      "hiN": "Nov 25 day range (Fox Business)",
-      "cat": "Q4 FY26 results Nov 24 after the close",
-      "catDate": "2026-11-24",
-      "setup": "Opened about $30.01 vs a $27.92 prior close and closed near the day's high on 2.6x average volume",
+      "t": "NVDA",
+      "n": "NVIDIA",
+      "theme": "AI chip rebound after a November rout",
+      "px": 155.52,
+      "pxN": "Nov 27 premarket, 5:44am ET (TECHi); Nov 25 close $149.30",
+      "chg": 4.2,
+      "cat": "Premarket rebound in AI hardware into the 1pm ET half-day close",
+      "catDate": "2026-11-27",
+      "setup": "Gapping up about 4% premarket after two down sessions; still more than 37% below its October record (Forbes)",
       "v": {
-        "news": 1,
+        "news": 0,
         "gap": 1,
-        "vol": 1,
+        "vol": -1,
         "iv": -1,
         "liq": 1
       },
-      "why": "Q4 FY26 revenue was $16.0B (+9.3%) and FY27 non-GAAP EPS was guided to $3.15-3.45; the quarterly dividend rose to $0.31. The stock rose 11.49% to $31.15 on 39.11M shares vs a 15.20M average.",
-      "risk": "Q4 non-GAAP EPS fell 10.8% y/y and included a $0.15 tariff-refund benefit; Q1 FY27 guide is $0.66-0.76 and memory costs were cited across PC/hardware names this week.",
-      "src": "https://www.stocktitan.net/articles/stock-market-today-live-november-25-2026",
-      "srcN": "Stock Titan Nov 25; Capp Notes Nov 25; Fox Business quote Nov 25",
+      "why": "Nvidia was $155.52 premarket (+4.2% vs the $149.30 Nov 25 close) as ten tracked AI hardware stocks rose an average 5.8%; no single company headline was cited for the move. It is the most-discussed ticker on Stocktwits with 54,982 mentions (AltIndex Nov 27).",
+      "risk": "S&P Global said it may cut Nvidia's rating one notch after a 90-day review, and the FT reported it barred partners from shipping its servers to four Southeast Asian countries; half-day volume is usually thin.",
+      "src": "https://www.techi.com/premarket-ai-hardware-stocks-friday-half-day-nvidia-november/",
+      "srcN": "TECHi Nov 27; Forbes Nov 27; Oninvest Nov 27; Stocktwits Nov 27; AltIndex Nov 27",
+      "soc": "Stocktwits sentiment 'bullish' (Stocktwits Nov 27); 54,982 Stocktwits mentions (AltIndex Nov 27)",
       "dd": [
         {
-          "f": "8-K Item 2.02 (Ex. 99.1)",
-          "d": "Nov 24",
-          "s": "Q4 FY26 revenue $16.0B (+9.3%), GAAP EPS $0.84, non-GAAP EPS $0.83 (-10.8%); FY27 non-GAAP EPS guide $3.15-3.45, FCF guide $2.9-3.1B; FY26 buybacks $1.2B; cash $4.4B vs about $9.3B debt.",
-          "u": "https://www.sec.gov/Archives/edgar/data/0000047217/000004721726000054/hp103126exhibit991q426.htm"
-        },
-        {
-          "f": "Form 4",
-          "d": "Dec 2025",
-          "s": "Latest Form 4 found (Stock Titan mirror): CEO Enrique Lores sold 41,922 sh (code S) on Dec 5, 2025 at about $26.005 under a 10b5-1 plan; Form 4s from the last 90 days were not reviewed."
+          "f": "Filings",
+          "s": "Could not open the SEC filings this run (sec.gov fetches were blocked); digest only."
         }
       ],
       "ddv": "watch"
     },
     {
       "kind": "day",
-      "t": "NTNX",
-      "n": "Nutanix",
-      "theme": "CEO exit and soft guide",
-      "px": 48.82,
-      "pxN": "Nov 25 close (calculated: Fox Business Nov 24 close $57.56 less 15.19%)",
-      "chg": -15.19,
-      "cat": "Q1 FY27 results and CEO succession plan Nov 24",
-      "catDate": "2026-11-24",
-      "setup": "Gapped down after hours on a beat overshadowed by the CEO transition and a FY27 revenue guide below consensus",
+      "t": "MU",
+      "n": "Micron Technology",
+      "theme": "Memory rebound",
+      "px": 643.35,
+      "pxN": "Nov 27 premarket, 5:44am ET (TECHi); Nov 25 close $601.25",
+      "chg": 7,
+      "cat": "Premarket rebound in AI hardware",
+      "catDate": "2026-11-27",
+      "setup": "Up 6-9% premarket after a 4.53% drop on Nov 25; down more than a quarter in November (Forbes)",
       "v": {
-        "news": 1,
+        "news": 0,
         "gap": 1,
         "vol": -1,
         "iv": -1,
         "liq": 1
       },
-      "why": "Q1 FY27 adjusted EPS $0.73 vs $0.61 expected and revenue $772.4M (+15%), but FY27 revenue guidance of $3.18-3.23B was below the $3.22B consensus and CEO Rajiv Ramaswami will step down. Shares fell 15.19% on Nov 25; Oppenheimer cut its target to $70 from $85.",
-      "risk": "Leadership uncertainty until a successor is named (no later than Apr 30, 2027 per the 8-K), and heavy insider selling in Sep-Oct at $68-75.",
-      "src": "https://www.investing.com/news/earnings/nutanix-stock-drops-9-on-weak-fy-guidance-and-ceo-exit-5049045",
-      "srcN": "Investing.com Nov 24; Seeking Alpha Nov 25; Stock Titan Nov 25",
-      "ins": "CEO Ramaswami sold 400,000 sh Oct 6-7 at about $73.57-74.00 and the CFO sold 232,712 sh Oct 12 at $74.55, both 10b5-1 (Earnings Whispers digest)",
+      "why": "Micron was $643.35 premarket (+7.0%) per TECHi; Forbes had it +6.4% at $640.00 and Stocktwits said Micron and SanDisk were each up more than 9%. AltIndex counts 11,148 Stocktwits mentions.",
+      "risk": "The move is a rebound without company news, after a month in which Micron fell more than 25%; premarket quotes differ by source and time.",
+      "src": "https://www.techi.com/premarket-ai-hardware-stocks-friday-half-day-nvidia-november/",
+      "srcN": "TECHi Nov 27; Forbes Nov 27; Stocktwits Nov 27; AltIndex Nov 27",
+      "soc": "11,148 Stocktwits mentions (AltIndex Nov 27)",
       "dd": [
         {
-          "f": "8-K Items 2.02/5.02/7.01/8.01",
-          "d": "Nov 24",
-          "s": "Ramaswami steps down as CEO and director at the earlier of his successor's start or Apr 30, 2027; advisor through Sep 30, 2027 at $133,333/month plus a $5.0M conditional transition award.",
-          "u": "https://www.sec.gov/Archives/edgar/data/0001618732/000117184326007693/f8k_112426.htm"
-        },
-        {
-          "f": "8-K Ex. 99.2",
-          "d": "Nov 24",
-          "s": "Board has hired a national search firm; release has no financials (Ex. 99.1 earnings release could not be opened).",
-          "u": "https://www.sec.gov/Archives/edgar/data/0001618732/000117184326007693/exh_992.htm"
-        },
-        {
-          "f": "Form 4 digest",
-          "d": "Sep 17-Oct 12",
-          "s": "Earnings Whispers lists 9 sales by 4 insiders totaling 744,129 sh ($54.5M), 8 under 10b5-1, and no buys in 90 days; forms not opened."
-        }
-      ],
-      "ddv": "red"
-    },
-    {
-      "kind": "day",
-      "t": "GDRX",
-      "n": "GoodRx",
-      "theme": "Restatement and transaction decline",
-      "px": 2.38,
-      "pxN": "Nov 25 close (Alpha Vantage)",
-      "chg": -20.67,
-      "hi": 2.68,
-      "lo": 2.37,
-      "hiN": "Nov 25 day range (Alpha Vantage)",
-      "cat": "Q3 results, restatement and 10-Q filing Nov 24",
-      "catDate": "2026-11-24",
-      "setup": "Gapped down from $3.00 to a $2.60 open and closed near the low",
-      "v": {
-        "news": 1,
-        "gap": 1,
-        "vol": 1,
-        "iv": -1,
-        "liq": 1
-      },
-      "why": "Q3 revenue rose 11% to $218.4M and FY26 guidance was raised to $844-850M, but prescription transactions revenue fell 20% to $101.6M and the company restated Q1-Q2 2026. Shares fell 20.67% to $2.38 on 7.12M shares (Yahoo lists about 1.27M average, undated).",
-      "risk": "Material weaknesses (Panabee says former senior finance management overrode controls), Nasdaq compliance still subject to confirmation, and $491.3M term loan vs $371.8M cash.",
-      "src": "https://www.panabee.com/news/goodrx-earnings-q3-2026",
-      "srcN": "Panabee Nov 24; Stock Titan Nov 25; Capp Notes Nov 25",
-      "dd": [
-        {
-          "f": "8-K Item 2.02 (Ex. 99.1)",
-          "d": "Nov 24",
-          "s": "Q3 revenue $218.4M (+11%), net income $16.4M, prescription transactions revenue -20% to $101.6M; FY26 revenue guide raised to $844-850M, adj. EBITDA $280-286M.",
-          "u": "https://www.sec.gov/Archives/edgar/data/0001809519/000180951926000231/gdrxq326-exx991pressrelease.htm"
-        },
-        {
-          "f": "10-Q",
-          "d": "Q3",
-          "s": "Refers to identified material weaknesses and a restatement of Q1 and Q2 2026; 2025 10-K amended Nov 24, 2026; cash $371.8M, term loan $491.25M due Jul 10, 2029; Class A shares 117.88M on Nov 17 vs 107.09M at Dec 31, 2025.",
-          "u": "https://www.sec.gov/Archives/edgar/data/0001809519/000180951926000230/gdrx-20260930.htm"
-        },
-        {
-          "f": "Form 4",
-          "d": "n/a",
-          "s": "Insider Form 4s were not reviewed this run."
-        }
-      ],
-      "ddv": "red"
-    },
-    {
-      "kind": "day",
-      "t": "BZ",
-      "n": "Kanzhun (BOSS Zhipin)",
-      "theme": "Earnings plus new buyback",
-      "pxN": "Nov 25 close (price not found)",
-      "chg": 12.56,
-      "cat": "Q3 2026 results and $500M buyback Nov 25",
-      "catDate": "2026-11-25",
-      "setup": "Rose 12.56% on results day with a new 12-month $500M repurchase program",
-      "v": {
-        "news": 1,
-        "gap": -1,
-        "vol": -1,
-        "iv": -1,
-        "liq": -1
-      },
-      "why": "Q3 revenue was RMB2,416.2M (US$360.4M, +11.7%) and adjusted net income rose 12.3% to RMB1,065.1M; the board authorized a new US$500M buyback on Nov 25. Shares rose 12.56% on Nov 25.",
-      "risk": "GAAP net loss of RMB249.2M from a RMB1,443.9M investment write-down, and Q4 revenue guide implies slower 5.3-7.3% growth; China ADR listing risk.",
-      "src": "https://www.sec.gov/Archives/edgar/data/0001842827/000110465926131805/tm2630442d1_ex99-1.htm",
-      "srcN": "Company 6-K Nov 25; Stock Titan Nov 25",
-      "dd": [
-        {
-          "f": "6-K (Ex. 99.1)",
-          "d": "Nov 25",
-          "s": "Q3 revenue RMB2,416.2M (+11.7%), net loss RMB249.2M, adj. net income RMB1,065.1M; new US$500M 12-month buyback plus an existing US$400M program through Aug 28, 2027; cash and short-term investments US$2,923.7M.",
-          "u": "https://www.sec.gov/Archives/edgar/data/0001842827/000110465926131805/tm2630442d1_ex99-1.htm"
-        },
-        {
-          "f": "Form 4",
-          "d": "n/a",
-          "s": "Foreign private issuer; insiders do not file Form 4."
-        }
-      ],
-      "ddv": "clean"
-    },
-    {
-      "kind": "day",
-      "t": "LI",
-      "n": "Li Auto",
-      "theme": "Earnings and Q4 delivery guide",
-      "pxN": "Nov 25 close (price not found)",
-      "chg": 11.03,
-      "cat": "Q3 2026 results Nov 25",
-      "catDate": "2026-11-25",
-      "setup": "Rose 11.03% on results day after guiding Q4 deliveries to 110,000-115,000",
-      "v": {
-        "news": 1,
-        "gap": -1,
-        "vol": -1,
-        "iv": -1,
-        "liq": -1
-      },
-      "why": "Q3 revenue rose 5.4% to RMB28.8B on 99,964 deliveries (+7.2%) and the net loss narrowed 50.4% to RMB309.7M; Q4 guidance is 110,000-115,000 deliveries and RMB31.7-33.1B revenue (+10.1-15.1%). Shares rose 11.03% Nov 25.",
-      "risk": "Still loss-making, vehicle margin slipped to 15.3% from 15.5%, and Q4 delivery growth is guided at only 0.7-5.3%.",
-      "src": "https://www.sec.gov/Archives/edgar/data/0001791706/000110465926131768/tm2630657d1_ex99-1.htm",
-      "srcN": "Company 6-K Nov 25; Stock Titan Nov 25",
-      "dd": [
-        {
-          "f": "6-K (Ex. 99.1)",
-          "d": "Nov 25",
-          "s": "Q3 revenue RMB28.8B (+5.4%), net loss RMB309.7M, vehicle margin 15.3%; Q4 guide 110,000-115,000 deliveries; cash RMB88.2B (US$13.2B) at Sep 30.",
-          "u": "https://www.sec.gov/Archives/edgar/data/0001791706/000110465926131768/tm2630657d1_ex99-1.htm"
-        },
-        {
-          "f": "Form 4",
-          "d": "n/a",
-          "s": "Foreign private issuer; insiders do not file Form 4. No financing filings were reviewed."
+          "f": "Filings",
+          "s": "Could not open the SEC filings this run (sec.gov fetches were blocked); digest only."
         }
       ],
       "ddv": "watch"
     },
     {
       "kind": "day",
-      "t": "PHAR",
-      "n": "Pharming Group",
-      "theme": "Manufacturing pause",
-      "pxN": "Nov 25 close (price not found)",
-      "chg": -23.98,
-      "cat": "RUCONEST production pause Nov 25",
-      "catDate": "2026-11-25",
-      "setup": "Fell 23.98% after pausing RUCONEST manufacturing; US supply lasts to mid-December",
+      "t": "SNDK",
+      "n": "Sandisk",
+      "theme": "Beaten-down memory bounce",
+      "px": 81.56,
+      "pxN": "Nov 27 premarket (Forbes, 5:43am ET); Nov 25 close $73.61 (AltIndex)",
+      "chg": 10.8,
+      "cat": "Premarket rebound after a near-50% November slide",
+      "catDate": "2026-11-27",
+      "setup": "Up about 10-11% premarket after a 5.6% fall Wednesday; down nearly half in November (Forbes)",
       "v": {
-        "news": 1,
-        "gap": -1,
+        "news": 0,
+        "gap": 1,
         "vol": -1,
         "iv": -1,
-        "liq": 0
+        "liq": 1
       },
-      "why": "Pharming paused RUCONEST production after a failed media-fill test at its third-party fill-finish maker; current supply lasts through mid-December and restart awaits root-cause fix and requalification. The ADR fell 23.98% Nov 25.",
-      "risk": "No restart date and no guidance update; the US ADR is thinly traded (Yahoo shows about 23,000 shares average, undated).",
-      "src": "https://www.sec.gov/Archives/edgar/data/0001828316/000182831626000053/pharmingtemporarilypausesr.htm",
-      "srcN": "Company 6-K Nov 25; Stock Titan Nov 25",
+      "why": "Sandisk was up 10.8% to $81.56 premarket (Forbes) and +10.2% per MarketScreener's WallStreetBets buzz piece; it had 6,872 Stocktwits mentions (AltIndex).",
+      "risk": "No company news was cited; a stock down nearly half in a month can swing hard both ways in a thin half-day session.",
+      "src": "https://www.forbes.com/sites/siladityaray/2026/11/27/stock-futures-surge-as-battered-ai-shares-rebound-ahead-of-shorterned-friday-trading/",
+      "srcN": "Forbes Nov 27; MarketScreener Nov 27; AltIndex Nov 27",
+      "soc": "Named in MarketScreener's WallStreetBets premarket buzz (Nov 27); 6,872 Stocktwits mentions (AltIndex Nov 27)",
       "dd": [
         {
-          "f": "6-K",
-          "d": "Nov 25",
-          "s": "RUCONEST production paused after a failed routine media fill; FDA notified; supply through mid-December; timeline and financial impact not stated.",
-          "u": "https://www.sec.gov/Archives/edgar/data/0001828316/000182831626000053/pharmingtemporarilypausesr.htm"
-        },
+          "f": "Filings",
+          "s": "Could not open the SEC filings this run (sec.gov fetches were blocked); digest only."
+        }
+      ],
+      "ddv": "watch"
+    },
+    {
+      "kind": "day",
+      "t": "NBIS",
+      "n": "Nebius Group",
+      "theme": "AI cloud rebound",
+      "px": 90.74,
+      "pxN": "Nov 27 premarket, 7:13am ET (MarketScreener); Nov 25 close $84.99",
+      "chg": 6.76,
+      "cat": "Premarket rebound with AI infrastructure names",
+      "catDate": "2026-11-27",
+      "setup": "Indicated higher premarket after a 2.66% drop Wednesday",
+      "v": {
+        "news": 0,
+        "gap": 1,
+        "vol": -1,
+        "iv": -1,
+        "liq": 1
+      },
+      "why": "Nebius was $90.74 premarket (+6.76%) vs an $84.99 Nov 25 close; it was one of two names MarketScreener highlighted among WallStreetBets stocks advancing premarket, with 7,467 Stocktwits mentions (AltIndex).",
+      "risk": "No company-specific news was stated; AI cloud names have been volatile with the Nasdaq-100 down about 8% for November.",
+      "src": "https://www.marketscreener.com/news/social-buzz-wallstreetbets-stocks-advance-premarket-friday-sandisk-nebius-group-to-open-higher-ce7851d9dc8ef026",
+      "srcN": "MarketScreener Nov 27; AltIndex Nov 27; Forbes Nov 27",
+      "soc": "Named in MarketScreener's WallStreetBets premarket buzz (Nov 27); 7,467 Stocktwits mentions (AltIndex Nov 27)",
+      "dd": [
         {
-          "f": "Financials",
-          "d": "n/a",
-          "s": "Cash, burn and any shelf or convertible were not reviewed this run."
+          "f": "Filings",
+          "s": "Could not open the SEC filings this run (sec.gov fetches were blocked); digest only."
+        }
+      ],
+      "ddv": "watch"
+    },
+    {
+      "kind": "day",
+      "t": "KNTK",
+      "n": "Kinetik Holdings",
+      "theme": "Takeover talks",
+      "px": 54.7,
+      "pxN": "Nov 25 close (Alpha Vantage); about +7% premarket per Oninvest",
+      "chg": 7,
+      "cat": "Bloomberg report: Targa Resources in talks to buy Kinetik; a deal could come as early as next week",
+      "catDate": "2026-11-27",
+      "setup": "Gapping up on a takeover report; Kinetik had been exploring a sale since September",
+      "v": {
+        "news": 1,
+        "gap": 1,
+        "vol": -1,
+        "iv": -1,
+        "liq": 1
+      },
+      "why": "Kinetik rose 7% after Bloomberg reported Targa Resources is in talks to acquire it at about an $8.9B market value, with a deal possibly as soon as next week; Targa fell 2-3%. Kinetik closed at $54.70 on Nov 25.",
+      "risk": "Talks are unconfirmed and may not produce a deal or price; a report-driven gap can fade if terms disappoint.",
+      "src": "https://en.oninvest.com/article/morning-in-new-york-the-focus-is-on-the-u-s-stock-market-s-recovery",
+      "srcN": "Oninvest (Freedom Broker) Nov 27; Alpha Vantage quote",
+      "dd": [
+        {
+          "f": "Filings",
+          "s": "Could not open the SEC filings this run (sec.gov fetches were blocked); digest only."
+        }
+      ],
+      "ddv": "watch"
+    },
+    {
+      "kind": "day",
+      "t": "MSTR",
+      "n": "Strategy",
+      "theme": "Bitcoin proxy as BTC tops $61K",
+      "px": 79.96,
+      "pxN": "Nov 25 close (Alpha Vantage); over +6% premarket per Stocktwits",
+      "chg": 6,
+      "cat": "Bitcoin up 1.6% to about $61,600; crypto stocks up premarket",
+      "catDate": "2026-11-27",
+      "setup": "Up more than 6% premarket with miners (MARA, WULF, CLSK, CORZ each +6%+)",
+      "v": {
+        "news": 0,
+        "gap": 1,
+        "vol": -1,
+        "iv": -1,
+        "liq": 1
+      },
+      "why": "Strategy rose over 6% premarket as bitcoin climbed 1.6% in 24 hours to about $61,600; $240M of crypto positions were liquidated, 71.4% of them shorts. It closed at $79.96 on Nov 25.",
+      "risk": "Analysts quoted want bitcoin above $62K to confirm the move; the stock tracks bitcoin and short-covering rallies can reverse.",
+      "src": "https://stocktwits.com/news-articles/markets/cryptocurrency/crypto-stocks-gain-after-bitcoin-tops-61-k-in-tech-rebound-but-analysts-want-a-move-above-62-k/cNbCsYgR9Ns",
+      "srcN": "Stocktwits Nov 27; Alpha Vantage quote",
+      "soc": "Stocktwits sentiment 'bullish' over the past day; bitcoin sentiment 'extremely bullish' (Stocktwits Nov 27)",
+      "dd": [
+        {
+          "f": "Filings",
+          "s": "Could not open the SEC filings this run (sec.gov fetches were blocked); digest only."
         }
       ],
       "ddv": "watch"
@@ -605,7 +552,7 @@
       "pxN": "Nov 25 close (Motley Fool quote box)",
       "cat": "Q3 FY27 results Dec 1",
       "catDate": "2026-12-01",
-      "setup": "Fell 36.2% in the month to Nov 16 per Trefis; reports Dec 1, call 1:30pm PT",
+      "setup": "Fell 36.2% in the month to Nov 16 per Trefis; reports Dec 1, call 1:30pm PT; indicated $141.44 premarket Nov 27 (+8.0%, TECHi)",
       "v": {
         "cat": 1,
         "low": 1,
